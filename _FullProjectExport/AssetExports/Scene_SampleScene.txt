@@ -1,0 +1,111 @@
+=== Scene Export ===
+Scene: Assets/_Project/Scenes/SampleScene.unity
+
+- GameObject: Main Camera (Tag: MainCamera, Layer: Default, Active: True)
+    * Transform
+        - Local Rotation: (0.00, 0.00, 0.00)
+        - Local Position: (0.00, 0.00, -10.00)
+        - Local Scale: (1.00, 1.00, 1.00)
+        - Constrain Proportions Scale: False
+    * Camera
+        - Clear Flags: Solid Color
+        - Back Ground Color: RGBA(0.192, 0.302, 0.475, 0.000)
+        - Projection Matrix Mode: 1
+        - Gate Fit Mode: 2
+        - FOV Axis Mode: 0
+        - Iso: 200
+        - Shutter Speed: 0.005
+        - Aperture: 16
+        - Focus Distance: 10
+        - Focal Length: 50
+        - Blade Count: 5
+        - Curvature: (2.00, 11.00)
+        - Barrel Clipping: 0.25
+        - Anamorphism: 0
+        - Sensor Size: (36.00, 24.00)
+        - Lens Shift: (0.00, 0.00)
+        - Normalized View Port Rect: (x:0.00, y:0.00, width:1.00, height:1.00)
+        - Near clip plane: 0.3
+        - Far clip plane: 1000
+        - Field of view: 34
+        - Orthographic: True
+        - Orthographic size: 5
+        - Depth: -1
+        - Culling Mask: -1
+        - Rendering Path: Use Graphics Settings
+        - Target Texture: null
+        - Target Display: 0
+        - Target Eye: 0
+        - HDR: True
+        - Allow MSAA: False
+        - Allow Dynamic Resolution: False
+        - Force Into RT: False
+        - Occlusion Culling: False
+        - Stereo Convergence: 10
+        - Stereo Separation: 0.022
+    * AudioListener
+    * UniversalAdditionalCameraData
+        - Render Shadows: True
+        - Requires Depth Texture Option: UsePipelineSettings
+        - Requires Opaque Texture Option: UsePipelineSettings
+        - Camera Type: Base
+        - Cameras: (complex value)
+        - Renderer Index: -1
+        - Volume Layer Mask: 1
+        - Volume Trigger: null
+        - Volume Framework Update Mode Option: UsePipelineSettings
+        - Render Post Processing: False
+        - Antialiasing: None
+        - Antialiasing Quality: High
+        - Stop Na N: False
+        - Dithering: False
+        - Clear Depth: True
+        - Allow XR Rendering: True
+        - Allow HDR Output: True
+        - Use Screen Coord Override: False
+        - Screen Size Override: (0.00, 0.00, 0.00, 0.00)
+        - Screen Coord Scale Bias: (0.00, 0.00, 0.00, 0.00)
+        - Requires Depth Texture: False
+        - Requires Color Texture: False
+        - Taa Settings: (complex value)
+- GameObject: Global Light 2D (Tag: Untagged, Layer: Default, Active: True)
+    * Transform
+        - Local Rotation: (0.00, 0.00, 0.00)
+        - Local Position: (0.00, 0.00, 0.00)
+        - Local Scale: (1.00, 1.00, 1.00)
+        - Constrain Proportions Scale: False
+    * Light2D
+        - Component Version: Version_2
+        - Light Type: Global
+        - Blend Style Index: 0
+        - Falloff Intensity: 0.5
+        - Color: RGBA(1.000, 1.000, 1.000, 1.000)
+        - Intensity: 1
+        - Light Volume Intensity: 1
+        - Light Volume Enabled: False
+        - Apply To Sorting Layers: (complex value)
+        - Light Cookie Sprite: null
+        - Deprecated Point Light Cookie Sprite: null
+        - Light Order: 0
+        - Alpha Blend On Overlap: False
+        - Overlap Operation: Additive
+        - Normal Map Distance: 3
+        - Normal Map Quality: Disabled
+        - Use Normal Map: False
+        - Shadows Enabled: False
+        - Shadow Intensity: 0.75
+        - Shadow Softness: 0
+        - Shadow Softness Falloff Intensity: 0.5
+        - Shadow Volume Intensity Enabled: False
+        - Shadow Volume Intensity: 0.75
+        - Local Bounds: Center: (0.00, 0.00, 0.00), Extents: (1.00, 1.00, 0.00)
+        - Point Light Inner Angle: 360
+        - Point Light Outer Angle: 360
+        - Point Light Inner Radius: 0
+        - Point Light Outer Radius: 1
+        - Shape Light Parametric Sides: 5
+        - Shape Light Parametric Angle Offset: 0
+        - Shape Light Parametric Radius: 1
+        - Shape Light Falloff Size: 0.5
+        - Shape Light Falloff Offset: (0.00, 0.00)
+        - Shape Path: (complex value)

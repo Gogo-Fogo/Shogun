@@ -1,0 +1,2 @@
+Scene: Assets/_Project/Scenes/SampleScene.unity => G:/Workspace/Unity/Projects/Shogun/Assets/..\_FullProjectExport\AssetExports\Scene_SampleScene.txt
+Scene: Assets/Settings/Scenes/URP2DSceneTemplate.unity => G:/Workspace/Unity/Projects/Shogun/Assets/..\_FullProjectExport\AssetExports\Scene_URP2DSceneTemplate.txt

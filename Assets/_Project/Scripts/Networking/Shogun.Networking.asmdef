@@ -1,0 +1,16 @@
+{
+    "name": "Shogun.Networking",
+    "rootNamespace": "",
+    "references": [
+        "GUID:716e414e3a6173047aa1b3dc9de87423"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
