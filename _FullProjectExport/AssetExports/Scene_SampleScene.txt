@@ -8,7 +8,7 @@ Scene: Assets/_Project/Scenes/SampleScene.unity
         - Local Scale: (1.00, 1.00, 1.00)
         - Constrain Proportions Scale: False
     * Camera
-        - Clear Flags: Solid Color
+        - Clear Flags: Don't Clear
         - Back Ground Color: RGBA(0.192, 0.302, 0.475, 0.000)
         - Projection Matrix Mode: 1
         - Gate Fit Mode: 2
@@ -48,7 +48,7 @@ Scene: Assets/_Project/Scenes/SampleScene.unity
         - Render Shadows: True
         - Requires Depth Texture Option: UsePipelineSettings
         - Requires Opaque Texture Option: UsePipelineSettings
-        - Camera Type: Base
+        - Camera Type: Overlay
         - Cameras: (complex value)
         - Renderer Index: -1
         - Volume Layer Mask: 1
@@ -68,44 +68,179 @@ Scene: Assets/_Project/Scenes/SampleScene.unity
         - Requires Depth Texture: False
         - Requires Color Texture: False
         - Taa Settings: (complex value)
-- GameObject: Global Light 2D (Tag: Untagged, Layer: Default, Active: True)
+- GameObject: Canvas (Tag: Untagged, Layer: UI, Active: True)
+    * RectTransform
+        - Local Rotation: (0.00, 0.00, 0.00)
+        - Local Position: (642.00, 1389.00, 0.00)
+        - Local Scale: (1.45, 1.45, 1.45)
+        - Constrain Proportions Scale: False
+        - Anchor Min: (0.00, 0.00)
+        - Anchor Max: (0.00, 0.00)
+        - Anchored Position: (642.00, 1389.00)
+        - Size Delta: (887.43, 1920.00)
+        - Pivot: (0.50, 0.50)
+    * Canvas
+        - Render Mode: Screen Space - Overlay
+        - Camera: null
+        - Plane Distance: 100
+        - Pixel Perfect: True
+        - Receives Events: True
+        - Override Sorting: False
+        - Override Pixel Perfect: False
+        - Sorting Bucket Normalized Size: 0
+        - Vertex Color Always Gamma Space: False
+        - Additional Shader Channels Flag: None
+        - Update Rect Transform For Standalone: Enabled
+    * CanvasScaler
+        - Ui Scale Mode: ScaleWithScreenSize
+        - Reference Pixels Per Unit: 100
+        - Scale Factor: 1
+        - Reference Resolution: (1080.00, 1920.00)
+        - Screen Match Mode: MatchWidthOrHeight
+        - Match Width Or Height: 1
+        - Physical Unit: Points
+        - Fallback Screen DPI: 96
+        - Default Sprite DPI: 96
+        - Dynamic Pixels Per Unit: 1
+        - Preset Info Is World: False
+    * GraphicRaycaster
+        - Ignore Reversed Graphics: True
+        - Blocking Objects: None
+        - Blocking Mask: -1
+    - GameObject: UI_SafeAreaPanel (Tag: Untagged, Layer: UI, Active: True)
+        * RectTransform
+            - Local Rotation: (0.00, 0.00, 0.00)
+            - Local Position: (0.00, 0.00, 0.00)
+            - Local Scale: (1.00, 1.00, 1.00)
+            - Constrain Proportions Scale: False
+            - Anchor Min: (0.00, 0.00)
+            - Anchor Max: (1.00, 1.00)
+            - Anchored Position: (0.00, 0.00)
+            - Size Delta: (0.00, 0.00)
+            - Pivot: (0.50, 0.50)
+        * CanvasRenderer
+            - Cull Transparent Mesh: True
+        * Image
+            - Material: null
+            - Color: RGBA(1.000, 1.000, 1.000, 0.000)
+            - Raycast Target: True
+            - Raycast Padding: (0.00, 0.00, 0.00, 0.00)
+            - Maskable: True
+            - On Cull State Changed: (complex value)
+            - Sprite: Background
+            - Type: Sliced
+            - Preserve Aspect: False
+            - Fill Center: True
+            - Fill Method: Radial360
+            - Fill Amount: 1
+            - Fill Clockwise: True
+            - Fill Origin: 0
+            - Use Sprite Mesh: False
+            - Pixels Per Unit Multiplier: 1
+        * SafeAreaHandler
+        - GameObject: HUD (Tag: Untagged, Layer: UI, Active: True)
+            * RectTransform
+                - Local Rotation: (0.00, 0.00, 0.00)
+                - Local Position: (0.00, 0.00, 0.00)
+                - Local Scale: (1.00, 1.00, 1.00)
+                - Constrain Proportions Scale: False
+                - Anchor Min: (0.00, 0.00)
+                - Anchor Max: (1.00, 1.00)
+                - Anchored Position: (0.00, 0.00)
+                - Size Delta: (0.00, 0.00)
+                - Pivot: (0.50, 0.50)
+        - GameObject: Menu_Main (Tag: Untagged, Layer: UI, Active: True)
+            * RectTransform
+                - Local Rotation: (0.00, 0.00, 0.00)
+                - Local Position: (0.00, 0.00, 0.00)
+                - Local Scale: (1.00, 1.00, 1.00)
+                - Constrain Proportions Scale: False
+                - Anchor Min: (0.00, 0.00)
+                - Anchor Max: (1.00, 1.00)
+                - Anchored Position: (0.00, 0.00)
+                - Size Delta: (0.00, 0.00)
+                - Pivot: (0.50, 0.50)
+        - GameObject: Popups (Tag: Untagged, Layer: UI, Active: True)
+            * RectTransform
+                - Local Rotation: (0.00, 0.00, 0.00)
+                - Local Position: (0.00, 0.00, 0.00)
+                - Local Scale: (1.00, 1.00, 1.00)
+                - Constrain Proportions Scale: False
+                - Anchor Min: (0.00, 0.00)
+                - Anchor Max: (1.00, 1.00)
+                - Anchored Position: (0.00, 0.00)
+                - Size Delta: (0.00, 0.00)
+                - Pivot: (0.50, 0.50)
+- GameObject: --- SYSTEM --- (Tag: Untagged, Layer: Default, Active: True)
     * Transform
         - Local Rotation: (0.00, 0.00, 0.00)
-        - Local Position: (0.00, 0.00, 0.00)
+        - Local Position: (583.05, 1405.47, 0.00)
         - Local Scale: (1.00, 1.00, 1.00)
         - Constrain Proportions Scale: False
-    * Light2D
-        - Component Version: Version_2
-        - Light Type: Global
-        - Blend Style Index: 0
-        - Falloff Intensity: 0.5
-        - Color: RGBA(1.000, 1.000, 1.000, 1.000)
-        - Intensity: 1
-        - Light Volume Intensity: 1
-        - Light Volume Enabled: False
-        - Apply To Sorting Layers: (complex value)
-        - Light Cookie Sprite: null
-        - Deprecated Point Light Cookie Sprite: null
-        - Light Order: 0
-        - Alpha Blend On Overlap: False
-        - Overlap Operation: Additive
-        - Normal Map Distance: 3
-        - Normal Map Quality: Disabled
-        - Use Normal Map: False
-        - Shadows Enabled: False
-        - Shadow Intensity: 0.75
-        - Shadow Softness: 0
-        - Shadow Softness Falloff Intensity: 0.5
-        - Shadow Volume Intensity Enabled: False
-        - Shadow Volume Intensity: 0.75
-        - Local Bounds: Center: (0.00, 0.00, 0.00), Extents: (1.00, 1.00, 0.00)
-        - Point Light Inner Angle: 360
-        - Point Light Outer Angle: 360
-        - Point Light Inner Radius: 0
-        - Point Light Outer Radius: 1
-        - Shape Light Parametric Sides: 5
-        - Shape Light Parametric Angle Offset: 0
-        - Shape Light Parametric Radius: 1
-        - Shape Light Falloff Size: 0.5
-        - Shape Light Falloff Offset: (0.00, 0.00)
-        - Shape Path: (complex value)
+    - GameObject: System_AppSettings (Tag: Untagged, Layer: Default, Active: True)
+        * Transform
+            - Local Rotation: (0.00, 0.00, 0.00)
+            - Local Position: (0.00, 0.00, 0.00)
+            - Local Scale: (1.00, 1.00, 1.00)
+            - Constrain Proportions Scale: False
+        * AppFrameRate
+            - Target Frame Rate: 120
+    - GameObject: Global Light 2D (Tag: Untagged, Layer: Default, Active: True)
+        * Transform
+            - Local Rotation: (0.00, 0.00, 0.00)
+            - Local Position: (-583.05, -1405.47, 0.00)
+            - Local Scale: (1.00, 1.00, 1.00)
+            - Constrain Proportions Scale: False
+        * Light2D
+            - Component Version: Version_2
+            - Light Type: Global
+            - Blend Style Index: 0
+            - Falloff Intensity: 0.5
+            - Color: RGBA(1.000, 1.000, 1.000, 1.000)
+            - Intensity: 1
+            - Light Volume Intensity: 1
+            - Light Volume Enabled: False
+            - Apply To Sorting Layers: (complex value)
+            - Light Cookie Sprite: null
+            - Deprecated Point Light Cookie Sprite: null
+            - Light Order: 0
+            - Alpha Blend On Overlap: False
+            - Overlap Operation: Additive
+            - Normal Map Distance: 3
+            - Normal Map Quality: Disabled
+            - Use Normal Map: False
+            - Shadows Enabled: False
+            - Shadow Intensity: 0.75
+            - Shadow Softness: 0
+            - Shadow Softness Falloff Intensity: 0.5
+            - Shadow Volume Intensity Enabled: False
+            - Shadow Volume Intensity: 0.75
+            - Local Bounds: Center: (0.00, 0.00, 0.00), Extents: (1.00, 1.00, 0.00)
+            - Point Light Inner Angle: 360
+            - Point Light Outer Angle: 360
+            - Point Light Inner Radius: 0
+            - Point Light Outer Radius: 1
+            - Shape Light Parametric Sides: 5
+            - Shape Light Parametric Angle Offset: 0
+            - Shape Light Parametric Radius: 1
+            - Shape Light Falloff Size: 0.5
+            - Shape Light Falloff Offset: (0.00, 0.00)
+            - Shape Path: (complex value)
+    - GameObject: EventSystem (Tag: Untagged, Layer: Default, Active: True)
+        * Transform
+            - Local Rotation: (0.00, 0.00, 0.00)
+            - Local Position: (-583.05, -1405.47, 0.00)
+            - Local Scale: (1.00, 1.00, 1.00)
+            - Constrain Proportions Scale: False
+        * EventSystem
+            - First Selected: null
+            - Send Navigation Events: True
+            - Drag Threshold: 10
+        * InputSystemUIInputModule
+            - Send Pointer Hover To Parent: True
+            - Move Repeat Delay: 0.5
+            - Move Repeat Rate: 0.1
+            - XR Tracking Origin: null
+            - Deselect On Background Click: True
+            - Pointer Behavior: SingleMouseOrPenButMultiTouchAndTrack
+            - Scroll Delta Per Tick: 6

@@ -25,6 +25,8 @@ Assets/
                 Editor/
                     ProjectExportTool.cs
                 Utilities/
+                    AppFrameRate.cs
+                    SafeAreaHandler.cs
                 Shogun.Core.asmdef
             Features/
                 Characters/
