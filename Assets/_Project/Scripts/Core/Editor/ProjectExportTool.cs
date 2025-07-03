@@ -5,6 +5,7 @@ using UnityEditor.SceneManagement;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Shogun.Core
 {
@@ -15,6 +16,12 @@ namespace Shogun.Core
         [MenuItem("Tools/Export Full Project Structure and Asset Details")]
         public static void ExportFullProject()
         {
+            // --- Save original open scenes and active scene ---
+            var originalOpenScenes = new List<SceneSetup>(EditorSceneManager.GetSceneManagerSetup());
+            var originalActiveScene = EditorSceneManager.GetActiveScene();
+            bool hadOpenScenes = originalOpenScenes.Count > 0;
+            string activeScenePath = hadOpenScenes && originalActiveScene.IsValid() ? originalActiveScene.path : null;
+
             // Attach log callback to suppress known warnings/errors during export
             _logCallback = (condition, stackTrace, type) =>
             {
@@ -65,13 +72,13 @@ namespace Shogun.Core
                     {
                         StringBuilder writer = new StringBuilder();
                         writer.AppendLine("=== Prefab Export ===");
-                        writer.AppendLine($"Prefab: {path}");
+                        writer.AppendLine($"Prefab Path: {path}");
                         writer.AppendLine();
 
                         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
                         if (prefab != null)
                         {
-                            DumpGameObject(prefab.transform, writer, 0);
+                            DumpGameObjectDetailed(prefab.transform, writer, 0);
                             File.WriteAllText(outputPath, writer.ToString());
                             summaryLines.Add($"Prefab: {path} => {outputPath}");
                         }
@@ -84,7 +91,7 @@ namespace Shogun.Core
                     currentIndex++;
                 }
 
-                // Export Scenes
+                // Export Scenes - open one at a time non-additively to avoid additive issues
                 foreach (var guid in sceneGUIDs)
                 {
                     string path = AssetDatabase.GUIDToAssetPath(guid);
@@ -97,13 +104,14 @@ namespace Shogun.Core
                     {
                         StringBuilder writer = new StringBuilder();
                         writer.AppendLine("=== Scene Export ===");
-                        writer.AppendLine($"Scene: {path}");
+                        writer.AppendLine($"Scene Path: {path}");
                         writer.AppendLine();
 
-                        var scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
+                        // Open scene non-additively (single scene mode)
+                        var scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
                         foreach (GameObject root in scene.GetRootGameObjects())
-                            DumpGameObject(root.transform, writer, 0);
-                        EditorSceneManager.CloseScene(scene, true);
+                            DumpGameObjectDetailed(root.transform, writer, 0);
+
                         File.WriteAllText(outputPath, writer.ToString());
                         summaryLines.Add($"Scene: {path} => {outputPath}");
                     }
@@ -113,6 +121,28 @@ namespace Shogun.Core
                     }
 
                     currentIndex++;
+                }
+
+                // Export script snippets (first 20 lines of each .cs file)
+                string scriptSnippetsPath = Path.Combine(exportFolder, "ScriptSnippets.txt");
+                using (StreamWriter scriptWriter = new StreamWriter(scriptSnippetsPath, false))
+                {
+                    string[] scriptFiles = Directory.GetFiles(rootPath, "*.cs", SearchOption.AllDirectories);
+                    foreach (var scriptFile in scriptFiles)
+                    {
+                        scriptWriter.WriteLine($"=== Script: {scriptFile.Replace(projectRoot + Path.DirectorySeparatorChar, "")} ===");
+                        string[] lines = File.ReadAllLines(scriptFile);
+                        int lineCount = Mathf.Min(20, lines.Length);
+                        for (int i = 0; i < lineCount; i++)
+                        {
+                            scriptWriter.WriteLine(lines[i]);
+                        }
+                        if (lines.Length > 20)
+                        {
+                            scriptWriter.WriteLine("// Only the first 20 lines are shown. Reference the file for full code.");
+                        }
+                        scriptWriter.WriteLine();
+                    }
                 }
 
                 // Write summary
@@ -125,9 +155,26 @@ namespace Shogun.Core
             {
                 EditorUtility.ClearProgressBar();
                 Application.logMessageReceived -= _logCallback;
+
+                // Restore previous open scenes and active scene
+                if (originalOpenScenes != null && originalOpenScenes.Count > 0)
+                {
+                    EditorSceneManager.RestoreSceneManagerSetup(originalOpenScenes.ToArray());
+
+                    // Re-activate original active scene (if valid)
+                    if (!string.IsNullOrEmpty(activeScenePath))
+                    {
+                        var reloadedScene = EditorSceneManager.GetSceneByPath(activeScenePath);
+                        if (reloadedScene.IsValid())
+                            EditorSceneManager.SetActiveScene(reloadedScene);
+                    }
+                }
             }
         }
 
+        /// <summary>
+        /// Recursively writes the directory and file structure, skipping .meta files.
+        /// </summary>
         private static void WriteDirectory(string dir, StreamWriter writer, string indent)
         {
             writer.WriteLine(indent + Path.GetFileName(dir) + "/");
@@ -143,7 +190,10 @@ namespace Shogun.Core
             }
         }
 
-        private static void DumpGameObject(Transform t, StringBuilder writer, int indent)
+        /// <summary>
+        /// Dumps detailed information about a GameObject and its components, including field values.
+        /// </summary>
+        private static void DumpGameObjectDetailed(Transform t, StringBuilder writer, int indent)
         {
             string prefix = new string(' ', indent * 4);
             GameObject go = t.gameObject;
@@ -163,9 +213,12 @@ namespace Shogun.Core
                 }
             }
             foreach (Transform child in t)
-                DumpGameObject(child, writer, indent + 1);
+                DumpGameObjectDetailed(child, writer, indent + 1);
         }
 
+        /// <summary>
+        /// Gets a string representation of a SerializedProperty's value.
+        /// </summary>
         private static string GetPropertyValue(SerializedProperty prop)
         {
             switch (prop.propertyType)

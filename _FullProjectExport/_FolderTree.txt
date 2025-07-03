@@ -14,8 +14,19 @@ Assets/
             Combat/
             Gacha/
             UI/
+        Prefabs/
+            System/
+                SharedSceneRoot.prefab
+                SystemRoot.prefab
         Scenes/
-            SampleScene.unity
+            Battle/
+                Battle_Prototype.unity
+            Core/
+                MainMenu.unity
+            Dev/
+                Dev_Sandbox.unity
+            UI/
+                UI_Demo.unity
         ScriptableObjects/
         Scripts/
             ApplicationLifecycle/
