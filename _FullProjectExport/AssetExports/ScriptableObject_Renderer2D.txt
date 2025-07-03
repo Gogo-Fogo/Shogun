@@ -1,0 +1,25 @@
+=== ScriptableObject Export ===
+Asset Path: Assets/Settings/Renderer2D.asset
+GUID: 424799608f7334c24bf367e4bbfa7f9a
+
+ScriptableObject: Renderer2D (Type: Renderer2DData)
+    - Debug Shaders: (complex value)
+    - Probe Volume Resources: (complex value)
+    - Renderer Features: (complex value)
+    - Renderer Feature Map: (complex value)
+    - Use Native Render Pass: False
+    - Layer Mask: -1
+    - Transparency Sort Mode: Default
+    - Transparency Sort Axis: (0.00, 1.00, 0.00)
+    - HDR Emulation Scale: 1
+    - Light Render Texture Scale: 0.5
+    - Light Blend Styles: (complex value)
+    - Use Depth Stencil Buffer: True
+    - Use Camera Sorting Layers Texture: False
+    - Camera Sorting Layers Texture Bound: -1
+    - Camera Sorting Layer Downsampling Method: None
+    - Max Light Render Texture Count: 16
+    - Max Shadow Render Texture Count: 1
+    - Post Process Data: PostProcessData
+    - Default Material Type: Lit
+    - Default Custom Material: Sprite-Lit-Default

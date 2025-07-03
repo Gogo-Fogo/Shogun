@@ -1,0 +1,2108 @@
+﻿Game Design Document (GDD) for "Shogun: Flowers Fall in Blood" (BRIEF)
+
+
+  
+
+1. Concept Summary
+* Game Title: "Shogun: Flowers Fall in Blood"
+* Brief Description: "Shogun: Flowers Fall in Blood" is an innovative mobile game that blends the engaging mechanics of 'Ninja Blazing' with the artistic flair of 'Ronin: The Last Samurai.' It combines the strategy and depth of classic martial arts with a modern interactive experience. Designed for portability and accessibility on mobile devices, it offers a deeply strategic, skill-based gameplay experience. Players can enjoy both solo and multiplayer modes, emphasizing precision, timing, and tactical depth. "Shogun: Flowers Fall in Blood" is not just another gacha game; it's a visually striking, replayable game crafted to appeal to both casual gamers and hardcore enthusiasts.
+2. Core Gameplay Mechanics
+* Combat System: The combat emphasizes player skill and timing, featuring gesture-based controls for sword fighting and special abilities. Players must master tapping, pressing, and swiping mechanics to effectively combat enemies, drawing inspiration from successful mechanics in 'Mortal Kombat Mobile.' The core of the gameplay involves precise control over character movement and attack ranges, where each character has a defined movement circle and an attack range circle, crucial for positioning and executing attacks.
+* Range and Movement Mechanics: Inspired by 'Naruto Ninja Blazing,' each character in "Shogun: Flowers Fall in Blood" possesses a unique range depicted as a circle around them, which dictates their movement and the reach of their jutsu or attacks. Each character has unique movement and attack ranges that dictate their strategic roles in battle. This system is fundamental to the gameplay, affecting how players approach both combat and environmental interactions. Some characters might excel in close combat with smaller, more potent ranges, while others might specialize in long-range attacks.
+* Combo System: Elemental synergies and weapon-type combos are inspired by "The Book of Five Rings," with players exploiting strengths and weaknesses inherent to different elements and weapons. This system encourages strategic planning and execution to maximize effectiveness in battle. Combos can be initiated when characters within compatible range circles perform synchronized attacks, offering powerful effects against adversaries.
+* Environmental Interactions: The game includes dynamic environments that players can use to gain tactical advantages or that can change the course of battle. Features like destructible cover (trees, boulders) and elemental hazards (rivers affecting elemental powers, poison fogs) add layers of strategic depth. The impact of environmental interactions also varies depending on the character's range, with certain environmental features amplifying or reducing the effectiveness of character abilities based on their proximity and interaction.
+This enhancement emphasizes the importance of strategic positioning and movement, making the gameplay experience more dynamic and tactical. Players will need to consider both the range and the special abilities of their characters to excel in combat, reflecting a deeper layer of strategy and player engagement.
+3. Progression and Customization
+* Skill Trees: Players can develop their characters through expansive skill trees that offer unique abilities and combat styles. This includes the potential integration of combat postures or stances, providing diverse gameplay experiences and strategic choices.
+* Character Customization: Simplified customization options allow for visual and functional changes without overwhelming players. The focus is on enhancing the game's strategic elements while allowing players to personalize their characters' appearances and gear to a degree.
+4. Narrative
+* Story Integration: The narrative is dark and cinematic, centered around an alliance of samurai, ninja, and ronin who must unite against a demonic invasion. The story adapts to player decisions, influencing both the immediate gameplay environment and broader story outcomes.
+* Cultural and Historical Elements: The game delves deeply into Japanese mythology and history, featuring samurai lore, the strategic teachings of Miyamoto Musashi, and elements from feudal Japan. This rich cultural tapestry adds depth and authenticity to the game world.
+5. Monetization Strategy
+* Model: Utilizing a gacha system for character acquisition, complemented by a seasonal pass that offers rewards tied to gameplay achievements. The in-game currency will be visually thematic, enhancing the overall game experience and fitting seamlessly within the game's world.
+6. Community Engagement
+* Updates and Communication: An active, managed community on platforms like Discord will be central to gathering player feedback and driving regular content updates.
+* Feedback Mechanisms: Closed beta testing and special preview events for community influencers will help refine the game, ensuring a balanced and engaging experience while protecting the game's unique elements from potential theft.
+Development and Release Strategy
+* The development phase will focus on creating a strong prototype to facilitate crowdfunding efforts. Community feedback will be integral during the beta testing phase to refine gameplay and ensure a balanced, engaging experience.
+
+
+
+
+
+
+
+
+Game Design Document (GDD) for "Shogun: Flowers Fall in Blood" (DETAILED)
+
+
+PHASE 1 PLAN
+I will proceed in this order (matching proper AAA studio practice):
+1. Introduction & Vision Statement
+
+2. Core Gameplay Systems (full multi-section combat design)
+
+3. Character Systems (gacha, stats, limit break, passives, gear)
+
+4. Status Effects, Elements, Environmental Interactions
+
+5. Multiplayer Systems (PvE Co-op, PvP Arena, Clans)
+
+6. Progression Systems (Story, Quests, Leveling, Economy)
+
+7. Monetization Systems (detailed gacha rates, pity system logic)
+
+8. UI/UX Full Flow Diagrams (in text form)
+
+9. Art + Animation + Audio Pipelines
+
+10. Studio Production Pipeline & Milestones
+
+11. Player Lifecycle Journey & Retention Loops
+
+12. Post-Launch Live Ops Design (Events, Rotations)
+
+13. Appendices (glossary, formulas, example data tables)
+
+🎮 SECTION 1: INTRODUCTION & VISION STATEMENT
+1.1 Project Title
+Shogun: Flowers Fall in Blood
+1.2 Platform
+Mobile (iOS, Android) – designed for portrait orientation and single-hand operation, with depth suitable for competitive long sessions.
+1.3 Genre
+Tactical Squad-Based RPG + Gesture-Driven Skill Combat + Character Collector (Gacha) + Dark Fantasy Narrative RPG
+1.4 Project Status
+Internal master game design document. Pre-production phase. Vertical slice milestone targeted.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1.5 Core Premise
+In a corrupted feudal Japan, an unnatural breach into Yomi (the underworld) spills demonic forces into the land. Clans of samurai, ninja, monks, and outcasts form fragile alliances to survive and reclaim their world. Players lead their chosen squad into escalating conflicts between mortal honor and demonic power.
+Thematic tone:
+   * Grim, poetic, and fatalistic
+
+   * Inspired by Japanese folklore and Bushido code
+
+   * Strong influences from Nioh, Ronin: The Last Samurai, Naruto Blazing, and Sekiro
+  
+Ronin: The Last Samurai
+             
+Naruto Blazing
+
+
+
+
+
+
+
+
+1.6 Design Vision
+1.6.1 Four Foundational Pillars
+      1. Precision Tactical Combat
+ Battles where movement, positioning, and range control determine victory.
+Combat rewards foresight, prediction, and synergy.
+
+      2. Gesture-Based Cinematic Skills
+ Tap, swipe, and hold mechanics execute devastating cinematic attacks with timing windows.
+Combines strategy with reflex-driven execution for a unique blend of gameplay layers.
+
+      3. Deep Meta Game & Collection Systems
+ Player progression via extensive gacha-based hero collection, growth, equipment, and skill trees.
+Hundreds of heroes across elemental archetypes, clans, and rarities.
+Full team customization for infinite squad compositions.
+
+      4. Evolving Narrative & World
+ A fully realized dark Japan blending historical accuracy with mythological horror.
+Player decisions subtly impact narrative arcs, faction allegiances, and mission outcomes.
+Story delivered via in-engine dialogue sequences, branching quests, and world events.
+
+
+
+1.7 Why This Game? (Positioning Statement)
+There is no current mobile game that blends:
+         * The tactical positioning mastery of combat ( Naruto Blazing)
+
+         * With real-time gesture-based skill activation (ex: Ronin: The Last Samurai)
+
+         * Combined with high-fidelity narrative presentation and moral choice progression
+
+         * Built fully for single-hand mobile accessibility, yet deep enough for long-term mastery.
+
+Shogun: Flowers Fall in Blood is designed to occupy this unique space.
+It is meant to be the “Sekiro of mobile tactics games”: punishing, rewarding, beautiful, and obsessively replayable.
+
+
+1.8 Primary Target Audience
+Demographic
+            * Core mobile strategy gamers
+
+            * Gacha RPG fans
+
+            * Anime / samurai culture enthusiasts
+
+            * Age 16+ (due to mature tone and dark themes)
+
+Player Profiles
+               * Collectors: Desire full roster ownership, min-max stats, completion of every unit
+
+               * Competitors: Want to dominate PvP Arena rankings
+
+               * Explorers: Seek full story completion, side quests, and lore discoveries
+
+               * Social Players: Engage in Clans, co-op boss hunts, guild events
+
+
+
+1.9 Secondary Goals
+                  * Optimize for strong LiveOps backend to support years of content cycles
+
+                  * Design for fair monetization (no pay-to-win stat walls)
+
+                  * Allow casual players to complete main campaign without paid units
+
+                  * Hardcore players can engage with optional ultra-difficulty endgame content
+
+SECTION 2: CORE GAMEPLAY SYSTEMS
+
+
+2.1 Combat Philosophy
+Shogun: Flowers Fall in Blood aims to merge the thoughtful precision of turn-based tactics with the kinetic feedback of gesture execution.
+Every action should feel intentional. Every misstep should cost the player.
+Design Goal:
+Players must balance strategic positioning, team synergy, and real-time gesture skill execution within the constraints of turn economy and battlefield layouts.
+
+
+2.2 Battlefield Structure
+
+2.2.2 Zones
+                     * Frontline: Melee warriors, tanks
+
+                     * Midline: Flexible attackers, supports
+
+                     * Backline: Archers, mystics, ranged units
+
+2.2.3 Tile Properties
+                        * Empty
+
+                        * Obstacle (tree, stone lantern, wreckage; blocks movement and some attacks)
+
+                        * Hazard (poison patch, fire ground, electrified zone; causes status effects or damage over time)
+
+
+
+2.3 Unit Movement System
+                           * Each unit has a Movement Radius (shown visually)
+
+                           * Movement cost is 1 tile = 1 movement point
+
+                           * Default: 2–3 tiles per turn depending on unit type
+
+                           * Units cannot move through obstacles or other units
+
+Movement decisions consume the Move Action of the turn.
+
+
+2.4 Turn-Based Action System
+2.4.1 Turn Order
+                              * Initiative stat (SPD) determines action order
+
+                              * High SPD units can act earlier and more often
+
+                              * Turn sequence shown via a visible turn queue
+
+2.4.2 Action Types
+A unit may perform one action per turn, after (or before) movement:
+                                 * Basic Attack (tap gesture)
+
+                                 * Skill Attack (swipe or hold gesture)
+
+                                 * Use Item
+
+                                 * Defend (reduce incoming damage by 50%)
+
+                                 * Pass Turn
+
+Units may also choose to move first, then act or act first, then move (flexible turn resolution).
+
+
+2.5 Gesture Skill Execution
+Unique core system. Defines the game’s identity.
+2.5.1 Gesture Types
+Gesture
+	Description
+	Example
+	Tap
+	Quick normal attack
+	Light katana slash
+	Swipe
+	Heavy skill attack (directional)
+	Spear thrust
+	Hold
+	Charge meter for ultimate skill
+	Onmyoji summoning ritual
+	Trace Shape (advanced)
+	Late-game characters only; trace specific shape to unleash devastating skill
+	Draw kanji for forbidden magic
+	2.5.2 Combo Window
+Certain skills require timing windows where gestures must be executed rapidly after previous action chains.
+Failure results in:
+                                    * Skill failure or reduced effect
+
+                                    * Increased cooldown of that skill
+
+The player learns mastery through repetition, creating a true “skill expression layer” on top of traditional RPG stat combat.
+
+
+2.6 Range & Targeting Mechanics
+                                       * Units have an Attack Radius
+
+                                       * Radius is visualized during targeting phase
+
+                                       * Melee units: radius = adjacent tiles
+
+                                       * Ranged units: radius = up to 5 tiles
+
+                                       * Attacks cannot pass through solid obstacles
+
+
+
+2.7 Synergy & Link Attacks
+If 2 or more allied units have overlapping attack radii on a target:
+                                          * Synergy Link is triggered
+
+                                          * Deals bonus damage + extra effects based on weapon affinity
+
+                                          * Adds combat depth by encouraging formation planning
+
+Example:
+                                             * Samurai + Ronin: “Cross Slash” (massive crit chance)
+
+                                             * Monk + Onmyoji: “Purification Ritual” (damage + cleanse debuffs)
+
+
+
+2.8 Weapon Types & Combat Styles
+Weapon Type
+	Characteristics
+	Katana
+	Fast, low cooldown, melee only
+	Nodachi
+	Heavy 2H sword, high damage, slower
+	Yari (Spear)
+	Mid-range melee, pierces multiple enemies
+	Bow
+	Long range, low defense
+	Naginata
+	Sweeping AoE melee
+	Magic Scroll
+	Casts ranged elemental spells
+	Dual Daggers
+	High speed, low damage, multi-hit
+	Staff
+	Support/healing abilities
+	Each weapon has unique gesture skill patterns for added mastery depth.
+
+
+2.9 Elemental System
+Inspired by The Book of Five Rings and adapted for our combat loop.
+Elements:
+                                                * Earth > Water > Fire > Wind > Shadow > Earth (cyclic advantage loop)
+
+                                                * Element advantage grants +25% damage
+
+                                                * Disadvantage causes -25% damage
+
+                                                * Neutral results in standard output
+
+This creates meaningful counter-play and team composition planning.
+
+
+2.10 Status Effects
+All status effects have a defined duration in turns and can stack with multiple sources.
+Status
+	Effect
+	Poison
+	Damage over time
+	Bleed
+	Damage over time; bypasses shields
+	Burn
+	Damage + disables healing
+	Freeze
+	Prevents movement
+	Stun
+	Prevents action
+	Silence
+	Prevents skill use
+	Fear
+	Random movement next turn
+	Paralysis
+	50% chance to skip turn
+	Marked
+	Takes double damage from next attack
+	
+
+2.11 Victory / Defeat Conditions
+Victory:
+                                                   * All enemy units defeated
+
+Defeat:
+                                                      * All player units defeated
+
+                                                      * Timer runs out (in timed boss battles)
+
+
+
+2.12 Battle Rewards
+After combat, players earn:
+                                                         * EXP
+
+                                                         * Currency
+
+                                                         * Random loot drops (weapons, armor, scrolls)
+
+                                                         * Rare shards for awakening or gacha pulls
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SECTION 3: CHARACTER SYSTEMS
+
+
+3.1 Character Philosophy
+Character depth is the core driver of long-term engagement.
+Shogun: Flowers Fall in Blood will feature an extensive and ever-growing roster of collectible warriors with diverse:
+                                                            * Stats
+
+                                                            * Skills
+
+                                                            * Weapons
+
+                                                            * Combat roles
+
+                                                            * Narrative backstories
+
+The player’s squad is the heart of the experience. The goal is to create endless replayability and mastery through character choice, team composition, and customization.
+
+
+3.2 Character Archetypes
+Each unit belongs to an archetype defining role and playstyle.
+Archetype
+	Role
+	Examples
+	Vanguard
+	Tank, frontliner
+	Samurai, Armored Ronin
+	Skirmisher
+	Fast melee DPS
+	Assassin Ninja, Dual Dagger Ronin
+	Marksman
+	Long-range physical damage
+	Archer, Hunter
+	Mystic
+	Ranged magical support/damage
+	Onmyoji, Shrine Maiden
+	Protector
+	Healing, shielding, debuff removal
+	Monk, Cleric
+	Each archetype defines base stat distribution, skill types, and passive abilities.
+
+
+3.3 Base Character Stats
+All characters have the following primary stats:
+Stat
+	Function
+	HP
+	Health pool
+	ATK
+	Physical & magical damage scaling
+	DEF
+	Reduces physical damage taken
+	RES
+	Reduces magical damage taken
+	SPD
+	Determines turn order
+	CRIT Rate
+	Chance to land critical hits
+	CRIT Damage
+	Bonus damage on crit hits
+	EVA
+	Chance to dodge enemy attacks
+	ACC
+	Chance to hit evasive targets
+	Additional secondary stats may be unlocked via gear, limit break, or awakening.
+
+
+3.4 Gacha Summoning System
+3.4.1 Summoning Currency
+                                                               * Spirit Seals = premium currency
+
+                                                               * Earned via gameplay, events, or in-app purchase
+
+3.4.2 Character Rarity Tiers
+Tier
+	Rarity Name
+	Pull Odds (Example)
+	1
+	Common
+	60%
+	2
+	Rare
+	30%
+	3
+	Super Rare
+	8%
+	4
+	Festival (Ultra Rare)
+	2%
+	Festival Units feature unique visuals, skills, and exclusive event availability.
+3.4.3 Banner Types
+                                                                  * Standard Banner: General pool of all units
+
+                                                                  * Event Banner: Focused rate-ups for specific units
+
+                                                                  * Limited-Time Festival Banner: Exclusive characters + boosted odds
+
+3.4.4 Pity System
+                                                                     * After 90 pulls without Ultra Rare, player guaranteed Festival unit on next pull
+
+                                                                     * Resets after successful pull
+
+This prevents excessive bad-luck streaks, balancing monetization with fairness.
+
+
+3.5 Character Progression Systems
+3.5.1 Leveling
+                                                                        * Units gain EXP from battles
+
+                                                                        * Level cap based on rarity + limit break status
+
+3.5.2 Awakening (Evolution)
+                                                                           * Characters evolve visually + stat boost at defined milestone levels
+
+                                                                           * Requires awakening materials (rare loot, boss drops)
+
+                                                                           * Unlocks new abilities and passive traits
+
+Example progression:
+Common ➔ Rare ➔ Super Rare ➔ Festival Form (if applicable)
+3.5.3 Limit Breaking
+                                                                              * Units at max level can be pushed beyond cap via rare Limit Break Crystals
+
+                                                                              * Boosts base stats by small % increments per limit break
+
+                                                                              * Maximum limit break level = +5 beyond normal cap
+
+This creates endgame longevity without making older characters obsolete.
+
+
+3.6 Skill Trees & Customization
+Every hero features a unique skill tree with player-chosen unlocks:
+3.6.1 Node Types
+                                                                                 * Active Skill Unlocks
+
+                                                                                 * Passive Stat Boosts
+
+                                                                                 * Conditional Triggered Skills
+
+                                                                                 * Special Augments (ex: +1 tile movement, +10% damage vs demons)
+
+Skill trees allow players to define roles within archetypes (example: tank Samurai vs DPS Samurai).
+3.6.2 Reset Option
+Players can spend premium currency or rare materials to respec a hero’s skill tree.
+
+
+3.7 Equipment & Gear System
+3.7.1 Gear Slots
+Slot
+	Item Type
+	Weapon
+	Katana, Bow, Staff, etc.
+	Armor
+	Light, Medium, Heavy
+	Accessory
+	Rings, Amulets, Charms
+	3.7.2 Gear Rarity
+Common ➔ Rare ➔ Epic ➔ Legendary ➔ Relic (event-exclusive)
+3.7.3 Gear Enhancement
+                                                                                    * Gear can be leveled to improve base stats
+
+                                                                                    * Legendary + Relic gear may unlock bonus passive effects
+
+3.7.4 Weapon Mastery
+                                                                                       * Units gain Weapon Mastery XP by using specific weapons
+
+                                                                                       * Unlocks unique skills tied to weapon type at mastery milestones
+
+3.8 Synergy Bonuses
+Certain character combinations gain passive battle bonuses:
+                                                                                          * Faction-based (ex: Samurai + Onmyoji “Ancient Vow”: +5% DEF + RES)
+
+                                                                                          * Story-linked pairings (ex: Master + Student characters gain boosted skill cooldown reductions)
+
+This system encourages creative team building and rewards lore knowledge.
+
+
+3.9 Unit Visual Design Pipeline
+All characters will feature:
+                                                                                             * 2D hand-drawn base model
+
+                                                                                             * Skeletal rigging for animations
+
+                                                                                             * Unique idle, attack, skill, and victory poses
+
+                                                                                             * Distinctive skill VFX and SFX
+
+Festival Units will feature exclusive animated idle effects + particle auras to further increase rarity prestige.
+SECTION 4: STATUS EFFECTS, ELEMENTS, AND ENVIRONMENTAL INTERACTIONS
+
+
+4.1 System Purpose
+These systems introduce battlefield unpredictability and player counter-play opportunities.
+They reward:
+                                                                                                * Knowledge of elemental matchups
+
+                                                                                                * Strategic use of environmental hazards
+
+                                                                                                * Management of debilitating status conditions
+
+They are designed to layer depth onto core combat without overwhelming the player.
+
+
+4.2 Elemental System
+Inspired by The Book of Five Rings and heavily integrated into combat resolution.
+4.2.1 Element Types
+Element
+	Description
+	Earth
+	Stability, defense boosts, reduces physical damage taken
+	Water
+	Adaptability, cleansing abilities, resistance to Fire
+	Fire
+	Aggression, high raw damage, chance to inflict Burn
+	Wind
+	Speed, evasion boosts, increased movement
+	Shadow
+	Corruption, drains HP, causes debuffs
+	4.2.2 Elemental Advantage Loop
+Earth > Water > Fire > Wind > Shadow > Earth (cyclical)
+4.2.3 Combat Impact
+                                                                                                   * Element advantage = +25% damage
+
+                                                                                                   * Element disadvantage = -25% damage
+
+                                                                                                   * Neutral matchup = standard calculation
+
+Players are encouraged to scout enemies and plan team compositions to counter elemental affinities.
+
+
+4.3 Status Effects System
+Status effects are applied by skills, gear, weapons, environmental hazards, or enemy abilities.
+4.3.1 Persistent Status Effects
+Effect
+	Description
+	Poison
+	Damage over time (DoT); moderate tick damage
+	Bleed
+	DoT that ignores shields and defense
+	Burn
+	DoT + disables healing while active
+	Freeze
+	Cannot move for X turns
+	Stun
+	Cannot act for X turns
+	Silence
+	Cannot use skills for X turns
+	Fear
+	Random movement next turn
+	Paralysis
+	50% chance to skip next turn
+	Blind
+	Reduces accuracy by 50%
+	Marked
+	Target takes +100% damage from next incoming attack
+	4.3.2 Instant Status Effects
+                                                                                                      * Knockback: Push target back X tiles
+
+                                                                                                      * Pull: Pull target toward caster X tiles
+
+                                                                                                      * Interrupt: Cancels any charge skill or hold gesture mid-cast
+
+Status effects always have a turn duration and may stack from multiple sources, except when explicitly stated otherwise.
+
+
+4.4 Cleansing & Resistance
+                                                                                                         * Some heroes have cleansing skills to remove status effects from allies
+
+                                                                                                         * Equipment and passives may grant partial or full status resistance
+
+Example:
+                                                                                                            * “Onmyoji's Prayer”: Removes 1 negative effect per turn
+
+                                                                                                            * “Talisman of Purity”: 30% chance to resist any incoming debuff
+
+
+
+4.5 Environmental Interactions
+Maps may contain static hazards and destructible objects.
+4.5.1 Destructible Objects
+Object
+	Function
+	Tree
+	Blocks movement + line of sight
+	Stone Lantern
+	Blocks ranged attacks
+	Bamboo Grove
+	Blocks vision but can be cut
+	Shrine Pillar
+	Special terrain; grants buffs or debuffs when destroyed
+	Destructible objects encourage battlefield shaping during combat.
+4.5.2 Static Environmental Hazards
+Hazard
+	Effect
+	Poison Patch
+	Applies Poison if stepped on
+	Fire Ground
+	Applies Burn
+	Electrified Pool
+	Damage + Stun chance
+	Cursed Shrine
+	Reduces DEF of any unit standing adjacent
+	River / Water Tile
+	Reduces Fire skill damage by 50%
+	Fog
+	Lowers global accuracy by 25% for all units in radius
+	Environmental effects encourage map awareness and reward mastery.
+4.5.3 Dynamic Hazards (Boss Fights)
+In certain boss stages, hazards can appear mid-combat:
+                                                                                                               * Lava fissures
+
+                                                                                                               * Toxic clouds
+
+                                                                                                               * Random lightning strikes
+
+                                                                                                               * Shifting river tides
+
+This makes boss fights feel cinematic, deadly, and distinct from regular encounters.
+
+
+4.6 Player Feedback & UX
+To avoid confusion or frustration:
+                                                                                                                  * All affected units show clear status icons above them
+
+                                                                                                                  * Environmental hazard tiles are marked with distinct visual overlays
+
+                                                                                                                  * Players receive pre-turn warnings if an area will become hazardous
+
+This ensures fairness and supports skill-based play even with random elements.
+
+
+SECTION 5: MULTIPLAYER SYSTEMS
+
+
+5.1 Multiplayer Philosophy
+Multiplayer must extend game lifespan, enhance replayability, and foster community interaction without forcing competitive monetization.
+Cooperation and competition are equally vital pillars.
+Our multiplayer design consists of:
+                                                                                                                     * Real-Time Co-op Boss Raids (Player vs Environment)
+
+                                                                                                                     * Asynchronous PvP Arena Battles (Player vs Player)
+
+                                                                                                                     * Guild & Clan Systems (Community progression)
+
+
+
+5.2 Real-Time Co-op Boss Raids
+5.2.1 Mode Overview
+                                                                                                                        * 2 or 3 players form a temporary squad to fight an ultra-powerful Raid Boss
+
+                                                                                                                        * Bosses feature multi-phase mechanics, environmental hazards, and special attacks
+
+5.2.2 Raid Entry System
+                                                                                                                           * Daily raid tokens limit participation (soft cap, refreshable with currency)
+
+                                                                                                                           * Players queue solo or invite friends from Friend List / Guild
+
+5.2.3 Combat Flow
+                                                                                                                              * Players control 1 hero each from their squad
+
+                                                                                                                              * Gesture inputs remain active for skill execution
+
+                                                                                                                              * Players take synchronous turns in a shared battlefield
+
+                                                                                                                              * Players can perform assist link attacks when in proximity of allies
+
+5.2.4 Communication
+                                                                                                                                 * No live voice or text
+
+                                                                                                                                 * Only preset messages, gesture pings, and sticker emotes to encourage cooperation
+
+Example:
+                                                                                                                                    * "Hold Back!"
+
+                                                                                                                                    * "Focus Fire!"
+
+                                                                                                                                    * "Need Healing!"
+
+5.2.5 Rewards
+                                                                                                                                       * Loot scales based on damage dealt and phase completion
+
+                                                                                                                                       * Exclusive materials for awakening, limit breaking, or raid-locked equipment
+
+                                                                                                                                       * Weekly leaderboards for top contributors (non-monetary rewards)
+
+
+
+5.3 Asynchronous PvP Arena
+5.3.1 Mode Overview
+Players compete to climb the Daimyo Tower, facing AI-controlled squads created by other players.
+5.3.2 Arena Rules
+                                                                                                                                          * Squad defense is set by the player
+
+                                                                                                                                          * Attackers challenge ranked squads to earn rank points
+
+                                                                                                                                          * Energy system limits attack attempts per day (resets daily)
+
+5.3.3 Combat System
+                                                                                                                                             * AI defenders follow player-saved behavior patterns (pre-battle decision matrix)
+
+                                                                                                                                             * Players fight manually with full gesture + strategy controls
+
+5.3.4 Leaderboards
+                                                                                                                                                * Global and regional ladders
+
+                                                                                                                                                * Seasons last 2 weeks
+
+                                                                                                                                                * Rewards based on final rank: premium currency, exclusive cosmetic titles, banners
+
+5.3.5 Anti-Exploitation Safeguards
+                                                                                                                                                   * Combat power matching prevents bullying low-rank players
+
+                                                                                                                                                   * Clear division between competitive (ranked) and casual (friendly test) modes
+
+5.3.6 Monetization Ethos
+Strict rule:
+ No pay-to-win stat boosts.
+Only cosmetics, optional event characters, or account progression unlockers allowed.
+
+
+5.4 Guild & Clan Systems
+5.4.1 Founding and Joining
+                                                                                                                                                      * Players may create or join guilds (Clans)
+
+                                                                                                                                                      * Guild size cap: 30 members (expandable via activity)
+
+5.4.2 Clan Features
+                                                                                                                                                         * Shared guild progression level
+
+                                                                                                                                                         * Weekly Guild Missions
+
+                                                                                                                                                         * Contribution Leaderboards
+
+5.4.3 Guild Missions Examples
+Mission
+	Reward
+	Complete 100 co-op battles collectively
+	Raid tokens
+	Collect 1000 Spirit Seals as a group
+	Clan XP
+	Defeat 10 raid bosses
+	Exclusive clan emblems
+	5.4.4 Guild Perks (Non-Pay)
+                                                                                                                                                            * Access to exclusive cosmetic banners and clan titles
+
+                                                                                                                                                            * Slight energy regen speed bonus (max +10% cap)
+
+                                                                                                                                                            * Co-op matchmaking prioritizes guild members
+
+5.4.5 Guild Governance
+                                                                                                                                                               * Rank system: Guild Master > Officer > Member
+
+                                                                                                                                                               * Voting system to democratically select weekly goals
+
+________________
+
+
+5.5 Player Safety & Anti-Toxicity Systems
+                                                                                                                                                                  * No freeform chat in combat modes
+
+                                                                                                                                                                  * No private messaging between strangers
+
+                                                                                                                                                                  * Public Guild Chat is moderated and features anti-spam filters
+
+                                                                                                                                                                  * Any player can mute another player’s emotes or pings during co-op sessions
+
+Focus: Minimize toxicity + maximize strategic communication
+SECTION 6: PROGRESSION SYSTEMS
+
+
+6.1 Progression Design Philosophy
+Player progression should provide:
+                                                                                                                                                                     * A clear sense of growth over time
+
+                                                                                                                                                                     * A balanced pacing curve for free and paying players
+
+                                                                                                                                                                     * Multiple progression paths (Story, PvE, Multiplayer, Collection)
+
+                                                                                                                                                                     * Long-term engagement without burnout
+
+Our core design mantra:
+“Players should feel stronger every session without ever being forced to pay to advance.”
+
+
+6.2 Core Progression Systems
+6.2.1 Player Account Level
+                                                                                                                                                                        * Gains XP from all game modes
+
+                                                                                                                                                                        * Unlocks game features at milestone levels (ex: Co-op unlocked at Lv.10)
+
+                                                                                                                                                                        * Provides small permanent account buffs (ex: +1 daily raid attempt at Lv.20)
+
+6.2.2 Campaign Progression
+                                                                                                                                                                           * Main Story Mode: Branching map with narrative battles
+
+                                                                                                                                                                           * Unlocks new regions, enemies, and cutscenes
+
+                                                                                                                                                                           * Players must complete battles with energy cost
+
+                                                                                                                                                                           * Stages can be revisited for farming materials and EXP
+
+6.2.3 Side Quests
+                                                                                                                                                                              * Optional smaller story arcs
+
+                                                                                                                                                                              * Reward rare materials, gear, or exclusive hero shards
+
+                                                                                                                                                                              * Designed for lore exploration and achievement completionists
+
+6.2.4 Emergency Missions
+                                                                                                                                                                                 * Time-limited high-difficulty stages
+
+                                                                                                                                                                                 * Random daily rotations
+
+                                                                                                                                                                                 * Feature unique mini-bosses with rare loot drops
+
+6.2.5 Ninja Road (Endurance Mode)
+                                                                                                                                                                                    * Players must defeat 20–50 sequential stages with a single squad
+
+                                                                                                                                                                                    * Units do NOT regenerate HP between stages
+
+                                                                                                                                                                                    * Provides powerful materials for limit breaking & top-tier gear
+
+
+
+6.3 Character Progression Paths
+6.3.1 Leveling
+                                                                                                                                                                                       * Earn EXP from battles to increase character levels
+
+                                                                                                                                                                                       * Higher rarity units require more EXP to level up
+
+6.3.2 Awakening
+                                                                                                                                                                                          * At milestone levels (20, 40, 60, 80), units can evolve
+
+                                                                                                                                                                                          * Requires rare Awakening Materials (boss drop + shop item)
+
+                                                                                                                                                                                          * Unlocks visual upgrades and new abilities
+
+6.3.3 Limit Breaking
+                                                                                                                                                                                             * Maxed out characters (Lv.100) can be limit broken +1 to +5 times
+
+                                                                                                                                                                                             * Requires Limit Break Crystals (super rare materials)
+
+                                                                                                                                                                                             * Provides % stat boosts and potentially unlocks secondary passives at final stages
+
+6.3.4 Gear Progression
+                                                                                                                                                                                                * Weapons, Armor, Accessories can be enhanced up to +15 levels
+
+                                                                                                                                                                                                * Gear can also be evolved from Common ➔ Relic quality tiers
+
+                                                                                                                                                                                                * Special relic equipment may offer unique skill modifiers or visual VFX
+
+6.3.5 Weapon Mastery
+                                                                                                                                                                                                   * Units earn Mastery XP with specific weapons
+
+                                                                                                                                                                                                   * Unlocks small permanent buffs + special finishers tied to weapon type
+
+
+
+6.4 Daily & Weekly Missions
+Players receive small objectives to encourage engagement:
+                                                                                                                                                                                                      * Complete 5 battles
+
+                                                                                                                                                                                                      * Use synergy attack 10 times
+
+                                                                                                                                                                                                      * Participate in 3 co-op raids
+
+                                                                                                                                                                                                      * Win 2 Arena matches
+
+Completing missions grants:
+                                                                                                                                                                                                         * EXP
+
+                                                                                                                                                                                                         * Spirit Seals
+
+                                                                                                                                                                                                         * Awakening Materials
+
+                                                                                                                                                                                                         * Raid Tokens
+
+Weekly milestone completions offer higher-tier rewards.
+
+
+6.5 Seasonal Event Progression
+Major updates introduce time-limited events:
+                                                                                                                                                                                                            * Seasonal Story Chapters tied to holidays, festivals, or lore arcs
+
+                                                                                                                                                                                                            * Special Event Units only summonable during active event window
+
+                                                                                                                                                                                                            * Exclusive bosses, equipment, and achievement rewards
+
+Events cycle every 30-45 days to match gacha banner schedule.
+
+
+6.6 Retention Loops
+System
+	Purpose
+	Daily Login Rewards
+	Encourage consistent engagement
+	Daily Quests
+	Provide clear short-term goals
+	Weekly Milestones
+	Long-term goal setting
+	Guild Missions
+	Social cooperation loop
+	Arena Seasons
+	Regular competition reset
+	Event Timers
+	Fear of missing out (FOMO) in healthy, fair design
+	Rule:
+ All retention loops are designed to be optional and rewarding, never mandatory or punishing.
+
+
+6.7 Anti-Burnout Safeguards
+                                                                                                                                                                                                               * Energy system caps excessive grinding per day
+
+                                                                                                                                                                                                               * Generous free Spirit Seal drip (events, quests, logins)
+
+                                                                                                                                                                                                               * No permanent “must-have” gacha units locked behind limited banners
+
+The game is built to respect player time while still rewarding investment.
+
+
+SECTION 7: MONETIZATION SYSTEMS
+
+
+7.1 Monetization Philosophy
+Our game will be ethically monetized.
+We explicitly reject exploitative mechanics.
+We will offer monetization choices that are:
+                                                                                                                                                                                                                  * Cosmetic-first wherever possible
+
+                                                                                                                                                                                                                  * Fair to free-to-play players
+
+                                                                                                                                                                                                                  * Never impacting direct PvP competitive balance
+
+Design mantra:
+“Monetization should enhance enjoyment, not create frustration.”
+
+
+7.2 Primary Monetization Channels
+7.2.1 Gacha Summoning
+Core driver of revenue.
+ Players spend Spirit Seals (premium currency) to summon collectible units.
+Types of Summon Banners:
+Type
+	Details
+	Standard Banner
+	Includes all general pool units
+	Event Banner
+	Focused rate-ups for event-limited heroes
+	Festival Banner
+	Exclusive ultra-rare “Festival Units”; limited availability
+	Example Pull Rates:
+Tier
+	Name
+	% Odds
+	Tier 1
+	Common
+	60%
+	Tier 2
+	Rare
+	30%
+	Tier 3
+	Super Rare
+	8%
+	Tier 4
+	Festival
+	2%
+	Pity System:
+After 90 consecutive pulls without Tier 4, player is guaranteed Festival unit.
+This reduces bad luck streak frustration and encourages continued engagement.
+
+
+7.2.2 Energy Refill
+Players may optionally spend Spirit Seals to replenish daily energy stamina.
+We will maintain generous free regeneration rates to prevent "pay to play" walls.
+
+
+7.2.3 Seasonal Battle Pass (Samurai Path)
+2-track seasonal progression system:
+                                                                                                                                                                                                                     * Free Track: All players unlock standard rewards via play
+
+                                                                                                                                                                                                                     * Premium Track (optional purchase):
+
+                                                                                                                                                                                                                        * Exclusive cosmetics
+
+                                                                                                                                                                                                                        * Event tickets
+
+                                                                                                                                                                                                                        * Extra Spirit Seals
+
+                                                                                                                                                                                                                        * Slight bonus material rates
+
+Battle Pass duration: 28 days
+ Non-purchase players lose nothing from free track.
+
+
+7.2.4 Cosmetic Shop
+Cosmetics will never impact gameplay performance.
+Examples include:
+                                                                                                                                                                                                                           * Alternate unit skins
+
+                                                                                                                                                                                                                           * Weapon skins
+
+                                                                                                                                                                                                                           * Custom aura trails
+
+                                                                                                                                                                                                                           * Summon animation effects
+
+                                                                                                                                                                                                                           * Guild banners & emblems
+
+                                                                                                                                                                                                                           * Chat emotes & stickers
+
+All obtainable for Spirit Seals or event achievements.
+
+
+7.2.5 Limited-Time Packs
+Occasional non-intrusive IAP packs may be offered:
+                                                                                                                                                                                                                              * Spirit Seals bundles
+
+                                                                                                                                                                                                                              * Awakening material packs
+
+                                                                                                                                                                                                                              * Starter progression packs (early game only)
+
+Strict rule:
+No exclusive units are ever locked behind paid packs.
+
+
+7.3 Optional Subscription Model (Speculative)
+A potential light subscription ($3–5/month) could offer:
+                                                                                                                                                                                                                                 * Daily free Spirit Seals
+
+                                                                                                                                                                                                                                 * Slight increase to daily energy cap
+
+                                                                                                                                                                                                                                 * Bonus login rewards
+
+                                                                                                                                                                                                                                 * VIP player title or icon
+
+This would remain fully optional and cosmetic-preferred.
+
+
+7.4 Ad Monetization (Optional)
+Rewarded Ads ONLY
+ Players may opt-in to watch short ads for:
+                                                                                                                                                                                                                                    * Extra energy refill
+
+                                                                                                                                                                                                                                    * Small amounts of Spirit Seals
+
+                                                                                                                                                                                                                                    * Daily dungeon attempts
+
+No forced ads will ever interrupt gameplay.
+
+
+7.5 Global Pricing Model
+                                                                                                                                                                                                                                       * Prices will be localized per region
+
+                                                                                                                                                                                                                                       * Pack pricing will reflect local market standards
+
+                                                                                                                                                                                                                                       * All currencies presented with clear equivalence to real-money value
+
+
+
+7.6 Anti-Abuse Safeguards
+                                                                                                                                                                                                                                          * Strict daily purchase limits to protect younger players
+
+                                                                                                                                                                                                                                          * Parental control support
+
+                                                                                                                                                                                                                                          * No gambling mechanics outside of standard gacha draw rates
+
+
+
+7.7 Ethical Design Commitment
+                                                                                                                                                                                                                                             * We will be fully transparent with pull rates on all banners
+
+                                                                                                                                                                                                                                             * We will avoid predatory tactics (e.g., “fake time pressure” offers)
+
+                                                                                                                                                                                                                                             * All game content can eventually be earned through gameplay (albeit slower for F2P)
+
+SECTION 8: UI/UX FULL FLOW DIAGRAMS (TEXT FORM)
+
+
+8.1 Design Philosophy
+The UI/UX of Shogun: Flowers Fall in Blood must be:
+                                                                                                                                                                                                                                                * Minimalist and elegant, respecting feudal Japan aesthetics
+
+                                                                                                                                                                                                                                                * Optimized for portrait, single-hand mobile use
+
+                                                                                                                                                                                                                                                * Focused on clarity, flow, and player feedback
+
+                                                                                                                                                                                                                                                * Delivering intuitive access to complex systems without clutter
+
+Design rule:
+“The player should never have to guess where to go next.”
+
+
+8.2 Core UI Screens & Navigation Flow
+8.2.1 Primary Navigation
+Main Menu → (Top-Level Buttons)
+                                                                                                                                                                                                                                                   * Battle
+
+                                                                                                                                                                                                                                                   * Heroes
+
+                                                                                                                                                                                                                                                   * Summon
+
+                                                                                                                                                                                                                                                   * Clan
+
+                                                                                                                                                                                                                                                   * Shop
+
+                                                                                                                                                                                                                                                   * Events
+
+                                                                                                                                                                                                                                                   * Mailbox
+
+                                                                                                                                                                                                                                                   * Settings
+
+
+
+8.2.2 Battle Menu Flow
+Main Menu → Battle → (Sub-Modes)
+                                                                                                                                                                                                                                                      * Story Mode → Chapter Selection → Stage Selection → Squad Select → Combat Start
+
+                                                                                                                                                                                                                                                      * Emergency Missions → Available Events → Squad Select → Combat Start
+
+                                                                                                                                                                                                                                                      * Raid Boss → Co-op Lobby → Matchmaking → Combat Start
+
+                                                                                                                                                                                                                                                      * Ninja Road → Floor Select → Squad Select → Combat Start
+
+                                                                                                                                                                                                                                                      * PvP Arena → Enemy Squad Preview → Squad Select → Battle Start
+
+Player flow is deliberately shallow: no more than 4 taps to start a match.
+
+
+8.2.3 Summon Menu Flow
+Main Menu → Summon
+                                                                                                                                                                                                                                                         * View Banner Options
+
+                                                                                                                                                                                                                                                         * Preview Unit Drop Rates
+
+                                                                                                                                                                                                                                                         * Select Summon Method (Single Pull / 10-Pull / Ticket Pull)
+
+                                                                                                                                                                                                                                                         * Confirm Purchase → Summon Animation → Results Reveal → Auto-send excess heroes to storage
+
+
+
+8.2.4 Heroes Menu Flow
+Main Menu → Heroes
+                                                                                                                                                                                                                                                            * View Full Collection
+
+                                                                                                                                                                                                                                                            * Tap Character →
+
+                                                                                                                                                                                                                                                               * View Stats
+
+                                                                                                                                                                                                                                                               * Level Up / Enhance / Limit Break
+
+                                                                                                                                                                                                                                                               * Equip Gear
+
+                                                                                                                                                                                                                                                               * Open Skill Tree
+
+                                                                                                                                                                                                                                                               * View Lore + Bio
+
+                                                                                                                                                                                                                                                               * Change Skin (if alternate unlocked)
+
+
+
+8.2.5 Clan Menu Flow
+Main Menu → Clan
+                                                                                                                                                                                                                                                                  * View Clan Info & Roster
+
+                                                                                                                                                                                                                                                                  * Access Guild Missions
+
+                                                                                                                                                                                                                                                                  * Clan Chat Window
+
+                                                                                                                                                                                                                                                                  * View Leaderboard Rankings
+
+
+
+8.2.6 Shop Menu Flow
+Main Menu → Shop
+                                                                                                                                                                                                                                                                     * Spirit Seal Packs
+
+                                                                                                                                                                                                                                                                     * Daily/Weekly/Monthly Limited Packs
+
+                                                                                                                                                                                                                                                                     * Cosmetic Store
+
+                                                                                                                                                                                                                                                                     * Energy Refill
+
+                                                                                                                                                                                                                                                                     * Battle Pass Purchase
+
+
+
+8.2.7 Settings Menu Flow
+Main Menu → Settings
+                                                                                                                                                                                                                                                                        * Audio: Music, SFX, Voice sliders
+
+                                                                                                                                                                                                                                                                        * Notifications toggle
+
+                                                                                                                                                                                                                                                                        * Language select
+
+                                                                                                                                                                                                                                                                        * Player ID and Account Binding
+
+                                                                                                                                                                                                                                                                        * Customer Support / Report Issue
+
+                                                                                                                                                                                                                                                                        * Privacy Policy + Terms of Service
+
+
+
+8.3 In-Combat UI Layout
+Screen Region
+	Element
+	Top Left
+	Turn Order Timeline
+	Top Center
+	Battle Timer (if time-limited stage)
+	Top Right
+	Pause/Menu button
+	Center
+	Battlefield
+	Bottom
+	Player Squad Portraits (HP bars + Skill Ready Indicators)
+	Bottom Right
+	Gesture Input Icon Prompt
+	Bottom Left
+	Quick Emotes for Co-op
+	Middle Overlay
+	Skill Name & Animation when active
+	All visual effects are kept clean & non-obstructive.
+
+
+8.4 Player Feedback Loops
+                                                                                                                                                                                                                                                                           * All button presses trigger subtle haptic + visual feedback
+
+                                                                                                                                                                                                                                                                           * Battle shows highlighted move tiles and attack ranges
+
+                                                                                                                                                                                                                                                                           * All status effects have floating icons above affected units
+
+                                                                                                                                                                                                                                                                           * Countdown animations for time-limited skills or environmental hazards
+
+Goal:
+“Every system provides immediate feedback with minimal text explanation required.”
+
+
+8.5 Accessibility Features
+                                                                                                                                                                                                                                                                              * Colorblind mode for elemental advantage colors
+
+                                                                                                                                                                                                                                                                              * Font scaling slider
+
+                                                                                                                                                                                                                                                                              * Toggle simplified effects for older devices
+
+                                                                                                                                                                                                                                                                              * Large icon mode for gesture cues
+
+This guarantees that all players, regardless of device quality or personal needs, can fully enjoy the game.
+SECTION 9: ART + ANIMATION + AUDIO PIPELINES
+
+
+9.1 Art Direction Philosophy
+Shogun: Flowers Fall in Blood must capture the duality of:
+                                                                                                                                                                                                                                                                                 * The serene beauty of traditional Japan
+
+                                                                                                                                                                                                                                                                                 * The overwhelming dread of demonic invasion
+
+Our visual style goal:
+“Haunting elegance.”
+Traditional brushstroke-inspired character designs with modern layered 2D animation.
+Target is high visual quality with mobile performance optimization.
+
+
+9.2 Character Art Pipeline
+9.2.1 Base Character Creation
+Stage
+	Output
+	Concept Sketch
+	Silhouette, pose, weapon concept
+	Clean Line Art
+	Fully refined model sheet
+	Color Render
+	Hand-painted digital textures
+	Rigging Prep
+	Separated body parts for animation
+	Expression Sets
+	Angry, hurt, victory, idle, skill activation faces
+	All characters follow standard rigged skeletal templates for consistent animation blending.
+9.2.2 Festival Unit Enhancements
+                                                                                                                                                                                                                                                                                    * Additional idle animation layers
+
+                                                                                                                                                                                                                                                                                    * Special aura particle effects
+
+                                                                                                                                                                                                                                                                                    * Animated VFX on weapons/clothing
+
+Festival heroes must visually “outclass” standard heroes without adding performance load.
+
+
+9.3 Enemy Design Pipeline
+                                                                                                                                                                                                                                                                                       * Base grunts: humanoid bandits, corrupted soldiers
+
+                                                                                                                                                                                                                                                                                       * Mid-tier: demonic beasts, possessed monks, mutated yokai
+
+                                                                                                                                                                                                                                                                                       * Bosses: Giant oni, monstrous spirits, Yomi warlords
+
+Boss units use larger scale rigs + unique skeletal setups.
+
+
+9.4 Environment Art Pipeline
+Environments must feel alive yet oppressive.
+Hand-painted static backgrounds + dynamic layered VFX overlays.
+Standard Biomes:
+                                                                                                                                                                                                                                                                                          * Forest Temple Ruins
+
+                                                                                                                                                                                                                                                                                          * Snow-Covered Shrine
+
+                                                                                                                                                                                                                                                                                          * Burning Village
+
+                                                                                                                                                                                                                                                                                          * Misty Mountain Path
+
+                                                                                                                                                                                                                                                                                          * Cursed Battlefield (blood moon skybox + drifting ash particles)
+
+Each biome includes destructible prop variants (trees, lanterns, banners).
+
+
+9.5 Battle VFX Design
+All attacks and gestures must feel weighty but visually clean:
+                                                                                                                                                                                                                                                                                             * Subtle wind streaks for movement
+
+                                                                                                                                                                                                                                                                                             * Burst splash effects for critical hits
+
+                                                                                                                                                                                                                                                                                             * Color-coded elemental skill explosions (e.g., red for fire, green for poison)
+
+Rule:
+Never overwhelm battlefield clarity with over-designed VFX spam.
+
+
+9.6 UI Art Style
+                                                                                                                                                                                                                                                                                                * Traditional Japanese paper texture backgrounds
+
+                                                                                                                                                                                                                                                                                                * Gold-leaf brushstroke menu frames
+
+                                                                                                                                                                                                                                                                                                * Kanji-inspired iconography
+
+                                                                                                                                                                                                                                                                                                * Soft, muted color palette with vibrant skill activation highlights
+
+Goal: Minimalist design enhanced by cultural authenticity.
+
+
+9.7 Animation Pipeline
+9.7.1 Character Animation Sets
+Type
+	Animation
+	Idle
+	Breathing, stance shifting
+	Walk
+	8-direction walking cycle
+	Attack
+	Light, Heavy, Ultimate gestures
+	Hit Reaction
+	Light stagger, heavy knockback
+	Death
+	Collapse, fade-out
+	Victory
+	Custom hero-specific victory pose
+	9.7.2 Skill Gesture FX
+                                                                                                                                                                                                                                                                                                   * Fast trace lines for tap skills
+
+                                                                                                                                                                                                                                                                                                   * Particle trail arcs for swipe skills
+
+                                                                                                                                                                                                                                                                                                   * Energy build-up and burst for hold skills
+
+                                                                                                                                                                                                                                                                                                   * Shape trace prompts for ultimate tier units
+
+Animations must be designed to align perfectly with combat system timing windows.
+
+
+9.8 Audio Design Pipeline
+9.8.1 Music
+                                                                                                                                                                                                                                                                                                      * Fully original orchestral soundtrack inspired by traditional Japanese instrumentation
+
+                                                                                                                                                                                                                                                                                                      * Instruments: shakuhachi (bamboo flute), shamisen (stringed lute), taiko drums
+
+Each biome and boss fight has dynamic layered music tracks that shift based on combat state.
+9.8.2 Sound Effects
+                                                                                                                                                                                                                                                                                                         * Realistic weapon clashing
+
+                                                                                                                                                                                                                                                                                                         * Environmental sounds (wind, distant bell tolls, demon howls)
+
+                                                                                                                                                                                                                                                                                                         * Layered elemental skill sounds for player feedback clarity
+
+9.8.3 Voice Acting
+                                                                                                                                                                                                                                                                                                            * Fully voiced main story scenes in original Japanese
+
+                                                                                                                                                                                                                                                                                                            * Optional English subtitle track
+
+                                                                                                                                                                                                                                                                                                            * Battle shout lines for every playable unit and boss
+
+Performance must balance authenticity with mobile optimization.
+SECTION 10: STUDIO PRODUCTION PIPELINE & MILESTONES
+
+
+10.1 Production Philosophy
+Our studio pipeline must enable:
+                                                                                                                                                                                                                                                                                                               * Rapid prototyping + iteration
+
+                                                                                                                                                                                                                                                                                                               * Parallel development tracks (art, engineering, design)
+
+                                                                                                                                                                                                                                                                                                               * Vertical slice first, then full content scaling
+
+                                                                                                                                                                                                                                                                                                               * Clear milestone tracking + deliverable expectations
+
+Production model:
+“Fail fast in prototype. Scale slow and safe after proof.”
+
+
+10.2 Team Structure (Small Studio Phase)
+Role
+	Responsibilities
+	Creative Director (Gogo-Sama)
+	Vision holder, final approvals
+	Game Designer
+	Combat systems, economy balance
+	Narrative Designer
+	Story, dialogue, world-building
+	Concept Artists
+	Character + environment exploration
+	2D Artists
+	Character, VFX, UI asset production
+	Animators
+	Rigging + frame-by-frame key animations
+	Engineers
+	Core game systems, tools, backend
+	Audio Designer
+	Music, SFX, voice direction
+	QA Lead
+	Test plans, balance + bug verification
+	Producer
+	Schedule, resource tracking, milestone delivery
+	Note: Many roles may be hybrid in indie phase.
+
+
+10.3 Development Milestone Schedule
+PHASE 1: Pre-Production (2 Months)
+                                                                                                                                                                                                                                                                                                                  * GDD and TDD finalization
+
+                                                                                                                                                                                                                                                                                                                  * Paper prototypes for combat, economy, progression
+
+                                                                                                                                                                                                                                                                                                                  * Block-out UI wireframes
+
+                                                                                                                                                                                                                                                                                                                  * First hero + environment concept art explorations
+
+Deliverable: Locked Feature Scope Document
+
+
+PHASE 2: Vertical Slice Prototype (4 Months)
+                                                                                                                                                                                                                                                                                                                     * Full combat system functional in sandbox test mode
+
+                                                                                                                                                                                                                                                                                                                     * Gesture inputs integrated
+
+                                                                                                                                                                                                                                                                                                                     * 3 hero units fully animated + implemented
+
+                                                                                                                                                                                                                                                                                                                     * 1 enemy boss with mechanics
+
+                                                                                                                                                                                                                                                                                                                     * 1 complete environment
+
+                                                                                                                                                                                                                                                                                                                     * Temporary UI skin applied
+
+Goal: Internal playtest proves core gameplay loop fun
+
+
+PHASE 3: Core Systems Development (3 Months)
+                                                                                                                                                                                                                                                                                                                        * Full squad management systems
+
+                                                                                                                                                                                                                                                                                                                        * Character gacha + rarity pool framework
+
+                                                                                                                                                                                                                                                                                                                        * Equipment + stat progression working
+
+                                                                                                                                                                                                                                                                                                                        * Full UI pass
+
+                                                                                                                                                                                                                                                                                                                        * First pass of Story Campaign scripting + cutscene tools
+
+Deliverable: Internal Alpha Build
+
+
+PHASE 4: Multiplayer Systems (2 Months)
+                                                                                                                                                                                                                                                                                                                           * Co-op real-time raid combat stable
+
+                                                                                                                                                                                                                                                                                                                           * Asynchronous PvP ladder fully functional
+
+                                                                                                                                                                                                                                                                                                                           * Clan framework active (without final polish)
+
+Deliverable: Internal Closed Beta Candidate
+
+
+PHASE 5: Monetization & LiveOps Tools (1 Month)
+                                                                                                                                                                                                                                                                                                                              * In-app purchases system (compliance ready)
+
+                                                                                                                                                                                                                                                                                                                              * Battle Pass framework active
+
+                                                                                                                                                                                                                                                                                                                              * Reward system pipeline completed
+
+                                                                                                                                                                                                                                                                                                                              * Event & banner rotation system working in tools
+
+
+
+PHASE 6: Closed Beta Testing (1 Month)
+                                                                                                                                                                                                                                                                                                                                 * First external community playtest via Discord signups
+
+                                                                                                                                                                                                                                                                                                                                 * Data collection on player behavior, economy, bugs
+
+                                                                                                                                                                                                                                                                                                                                 * Prioritized feedback adjustments
+
+
+
+PHASE 7: Soft Launch + Full Launch Prep (2 Months)
+                                                                                                                                                                                                                                                                                                                                    * Launch soft in 1–2 test countries
+
+                                                                                                                                                                                                                                                                                                                                    * Monitor retention, crash rates, economy balance
+
+                                                                                                                                                                                                                                                                                                                                    * Localizations (5–7 languages)
+
+                                                                                                                                                                                                                                                                                                                                    * Launch global marketing campaign
+
+                                                                                                                                                                                                                                                                                                                                    * Prepare final live launch build
+
+
+
+10.4 Post-Launch Ongoing Development
+Interval
+	Content
+	Every Month
+	New characters, events, story chapter
+	Every Quarter
+	Major game mode or feature
+	Ongoing
+	Server stability updates, cheat prevention, balance patches
+	
+
+10.5 Risks & Mitigation
+Risk
+	Mitigation
+	Scope Creep
+	Locked Feature Scope Document
+	Monetization Pushback
+	Strong community feedback loops
+	Technical Debt
+	Early systems stability focus
+	Content Burnout
+	Automated LiveOps toolset for efficient event creation
+	
+
+SECTION 11: PLAYER LIFECYCLE JOURNEY & RETENTION LOOPS
+
+
+11.1 Player Lifecycle Philosophy
+Retention is built around giving players:
+                                                                                                                                                                                                                                                                                                                                       * Constant micro-goals (daily)
+
+                                                                                                                                                                                                                                                                                                                                       * Medium milestones (weekly)
+
+                                                                                                                                                                                                                                                                                                                                       * Long-term aspirations (monthly + collection-based)
+
+                                                                                                                                                                                                                                                                                                                                       * A feeling of fairness + meaningful progression at all stages
+
+Design Rule:
+“A player should never feel forced to quit or forced to spend to progress.”
+
+
+11.2 Player Onboarding Flow
+Stage
+	Experience
+	Day 0 (Install)
+	Intro cutscene + interactive tutorial battle
+	Day 1
+	Unlock first hero + guided missions
+	Day 2–3
+	Unlock full squad building + Summon tutorial
+	Day 4–7
+	Introduce multiplayer (Raid Co-op + PvP Arena)
+	Day 8+
+	Open full feature set + events + live ops
+	Onboarding designed to slowly layer complexity without overwhelming new players.
+
+
+11.3 Daily Retention Loops
+Daily Reset Time: 00:00 server time
+System
+	Purpose
+	Daily Login Reward
+	Small free Spirit Seal + random items
+	Daily Quests
+	Low-effort tasks for quick wins
+	Co-op Daily Token Reset
+	Incentivizes daily multiplayer
+	Arena Energy Reset
+	Encourages daily PvP participation
+	Time-to-complete for all daily tasks designed at ~15 minutes for casual players.
+
+
+11.4 Weekly Retention Loops
+System
+	Purpose
+	Weekly Quests
+	Deeper engagement goals
+	Clan Weekly Mission Targets
+	Cooperative social loop
+	Arena Ladder Reset
+	Competitive loop
+	Event Boss Rotations
+	Adds fresh PvE challenge
+	Weekly structure aims for 2–3 hours total per week commitment for standard players.
+
+
+11.5 Monthly / Seasonal Aspirations
+                                                                                                                                                                                                                                                                                                                                          * Event Exclusive Units: Time-limited gacha banners
+
+                                                                                                                                                                                                                                                                                                                                          * Limited Story Chapters: Temporary lore expansions
+
+                                                                                                                                                                                                                                                                                                                                          * Seasonal Arena Cosmetics: Visual rewards for top 1% players
+
+Monthly content designed to feel aspirational, not mandatory.
+
+
+11.6 Player Progression Stages
+Stage
+	Duration Estimate
+	Player Type
+	Early Game
+	Days 1–7
+	New Player
+	Mid Game
+	Days 7–30
+	Squad Builder
+	Late Game
+	1 Month+
+	Competitive / Completionist
+	Endgame
+	3–6 Months+
+	Collector / Hardcore Clan Strategist
+	The goal is to provide meaningful content at every stage of player commitment.
+
+
+11.7 Psychological Retention Design
+Key principles:
+                                                                                                                                                                                                                                                                                                                                             * Compulsion Loop (Daily Missions + Login)
+
+                                                                                                                                                                                                                                                                                                                                             * Progression Loop (Squad Strength Growth)
+
+                                                                                                                                                                                                                                                                                                                                             * Collection Loop (Unlock New Heroes + Skins)
+
+                                                                                                                                                                                                                                                                                                                                             * Social Loop (Clans + Co-op Raids)
+
+All loops are optional and frictionless; we reject “punishing FOMO” tactics.
+
+
+11.8 Re-Engagement Systems
+To bring back lapsed players:
+                                                                                                                                                                                                                                                                                                                                                * Comeback Login Bonus: Streak of free gifts for returning players
+
+                                                                                                                                                                                                                                                                                                                                                * Comeback Questline: Temporary boosted rewards for progression
+
+                                                                                                                                                                                                                                                                                                                                                * Guild Invitations: Allow friends/clans to request lapsed player return
+
+These are designed to feel generous, not guilt-based.
+
+
+11.9 KPI Target Benchmarks (Speculative)
+Metric
+	Target
+	Day 1 Retention
+	35%+
+	Day 7 Retention
+	15%+
+	Day 30 Retention
+	7%+
+	ARPDAU (Average Revenue Per Daily Active User)
+	$0.15–$0.30
+	Conversion Rate (F2P ➔ Paying)
+	2%–5%
+	These targets are based on competitive mobile RPG market averages.
+
+
+SECTION 12: POST-LAUNCH LIVE OPS DESIGN
+
+
+12.1 Live Operations Philosophy
+Shogun: Flowers Fall in Blood must operate as a living game.
+Content cadence and LiveOps systems will ensure:
+                                                                                                                                                                                                                                                                                                                                                   * Player trust and predictable update rhythm
+
+                                                                                                                                                                                                                                                                                                                                                   * Strong community excitement for every patch
+
+                                                                                                                                                                                                                                                                                                                                                   * Sustainable internal production load for the team
+
+Design Rule:
+“Never surprise players with exploitative or misleading content drops.”
+
+
+12.2 Core Live Ops Pillars
+                                                                                                                                                                                                                                                                                                                                                      1. Regular New Content (units, gear, stages)
+
+                                                                                                                                                                                                                                                                                                                                                      2. Time-Limited Seasonal Events
+
+                                                                                                                                                                                                                                                                                                                                                      3. Co-op and PvP Mode Refreshes
+
+                                                                                                                                                                                                                                                                                                                                                      4. Community Driven Milestone Events
+
+                                                                                                                                                                                                                                                                                                                                                      5. Soft Monetization Push via Events + Cosmetics Only
+
+
+
+12.3 Monthly Content Release Model
+Content Type
+	Frequency
+	New Playable Units
+	Every 4 weeks
+	New Raid Bosses
+	Every 2–3 weeks
+	Limited Story Side Chapters
+	Monthly
+	Arena PvP Reward Resets
+	Biweekly Seasons
+	Seasonal Cosmetics / Skins
+	Every event cycle
+	A content roadmap calendar will be visible in-game for full player transparency.
+
+
+12.4 Seasonal Event Structure
+Typical event lifecycle:
+                                                                                                                                                                                                                                                                                                                                                         1. Announcement Teaser (social media + in-game banners)
+
+                                                                                                                                                                                                                                                                                                                                                         2. Pre-event Countdown Login Bonus
+
+                                                                                                                                                                                                                                                                                                                                                         3. Event Launch: New bosses, story, time-limited banner
+
+                                                                                                                                                                                                                                                                                                                                                         4. Community Challenge Milestones (e.g. defeat global boss X times)
+
+                                                                                                                                                                                                                                                                                                                                                         5. Event Conclusion: Reward distribution, teaser for next event
+
+Most seasonal events are tied to Japanese cultural festivals or internal lore arcs.
+
+
+12.5 Example Event Types
+Event
+	Description
+	Festival of Blades
+	Boosted weapon skin drops
+	Demon Invasion
+	Massive co-op boss event
+	Spirit Blossom
+	Special gacha banner + environment
+	The Yomi Eclipse
+	Limited-time side story + cosmetics
+	Clan Wars
+	Temporary leaderboard event for guilds
+	
+
+12.6 Raid Boss Event Loop
+                                                                                                                                                                                                                                                                                                                                                            * Ultra high HP Raid Boss shared globally
+
+                                                                                                                                                                                                                                                                                                                                                            * Players team up in real-time or solo to chip away at total HP pool
+
+                                                                                                                                                                                                                                                                                                                                                            * Global milestones unlock tiered community rewards
+
+                                                                                                                                                                                                                                                                                                                                                            * Top contributors earn special cosmetic titles or frames (no stat impact)
+
+
+
+12.7 Balance Patches & Meta Shifts
+Every 60–90 days, a Balance Pass review is done:
+                                                                                                                                                                                                                                                                                                                                                               * Underpowered units may receive buffs
+
+                                                                                                                                                                                                                                                                                                                                                               * Overpowered combos are normalized
+
+                                                                                                                                                                                                                                                                                                                                                               * New content is designed to counter, not power creep existing units
+
+This ensures a healthy long-term meta ecosystem.
+
+
+12.8 Emergency Hotfix Pipeline
+                                                                                                                                                                                                                                                                                                                                                                  * Live server patches for critical bugs
+
+                                                                                                                                                                                                                                                                                                                                                                  * Internal QA + LiveOps team must be able to deploy hotfixes within <24 hours
+
+
+
+12.9 Community Engagement
+Community will be treated as co-developers via feedback channels:
+                                                                                                                                                                                                                                                                                                                                                                     * Closed Beta Discord testers
+
+                                                                                                                                                                                                                                                                                                                                                                     * Live Q&A developer AMAs
+
+                                                                                                                                                                                                                                                                                                                                                                     * Monthly player surveys for next event type / unit theme voting
+
+                                                                                                                                                                                                                                                                                                                                                                     * Strong official social media presence with player highlights
+
+We must earn the reputation of a “community listening studio.”
+
+
+12.10 LiveOps Internal Tools
+Custom internal dashboards for:
+                                                                                                                                                                                                                                                                                                                                                                        * Banner schedule automation
+
+                                                                                                                                                                                                                                                                                                                                                                        * Raid boss stat tuning
+
+                                                                                                                                                                                                                                                                                                                                                                        * Event milestone tracking
+
+                                                                                                                                                                                                                                                                                                                                                                        * Reward distribution logs
+
+                                                                                                                                                                                                                                                                                                                                                                        * Server health + active player monitoring
+
+Investment in tool automation is vital to scale content without burning out the dev team.
+SECTION 13: APPENDICES
+
+
+13.1 Glossary of Core Terms
+Term
+	Definition
+	Action
+	A single combat command per turn
+	Arena
+	PvP mode against AI-controlled player squads
+	Awakening
+	System for evolving heroes with materials
+	Banner
+	Limited-time gacha event
+	Clan
+	Player-created social group (guild)
+	Co-op Raid
+	Real-time multiplayer PvE boss battle
+	Daily Quests
+	Set of short recurring objectives
+	Elemental Advantage
+	Damage boost based on element matchups
+	Energy
+	Stamina system limiting battle entries per period
+	Festival Unit
+	Extremely rare, high-value hero only available on event banners
+	Gesture Input
+	Player-controlled tap, swipe, or hold combat mechanic
+	Hero
+	Any playable collectible unit
+	Limit Break
+	System to push maxed heroes beyond original stat caps
+	Mastery
+	Progression system tied to weapon use frequency
+	Ninja Road
+	Endurance mode with no healing between stages
+	Pity System
+	Safety mechanic guaranteeing rare pull after X attempts
+	Spirit Seals
+	Premium in-game currency
+	Status Effect
+	Temporary debuff or condition applied in battle
+	Vertical Slice
+	Playable early demo proving full core gameplay loop
+	
+
+
+
+
+
+
+
+
+
+13.2 Core Combat Formula Examples
+13.2.1 Damage Calculation
+Base Formula:
+ (Attacker ATK × Skill Multiplier × Element Modifier) - Target DEF = Raw Damage
+                                                                                                                                                                                                                                                                                                                                                                           * Element Modifier = 1.25 (advantage), 0.75 (disadvantage), 1.0 (neutral)
+
+                                                                                                                                                                                                                                                                                                                                                                           * Minimum damage floor exists to prevent 0 output
+
+13.2.2 Critical Hit Formula
+If (Random roll ≤ CRIT RATE) → Damage × CRIT DAMAGE multiplier
+                                                                                                                                                                                                                                                                                                                                                                              * Default CRIT Damage = 1.5x base hit
+
+13.2.3 Status Chance Application
+If (Random roll ≤ Skill Status Chance - Target RESISTANCE %) → Apply Status Effect
+
+
+13.3 Example Data Table: Hero Base Stats
+Hero Name
+	Type
+	Rarity
+	HP
+	ATK
+	DEF
+	SPD
+	Ronin Blade
+	Skirmisher
+	Rare
+	850
+	320
+	100
+	140
+	Shrine Maiden
+	Mystic
+	Super Rare
+	900
+	250
+	120
+	130
+	Demon Hunter
+	Vanguard
+	Rare
+	1050
+	280
+	160
+	110
+	Shadow Assassin
+	Skirmisher
+	Festival
+	800
+	350
+	90
+	160
+	(These are purely illustrative internal placeholder stats.)
+
+
+13.4 Example Gacha Rates Table
+Rarity
+	Pull Rate
+	Common
+	60%
+	Rare
+	30%
+	Super Rare
+	8%
+	Festival (Ultra Rare)
+	2%
+	
+
+13.5 Development Key Metrics
+KPI
+	Target Benchmark
+	Day 1 Retention
+	35%+
+	Day 7 Retention
+	15%+
+	ARPDAU
+	$0.15–$0.30
+	Average Session Length
+	10–20 minutes
+	Gacha Pull Conversion Rate
+	2%–5%
+	
+
+13.6 Studio Documentation Standards
+All future system proposals must follow this internal format:
+                                                                                                                                                                                                                                                                                                                                                                                 1. Feature Name
+
+                                                                                                                                                                                                                                                                                                                                                                                 2. Purpose / Pillars
+
+                                                                                                                                                                                                                                                                                                                                                                                 3. Systems Breakdown
+
+                                                                                                                                                                                                                                                                                                                                                                                 4. Data Tables / Mock Examples
+
+                                                                                                                                                                                                                                                                                                                                                                                 5. Failure Cases + Safeguards
+
+                                                                                                                                                                                                                                                                                                                                                                                 6. Expected Player Impact
+
+                                                                                                                                                                                                                                                                                                                                                                                 7. Open Design Questions (for team review)
+
+This prevents design misalignment as the team scales.

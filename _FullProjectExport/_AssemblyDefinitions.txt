@@ -1,0 +1,132 @@
+=== ASSEMBLY DEFINITIONS ===
+Assembly Definition: _Project\Scripts\Core\Shogun.Core.asmdef
+Content:
+{
+    "name": "Shogun.Core",
+    "rootNamespace": "",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
+
+Assembly Definition: _Project\Scripts\Input\Shogun.Input.asmdef
+Content:
+{
+    "name": "Shogun.Input",
+    "rootNamespace": "",
+    "references": [
+        "GUID:716e414e3a6173047aa1b3dc9de87423"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
+
+Assembly Definition: _Project\Scripts\Networking\Shogun.Networking.asmdef
+Content:
+{
+    "name": "Shogun.Networking",
+    "rootNamespace": "",
+    "references": [
+        "GUID:716e414e3a6173047aa1b3dc9de87423"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
+
+Assembly Definition: _Project\Scripts\Features\Characters\Shogun.Characters.asmdef
+Content:
+{
+    "name": "Shogun.Characters",
+    "rootNamespace": "",
+    "references": [
+        "GUID:716e414e3a6173047aa1b3dc9de87423"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
+
+Assembly Definition: _Project\Scripts\Features\Combat\Shogun.Combat.asmdef
+Content:
+{
+    "name": "Shogun.Combat",
+    "rootNamespace": "",
+    "references": [
+        "GUID:716e414e3a6173047aa1b3dc9de87423"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
+
+Assembly Definition: _Project\Scripts\Features\Gacha\Shogun.Gacha.asmdef
+Content:
+{
+    "name": "Shogun.Gacha",
+    "rootNamespace": "",
+    "references": [
+        "GUID:716e414e3a6173047aa1b3dc9de87423"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
+
+Assembly Definition: _Project\Scripts\Features\UI\Shogun.UI.asmdef
+Content:
+{
+    "name": "Shogun.UI",
+    "rootNamespace": "",
+    "references": [
+        "GUID:716e414e3a6173047aa1b3dc9de87423"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
+

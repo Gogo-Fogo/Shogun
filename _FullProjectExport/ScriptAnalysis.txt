@@ -1,0 +1,172 @@
+=== SCRIPT ANALYSIS ===
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\Tests\Characters\CharacterTests.cs ===
+Total Lines: 18
+  Code Lines: 14
+  Comment Lines: 3
+  Empty Lines: 1
+First 30 lines:
+  01: using NUnit.Framework;
+  02: 
+  03: namespace Shogun.Tests.Characters
+  04: {
+  05:     public class CharacterTests
+  06:     {
+  07:         [Test]
+  08:         public void ExampleCharacterTest()
+  09:         {
+  10:             // Arrange
+  11:             string name = "Naruto";
+  12:             // Act
+  13:             int length = name.Length;
+  14:             // Assert
+  15:             Assert.AreEqual(6, length);
+  16:         }
+  17:     }
+  18: } 
+
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\Tests\Combat\CombatTests.cs ===
+Total Lines: 19
+  Code Lines: 15
+  Comment Lines: 3
+  Empty Lines: 1
+First 30 lines:
+  01: using NUnit.Framework;
+  02: 
+  03: namespace Shogun.Tests.Combat
+  04: {
+  05:     public class CombatTests
+  06:     {
+  07:         [Test]
+  08:         public void ExampleCombatTest()
+  09:         {
+  10:             // Arrange
+  11:             int a = 2;
+  12:             int b = 2;
+  13:             // Act
+  14:             int result = a + b;
+  15:             // Assert
+  16:             Assert.AreEqual(4, result);
+  17:         }
+  18:     }
+  19: } 
+
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Editor\ProjectExportTool.cs ===
+Total Lines: 548
+  Code Lines: 450
+  Comment Lines: 31
+  Empty Lines: 67
+First 30 lines:
+  01: #if UNITY_EDITOR
+  02: using UnityEditor;
+  03: using UnityEngine;
+  04: using UnityEditor.SceneManagement;
+  05: using System.IO;
+  06: using System.Text;
+  07: using System.Collections.Generic;
+  08: using System.Linq;
+  09: using UnityEditor.PackageManager;
+  10: 
+  11: namespace Shogun.Core
+  12: {
+  13:     public class ProjectExportTool
+  14:     {
+  15:         private static Application.LogCallback _logCallback;
+  16: 
+  17:         [MenuItem("Tools/Export Full Project Structure and Asset Details")]
+  18:         public static void ExportFullProject()
+  19:         {
+  20:             // --- Save original open scenes and active scene ---
+  21:             var originalOpenScenes = new List<SceneSetup>(EditorSceneManager.GetSceneManagerSetup());
+  22:             var originalActiveScene = EditorSceneManager.GetActiveScene();
+  23:             bool hadOpenScenes = originalOpenScenes.Count > 0;
+  24:             string activeScenePath = hadOpenScenes && originalActiveScene.IsValid() ? originalActiveScene.path : null;
+  25: 
+  26:             // Attach log callback to suppress known warnings/errors during export
+  27:             _logCallback = (condition, stackTrace, type) =>
+  28:             {
+  29:                 if (type == LogType.Warning && condition.Contains("Unloading the last loaded scene")) return;
+  30:                 if (type == LogType.Error && condition.Contains("More than one global light on layer Default")) return;
+  ... (truncated)
+
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Utilities\AppFrameRate.cs ===
+Total Lines: 24
+  Code Lines: 21
+  Comment Lines: 0
+  Empty Lines: 3
+First 30 lines:
+  01: using UnityEngine;
+  02: 
+  03: public class AppFrameRate : MonoBehaviour
+  04: {
+  05:     [Header("Set your desired FPS here")]
+  06:     public int targetFrameRate = 120;
+  07: 
+  08:     private static AppFrameRate instance;
+  09: 
+  10:     void Awake()
+  11:     {
+  12:         if (instance == null)
+  13:         {
+  14:             instance = this;
+  15:             Application.targetFrameRate = targetFrameRate;
+  16:             QualitySettings.vSyncCount = 0;
+  17:             DontDestroyOnLoad(gameObject);
+  18:         }
+  19:         else
+  20:         {
+  21:             Destroy(gameObject); // Ensure only one instance exists
+  22:         }
+  23:     }
+  24: }
+
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Utilities\SafeAreaHandler.cs ===
+Total Lines: 49
+  Code Lines: 40
+  Comment Lines: 1
+  Empty Lines: 8
+First 30 lines:
+  01: using UnityEngine;
+  02: 
+  03: [RequireComponent(typeof(RectTransform))]
+  04: public class SafeAreaHandler : MonoBehaviour
+  05: {
+  06:     private RectTransform _rectTransform;
+  07:     private Rect _lastSafeArea = new Rect(0, 0, 0, 0);
+  08:     private ScreenOrientation _lastOrientation = ScreenOrientation.Portrait;
+  09:     private Vector2Int _lastResolution = Vector2Int.zero;
+  10: 
+  11:     void Awake()
+  12:     {
+  13:         _rectTransform = GetComponent<RectTransform>();
+  14:         ApplySafeArea();
+  15:     }
+  16: 
+  17:     void Update()
+  18:     {
+  19:         if (Screen.safeArea != _lastSafeArea || 
+  20:             Screen.orientation != _lastOrientation ||
+  21:             new Vector2Int(Screen.width, Screen.height) != _lastResolution)
+  22:         {
+  23:             ApplySafeArea();
+  24:         }
+  25:     }
+  26: 
+  27:     private void ApplySafeArea()
+  28:     {
+  29:         Rect safeArea = Screen.safeArea;
+  30: 
+  ... (truncated)
+
+=== SCRIPT SUMMARY ===
+Total Scripts: 5
+Total Classes: 5
+Total Interfaces: 0
+Total Enums: 0
+
+Classes:
+  - CharacterTests (G:/Workspace/Unity/Projects/Shogun/Assets\Tests\Characters\CharacterTests.cs)
+  - CombatTests (G:/Workspace/Unity/Projects/Shogun/Assets\Tests\Combat\CombatTests.cs)
+  - ProjectExportTool (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Editor\ProjectExportTool.cs)
+  - AppFrameRate (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Utilities\AppFrameRate.cs)
+  - SafeAreaHandler (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Utilities\SafeAreaHandler.cs)
+

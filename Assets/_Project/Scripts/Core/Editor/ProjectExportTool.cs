@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.PackageManager;
 
 namespace Shogun.Core
 {
@@ -48,15 +49,25 @@ namespace Shogun.Core
                     WriteDirectory(rootPath, folderWriter, "");
                 }
 
-                // Prepare for prefab and scene exports
+                // Export project overview
+                ExportProjectOverview(exportFolder, projectRoot);
+
+                // Export package dependencies
+                ExportPackageDependencies(exportFolder);
+
+                // Export assembly definitions
+                ExportAssemblyDefinitions(exportFolder, rootPath);
+
+                // Prepare for asset exports
                 string[] prefabGUIDs = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets" });
                 string[] sceneGUIDs = AssetDatabase.FindAssets("t:Scene", new[] { "Assets" });
+                string[] scriptableObjectGUIDs = AssetDatabase.FindAssets("t:ScriptableObject", new[] { "Assets" });
 
                 List<string> summaryLines = new List<string>();
                 string assetsExportFolder = Path.Combine(exportFolder, "AssetExports");
                 Directory.CreateDirectory(assetsExportFolder);
 
-                int totalCount = prefabGUIDs.Length + sceneGUIDs.Length;
+                int totalCount = prefabGUIDs.Length + sceneGUIDs.Length + scriptableObjectGUIDs.Length;
                 int currentIndex = 0;
 
                 // Export Prefabs
@@ -73,6 +84,7 @@ namespace Shogun.Core
                         StringBuilder writer = new StringBuilder();
                         writer.AppendLine("=== Prefab Export ===");
                         writer.AppendLine($"Prefab Path: {path}");
+                        writer.AppendLine($"GUID: {guid}");
                         writer.AppendLine();
 
                         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
@@ -105,6 +117,7 @@ namespace Shogun.Core
                         StringBuilder writer = new StringBuilder();
                         writer.AppendLine("=== Scene Export ===");
                         writer.AppendLine($"Scene Path: {path}");
+                        writer.AppendLine($"GUID: {guid}");
                         writer.AppendLine();
 
                         // Open scene non-additively (single scene mode)
@@ -123,33 +136,47 @@ namespace Shogun.Core
                     currentIndex++;
                 }
 
-                // Export script snippets (first 20 lines of each .cs file)
-                string scriptSnippetsPath = Path.Combine(exportFolder, "ScriptSnippets.txt");
-                using (StreamWriter scriptWriter = new StreamWriter(scriptSnippetsPath, false))
+                // Export ScriptableObjects
+                foreach (var guid in scriptableObjectGUIDs)
                 {
-                    string[] scriptFiles = Directory.GetFiles(rootPath, "*.cs", SearchOption.AllDirectories);
-                    foreach (var scriptFile in scriptFiles)
+                    string path = AssetDatabase.GUIDToAssetPath(guid);
+                    string assetName = Path.GetFileNameWithoutExtension(path);
+                    string outputPath = Path.Combine(assetsExportFolder, $"ScriptableObject_{assetName}.txt");
+
+                    EditorUtility.DisplayProgressBar("Exporting Assets", $"ScriptableObject: {assetName}", (float)currentIndex / totalCount);
+
+                    try
                     {
-                        scriptWriter.WriteLine($"=== Script: {scriptFile.Replace(projectRoot + Path.DirectorySeparatorChar, "")} ===");
-                        string[] lines = File.ReadAllLines(scriptFile);
-                        int lineCount = Mathf.Min(20, lines.Length);
-                        for (int i = 0; i < lineCount; i++)
+                        StringBuilder writer = new StringBuilder();
+                        writer.AppendLine("=== ScriptableObject Export ===");
+                        writer.AppendLine($"Asset Path: {path}");
+                        writer.AppendLine($"GUID: {guid}");
+                        writer.AppendLine();
+
+                        ScriptableObject so = AssetDatabase.LoadAssetAtPath<ScriptableObject>(path);
+                        if (so != null)
                         {
-                            scriptWriter.WriteLine(lines[i]);
+                            DumpScriptableObjectDetailed(so, writer);
+                            File.WriteAllText(outputPath, writer.ToString());
+                            summaryLines.Add($"ScriptableObject: {path} => {outputPath}");
                         }
-                        if (lines.Length > 20)
-                        {
-                            scriptWriter.WriteLine("// Only the first 20 lines are shown. Reference the file for full code.");
-                        }
-                        scriptWriter.WriteLine();
                     }
+                    catch (System.Exception ex)
+                    {
+                        Debug.LogError($"Failed to export ScriptableObject {path}: {ex.Message}");
+                    }
+
+                    currentIndex++;
                 }
+
+                // Export enhanced script analysis
+                ExportScriptAnalysis(exportFolder, rootPath, projectRoot);
 
                 // Write summary
                 string summaryPath = Path.Combine(exportFolder, "_ExportSummary.txt");
                 File.WriteAllLines(summaryPath, summaryLines);
 
-                Debug.Log($"Full project export complete to {exportFolder}");
+                Debug.Log($"Enhanced project export complete to {exportFolder}");
             }
             finally
             {
@@ -169,6 +196,280 @@ namespace Shogun.Core
                             EditorSceneManager.SetActiveScene(reloadedScene);
                     }
                 }
+            }
+        }
+
+        private static void ExportProjectOverview(string exportFolder, string projectRoot)
+        {
+            string overviewPath = Path.Combine(exportFolder, "_ProjectOverview.txt");
+            using (StreamWriter writer = new StreamWriter(overviewPath, false))
+            {
+                writer.WriteLine("=== PROJECT OVERVIEW ===");
+                writer.WriteLine($"Unity Version: {Application.unityVersion}");
+                writer.WriteLine($"Project Name: {Application.productName}");
+                writer.WriteLine($"Company Name: {Application.companyName}");
+                writer.WriteLine($"Build Target: {EditorUserBuildSettings.activeBuildTarget}");
+                var buildTargetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
+                var namedBuildTarget = UnityEditor.Build.NamedBuildTarget.FromBuildTargetGroup(buildTargetGroup);
+                writer.WriteLine($"Scripting Backend: {PlayerSettings.GetScriptingBackend(namedBuildTarget)}");
+                writer.WriteLine($"API Compatibility Level: {PlayerSettings.GetApiCompatibilityLevel(namedBuildTarget)}");
+                writer.WriteLine($"Project Root: {projectRoot}");
+                writer.WriteLine();
+
+                // Export build settings
+                writer.WriteLine("=== BUILD SETTINGS ===");
+                writer.WriteLine($"Scenes in Build ({EditorBuildSettings.scenes.Length}):");
+                for (int i = 0; i < EditorBuildSettings.scenes.Length; i++)
+                {
+                    var scene = EditorBuildSettings.scenes[i];
+                    writer.WriteLine($"  [{i}] {scene.path} (Enabled: {scene.enabled})");
+                }
+                writer.WriteLine();
+
+                // Export quality settings
+                writer.WriteLine("=== QUALITY SETTINGS ===");
+                for (int i = 0; i < QualitySettings.names.Length; i++)
+                {
+                    writer.WriteLine($"  [{i}] {QualitySettings.names[i]} (Active: {i == QualitySettings.GetQualityLevel()})");
+                }
+                writer.WriteLine();
+            }
+        }
+
+        private static void ExportPackageDependencies(string exportFolder)
+        {
+            string packagesPath = Path.Combine(exportFolder, "_PackageDependencies.txt");
+            using (StreamWriter writer = new StreamWriter(packagesPath, false))
+            {
+                writer.WriteLine("=== PACKAGE DEPENDENCIES ===");
+                
+                var packages = Client.List();
+                while (!packages.IsCompleted) { }
+                
+                if (packages.Status == StatusCode.Success)
+                {
+                    foreach (var package in packages.Result)
+                    {
+                        writer.WriteLine($"Package: {package.name} v{package.version}");
+                        if (!string.IsNullOrEmpty(package.description))
+                            writer.WriteLine($"  Description: {package.description}");
+                        writer.WriteLine();
+                    }
+                }
+                else
+                {
+                    writer.WriteLine("Failed to retrieve package list");
+                }
+            }
+        }
+
+        private static void ExportAssemblyDefinitions(string exportFolder, string rootPath)
+        {
+            string asmdefPath = Path.Combine(exportFolder, "_AssemblyDefinitions.txt");
+            using (StreamWriter writer = new StreamWriter(asmdefPath, false))
+            {
+                writer.WriteLine("=== ASSEMBLY DEFINITIONS ===");
+                
+                string[] asmdefFiles = Directory.GetFiles(rootPath, "*.asmdef", SearchOption.AllDirectories);
+                foreach (var asmdefFile in asmdefFiles)
+                {
+                    writer.WriteLine($"Assembly Definition: {asmdefFile.Replace(rootPath + Path.DirectorySeparatorChar, "")}");
+                    
+                    try
+                    {
+                        string content = File.ReadAllText(asmdefFile);
+                        writer.WriteLine("Content:");
+                        writer.WriteLine(content);
+                        writer.WriteLine();
+                    }
+                    catch (System.Exception ex)
+                    {
+                        writer.WriteLine($"Error reading file: {ex.Message}");
+                        writer.WriteLine();
+                    }
+                }
+            }
+        }
+
+        private static void ExportScriptAnalysis(string exportFolder, string rootPath, string projectRoot)
+        {
+            string scriptAnalysisPath = Path.Combine(exportFolder, "ScriptAnalysis.txt");
+            using (StreamWriter writer = new StreamWriter(scriptAnalysisPath, false))
+            {
+                writer.WriteLine("=== SCRIPT ANALYSIS ===");
+                
+                string[] scriptFiles = Directory.GetFiles(rootPath, "*.cs", SearchOption.AllDirectories);
+                var scriptStats = new Dictionary<string, int>();
+                var classList = new List<string>();
+                var interfaceList = new List<string>();
+                var enumList = new List<string>();
+
+                foreach (var scriptFile in scriptFiles)
+                {
+                    string relativePath = scriptFile.Replace(projectRoot + Path.DirectorySeparatorChar, "");
+                    writer.WriteLine($"=== Script: {relativePath} ===");
+                    
+                    try
+                    {
+                        string[] lines = File.ReadAllLines(scriptFile);
+                        writer.WriteLine($"Total Lines: {lines.Length}");
+                        
+                        // Count lines by type
+                        int commentLines = 0;
+                        int codeLines = 0;
+                        int emptyLines = 0;
+                        
+                        foreach (string line in lines)
+                        {
+                            string trimmed = line.Trim();
+                            if (string.IsNullOrEmpty(trimmed))
+                                emptyLines++;
+                            else if (trimmed.StartsWith("//") || trimmed.StartsWith("/*") || trimmed.StartsWith("*"))
+                                commentLines++;
+                            else
+                                codeLines++;
+                        }
+                        
+                        writer.WriteLine($"  Code Lines: {codeLines}");
+                        writer.WriteLine($"  Comment Lines: {commentLines}");
+                        writer.WriteLine($"  Empty Lines: {emptyLines}");
+                        
+                        // Find classes, interfaces, enums
+                        for (int i = 0; i < Mathf.Min(50, lines.Length); i++)
+                        {
+                            string line = lines[i].Trim();
+                            if (line.StartsWith("public class ") || line.StartsWith("private class ") || line.StartsWith("class "))
+                            {
+                                string className = ExtractClassName(line);
+                                if (!string.IsNullOrEmpty(className))
+                                    classList.Add($"{className} ({relativePath})");
+                            }
+                            else if (line.StartsWith("public interface ") || line.StartsWith("private interface ") || line.StartsWith("interface "))
+                            {
+                                string interfaceName = ExtractInterfaceName(line);
+                                if (!string.IsNullOrEmpty(interfaceName))
+                                    interfaceList.Add($"{interfaceName} ({relativePath})");
+                            }
+                            else if (line.StartsWith("public enum ") || line.StartsWith("private enum ") || line.StartsWith("enum "))
+                            {
+                                string enumName = ExtractEnumName(line);
+                                if (!string.IsNullOrEmpty(enumName))
+                                    enumList.Add($"{enumName} ({relativePath})");
+                            }
+                        }
+                        
+                        // Show first 30 lines
+                        writer.WriteLine("First 30 lines:");
+                        int lineCount = Mathf.Min(30, lines.Length);
+                        for (int i = 0; i < lineCount; i++)
+                        {
+                            writer.WriteLine($"  {i + 1:D2}: {lines[i]}");
+                        }
+                        if (lines.Length > 30)
+                        {
+                            writer.WriteLine("  ... (truncated)");
+                        }
+                        writer.WriteLine();
+                    }
+                    catch (System.Exception ex)
+                    {
+                        writer.WriteLine($"Error reading file: {ex.Message}");
+                        writer.WriteLine();
+                    }
+                }
+                
+                // Summary
+                writer.WriteLine("=== SCRIPT SUMMARY ===");
+                writer.WriteLine($"Total Scripts: {scriptFiles.Length}");
+                writer.WriteLine($"Total Classes: {classList.Count}");
+                writer.WriteLine($"Total Interfaces: {interfaceList.Count}");
+                writer.WriteLine($"Total Enums: {enumList.Count}");
+                writer.WriteLine();
+                
+                if (classList.Count > 0)
+                {
+                    writer.WriteLine("Classes:");
+                    foreach (var className in classList)
+                        writer.WriteLine($"  - {className}");
+                    writer.WriteLine();
+                }
+                
+                if (interfaceList.Count > 0)
+                {
+                    writer.WriteLine("Interfaces:");
+                    foreach (var interfaceName in interfaceList)
+                        writer.WriteLine($"  - {interfaceName}");
+                    writer.WriteLine();
+                }
+                
+                if (enumList.Count > 0)
+                {
+                    writer.WriteLine("Enums:");
+                    foreach (var enumName in enumList)
+                        writer.WriteLine($"  - {enumName}");
+                    writer.WriteLine();
+                }
+            }
+        }
+
+        private static string ExtractClassName(string line)
+        {
+            // Simple extraction - could be improved with regex
+            if (line.Contains("class "))
+            {
+                int classIndex = line.IndexOf("class ") + 6;
+                int endIndex = line.IndexOf(' ', classIndex);
+                if (endIndex == -1) endIndex = line.IndexOf(':', classIndex);
+                if (endIndex == -1) endIndex = line.IndexOf('{', classIndex);
+                if (endIndex == -1) endIndex = line.Length;
+                
+                return line.Substring(classIndex, endIndex - classIndex).Trim();
+            }
+            return null;
+        }
+
+        private static string ExtractInterfaceName(string line)
+        {
+            if (line.Contains("interface "))
+            {
+                int interfaceIndex = line.IndexOf("interface ") + 10;
+                int endIndex = line.IndexOf(' ', interfaceIndex);
+                if (endIndex == -1) endIndex = line.IndexOf(':', interfaceIndex);
+                if (endIndex == -1) endIndex = line.IndexOf('{', interfaceIndex);
+                if (endIndex == -1) endIndex = line.Length;
+                
+                return line.Substring(interfaceIndex, endIndex - interfaceIndex).Trim();
+            }
+            return null;
+        }
+
+        private static string ExtractEnumName(string line)
+        {
+            if (line.Contains("enum "))
+            {
+                int enumIndex = line.IndexOf("enum ") + 5;
+                int endIndex = line.IndexOf(' ', enumIndex);
+                if (endIndex == -1) endIndex = line.IndexOf(':', enumIndex);
+                if (endIndex == -1) endIndex = line.IndexOf('{', enumIndex);
+                if (endIndex == -1) endIndex = line.Length;
+                
+                return line.Substring(enumIndex, endIndex - enumIndex).Trim();
+            }
+            return null;
+        }
+
+        private static void DumpScriptableObjectDetailed(ScriptableObject so, StringBuilder writer)
+        {
+            writer.AppendLine($"ScriptableObject: {so.name} (Type: {so.GetType().Name})");
+            var serializedObject = new SerializedObject(so);
+            var property = serializedObject.GetIterator();
+            bool first = true;
+            
+            while (property.NextVisible(first))
+            {
+                first = false;
+                if (property.name == "m_Script") continue;
+                writer.AppendLine($"    - {property.displayName}: {GetPropertyValue(property)}");
             }
         }
 

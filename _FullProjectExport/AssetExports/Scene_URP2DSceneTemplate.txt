@@ -1,5 +1,6 @@
 === Scene Export ===
 Scene Path: Assets/Settings/Scenes/URP2DSceneTemplate.unity
+GUID: 2cda990e2423bbf4892e6590ba056729
 
 - GameObject: Main Camera (Tag: MainCamera, Layer: Default, Active: True)
     * Transform

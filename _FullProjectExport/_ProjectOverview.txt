@@ -1,0 +1,21 @@
+=== PROJECT OVERVIEW ===
+Unity Version: 6000.1.9f1
+Project Name: Shogun
+Company Name: Gogo Productions
+Build Target: iOS
+Scripting Backend: IL2CPP
+API Compatibility Level: NET_Standard_2_0
+Project Root: G:/Workspace/Unity/Projects/Shogun/Assets/..
+
+=== BUILD SETTINGS ===
+Scenes in Build (1):
+  [0] Assets/_Project/Scenes/Dev/Dev_Sandbox.unity (Enabled: True)
+
+=== QUALITY SETTINGS ===
+  [0] Very Low (Active: False)
+  [1] Low (Active: False)
+  [2] Medium (Active: False)
+  [3] High (Active: True)
+  [4] Very High (Active: False)
+  [5] Ultra (Active: False)
+

@@ -1,0 +1,504 @@
+﻿Architectural Blueprint for a Scalable, Multiplayer Turn-Based RPG in Unity
+
+
+
+
+Part 1: Foundational Project and Code Structure
+
+
+The long-term success and maintainability of a complex project like 'Shogun: Flowers Fall in Blood' are determined not by the first feature implemented, but by the foundational structure established before that feature is even conceived. A disciplined approach to project organization, including folder structures, naming conventions, namespaces, and assembly definitions, is not mere administrative overhead. It is the physical and logical embodiment of the software architecture, serving as the first line of defense against technical debt, enforcing modularity, and accelerating team collaboration. For a mobile game intended for live operations (LiveOps), this foundation is non-negotiable.
+
+
+1.1 The Modern Unity Project Structure: Feature-First Organization
+
+
+The traditional method of organizing a Unity project is by asset type, with root folders such as /Scripts, /Prefabs, /Materials, and /Textures.1 While intuitive for small prototypes, this approach scales poorly and introduces significant friction in larger projects. As the number of features grows, the assets related to a single gameplay concept—such as a playable character—become scattered across the entire project directory. A developer needing to modify a character's logic, prefab, materials, and associated UI elements must navigate multiple, disparate folders, increasing cognitive load and reducing productivity.
+A more robust and scalable paradigm is the feature-based (or domain-based) structure. This methodology prioritizes the co-location of all assets related to a single, discrete feature. This is the approach implicitly recommended by Unity for large-scale projects and is exemplified in their production-grade samples like Boss Room.2
+The core principle is to create a project structure that reflects the logical components of the game itself. A recommended root-level structure within the Assets folder is as follows:
+
+
+
+
+
+
+Assets/
+├── _Project/
+│   ├── Art/
+│   ├── Audio/
+│   ├── Features/
+│   │   ├── Characters/
+│   │   ├── Combat/
+│   │   ├── Gacha/
+│   │   ├── UI/
+│   │   └──... (other features)
+│   ├── Scenes/
+│   ├── ScriptableObjects/
+│   └── Scripts/
+├── _ThirdParty/
+│   └──... (Asset Store packages, plugins)
+└── _Sandbox/
+   ├── DeveloperName1/
+   └── DeveloperName2/
+
+Breakdown of the Root Structure:
+* _Project/: This folder contains all first-party assets and code created specifically for 'Shogun'. The underscore prefix ensures it sorts to the top of the Project window for easy access.
+   * Features/: This is the heart of the feature-based organization. Each subfolder within Features represents a distinct domain of the game. For example, Features/Characters/ would contain subfolders for Scripts, Prefabs, Models, Animations, Materials, and ScriptableObjects that are all specific to the character system. This co-location dramatically simplifies development and refactoring.
+   * Scenes/: Contains all game scenes. For a large project, it is advisable to split levels into multiple smaller scenes and load them additively to reduce merge conflicts and improve collaborative workflows.4
+   * ScriptableObjects/: While feature-specific ScriptableObjects (SOs) should live within their respective Features folder, this root-level directory is reserved for global, cross-cutting SOs like GameSettings, EventChannels, or BuildConfiguration.
+   * Scripts/: This folder houses the C# scripts that form the architectural backbone of the project, such as core systems, managers, and utilities that are not tied to a single feature. The detailed structure of this folder is paramount and is covered in the next section.
+* _ThirdParty/: This folder is essential for isolating external assets, such as those from the Unity Asset Store or other SDKs.4 Many third-party packages have their own prescribed folder structures. Placing them here prevents their files from polluting the
+_Project directory, making it easier to update or replace them in the future without breaking internal dependencies.
+* _Sandbox/: This is a dedicated, non-production area for experimentation and testing.4 Each developer can have their own subfolder to prototype ideas without cluttering the main project or creating version control conflicts. Assets in this folder should never be referenced by production scenes or prefabs.
+Finally, establishing and documenting strict naming conventions is critical. All file and folder names should use PascalCase or camelCase and must avoid spaces, as these can cause issues with Unity's command-line tools and some version control systems.4 Consistency is key; a project style guide should be created and adhered to by all team members.
+
+
+1.2 Architecting the Scripts Directory with Namespaces and Assembly Definitions
+
+
+The logical architecture of the codebase is physically represented by the structure of the _Project/Scripts/ directory. This structure must be reinforced by two powerful C# and Unity features: namespaces and assembly definitions (.asmdef).
+The folder structure within Scripts should mirror the game's high-level architecture, separating core systems from gameplay features and creating clear boundaries between different layers of logic.
+Proposed Scripts Directory Tree:
+
+
+
+
+
+
+_Project/
+└── Scripts/
+   ├── ApplicationLifecycle/ (e.g., Bootstrapper, SceneLoader)
+   ├── Core/
+   │   ├── Architecture/ (e.g., EventBus, StateMachine, SO Architecture base classes)
+   │   ├── Data/ (e.g., Serializable structs, data containers)
+   │   └── Utilities/ (e.g., Math helpers, extension methods)
+   ├── Features/
+   │   ├── Combat/
+   │   │   ├── Core/ (e.g., CombatManager, TurnManager)
+   │   │   ├── Actions/ (e.g., SkillExecutor, ActionValidator)
+   │   │   └── Entities/ (e.g., CharacterLogic, StatusEffectController)
+   │   ├── Gacha/
+   │   │   └──...
+   │   └──... (other feature-specific logic)
+   ├── Input/ (e.g., InputManager, GestureRecognizer)
+   └── Networking/
+       ├── Core/ (e.g., NetworkManager, ConnectionManager)
+       ├── State/ (e.g., NetworkedGameState)
+       └── Transport/ (e.g., RPC handlers, custom serialization)
+
+Namespaces:
+Every script must belong to a namespace that directly corresponds to its folder path.4 This practice provides two primary benefits: it organizes code into logical groups, and it prevents class name collisions with third-party libraries. For example, a script located at
+_Project/Scripts/Features/Combat/Core/CombatManager.cs must be declared within the following namespace:
+
+
+C#
+
+
+
+
+namespace Shogun.Features.Combat.Core
+{
+   public class CombatManager
+   {
+       //...
+   }
+}
+
+This discipline makes the codebase's architecture explicit and self-documenting.
+Assembly Definitions (.asmdef):
+For a project of this complexity, assembly definitions are not optional; they are a requirement for a scalable and performant development environment. An .asmdef file is a Unity asset that defines a C# assembly (a compiled .dll file). By creating .asmdef files within the folder structure, the project is partitioned into smaller, manageable libraries.
+The process involves placing an .asmdef file in each major feature and system folder (e.g., _Project/Scripts/Core/Shogun.Core.asmdef, _Project/Scripts/Features/Combat/Shogun.Combat.asmdef). This provides two transformative advantages:
+   1. Drastically Reduced Compilation Times: Without assembly definitions, Unity treats the entire project as a single assembly (Assembly-CSharp.dll). Any script change forces a recompilation of every script in the project. With .asmdef files, changing a script in the Shogun.UI assembly only triggers a recompile of that specific assembly and any other assemblies that explicitly depend on it. This can reduce iteration times from minutes to seconds in a large project.
+   2. Compiler-Enforced Architecture: Assembly definitions allow the explicit definition of dependencies. For instance, the Shogun.Combat.asmdef can be configured to have a dependency on Shogun.Core.asmdef. This means code within the Combat assembly can use classes from Core. However, the reverse is not true unless explicitly defined. This prevents developers from accidentally creating "spaghetti code" where a low-level system like Core depends on a high-level system like Combat. This enforces architectural layers at the compiler level, a best practice used in large-scale projects to maintain clean dependencies.2
+The choice to adopt a feature-based folder structure is not merely an organizational preference; it is a foundational architectural commitment. This approach naturally leads to the co-location of all assets related to a single domain. This co-location, in turn, makes the creation of an assembly definition for that domain a logical and straightforward step. The .asmdef file then acts as an architectural gatekeeper, defining a public API for that feature and preventing undesirable dependencies. Thus, a seemingly simple decision about folder organization directly enables the use of powerful tools that enforce modularity, reduce compile times, and ensure the long-term health and scalability of the codebase, a critical consideration for any project planning for years of live service.
+________________
+
+
+Part 2: Core Architectural Patterns and Data Management
+
+
+Moving from the physical layout of the project to its logical design, the next step is to establish the core architectural patterns. These patterns will govern how data is stored, how systems communicate, and how game state is managed. For 'Shogun: Flowers Fall in Blood,' a game with complex interactions, data-driven design, and the need for both single-player and multiplayer modes, a combination of modern, decoupled patterns is essential. The selection of these patterns is a synergistic process; each one reinforces the others to create a robust, flexible, and maintainable whole.
+
+
+2.1 The ScriptableObject (SO) Architecture: Data as the Foundation
+
+
+In Unity, ScriptableObjects are lightweight data containers that can be saved as assets in the project. While often used for simple data storage, their true power lies in forming the bedrock of a comprehensive ScriptableObject Architecture. This approach, strongly advocated by Unity's own best practices, involves using SOs to define the immutable properties of every core entity in the game, effectively separating data from logic.7
+For 'Shogun,' every fundamental concept—a character, a skill, an item, an enemy type, or a gacha banner—should be represented by a unique ScriptableObject asset. This strategy offers several key advantages:
+   * Decoupling Data from Scenes: SOs exist as project assets, independent of any scene. This means character or item definitions can be created, modified, and referenced without ever opening a scene file, which is ideal for team collaboration and reducing merge conflicts.8
+   * Designer-Friendly Workflow: Game designers can create and balance new content by creating and editing SO assets directly in the Unity Inspector. They can define a new character's base stats, link their 3D model, assign their skills, and write their lore text, all without writing a single line of code.
+   * Data Reusability and Consistency: A single CharacterDefinition.asset can be referenced by multiple instances in the game. If a character's base attack power needs to be changed, the designer edits the one SO asset, and the change is automatically reflected everywhere that character appears. This eliminates the data duplication that occurs when such values are stored in MonoBehaviour prefabs.7
+The implementation requires a clear distinction between immutable definition and mutable instance:
+   * Definition (The "What"): This is the ScriptableObject asset (e.g., CharacterDefinition.cs). It contains all the static, unchanging data for a character: their name, ID, base stats (HP, attack, defense), a list of learnable SkillDefinition SOs, and references to their visual assets (model, icon, etc., preferably as Addressable strings). This data should be readonly or have private setters to enforce its immutability at runtime.
+   * Instance (The "Now"): This is a plain C# class (e.g., CharacterInstance.cs). It represents a specific character in a specific combat encounter or in the player's roster. It holds a reference to its corresponding CharacterDefinition SO and stores all mutable, runtime state: current HP, current mana, applied status effects, and cooldown timers.
+This separation of "what a thing is" from "what a thing is doing" is a cornerstone of scalable architecture.8 It ensures that the core logic operates on predictable data structures, while the runtime state is managed separately. Furthermore, game-wide configurations, such as damage calculation formulas, turn timers, or experience point curves, should also be stored in global
+Settings SOs (e.g., CombatSettings.asset), allowing for easy tweaking and balancing.
+
+
+2.2 Decoupling with a Global Event Bus (SO Event Channels)
+
+
+As a project grows, direct references between classes create a tightly coupled system often referred to as "spaghetti code." If the CombatManager needs to tell the UIManager to update a health bar, and also tell the AudioManager to play a sound, it must hold direct references to both. This makes the CombatManager brittle; adding a new system that needs to react to damage (like an AnalyticsManager) requires modifying the CombatManager itself.
+An event-driven architecture solves this problem by inverting the dependency. Systems communicate indirectly by raising and listening for globally accessible events, without needing to know about each other's existence.5 A highly effective and Unity-native way to implement this is using a pattern known as
+ScriptableObject Event Channels.9
+The implementation consists of two main components:
+   1. EventChannelSO.cs: A generic ScriptableObject that acts as the event itself. For an event that passes character and damage information, it might look like this:
+C#
+// File: EventChannelCharacterDamageSO.cs
+
+public class EventChannelCharacterDamageSO : ScriptableObject
+{
+   public System.Action<CharacterInstance, int> OnEventRaised;
+
+   public void Raise(CharacterInstance character, int damage)
+   {
+       OnEventRaised?.Invoke(character, damage);
+   }
+}
+
+   2. EventListener Components: MonoBehaviours that listen for these events.
+With this system, the workflow becomes completely decoupled:
+      * Creation: A designer or programmer creates an instance of this SO as an asset in the project, for example, OnCharacterDamaged.asset.
+      * Raising an Event: The system responsible for dealing damage (e.g., a SkillExecutor) holds a reference to OnCharacterDamaged.asset and calls eventChannel.Raise(targetCharacter, damageAmount). The SkillExecutor has no knowledge of the UI, audio, or any other system.
+      * Listening for an Event: The UIHealthBar component also holds a reference to the same OnCharacterDamaged.asset. In its OnEnable, it subscribes a method to the OnEventRaised action. The AudioManager does the same.
+Now, if an AnalyticsManager needs to track damage events, it simply needs to be given a reference to the OnCharacterDamaged.asset and subscribe its own listener. No existing code in the combat system needs to be changed. This pattern is exceptionally powerful for creating modular, testable, and easily extendable systems, making it a perfect fit for a LiveOps game where new features will be added continuously.
+
+
+2.3 Managing Game State: The Superiority of the Stack Machine Pattern
+
+
+Turn-based games are fundamentally about managing states. A simple game might get by with a basic Finite State Machine (FSM) with states like PlayerTurn, EnemyTurn, and BattleOver.10 However, 'Shogun's' design, which includes gesture-based skills and dynamic interactions, requires a more sophisticated approach. A simple FSM struggles with nested or interruptible logic. For example, if during the
+PlayerTurn state, the player activates a skill that requires a gesture-based Quick-Time Event (QTE), how is this sub-state managed?
+The ideal solution for this scenario is the Stack Machine pattern, also known as a Pushdown Automaton.11 Unlike a simple FSM which can only have one active state, a Stack Machine maintains a stack of states. The game loop only ever updates the state at the top of the stack. This allows for states to be "paused" by pushing a new state on top of them, and "resumed" when that new state is popped off.
+The flow of combat using a Stack Machine would be as follows 11:
+      1. Battle Start: The CombatManager pushes the initial state, SelectActionState, onto the empty stack. The stack is now: ``. The game waits for player input.
+      2. Player Action: The player selects a skill. The SelectActionState is popped and a PerformActionState is pushed. The stack is now: ``.
+      3. Interrupting Action (QTE): The PerformActionState begins executing the skill. The skill's SkillDefinition SO indicates it has a gesture-based QTE. The PerformActionState pushes a new GestureQTEState onto the stack. The stack is now: ``. The PerformActionState is now paused, frozen in time, while the GestureQTEState becomes active and handles the QTE input.
+      4. Resolving Interrupt: The player completes (or fails) the gesture. The GestureQTEState resolves the outcome, applies any bonuses, and then pops itself from the stack. The stack is now back to: ``. The PerformActionState resumes exactly where it left off, now aware of the QTE's result.
+      5. Action End: The skill animation and effects finish. The PerformActionState pops itself and pushes the next logical state, perhaps EnemyTurnState.
+This pattern elegantly handles nested and interruptible sequences, which are common in tactical RPGs (e.g., counter-attacks, triggered abilities, cinematic sequences). The following table provides a comparative analysis to justify this architectural choice.
+
+
+Feature
+	Simple FSM
+	Hierarchical FSM (HFSM)
+	Coroutine-based Logic
+	Stack Machine
+	Core Concept
+	A single active state with defined transitions.
+	States can contain sub-states, allowing for shared logic.
+	Uses yield return statements to create sequential, pausable logic.
+	A stack of states; only the top state is active.
+	Pros
+	Very simple to understand and implement.
+	Reduces state duplication (e.g., Idle and Moving can be sub-states of OnGround).
+	Intuitive for simple, linear sequences. Easy to read.
+	Excellent for interruptible, nested logic (QTEs, counters, menus). Cleanly separates state logic.
+	Cons
+	"State explosion" in complex games. Poor at handling nested or interruptible logic.
+	Can become complex to visualize and debug. Transitions can be rigid.
+	Hard to serialize state. Difficult to manage complex, branching logic. Prone to dangling references if not managed carefully.
+	Slightly higher conceptual overhead than a simple FSM. Requires a central manager for the stack.
+	Best For
+	Simple AI, basic UI menus, very simple game loops.
+	Character controllers with many related states (e.g., platformers).
+	Simple tutorials, cutscenes, or ability sequences without interruptions.
+	Dynamic turn-based combat, complex UI navigation (e.g., nested menus), any system with pausable/resumable states.
+	Scalability for Multiplayer
+	Low. Synchronizing a single state variable is easy, but the logic itself is not flexible enough for complex interactions.
+	Medium. Can be synchronized but adds complexity.
+	Very Low. Coroutine state is notoriously difficult to synchronize reliably across a network.
+	High. The entire state stack can be represented as a list of state IDs and serialized. The server can authoritatively push/pop states, which clients then replicate.
+	As the table demonstrates, while simpler options exist, the Stack Machine provides the necessary flexibility for the game's dynamic features and, crucially, offers a clear path to being synchronized in a multiplayer environment, making it the superior choice.11
+
+
+2.4 Input System for Gesture-Based Skills
+
+
+To power the gesture-based skills, a robust input system is required that can translate raw touch data into meaningful gameplay commands. For modern Unity projects, the legacy Input Manager is not recommended. The new Input System package is the correct choice, offering significantly more power, flexibility, and control.12
+Specifically for mobile touch, the EnhancedTouch API within the new Input System is the most suitable tool.13 Unlike the basic API which polls for touches, the
+EnhancedTouch API provides a more robust event-based system that tracks individual fingers throughout their entire lifecycle on the screen (began, moved, ended). This is essential for recognizing complex gestures.
+The architecture for input should be completely decoupled from the game logic:
+      1. InputManager.cs: A dedicated singleton or global manager responsible for handling all raw input. In its OnEnable, it will call EnhancedTouchSupport.Enable() and subscribe to the Touch.onFingerDown, Touch.onFingerMove, and Touch.onFingerUp events.
+      2. Gesture Recognition: The InputManager will contain logic to process the stream of touch data. For a swipe, it would record the startPosition on onFingerDown and the endPosition on onFingerUp. It would then calculate the vector and magnitude of the swipe.15 For a "hold" gesture, it would start a timer on
+onFingerDown and check it on onFingerUp.
+      3. Event Broadcasting: Crucially, upon recognizing a gesture, the InputManager does not perform any game action directly. Instead, it raises an event on a dedicated SO Event Channel, such as OnSwipeGestureDetected.Raise(swipeDirection) or OnHoldGestureCompleted.Raise(holdDuration).
+This decoupling is vital. The InputManager's sole responsibility is to translate messy, low-level hardware input into clean, high-level game events. The currently active state in the StateStackManager (e.g., the GestureQTEState) will be the one listening for these specific gesture events. This allows the same gesture to have different meanings in different contexts, without the InputManager needing to be aware of the game's state.
+The combination of these four patterns—SO Architecture, Event Bus, Stack Machine, and a decoupled Input System—creates a powerful and synergistic foundation. A designer can create a new skill as a SkillDefinition SO, specifying that it requires a "SwipeUp" gesture. The InputManager detects the raw swipe and broadcasts a generic OnSwipeGesture event. The StateStackManager's active GestureQTEState receives this event, checks the current skill's definition to see if the gesture matches, and then proceeds with the skill's execution. The skill itself then raises a generic OnDamageDealt event, which the UI and other systems respond to. At no point does any component hold a direct, hard-coded reference to another. This is the essence of a scalable, data-driven architecture that is primed for both single-player complexity and future multiplayer expansion.
+________________
+
+
+Part 3: Implementing the Turn-Based Combat Loop (Single-Player Focus)
+
+
+With the foundational architectural patterns established, this section details their concrete application in building the single-player combat system. This serves as a critical stepping stone, creating a robust and well-structured core that is designed from the outset for future multiplayer adaptation. The key principle guiding this phase is the strict separation of logic and presentation, a practice that will pay immense dividends when introducing networking.
+
+
+3.1 Anatomy of a Combat Encounter: The Managers
+
+
+Every combat encounter requires an orchestrator—a central authority responsible for setup, turn management, and victory/defeat conditions. This role is fulfilled by a CombatManager script, a common and effective pattern in Unity game development.16
+The CombatManager will be a MonoBehaviour residing in the main combat scene. Its primary responsibilities include:
+         * Encounter Setup: Upon starting combat, the CombatManager is responsible for initializing the battlefield. It will read data from an EncounterDefinition SO, which specifies the enemies to be spawned, their positions, and any environmental conditions. It then instantiates the necessary character prefabs (both player party members and enemies).
+         * State Management: The CombatManager owns and operates the StateStackManager detailed in Part 2. It initiates the combat loop by pushing the first state (e.g., BattleStartState, which might play an intro animation before transitioning to PlayerTurnState).
+         * Turn Progression: While individual turn logic is encapsulated within the states themselves (e.g., PlayerTurnState, EnemyTurnState), the CombatManager provides the context they need, such as the list of all active combatants.
+         * Win/Loss Condition Monitoring: The CombatManager subscribes to global events, such as OnCharacterDefeated, via the Event Bus. After each action, it checks if all player characters or all enemy characters have been defeated, and if so, it pushes the appropriate concluding state (VictoryState or DefeatState) onto the state stack.
+The CombatManager should be designed as a high-level conductor, delegating the "how" of specific actions to other systems. It manages the "what" and "when" of the battle's flow, ensuring that the core logic remains clean and focused.
+
+
+3.2 The Action & Skill System: Data-Driven Execution
+
+
+A hard-coded skill system, where each skill is its own class, is inflexible and requires programmer intervention for any change. A data-driven approach, leveraging the SO architecture, is vastly superior for a game intended for LiveOps.
+The core of this system is a SkillExecutor class. This class is not a MonoBehaviour; it is a plain C# utility class whose job is to take a SkillDefinition SO and execute the effects described within it. This design embodies the principle of composition over inheritance 18, where complex behaviors are built by combining simpler data components rather than creating a deep and rigid class hierarchy.
+The implementation would look like this:
+         1. Effect ScriptableObjects: Create a base EffectSO class and then derive specific effect types from it. Examples include:
+         * DamageEffectSO: Contains data for damage amount, element type, and whether it can crit.
+         * HealEffectSO: Contains data for healing amount.
+         * ApplyStatusEffectSO: Contains a reference to a StatusEffectDefinitionSO and the duration.
+         * MoveToTargetEffectSO: Contains data for movement speed and targeting.
+         2. SkillDefinitionSO: This SO, which defines a skill, will contain a list of these EffectSO assets. A "Fireball" skill might have a DamageEffectSO and an ApplyStatusEffectSO (for a "Burning" status). A "Charge" skill might have a MoveToTargetEffectSO followed by a DamageEffectSO.
+         3. SkillExecutor: When a character uses a skill, the PerformActionState will pass the chosen SkillDefinitionSO and the target(s) to the SkillExecutor. The SkillExecutor then simply iterates through the Effects list in the SO and applies each one in sequence.
+This architecture is incredibly powerful and flexible. Designers can create entirely new and complex skills by simply creating new SkillDefinition assets and combining the existing EffectSO building blocks in novel ways. If a new type of effect is needed (e.g., "Drain Mana"), a programmer only needs to create a new DrainManaEffectSO and the logic to handle it in the SkillExecutor. This new component can then be used by designers across hundreds of new or existing skills without any further code changes.
+
+
+3.3 Character Representation: Separating Logic and Presentation
+
+
+This is arguably the most critical architectural decision for ensuring a smooth transition from single-player to multiplayer. The data and logic of a character must be completely separated from its visual and audible representation in the game world.8 Failure to do this from the start often leads to a massive, time-consuming refactor when networking is introduced, as game logic tied to
+MonoBehaviour components like Animator or Transform cannot be easily run on a headless server.
+The solution is a strict Logic/View split:
+         * CharacterLogic (The "Brain"): This is a plain C# class (POCO - Plain Old C# Object). It contains no Unity-specific code (i.e., no using UnityEngine; if possible, except for Vector3 etc.).
+         * It holds a reference to the character's CharacterDefinition SO.
+         * It manages all authoritative runtime state: currentHealth, currentMana, a list of activeStatusEffects, position on the battlefield, etc.
+         * It contains the core gameplay methods: TakeDamage(int amount), UseMana(int amount), ApplyStatusEffect(StatusEffectDefinitionSO effect), CalculateDamageOutput().
+         * It exposes C# events (e.g., public event Action<int> OnHealthChanged;) for the View to subscribe to. It knows nothing about GameObjects, animations, or particle effects.
+         * CharacterView (The "Body"): This is a MonoBehaviour attached to the character's prefab in the scene.
+         * It holds a reference to an instance of a CharacterLogic class.
+         * Its sole responsibility is presentation. It subscribes to the events exposed by its CharacterLogic instance.
+         * When OnHealthChanged is invoked by the logic, the CharacterView updates the UI health bar and might play a "flinch" animation.
+         * When the logic dictates a move, the CharacterView is responsible for tweening the Transform to the new position.
+         * It handles all calls to Animator.SetTrigger(), ParticleSystem.Play(), and AudioSource.PlayOneShot().
+This separation creates a clean boundary. The entire single-player game can be played out using only the CharacterLogic and other logic classes, with the results printed to a console. This makes the core logic highly portable and testable.
+The reason this separation is paramount for multiplayer is that it enables code reuse and prepares for a headless server environment. In a single-player game, the CombatManager instantiates both a CharacterLogic object and a CharacterView prefab, and then links them together. In a multiplayer game, the server (which may have no GPU and cannot run visual code) will instantiate only the CharacterLogic objects. It will run the entire combat simulation using these lightweight, non-visual objects. Meanwhile, a client machine will instantiate only the CharacterView prefabs. These views will be linked not to a local CharacterLogic instance, but to a network proxy object that receives state updates from the server's authoritative CharacterLogic. By designing with this separation from day one, the core gameplay code becomes instantly reusable in a networked environment, saving months of refactoring effort and ensuring a much cleaner, more maintainable final product.
+________________
+
+
+Part 4: Architecting for Turn-Based Multiplayer with Netcode for GameObjects (NGO)
+
+
+Transitioning the well-structured single-player core to a multiplayer experience is the most complex technical challenge for 'Shogun'. This section provides a detailed blueprint for this process, using Unity's modern networking solution, Netcode for GameObjects (NGO). The architecture will be server-authoritative to ensure fairness and prevent cheating, and it will leverage the patterns established in the single-player foundation to maximize code reuse and maintainability.
+
+
+4.1 Network Topology and Authority Model
+
+
+The first decision in multiplayer architecture is choosing the network topology and authority model.
+         * Authority Model: For any game with competitive elements like PvP, a server-authoritative model is mandatory.19 In this model, the server is the single source of truth for all game state. A player's client can send requests (e.g., "I want to use this skill on this target"), but it cannot command the game state to change. The server validates the request, executes the action authoritatively, and then informs all clients of the new, updated state. This prevents a wide range of cheats, such as a client telling the server they have infinite health or killed an enemy with a single hit.
+         * Network Topology: Given the server-authoritative model, there are two primary topologies 19:
+         1. Dedicated Server: The game server runs on a dedicated machine in a data center. Players connect to this server. This is the most secure and reliable option but incurs hosting costs.
+         2. Listen Server (or Host): One of the players in the game session also acts as the server. Other players connect to this host. This is highly cost-effective and suitable for co-op and small-scale PvP.
+For 'Shogun: Flowers Fall in Blood,' a Listen Server topology is the recommended starting point. It is well-supported by NGO, has no initial hosting costs, and is sufficient for the game's turn-based nature. The architecture designed here will also be compatible with a transition to dedicated servers in the future, should the game's success warrant it.
+
+
+4.2 Adapting the Architecture: The Boss Room Paradigm
+
+
+Unity's flagship multiplayer sample, Boss Room, provides an excellent, production-ready template for structuring an NGO project.2 The key takeaway from
+Boss Room is the clear, disciplined separation of server-side and client-side responsibilities, even within the same logical component.
+The Logic/View separation established in Part 3 is the prerequisite for this. Now, we extend that concept to the manager classes. For any MonoBehaviour that needs to behave differently on the server versus the client, we will split its implementation:
+         * Component Splitting: A single CombatManager GameObject in the scene will have two scripts attached: CombatManager_Server.cs and CombatManager_Client.cs.
+         * CombatManager_Server: This script contains all the authoritative logic. It manages the server-side StateStackManager, validates player actions received via RPCs, and updates the networked game state. It will have a check in its Awake() or Start() method: if (!IsServer) { this.enabled = false; return; }.
+         * CombatManager_Client: This script handles client-side concerns. It receives state updates from the server, submits player input as RPCs, and triggers purely visual/cosmetic effects. It will have a corresponding check: if (!IsClient) { this.enabled = false; return; }.
+This pattern ensures that at runtime, only the relevant code executes on any given machine (server, client, or host which is both).
+         * Shared Code: The fundamental, abstract game logic—such as the damage calculation formulas or the SkillExecutor class—should remain in plain C# classes within a shared assembly (e.g., Shogun.Combat.Core). This code is portable and can be called by both CombatManager_Server (for authoritative execution) and CombatManager_Client (for predictive or cosmetic calculations, if needed). This application of domain-based assemblies is a core principle of the Boss Room architecture.2
+
+
+4.3 Synchronizing Turn-Based State: The Holy Grail
+
+
+The turn-based nature of 'Shogun' simplifies networking significantly compared to a real-time action game. We do not need complex client-side prediction or constant NetworkTransform synchronization for movement.21 The challenge shifts from synchronizing continuous state to ensuring the
+transactional integrity of discrete turns. Each turn is a self-contained transaction that must be securely processed.
+The flow of a single networked turn is as follows, using NGO's core features:
+         1. State Synchronization (NetworkVariable): The CombatManager_Server holds the authoritative game state using NetworkVariable<T>. For example:
+         * public NetworkVariable<int> CurrentTurnOwnerID = new();
+         * public NetworkList<CharacterNetworkState> CharacterStates = new(); (where CharacterNetworkState is a custom struct implementing INetworkSerializable that holds HP, mana, status effects, etc.).
+         * When the server modifies the value of these variables (e.g., CurrentTurnOwnerID.Value = nextPlayerID;), NGO automatically and reliably synchronizes the new value to all connected clients.
+         * The CombatManager_Client and CharacterView scripts on each client subscribe to the OnValueChanged event of these variables to update the presentation layer (e.g., highlight the active character, update health bars).
+         2. Action Submission (``): When a player whose turn it is decides on an action, their local CombatManager_Client does not execute it. Instead, it packages the player's intent into a request and sends it to the server using a Server RPC.
+C#
+// In CombatManager_Client.cs
+public void SubmitPlayerAction(int skillID, int targetIDs)
+{
+   SubmitActionServerRpc(skillID, targetIDs);
+}
+
+// Called by a client, runs on the server
+private void SubmitActionServerRpc(int skillID, int targetIDs, ServerRpcParams rpcParams = default)
+{
+   //... server-side validation and execution happens here...
+}
+
+         3. Action Validation and Execution (Server): The SubmitActionServerRpc method is executed only on the server. The server's CombatManager_Server receives this call. It performs critical validation:
+            * Is it actually this player's turn (rpcParams.Receive.SenderClientId must match the owner of the current turn)?
+            * Is the requested skill valid and does the player have enough resources (mana)?
+            * Are the targets valid?
+            * If the action is valid, the server uses the shared SkillExecutor to run the logic against its authoritative CharacterLogic instances. This updates the server's internal state.
+            4. Broadcasting the New State: As the server's logic updates the CharacterStates NetworkList and other NetworkVariables, NGO automatically sends these changes to all clients. The clients' OnValueChanged callbacks fire, and their CharacterViews update to reflect the new state of the game (e.g., health bars decrease, characters die). This is the primary mechanism for state synchronization.
+            5. One-Off Visuals (``): For events that are not part of the persistent state but need to be visualized by everyone (e.g., a specific "skill impact" particle effect or a screen shake), the server can issue a Client RPC.
+C#
+// In CombatManager_Server.cs, after executing a skill
+PlaySkillFXClientRpc(skillID, targetIDs);
+
+
+private void PlaySkillFXClientRpc(int skillID, int targetIDs)
+{
+   // This code runs on ALL clients
+   // Find the CharacterViews and play the appropriate particle effects/sounds
+}
+
+This clear, transactional flow—Client Request -> Server Validate -> Server Execute -> Server Broadcast State—is the cornerstone of a secure and robust turn-based multiplayer system.
+
+
+4.4 Reconciling Single-Player and Multiplayer Logic
+
+
+To avoid maintaining two entirely separate codebases, the architecture must be designed to share as much logic as possible. The Logic/View split is the first step. The second is the use of interfaces and dependency injection.
+               1. Define Interfaces: Create interfaces for the core systems.
+C#
+public interface ICombatManager
+{
+   void StartCombat(EncounterDefinition encounter);
+   void SubmitPlayerAction(int skillID, int targetIDs);
+}
+
+               2. Create Implementations:
+                  * SinglePlayerCombatManager.cs implements ICombatManager. Its SubmitPlayerAction method executes the skill logic directly.
+                  * MultiplayerCombatManager.cs also implements ICombatManager. Its SubmitPlayerAction method calls the SubmitActionServerRpc to send the request to the server. This class would contain both the _Server and _Client logic, managed internally.
+                  3. Inject Dependencies: A high-level GameManager or Bootstrapper will be responsible for creating the correct implementation based on the selected game mode. When the player starts a single-player game, it instantiates the SinglePlayerCombatManager. When they start a multiplayer game, it instantiates the MultiplayerCombatManager.
+The rest of the game's code (e.g., the UI) is written to interact with the ICombatManager interface, not a concrete class. This way, the UI doesn't need to know or care whether the game is single-player or multiplayer. This approach ensures maximum code reuse and keeps the two modes from diverging into unmaintainable, separate projects.
+________________
+
+
+Part 5: Designing for Live Operations and Gacha Mechanics
+
+
+A modern mobile free-to-play RPG like 'Shogun' is not a "ship and forget" product; it is a live service. The architecture must be designed from the ground up to support continuous content delivery, remote configuration, and secure, server-driven monetization systems like gacha. This requires a seamless integration between the Unity client and backend services, with a clear division of authority to maintain security and flexibility.
+
+
+5.1 The Addressable Asset System as a Foundation for LiveOps
+
+
+The single most important technology for enabling LiveOps is the Addressable Asset System. Its purpose is to decouple assets from the main game build, allowing them to be loaded dynamically at runtime from either local storage or a remote server.22 This is the mechanism that allows for adding new characters, skills, items, and events to the game without requiring the player to download a full application update from the App Store or Google Play.
+For 'Shogun,' the integration of Addressables is fundamental:
+                  * All Dynamic Content is Addressable: Every ScriptableObject that defines game content—CharacterDefinition, SkillDefinition, ItemDefinition, GachaBannerDefinition—must be marked as "Addressable" in the Unity Editor. The same applies to their associated assets, such as 3D models, textures, and audio clips.
+                  * Strategic Grouping: Addressable assets are organized into groups, which are then built into AssetBundles. The grouping strategy should align with the content release plan.22 For example, a group named
+Characters_Launch would contain all the initial characters and be shipped with the base game (marked as "Local Build Path"). A future update might add a group named Event_SummerFestival_2025, containing new characters and items for a limited-time event. This group would be built to a "Remote Build Path."
+                  * Content Delivery Pipeline: These remote AssetBundles are uploaded to a Content Delivery Network (CDN). Unity's Cloud Content Delivery (CCD) service is a fully integrated solution for this purpose.23 When the game starts, it can check with the CCD service for an updated content catalog. If a new catalog is available, the game can download the new or updated AssetBundles in the background, making the new content available to the player seamlessly.
+By using Addressables for all content definitions, the game becomes a lightweight client that dynamically pulls its content from a server, giving the development team the power to update, balance, and expand the game world on a daily or weekly basis.
+
+
+5.2 Integrating with Unity Gaming Services (UGS)
+
+
+Building, deploying, and maintaining a custom backend for a live service game is a massive undertaking. Unity Gaming Services (UGS) provides a suite of managed backend services that handle the most common requirements, allowing the development team to focus on gameplay and content.23 For 'Shogun,' the following UGS products are essential:
+                     * Authentication: Provides secure player sign-in, supporting anonymous accounts for new players and linking to platform-specific accounts (Apple, Google) for account persistence.25
+                     * Cloud Save: A secure key-value store for all player-specific persistent data. This is where the player's roster of characters, inventory of items, and virtual currency balances will be stored. All data is stored on the cloud, preventing loss and enabling play across multiple devices.23
+                     * Cloud Code: Allows for the execution of server-side C# or JavaScript logic in a secure, serverless environment. This is critical for any action that must be authoritative and cheat-proof but does not belong on the game server, such as processing a gacha pull or validating a purchase.25
+                     * Economy: A service for defining and managing all virtual currencies, items, and in-app purchases. It allows for remote configuration of prices, store contents, and special offers, which can be updated without a client change.23
+                     * Lobby and Relay: These services facilitate the multiplayer connectivity itself. Lobby helps players find each other and form groups, while Relay solves the networking problem of connecting players who are behind home routers (NAT traversal), which is essential for the Listen Server topology.3
+
+
+5.3 A Scalable Gacha System Architecture
+
+
+The gacha mechanic is a core monetization driver and must be designed with security as the highest priority. The client can never be trusted to determine the outcome of a gacha pull. The architecture must enforce a secure, server-authoritative flow.
+The implementation combines Addressables, UGS Economy, and Cloud Code:
+                     1. Banner Definition (Client-side Presentation): A GachaBannerDefinition.asset (an Addressable SO) is created for each gacha banner. It contains the banner's artwork, name, description, cost, and a visual representation of the possible rewards. These are downloaded by the client to display the available gacha pools in the UI.
+                     2. Player Initiates Pull (Client Request): When the player taps the "pull" button, the client does not perform any randomization. It makes a call to a Cloud Code script, passing the ID of the banner they are pulling from. For example: await CloudCodeService.Instance.CallEndpointAsync("performGachaPull", new { bannerId = "summer_banner_2025" });
+                     3. Authoritative Roll (Server-side Cloud Code): The performGachaPull script executes securely on Unity's servers. Its logic is as follows:
+a. It authenticates the player making the call.
+b. It retrieves the banner's cost and the player's currency balance from the UGS Economy or Cloud Save service.
+c. It validates that the player has enough currency. If so, it deducts the cost.
+d. It performs the weighted random roll to determine the reward. The probabilities for this roll are defined securely within the Cloud Code script or fetched from a secure remote configuration, not from the client-side SO.
+e. It adds the ID of the rewarded character or item to the player's inventory using the Cloud Save API.
+                     4. Result Notification (Client Update): The Cloud Code script returns a success message to the client, including the ID of the item they won. The client then triggers the elaborate presentation sequence (e.g., an animation revealing the new character). The client is simply visualizing a result that has already been authoritatively determined and saved to their account.
+This architecture ensures that the gacha system is completely cheat-proof. The client's role is limited to presentation and initiating requests, while all logic involving currency and rewards is handled in a secure, server-controlled environment.
+This leads to a clear and necessary "triangle of trust"—a tripartite division of authority that is the cornerstone of a secure and scalable LiveOps architecture. Each vertex of the triangle has a distinct and non-overlapping domain of authority:
+                        1. The Client's Authority: The client is authoritative over player intent and nothing more. Its sole purpose is to gather input from the player (taps, gestures) and to present the game state that it is given by the other two authorities. It is fundamentally untrustworthy.
+                        2. The Game Server's Authority (Listen Server/Host): The game server is authoritative over the session-based game state. It decides whose turn it is in combat, whether a move is valid, calculates damage, and determines the immediate outcome of in-game actions. It has no authority over a player's permanent inventory or currency. Its authority ends when the combat session ends.
+                        3. The Backend's Authority (UGS): The backend services are authoritative over the player's persistent data and economy. It is the ultimate source of truth for what items a player owns, how much currency they have, and their overall account progression.
+A critical architectural mistake would be to conflate these roles. For instance, allowing the game server (the host player) to handle a gacha pull would be a massive security flaw, as a malicious host could modify their client's code to grant themselves any item. By strictly offloading all persistent and economic transactions to a secure, neutral backend like UGS Cloud Code 25, this entire class of vulnerabilities is eliminated. Understanding and enforcing this tripartite division of authority is essential for the long-term integrity and commercial viability of 'Shogun: Flowers Fall in Blood.'
+________________
+
+
+Part 6: Conclusion and Recommended Open-Source References
+
+
+The architectural blueprint detailed in this report provides a comprehensive, professional, and maintainable framework for the development of 'Shogun: Flowers Fall in Blood.' It is a system designed not just for initial launch but for a long and successful life as a live service game. By adhering to these principles, the development team can build a product that is both compelling for players and scalable for the business.
+
+
+6.1 Synthesis of the Architectural Vision
+
+
+The proposed architecture is a holistic system where each component reinforces the others to achieve the project's goals. The key pillars of this vision are:
+                        * Structural Discipline: A feature-based project structure, enforced by namespaces and assembly definitions, creates a modular foundation that accelerates development and prevents architectural decay.
+                        * Data-Driven Design: A ScriptableObject architecture places game data at the forefront, empowering designers and decoupling game logic from hard-coded values. This is the key to flexible and rapid content creation.
+                        * Decoupled Communication: A global Event Bus built with ScriptableObject Event Channels ensures that systems can communicate without direct dependencies, leading to a codebase that is easier to maintain, test, and extend.
+                        * Dynamic State Management: A Stack Machine for combat state provides the necessary power and flexibility to handle the game's dynamic, interruptible skill system, while also offering a clear path for network synchronization.
+                        * Preparation for Multiplayer: The strict separation of Logic and Presentation from day one is the single most important principle that enables the reuse of core gameplay code in both single-player and multiplayer modes, drastically reducing redundant work.
+                        * Tripartite Authority: A clear division of responsibility between the Client (intent), the Game Server (session state), and the Backend (persistent data) creates a secure and robust framework for both fair gameplay and cheat-proof monetization.
+Together, these principles form a cohesive strategy that directly addresses the initial request for a professional, scalable, and maintainable architecture. It provides a clear path for building the complex single-player experience, a robust methodology for implementing turn-based multiplayer, and a secure foundation for live operations and gacha mechanics.
+
+
+6.2 Annotated Project and Article Citations
+
+
+To further aid in the implementation of this architecture, the following public resources are highly recommended for detailed study. They provide practical examples and deeper dives into the core concepts discussed.
+                        * Unity's Boss Room Project 2
+                        * Description: A complete, production-grade co-op RPG sample from Unity. It is the definitive reference for building a game with Netcode for GameObjects.
+                        * Focus Areas:
+                        * Architecture: Pay close attention to the use of domain-based assembly definitions (.asmdef) to separate systems.
+                        * Client/Server Separation: Analyze how components like Action and Health are split into server and client logic, often within the same GameObject. Study the ConnectionManager and game state machines to understand the application lifecycle.
+                        * Action System: The way Boss Room handles player abilities using ScriptableObjects and RPCs is a direct, albeit real-time, parallel to the skill system proposed for 'Shogun'.
+                        * Angus-Fan's TurnBasedStrategyGame on GitHub 16
+                        * Description: A simple, open-source turn-based strategy game. It provides a clear and understandable implementation of the fundamental mechanics.
+                        * Focus Areas:
+                        * Core Logic: Use this project as a reference for the basic logic of a turn-based system: grid management (tileMapScript), unit representation (UnitScript), and turn orchestration (gameManagerScript, battleManagerScript).
+                        * Starting Point: This project represents a solid foundation for the single-player logic. It can be used as a practical base upon which to layer the more advanced patterns discussed in this report, such as the Stack Machine and the Logic/View separation.
+                        * GameDev StackExchange: "How to structure a dynamic turn-based system" 11
+                        * Description: This Q&A answer provides the most concise and effective explanation of the Stack Machine pattern for turn-based combat.
+                        * Focus Areas:
+                        * Conceptual Understanding: This is the theoretical key to the dynamic combat flow. The step-by-step example of pushing and popping states for attacks, QTEs, and death animations should be studied carefully.
+                        * Implementation Guide: Implement the StateStackManager and the individual state classes (IState) almost exactly as described in this answer to manage the combat loop.
+                        * Unity Documentation: Addressables and Cloud Content Delivery (CCD) 22
+                        * Description: The official documentation is the ultimate source of truth for Unity's LiveOps content pipeline.
+                        * Focus Areas:
+                        * Planning: The best practices guide for Addressables 22 is required reading. It emphasizes the importance of planning the content grouping strategy from day one.
+                        * Workflow: Understand the workflow of creating Addressable groups, building them to local and remote paths, and using a service like CCD 24 to host and deliver remote content. This knowledge is essential for designing the game's long-term update strategy.
+Works cited
+                        1. How to structure your Unity project (best practice tips) - Game Dev ..., accessed on July 2, 2025, https://gamedevbeginner.com/how-to-structure-your-unity-project-best-practice-tips/
+                        2. Boss Room architecture - Unity Multiplayer, accessed on July 2, 2025, https://docs-multiplayer.unity3d.com/netcode/current/learn/bossroom/bossroom-architecture/
+                        3. Getting started with Boss Room - Unity Multiplayer, accessed on July 2, 2025, https://docs-multiplayer.unity3d.com/netcode/current/learn/bossroom/bossroom/
+                        4. Best practices for organizing your Unity project | Unity, accessed on July 2, 2025, https://unity.com/how-to/organizing-your-project
+                        5. Structuring Your Unity Code For Production - Important Best Practices | Codementor, accessed on July 2, 2025, https://www.codementor.io/@mody/structuring-your-unity-code-for-production-important-best-practices-25bmix6f3q
+                        6. Unity-Technologies/com.unity.multiplayer.samples.coop: A small-scale cooperative game sample built on the new, Unity networking framework to teach developers about creating a similar multiplayer game. - GitHub, accessed on July 2, 2025, https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop
+                        7. Advanced programming and code architecture - Unity, accessed on July 2, 2025, https://unity.com/how-to/advanced-programming-and-code-architecture
+                        8. How to architect code as your project scales | Avoiding technical ..., accessed on July 2, 2025, https://unity.com/how-to/how-architect-code-your-project-scales
+                        9. Learn to Build an Advanced Event Bus | Unity Architecture - YouTube, accessed on July 2, 2025, https://www.youtube.com/watch?v=4_DTAnigmaQ
+                        10. How to make a turn based rpg in unity : r/gamedev - Reddit, accessed on July 2, 2025, https://www.reddit.com/r/gamedev/comments/rixeeo/how_to_make_a_turn_based_rpg_in_unity/
+                        11. unity - How to structure a dynamic turn based system? - Game ..., accessed on July 2, 2025, https://gamedev.stackexchange.com/questions/205701/how-to-structure-a-dynamic-turn-based-system
+                        12. Mobile device input - Unity - Manual, accessed on July 2, 2025, https://docs.unity3d.com/Manual//MobileInput.html
+                        13. Touch support | Input System | 1.0.2 - Unity - Manual, accessed on July 2, 2025, https://docs.unity3d.com/Packages/com.unity.inputsystem@1.0/manual/Touch.html
+                        14. How to use TOUCH with the NEW Input System in Unity - YouTube, accessed on July 2, 2025, https://www.youtube.com/watch?v=4MOOitENQVg
+                        15. Unity Quick Tip — Implementing a Simple Screen Swipe on Mobile using the New Input System - Luke Duckett, accessed on July 2, 2025, https://lukeduckett.medium.com/unity-quick-tip-implementing-simple-screen-swipes-on-mobile-using-the-new-input-system-b20123f6f04b
+                        16. Angus-Fan/TurnBasedStrategyGame: My Unity project for a ... - GitHub, accessed on July 2, 2025, https://github.com/Angus-Fan/TurnBasedStrategyGame
+                        17. Turn based strategy game architecture? : r/Unity3D - Reddit, accessed on July 2, 2025, https://www.reddit.com/r/Unity3D/comments/9w4m93/turn_based_strategy_game_architecture/
+                        18. SIMPLE Tip For Better Unity Game Architecture - YouTube, accessed on July 2, 2025, https://www.youtube.com/watch?v=mAfpfUYhpAs
+                        19. Network topologies | Unity Multiplayer, accessed on July 2, 2025, https://docs-multiplayer.unity3d.com/netcode/current/terms-concepts/network-topologies/
+                        20. For anyone that made a multiplayer game with networking, how did you architect it? - Reddit, accessed on July 2, 2025, https://www.reddit.com/r/Unity3D/comments/1evvp77/for_anyone_that_made_a_multiplayer_game_with/
+                        21. Build a production-ready multiplayer game with Netcode for GameObjects - Unity, accessed on July 2, 2025, https://unity.com/blog/games/build-a-production-ready-multiplayer-game-with-netcode-for-gameobjects
+                        22. Addressables: Planning and best practices - Unity, accessed on July 2, 2025, https://unity.com/blog/engine-platform/addressables-planning-and-best-practices
+                        23. LiveOps Game Backend Solutions & Player Retention - Unity, accessed on July 2, 2025, https://unity.com/solutions/gaming-services/continuous-game-improvements
+                        24. Unity Cloud Content Delivery - Unity - Manual, accessed on July 2, 2025, https://docs.unity3d.com/2020.1/Documentation/Manual/UnityCCD.html
+                        25. LiveOps Game Development Tools & Player Insights - Unity, accessed on July 2, 2025, https://unity.com/solutions/gaming-services/player-insights
+                        26. Unity networking architecture for games like EU4 or Civ 6, using mirror or netcode - Reddit, accessed on July 2, 2025, https://www.reddit.com/r/Unity3D/comments/qfo0br/unity_networking_architecture_for_games_like_eu4/

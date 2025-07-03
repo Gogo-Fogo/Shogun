@@ -1,5 +1,6 @@
 === Prefab Export ===
 Prefab Path: Assets/_Project/Prefabs/System/SystemRoot.prefab
+GUID: 0c7407354d53eb64492d70b1ecca5de7
 
 - GameObject: SystemRoot (Tag: Untagged, Layer: Default, Active: True)
     * Transform

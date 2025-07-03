@@ -1,0 +1,8 @@
+=== ScriptableObject Export ===
+Asset Path: Assets/InputSystem_Actions.inputactions
+GUID: 2bcd2660ca9b64942af0de543d8d7100
+
+ScriptableObject: InputSystem_Actions (Type: InputActionAsset)
+    - Action Maps: (complex value)
+    - Control Schemes: (complex value)
+    - Is Project Wide: False

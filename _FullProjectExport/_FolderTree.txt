@@ -5,15 +5,35 @@ Assets/
         Lit2DSceneTemplate.scenetemplate
         Renderer2D.asset
         UniversalRP.asset
+    Tests/
+        Characters/
+            CharacterTests.cs
+        Combat/
+            CombatTests.cs
+        README.md
     _Project/
         AddressableAssetsData/
         Art/
         Audio/
         Features/
             Characters/
+                Art/
+                Prefabs/
+                    SharedSceneRoot.prefab
+                    SystemRoot.prefab
+                ScriptableObjects/
             Combat/
+                Art/
+                Prefabs/
+                ScriptableObjects/
             Gacha/
+                Art/
+                Prefabs/
+                ScriptableObjects/
             UI/
+                Art/
+                Prefabs/
+                ScriptableObjects/
         Prefabs/
             System/
                 SharedSceneRoot.prefab

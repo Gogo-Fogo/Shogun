@@ -1,0 +1,13 @@
+=== ScriptableObject Export ===
+Asset Path: Assets/Settings/Lit2DSceneTemplate.scenetemplate
+GUID: d03ed43fc9d8a4f2e9fa70c1c7916eb9
+
+ScriptableObject: Lit2DSceneTemplate (Type: SceneTemplateAsset)
+    - Template Scene: URP2DSceneTemplate
+    - Template Name: Lit 2D (URP)
+    - Description: Contains an orthographic camera and a Global Light 2D. Works with the 2D Renderer in Universal RP.
+    - Preview: Lit 2D
+    - Dependencies: (complex value)
+    - Template Pipeline: null
+    - Badge: null
+    - Add To Defaults: True

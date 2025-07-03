@@ -1,0 +1,6 @@
+=== ScriptableObject Export ===
+Asset Path: Assets/DefaultVolumeProfile.asset
+GUID: 3f9215ea0144899419cfbc0957140d3f
+
+ScriptableObject: DefaultVolumeProfile (Type: VolumeProfile)
+    - Components: (complex value)

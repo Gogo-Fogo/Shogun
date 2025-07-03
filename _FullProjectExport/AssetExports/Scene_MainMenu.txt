@@ -1,5 +1,6 @@
 === Scene Export ===
 Scene Path: Assets/_Project/Scenes/Core/MainMenu.unity
+GUID: 740f3a73898e756478a1c7f7b71f45a3
 
 - GameObject: SystemRoot (Tag: Untagged, Layer: Default, Active: True)
     * Transform

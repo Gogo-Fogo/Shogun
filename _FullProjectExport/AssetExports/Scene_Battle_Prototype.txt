@@ -1,5 +1,6 @@
 === Scene Export ===
 Scene Path: Assets/_Project/Scenes/Battle/Battle_Prototype.unity
+GUID: 31939e7541db9024cb62a6acd3a09af8
 
 - GameObject: SystemRoot (Tag: Untagged, Layer: Default, Active: True)
     * Transform
