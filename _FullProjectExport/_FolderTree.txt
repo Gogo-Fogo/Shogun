@@ -1,4 +1,6 @@
 Assets/
+    samurai_ninja_assets/
+        craftpix-net-123681-free-samurai-pixel-art-sprite-sheets/
     Settings/
         Scenes/
             URP2DSceneTemplate.unity
@@ -10570,6 +10572,1061 @@ Assets/
         Features/
             Characters/
                 Art/
+                    Animations/
+                    Licenses/
+                        Font.txt
+                        Licens.txt
+                    Portraits/
+                    References/
+                    SourceFiles/
+                        PSD/
+                            Samurai_Archer_Spritelist.psd
+                            Samurai_Commander_Spritelist.psd
+                            Samurai_Spritelist.psd
+                    Sprites/
+                        Animals/
+                            Samurai Panda 2D Pixel Art/
+                                Samurai Panda 2D Pixel Art/
+                                    Samurai Panda 2D Pixel Art/
+                                        Sprites/
+                                            ATTACK 1.png
+                                            ATTACK 2.png
+                                            ATTACK 3.png
+                                            DASH ATTACK.png
+                                            DASH.png
+                                            DEATH.png
+                                            DEFEND.png
+                                            HURT.png
+                                            IDLE.png
+                                            JUMP.png
+                                            RUN.png
+                                        License.txt
+                                        preview.gif
+                            Wolf Samurai 2D Pixel Art v1.1/
+                                Wolf Samurai 2D Pixel Art v1.1/
+                                    Sprites/
+                                        without_outline/
+                                            ATTACK 1.png
+                                            ATTACK 2.png
+                                            ATTACK 3.png
+                                            DASH ATTACK.png
+                                            DEATH.png
+                                            HURT.png
+                                            IDLE.png
+                                            JUMP.png
+                                            RUN.png
+                                        with_outline/
+                                            ATTACK 1.png
+                                            ATTACK 2.png
+                                            ATTACK 3.png
+                                            DASH ATTACK.png
+                                            DEATH.png
+                                            HURT.png
+                                            IDLE.png
+                                            JUMP.png
+                                            RUN.png
+                                    License.txt
+                                    Preview.png
+                        Demons/
+                            Demon Samurai 2D Pixel Art/
+                                Demon Samurai 2D Pixel Art/
+                                    Demon Samurai 2D Pixel Art/
+                                        Sprites/
+                                            ATTACK 1 (FLAMING SWORD).png
+                                            ATTACK 1.png
+                                            ATTACK 2 (FLAMING SWORD).png
+                                            ATTACK 2.png
+                                            ATTACK 3 (FLAMING SWORD).png
+                                            ATTACK 3.png
+                                            DEATH.png
+                                            DEFEND.png
+                                            HURT (FLAMING SWORD).png
+                                            HURT.png
+                                            IDLE (FLAMING SWORD).png
+                                            IDLE.png
+                                            JUMP ATTACK (FLAMING SWORD).png
+                                            JUMP ATTACK.png
+                                            RUN (FLAMING SWORD).png
+                                            RUN.png
+                                            SHOUT.png
+                                        License.txt
+                                        preview.gif
+                            Executioner 2D Pixel Art/
+                                Executioner 2D Pixel Art/
+                                    Sprites/
+                                        ATTACK 1.png
+                                        ATTACK 2.png
+                                        DEATH.png
+                                        HURT.png
+                                        IDLE.png
+                                        WALK.png
+                                    License.txt
+                                    Preview.gif
+                            FrozenDemon/
+                                FrozenDemon/
+                                    Attack1.png
+                                    Attack2.png
+                                    Death.png
+                                    Fall.png
+                                    Idle.png
+                                    Jump.png
+                                    Run.png
+                                    Take hit.png
+                            GhostSentinel/
+                                GhostSentinel/
+                                    Attack1.png
+                                    Attack2.png
+                                    Death.png
+                                    Fall.png
+                                    Idle.png
+                                    Jump.png
+                                    Run.png
+                                    Take hit.png
+                            RedDemon/
+                                RedDemon/
+                                    Attack1.png
+                                    Attack2.png
+                                    Death.png
+                                    Fall.png
+                                    Idle.png
+                                    Jump.png
+                                    Run.png
+                                    Take hit.png
+                        Ninja/
+                            craftpix-net-407836-free-ninja-sprite-sheets-pixel-art/
+                                Kunoichi/
+                                    Attack_1.png
+                                    Attack_2.png
+                                    Cast.png
+                                    Dead.png
+                                    Eating.png
+                                    Hurt.png
+                                    Idle.png
+                                    Jump.png
+                                    Run.png
+                                    Spine.png
+                                    Walk.png
+                                Ninja_Monk/
+                                    Attack_1.png
+                                    Attack_2.png
+                                    Blade.png
+                                    Cast.png
+                                    Dead.png
+                                    Hurt.png
+                                    Idle.png
+                                    Jump.png
+                                    Kunai.png
+                                    Run.png
+                                    Walk.png
+                                Ninja_Peasant/
+                                    Attack_1.png
+                                    Attack_2.png
+                                    Dart.png
+                                    Dead.png
+                                    Disguise.png
+                                    Hurt.png
+                                    Idle.png
+                                    Jump.png
+                                    Run.png
+                                    Shot.png
+                                    Walk.png
+                                PSD/
+                                    Gif_Previev.psd
+                                    Kunoichi_Previev.psd
+                                    Kunoichi_spritelist.psd
+                                    Ninja_Monk_Previev.psd
+                                    Ninja_Monk_spritelist.psd
+                                    Ninja_Pack_Previev.psd
+                                    Ninja_Peasant_Previev.psd
+                                    Ninja_Peasant_spritelist.psd
+                                COUPON.pdf
+                                COUPON.png
+                                Font.txt
+                                Licens.txt
+                            FreeNinja/
+                                FreeNinja/
+                                    YellowNinja/
+                                        yellowNinja - attack.png
+                                        yellowNinja - Death.png
+                                        yellowNinja - hit.png
+                                        yellowNinja - idle.png
+                                        yellowNinja - walk.png
+                                        yellowNinja - Whitehit.png
+                            ShadowNinja/
+                                ShadowNinja/
+                                    Attack1.png
+                                    Attack2.png
+                                    Death.png
+                                    Fall.png
+                                    Idle.png
+                                    Jump.png
+                                    Run.png
+                                    Take hit.png
+                        Samurai/
+                            EmeraldProtector/
+                                EmeraldProtector/
+                                    Attack1.png
+                                    Attack2.png
+                                    Death.png
+                                    Fall.png
+                                    Idle.png
+                                    Jump.png
+                                    Run.png
+                                    Take Hit.png
+                            FULL_Samurai 2D Pixel Art v1.2/
+                                FULL_Samurai 2D Pixel Art v1.2/
+                                    Sprites/
+                                        AIR ATTACK.png
+                                        ATTACK 1.png
+                                        ATTACK 2.png
+                                        ATTACK 3.png
+                                        CLIMBING.png
+                                        DASH.png
+                                        DEATH.png
+                                        DEFEND.png
+                                        HEALING NO EFFECT.png
+                                        HEALING.png
+                                        HURT.png
+                                        IDLE.png
+                                        JUMP-FALL.png
+                                        JUMP-START.png
+                                        JUMP-TRANSITION.png
+                                        JUMP.png
+                                        RUN.png
+                                        SPECIAL ATTACK.png
+                                        THROW.png
+                                        WALK.png
+                                        WALL CONTACT.png
+                                        WALL JUMP.png
+                                        WALL SLIDE.png
+                                    License.txt
+                                    Preview.png
+                                    shuriken.png
+                            GandalfHardcore Samurai/
+                                GandalfHardcore Samurai/
+                                    Samurai 640x640 Portrait1.png
+                                    Samurai 640x640 Portrait2.png
+                                    Samurai 640x640 Portrait3.png
+                                    Samurai 640x640 Portrait4.png
+                                    Samurai 640x640 Portrait5.png
+                                    Samurai 640x640 Portrait6.png
+                                    Samurai 640x640 Portrait7.png
+                                    Samurai 640x640 Portrait8.png
+                                    Samurai 64x64 Portrait1.png
+                                    Samurai 64x64 Portrait2.png
+                                    Samurai 64x64 Portrait3.png
+                                    Samurai 64x64 Portrait4.png
+                                    Samurai 64x64 Portrait5.png
+                                    Samurai 64x64 Portrait6.png
+                                    Samurai 64x64 Portrait7.png
+                                    Samurai 64x64 Portrait8.png
+                                    Samurai Colors.png
+                                    Samurai Sheet black.png
+                                    Samurai Sheet blue.png
+                                    Samurai Sheet brown.png
+                                    Samurai Sheet green.png
+                                    Samurai Sheet purple.png
+                                    Samurai Sheet red.png
+                                    Samurai Sheet white.png
+                                    Samurai Sheet yellow.png
+                                    Samurai.ase
+                            Martial Hero 2/
+                                Martial Hero 2/
+                                    Sprites/
+                                        Attack1.png
+                                        Attack2.png
+                                        Death.png
+                                        Fall.png
+                                        Idle.png
+                                        Jump.png
+                                        Run.png
+                                        Take hit.png
+                                    License.txt
+                            MidnightSlash/
+                                MidnightSlash/
+                                    Attack1.png
+                                    Attack2.png
+                                    Death.png
+                                    Fall.png
+                                    Idle.png
+                                    Jump.png
+                                    Run.png
+                                    Take Hit.png
+                            NeonPhantom/
+                                NeonPhantom/
+                                    Attack1.png
+                                    Attack2.png
+                                    Death.png
+                                    Fall.png
+                                    Idle.png
+                                    Jump.png
+                                    Run.png
+                                    Take Hit.png
+                            NightBorne/
+                                NightBorne.png
+                                NightBorne_attack.gif
+                                NightBorne_death..gif
+                                NightBorne_hurt.gif
+                                NightBorne_idle.gif
+                                NightBorne_run.gif
+                            Samurai/
+                                Attack_1.png
+                                Attack_2.png
+                                Attack_3.png
+                                Dead.png
+                                Hurt.png
+                                Idle.png
+                                Jump.png
+                                Protection.png
+                                Run.png
+                                Walk.png
+                            Samurai #2 2D Pixel Art/
+                                Samurai #2 2D Pixel Art/
+                                    Sprites/
+                                        ATTACK1.png
+                                        ATTACK2.png
+                                        ATTACK3.png
+                                        DASH ATTACK.png
+                                        DASH.png
+                                        DEATH.png
+                                        DEFENCE.png
+                                        DUST EFFECT.png
+                                        HURT.png
+                                        IDLE.png
+                                        JUMP.png
+                                        RUN.png
+                                        SHURIKEN.png
+                                        THROW.png
+                                    License.txt
+                                    Preview.png
+                            Samurai #3 2D Pixel Art v1.2/
+                                Samurai #3 2D Pixel Art v1.2/
+                                    Samurai #3 2D Pixel Art v1.2/
+                                        Sprites/
+                                            ATTACK 1.png
+                                            ATTACK 2.png
+                                            ATTACK 3.png
+                                            DASH ATTACK.png
+                                            DASH.png
+                                            DEATH.png
+                                            DEFEND.png
+                                            HURT.png
+                                            IDLE.png
+                                            JUMP.png
+                                            RUN.png
+                                            STRONG ATTACK.png
+                                            THROW.png
+                                        License.txt
+                                        preview.gif
+                                        shuriken.png
+                            Samurai #4 2D Pixel Art v1.1/
+                                Samurai #4 2D Pixel Art v1.1/
+                                    Samurai #4 2D Pixel Art v1.1/
+                                        Sprites/
+                                            ATTACK 1.png
+                                            ATTACK 2.png
+                                            ATTACK 3.png
+                                            DEATH.png
+                                            DEFEND.png
+                                            HURT.png
+                                            IDLE.png
+                                            JUMP.png
+                                            RUN.png
+                                            THROW.png
+                                        License.txt
+                                        Preview.gif
+                                        shuriken.png
+                            Samurai #5 2D Pixel Art v1.1/
+                                Samurai #5 2D Pixel Art v1.1/
+                                    Samurai #5 2D Pixel Art v1.1/
+                                        Sprites/
+                                            ATTACK 1.png
+                                            ATTACK 2.png
+                                            ATTACK 3.png
+                                            DEATH.png
+                                            DEFEND.png
+                                            HURT.png
+                                            IDLE.png
+                                            JUMP.png
+                                            RUN.png
+                                        License.txt
+                                        preview.gif
+                            Samurai #6 2D Pixel Art v1.1/
+                                Samurai #6 2D Pixel Art v1.1/
+                                    Samurai #6 2D Pixel Art v1.1/
+                                        Sprites/
+                                            ATTACK 1.png
+                                            ATTACK 2.png
+                                            ATTACK 3.png
+                                            DEATH.png
+                                            DEFEND.png
+                                            HURT.png
+                                            IDLE.png
+                                            JUMP.png
+                                            RUN.png
+                                        License.txt
+                                        preview.gif
+                            Samurai_Archer/
+                                Arrow.png
+                                Attack_1.png
+                                Attack_2.png
+                                Attack_3.png
+                                Dead.png
+                                Hurt.png
+                                Idle.png
+                                Jump.png
+                                Run.png
+                                Shot.png
+                                Walk.png
+                            Samurai_Commander/
+                                Attack_1.png
+                                Attack_2.png
+                                Attack_3.png
+                                Dead.png
+                                Hurt.png
+                                Idle.png
+                                Jump.png
+                                Protect.png
+                                Run.png
+                                Walk.png
+                            TheDarkRedOne/
+                                TheDarkRedOne/
+                                    Attack1.png
+                                    Attack2.png
+                                    Death.png
+                                    Fall.png
+                                    Idle.png
+                                    Jump.png
+                                    Run.png
+                                    Take Hit.png
+                            Warrior-in-Red Free/
+                                Idle-Sheet.png
+                        Special/
+                            Cyber samurai girl/
+                                Cyber samurai girl Attack/
+                                    1.png
+                                    10.png
+                                    11.png
+                                    12.png
+                                    13.png
+                                    2.png
+                                    3.png
+                                    4.png
+                                    5.png
+                                    6.png
+                                    7.png
+                                    8.png
+                                    9.png
+                                Cyber samurai girl Attack 2/
+                                    1.png
+                                    10.png
+                                    11.png
+                                    12.png
+                                    2.png
+                                    3.png
+                                    4.png
+                                    5.png
+                                    6.png
+                                    7.png
+                                    8.png
+                                    9.png
+                                Cyber samurai girl Dead/
+                                    1.png
+                                    2.png
+                                    3.png
+                                    4.png
+                                    5.png
+                                    6.png
+                                    7.png
+                                    8.png
+                                Cyber samurai girl Dead 2/
+                                    1.png
+                                    2.png
+                                    3.png
+                                    4.png
+                                    5.png
+                                    6.png
+                                    7.png
+                                    8.png
+                                Cyber samurai girl Dead 3/
+                                    1.png
+                                    2.png
+                                    3.png
+                                    4.png
+                                    5.png
+                                    6.png
+                                    7.png
+                                    8.png
+                                Cyber samurai girl Idle/
+                                    1.png
+                                    2.png
+                                    3.png
+                                    4.png
+                                    5.png
+                                    6.png
+                                    7.png
+                                    8.png
+                                Cyber samurai girl Jump/
+                                    1.png
+                                    10.png
+                                    2.png
+                                    3.png
+                                    4.png
+                                    5.png
+                                    6.png
+                                    7.png
+                                    8.png
+                                    9.png
+                                Cyber samurai girl Run/
+                                    1.png
+                                    2.png
+                                    3.png
+                                    4.png
+                                    5.png
+                                    6.png
+                                    7.png
+                                    8.png
+                                    9.png
+                                Cyber samurai girl Ultimate/
+                                    1.png
+                                    10.png
+                                    11.png
+                                    12.png
+                                    13.png
+                                    14.png
+                                    15.png
+                                    16.png
+                                    17.png
+                                    18.png
+                                    19.png
+                                    2.png
+                                    20.png
+                                    21.png
+                                    3.png
+                                    4.png
+                                    5.png
+                                    6.png
+                                    7.png
+                                    8.png
+                                    9.png
+                            Fantasy Martial Characters/
+                                Fantasy Martial Characters/
+                                    Character_1/
+                                        individual frames/
+                                            Attack1/
+                                                Attack1_1.png
+                                                Attack1_2.png
+                                                Attack1_3.png
+                                                Attack1_4.png
+                                            Attack2/
+                                                Attack2_1.png
+                                                Attack2_2.png
+                                                Attack2_3.png
+                                                Attack2_4.png
+                                            Death/
+                                                Death1.png
+                                                Death2.png
+                                                Death3.png
+                                                Death4.png
+                                            Fall/
+                                                Fall1.png
+                                                Fall2.png
+                                            Hit/
+                                                Hit1.png
+                                                Hit2.png
+                                                Hit3.png
+                                                Hit4.png
+                                            Idle/
+                                                idle1.png
+                                                idle2.png
+                                                idle3.png
+                                                idle4.png
+                                            Jump/
+                                                Jump1.png
+                                                Jump2.png
+                                            Run/
+                                                Run1.png
+                                                Run2.png
+                                                Run3.png
+                                                Run4.png
+                                                Run5.png
+                                                Run6.png
+                                                Run7.png
+                                                Run8.png
+                                        sprite sheets/
+                                            Attack1.png
+                                            Attack2.png
+                                            Death.png
+                                            Fall.png
+                                            Hit.png
+                                            Idle.png
+                                            Jump.png
+                                            Run.png
+                                    Character_2/
+                                        individual frames/
+                                            Attack1/
+                                                Attack1_1.png
+                                                Attack1_2.png
+                                                Attack1_3.png
+                                                Attack1_4.png
+                                            Attack2/
+                                                Attack2_1.png
+                                                Attack2_2.png
+                                                Attack2_3.png
+                                                Attack2_4.png
+                                            Death/
+                                                Death1.png
+                                                Death2.png
+                                                Death3.png
+                                                Death4.png
+                                            Fall/
+                                                Fall1.png
+                                                Fall2.png
+                                            Hit/
+                                                Hit1.png
+                                                Hit2.png
+                                                Hit3.png
+                                                Hit4.png
+                                            Idle/
+                                                Idle1.png
+                                                Idle2.png
+                                                Idle3.png
+                                                Idle4.png
+                                            Jump/
+                                                Jump1.png
+                                                Jump2.png
+                                            Run/
+                                                Run1.png
+                                                Run2.png
+                                                Run3.png
+                                                Run4.png
+                                                Run5.png
+                                                Run6.png
+                                                Run7.png
+                                                Run8.png
+                                        sprite sheets/
+                                            Attack1.png
+                                            Attack2.png
+                                            Death.png
+                                            Fall.png
+                                            Hit.png
+                                            Idle.png
+                                            Jump.png
+                                            Run.png
+                                    Character_3/
+                                        individual frames/
+                                            Attack1/
+                                                Attack1_1.png
+                                                Attack1_2.png
+                                                Attack1_3.png
+                                                Attack1_4.png
+                                            Attack2/
+                                                Attack2_1.png
+                                                Attack2_2.png
+                                                Attack2_3.png
+                                                Attack2_4.png
+                                            Death/
+                                                Death1.png
+                                                Death2.png
+                                                Death3.png
+                                                Death4.png
+                                            Fall/
+                                                Fall1.png
+                                                Fall2.png
+                                            Hit/
+                                                Hit1.png
+                                                Hit2.png
+                                                Hit3.png
+                                                Hit4.png
+                                            Idle/
+                                                Idle1.png
+                                                Idle2.png
+                                                Idle3.png
+                                                Idle4.png
+                                            Jump/
+                                                Jump1.png
+                                                Jump2.png
+                                            Run/
+                                                Run1.png
+                                                Run2.png
+                                                Run3.png
+                                                Run4.png
+                                                Run5.png
+                                                Run6.png
+                                                Run7.png
+                                                Run8.png
+                                        sprite sheets/
+                                            Attack1.png
+                                            Attack2.png
+                                            Death.png
+                                            Fall.png
+                                            Hit.png
+                                            Idle.png
+                                            Jump.png
+                                            Run.png
+                                    Character_4/
+                                        individual frames/
+                                            Attack1/
+                                                Attack1_1.png
+                                                Attack1_2.png
+                                                Attack1_3.png
+                                                Attack1_4.png
+                                            Attack2/
+                                                Attack2_1.png
+                                                Attack2_2.png
+                                                Attack2_3.png
+                                                Attack2_4.png
+                                            Death/
+                                                Death1.png
+                                                Death2.png
+                                                Death3.png
+                                                Death4.png
+                                            Fall/
+                                                Fall1.png
+                                                Fall2.png
+                                            Hit/
+                                                Hit1.png
+                                                Hit2.png
+                                                Hit3.png
+                                                Hit4.png
+                                            Idle/
+                                                Idle1.png
+                                                Idle2.png
+                                                Idle3.png
+                                                Idle4.png
+                                            Jump/
+                                                Jump1.png
+                                                Jump2.png
+                                            Run/
+                                                Run1.png
+                                                Run2.png
+                                                Run3.png
+                                                Run4.png
+                                                Run5.png
+                                                Run6.png
+                                                Run7.png
+                                                Run8.png
+                                        sprite sheets/
+                                            Attack1.png
+                                            Attack2.png
+                                            Death.png
+                                            Fall.png
+                                            Hit.png
+                                            Idle.png
+                                            Jump.png
+                                            Run.png
+                                    Character_5/
+                                        individual frames/
+                                            Attack1/
+                                                Attack1_1.png
+                                                Attack1_2.png
+                                                Attack1_3.png
+                                                Attack1_4.png
+                                            Attack2/
+                                                Attack2_1.png
+                                                Attack2_2.png
+                                                Attack2_3.png
+                                                Attack2_4.png
+                                            Death/
+                                                Death1.png
+                                                Death2.png
+                                                Death3.png
+                                                Death4.png
+                                            Fall/
+                                                Fall1.png
+                                                Fall2.png
+                                            Hit/
+                                                Hit1.png
+                                                Hit2.png
+                                                Hit3.png
+                                                Hit4.png
+                                            Idle/
+                                                Idle1.png
+                                                Idle2.png
+                                                Idle3.png
+                                                Idle4.png
+                                            Jump/
+                                                Jump1.png
+                                                Jump2.png
+                                            Run/
+                                                Run1.png
+                                                Run2.png
+                                                Run3.png
+                                                Run4.png
+                                                Run5.png
+                                                Run6.png
+                                                Run7.png
+                                                Run8.png
+                                        sprite sheets/
+                                            Attack1.png
+                                            Attack2.png
+                                            Attack3.png
+                                            Death.png
+                                            Fall.png
+                                            Hit.png
+                                            Idle.png
+                                            Jump.png
+                                            Run.png
+                                    Character_6/
+                                        individual frames/
+                                            Attack1/
+                                                Attack1_1.png
+                                                Attack1_2.png
+                                                Attack1_3.png
+                                                Attack1_4.png
+                                            Attack2/
+                                                Attack2_1.png
+                                                Attack2_2.png
+                                                Attack2_3.png
+                                                Attack2_4.png
+                                            Death/
+                                                Death1.png
+                                                Death2.png
+                                                Death3.png
+                                                Death4.png
+                                            Fall/
+                                                Fall1.png
+                                                Fall2.png
+                                            Hit/
+                                                Hit1.png
+                                                Hit2.png
+                                                Hit3.png
+                                                Hit4.png
+                                            Idle/
+                                                Idle1.png
+                                                Idle2.png
+                                                Idle3.png
+                                                Idle4.png
+                                            Jump/
+                                                Jump1.png
+                                                Jump2.png
+                                            Run/
+                                                Run1.png
+                                                Run2.png
+                                                Run3.png
+                                                Run4.png
+                                                Run5.png
+                                                Run6.png
+                                                Run7.png
+                                                Run8.png
+                                        sprite sheets/
+                                            Attack1.png
+                                            Attack2.png
+                                            Death.png
+                                            Fall.png
+                                            Hit.png
+                                            Idle.png
+                                            Jump.png
+                                            Run.png
+                                    All Characters.png
+                            Fantasy Martial Characters 3/
+                                Fantasy Martial Characters 3/
+                                    Character_1/
+                                        attack1.png
+                                        attack2.png
+                                        Death.png
+                                        Fall.png
+                                        Idle.png
+                                        Jump.png
+                                        Run.png
+                                        Take Hit - white silhouette.png
+                                        Take Hit.png
+                                    Character_2/
+                                        Attack1.png
+                                        Attack2.png
+                                        Death.png
+                                        Fall.png
+                                        Idle.png
+                                        Jump.png
+                                        Run.png
+                                        Take Hit - white silhouette.png
+                                        Take Hit.png
+                                    Character_3/
+                                        Attack1.png
+                                        Attack2.png
+                                        Death.png
+                                        Fall.png
+                                        Idle.png
+                                        Jump.png
+                                        Run.png
+                                        Take Hit - white silhouette.png
+                                        Take Hit.png
+                                    Character_4/
+                                        Attack1.png
+                                        Attack2.png
+                                        Death.png
+                                        Fall.png
+                                        Idle.png
+                                        Jump.png
+                                        Run.png
+                                        Take Hit - white silhouette.png
+                                        Take Hit.png
+                                    Character_5/
+                                        Attack1.png
+                                        Attack2.png
+                                        Death.png
+                                        Fall.png
+                                        Idle.png
+                                        Jump.png
+                                        Run.png
+                                        Take Hit - white silhouette.png
+                                        Take Hit.png
+                                    Character_6/
+                                        Attack1.png
+                                        Attack2.png
+                                        Death.png
+                                        Fall.png
+                                        Idle.png
+                                        Jump.png
+                                        Run.png
+                                        Take Hit - white silhouette.png
+                                        Take Hit.png
+                                    Characters preview.png
+                                    License.txt
+                            Fantasy Martial Characters1.1/
+                                Fantasy Martial Characters1.1/
+                                    Character_1/
+                                        individual frames/
+                                            Attack3_1.png
+                                            Attack3_2.png
+                                            Attack3_3.png
+                                            Attack3_4.png
+                                        sprite sheets/
+                                            Attack3.png
+                                    Character_2/
+                                        individual frames/
+                                            Attack3_1.png
+                                            Attack3_2.png
+                                            Attack3_3.png
+                                            Attack3_4.png
+                                        sprite sheets/
+                                            Attack3.png
+                                    Character_3/
+                                        individual frames/
+                                            Attack3_1.png
+                                            Attack3_2.png
+                                            Attack3_3.png
+                                            Attack3_4.png
+                                        sprite sheets/
+                                            Attack3.png
+                                    Character_4/
+                                        individual frames/
+                                            Attack3_1.png
+                                            Attack3_2.png
+                                            Attack3_3.png
+                                            Attack3_4.png
+                                        sprite sheets/
+                                            Attack3.png
+                                    Character_5/
+                                        individual frames/
+                                            Attack3_1.png
+                                            Attack3_2.png
+                                            Attack3_3.png
+                                            Attack3_4.png
+                                        sprite sheets/
+                                            Attack3.png
+                                    Character_6/
+                                        individual frames/
+                                            Attack3_1.png
+                                            Attack3_2.png
+                                            Attack3_3.png
+                                            Attack3_4.png
+                                        sprite sheets/
+                                            Attack3.png
+                            Producto/
+                                Producto/
+                                    Samurai busto 1 .jpg
+                                    Tileset samurai division.png
+                                    Tileset samurai.png
+                        Yokai/
+                            craftpix-net-605776-free-yokai-pixel-art-character-sprites/
+                                Karasu_tengu/
+                                    Attack_1.png
+                                    Attack_2.png
+                                    Attack_3.png
+                                    Dead.png
+                                    Hurt.png
+                                    Idle.png
+                                    Idle_2.png
+                                    Jump.png
+                                    Run.png
+                                    Walk.png
+                                Kitsune/
+                                    Attack_1.png
+                                    Attack_2.png
+                                    Attack_3.png
+                                    Dead.png
+                                    Fire_1.png
+                                    Fire_2.png
+                                    Hurt.png
+                                    Idle.png
+                                    Idle_2.png
+                                    Jump.png
+                                    Run.png
+                                    Walk.png
+                                PSD/
+                                    Karasu_tengu_Spritelist.psd
+                                    Kitcune_Spritelist.psd
+                                    Yamabushi_tengu_Spritelist.psd
+                                Yamabushi_tengu/
+                                    Attack_1.png
+                                    Attack_2.png
+                                    Attack_3.png
+                                    Dead.png
+                                    Hurt.png
+                                    Idle.png
+                                    Idle_2.png
+                                    Jump.png
+                                    Run.png
+                                    Walk.png
+                                COUPON.pdf
+                                COUPON.png
+                                Font.txt
+                                Licens.txt
+                            Yokai/
+                                Gotoku/
+                                    Attack_1.png
+                                    Attack_2.png
+                                    Attack_3.png
+                                    Dead.png
+                                    Hurt.png
+                                    Idle.png
+                                    Jump.png
+                                    Run.png
+                                    Scream.png
+                                    Walk.png
+                                Onre/
+                                    Attack_1.png
+                                    Attack_2.png
+                                    Attack_3.png
+                                    Dead.png
+                                    Flight.png
+                                    Hurt.png
+                                    Idle.png
+                                    Run.png
+                                    Scream.png
+                                    Walk.png
+                                PSD/
+                                    Gotoku_spritelist.psd
+                                    Onre_spritelist.psd
+                                    Yurei_spritelist.psd
+                                Yurei/
+                                    Attack_1.png
+                                    Attack_2.png
+                                    Attack_3.png
+                                    Attack_4.png
+                                    Charge_1.png
+                                    Charge_2.png
+                                    Dead.png
+                                    Hurt.png
+                                    Idle.png
+                                    Run.png
+                                    Scream.png
+                                    Walk.png
+                                COUPON.pdf
+                                COUPON.png
+                                License.txt
+                    SpriteSheets/
                 Prefabs/
                 ScriptableObjects/
             Combat/
