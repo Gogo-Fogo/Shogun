@@ -74,7 +74,36 @@ Assets/
 ## Progress & Next Steps
 - **✅ Event System Implemented**: ScriptableObject event channels and listeners are in place.
 - **✅ Assembly Definitions**: All major systems have proper .asmdef and namespaces.
-- **⏳ Next Up**: Implement CharacterDefinition ScriptableObjects, Combat State Machine, and Gesture Input System.
+- **✅ Character Definition System**: Complete character system with Naruto Blazing-inspired mechanics.
+  - CharacterDefinition ScriptableObjects for base data
+  - CharacterStats with level progression and elemental effectiveness
+  - CharacterInstance with runtime state and battle mechanics
+  - CharacterFactory for creation and management
+  - Comprehensive test suite
+- **⏳ Next Up**: Implement Combat State Machine, TurnManager, and BattlefieldManager for turn-based combat.
+
+## Character System Features
+
+The character system implements core mechanics inspired by Naruto Blazing:
+
+### Core Mechanics
+- **Free-form Movement**: Characters can move anywhere on the battlefield (not limited to circles)
+- **Circular Attack Ranges**: Short (1.5), Mid (3), Long (5) range circles
+- **Elemental Effectiveness**: Heart > Skill > Body > Heart with 1.5x advantage/0.5x disadvantage
+- **Turn-Based Actions**: Movement and attack tracking per turn
+- **Status Effects**: Poison, heal, stun, silence, burn, freeze, bleed
+
+### Character Types
+- **Samurai, Ninja, Onmyoji, Monk, Ronin, Yokai, Demon, Animal**
+- **Elemental Types**: Heart (Red), Skill (Green), Body (Yellow), Bravery (Blue), Wisdom (Purple)
+- **Rarity System**: Common to Legendary with stat scaling
+- **Special Abilities**: Unique skills with cooldowns
+
+### Technical Features
+- **ScriptableObject Architecture**: Data-driven character definitions
+- **Event-Driven System**: Health changes, death, position changes, status effects
+- **Factory Pattern**: Character creation and management
+- **Comprehensive Testing**: Full test suite for all character functionality
 
 ## Design Documents
 

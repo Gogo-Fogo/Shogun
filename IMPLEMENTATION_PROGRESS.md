@@ -29,6 +29,24 @@
 - **InputEventData**: Input/gesture events (tap, swipe, hold, etc.)
 - **Status**: ✅ COMPLETE
 
+### 3. Character Definition System
+- **CharacterDefinition.cs**: ScriptableObject for character base data with Naruto Blazing-inspired mechanics
+- **CharacterStats.cs**: Stats, level progression, and elemental effectiveness calculations
+- **CharacterInstance.cs**: Runtime character state with battle mechanics and status effects
+- **CharacterFactory.cs**: Character creation, management, and utility methods
+- **CharacterSystemTests.cs**: Comprehensive test suite for character functionality
+- **Status**: ✅ COMPLETE
+
+### 4. Multi-Layered Combat System (MAJOR UPGRADE)
+- **Updated Elemental System**: Genshin Impact-inspired with 7 elements (Fire, Water, Earth, Wind, Lightning, Ice, Shadow)
+- **Martial Arts System**: 7 weapon types (Unarmed, Sword, Spear, Bow, Staff, Dual Daggers, Heavy Weapons)
+- **Stealth Mechanics**: Bush hiding with diminishing returns based on martial arts type
+- **Counter-Attack System**: Reactive combat with martial arts-specific chances and damage multipliers
+- **Elemental Reactions**: Vaporize, Melt, Electro-charged, Swirl, Freeze, Corrupt
+- **Comprehensive Testing**: Updated test suite covering all new mechanics
+- **Documentation**: Complete combat mechanics documentation created
+- **Status**: ✅ COMPLETE
+
 ## ✅ Documentation Consistency Fixes
 
 ### Movement and Attack Range Mechanics
@@ -42,24 +60,29 @@
   - `docs/Game Design Document (GDD) for _Shogun_ Flowers Fall in Blood_.txt`
 - **Status**: ✅ COMPLETE
 
-## 🎯 Next Priority Implementation
+## ✅ Bugfixes & Documentation Updates
 
-### Phase 1: Character Definition System
-1. **CharacterDefinition.cs** - ScriptableObject for character base data
-2. **CharacterInstance.cs** - Runtime character state
-3. **CharacterStats.cs** - Stats and progression system
-4. **CharacterFactory.cs** - Character creation and management
+- Fixed StatusEffect duration bug in CharacterInstance.cs by adding ReduceDuration() method and updating ProcessStatusEffects().
+- Updated CharacterSystemTests.cs to use the correct CreateCharacter overload and set character level by adding experience.
+- Removed all grid-based references from documentation and replaced with free-form/battlefield terminology in README.md, IMPLEMENTATION_PROGRESS.md, and docs.
+
+## 🎯 Next Priority Implementation
 
 ### Phase 2: Combat State Machine
 1. **CombatStateMachine.cs** - Stack-based state management
 2. **CombatState.cs** - Base state class
 3. **TurnManager.cs** - Turn-based combat flow
-4. **TacticalGrid.cs** - Movement and positioning system
+4. **BattlefieldManager.cs** - Movement and positioning system
 
 ### Phase 3: Input System
 1. **GestureRecognizer.cs** - Tap, swipe, hold detection
 2. **InputManager.cs** - New Input System integration
 3. **CombatInputHandler.cs** - Combat-specific input
+
+### Phase 4: Mini-Game System
+1. **MiniGameManager.cs** - Skill-based execution system
+2. **OffensiveMiniGames.cs** - Attack execution mini-games
+3. **DefensiveMiniGames.cs** - Defense execution mini-games
 
 ## 📁 Files Created
 
@@ -68,8 +91,19 @@ Assets/_Project/Scripts/Core/Architecture/
 ├── EventChannelSO.cs          ✅ Complete
 └── EventListener.cs           ✅ Complete
 
+Assets/_Project/Scripts/Features/Characters/
+├── CharacterDefinition.cs     ✅ Complete (Updated)
+├── CharacterStats.cs          ✅ Complete (Updated)
+├── CharacterInstance.cs       ✅ Complete (Updated)
+└── CharacterFactory.cs        ✅ Complete
+
 Assets/_Project/ScriptableObjects/Events/
 └── GameEvents.cs              ✅ Complete
 
+Assets/Tests/Characters/
+└── CharacterSystemTests.cs    ✅ Complete (Updated)
+
+docs/
+└── Combat_Mechanics_System.md ✅ Complete (New)
+
 IMPLEMENTATION_PROGRESS.md     ✅ Complete
-```

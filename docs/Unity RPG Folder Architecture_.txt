@@ -463,7 +463,7 @@ To further aid in the implementation of this architecture, the following public 
                         * Angus-Fan's TurnBasedStrategyGame on GitHub 16
                         * Description: A simple, open-source turn-based strategy game. It provides a clear and understandable implementation of the fundamental mechanics.
                         * Focus Areas:
-                        * Core Logic: Use this project as a reference for the basic logic of a turn-based system: grid management (tileMapScript), unit representation (UnitScript), and turn orchestration (gameManagerScript, battleManagerScript).
+                        * Core Logic: Use this project as a reference for the basic logic of a turn-based system: battlefield positioning (tileMapScript), unit representation (UnitScript), and turn orchestration (gameManagerScript, battleManagerScript).
                         * Starting Point: This project represents a solid foundation for the single-player logic. It can be used as a practical base upon which to layer the more advanced patterns discussed in this report, such as the Stack Machine and the Logic/View separation.
                         * GameDev StackExchange: "How to structure a dynamic turn-based system" 11
                         * Description: This Q&A answer provides the most concise and effective explanation of the Stack Machine pattern for turn-based combat.
