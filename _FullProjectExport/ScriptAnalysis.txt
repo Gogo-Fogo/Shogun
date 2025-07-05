@@ -50,6 +50,120 @@ First 30 lines:
   18:     }
   19: } 
 
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\ScriptableObjects\Events\GameEvents.cs ===
+Total Lines: 226
+  Code Lines: 172
+  Comment Lines: 33
+  Empty Lines: 21
+First 30 lines:
+  01: using UnityEngine;
+  02: using Shogun.Core.Architecture;
+  03: 
+  04: namespace Shogun.Events
+  05: {
+  06:     /// <summary>
+  07:     /// Event channel for scene management events.
+  08:     /// </summary>
+  09:     [CreateAssetMenu(fileName = "SceneEventChannel", menuName = "Shogun/Events/Scene Event Channel")]
+  10:     public class SceneEventChannel : EventChannelSO<string>
+  11:     {
+  12:     }
+  13: 
+  14:     /// <summary>
+  15:     /// Event channel for combat-related events.
+  16:     /// </summary>
+  17:     [CreateAssetMenu(fileName = "CombatEventChannel", menuName = "Shogun/Events/Combat Event Channel")]
+  18:     public class CombatEventChannel : EventChannelSO<CombatEventData>
+  19:     {
+  20:     }
+  21: 
+  22:     /// <summary>
+  23:     /// Event channel for character-related events.
+  24:     /// </summary>
+  25:     [CreateAssetMenu(fileName = "CharacterEventChannel", menuName = "Shogun/Events/Character Event Channel")]
+  26:     public class CharacterEventChannel : EventChannelSO<CharacterEventData>
+  27:     {
+  28:     }
+  29: 
+  30:     /// <summary>
+  ... (truncated)
+
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Architecture\EventChannelSO.cs ===
+Total Lines: 155
+  Code Lines: 65
+  Comment Lines: 74
+  Empty Lines: 16
+First 30 lines:
+  01: using UnityEngine;
+  02: using System;
+  03: 
+  04: namespace Shogun.Core.Architecture
+  05: {
+  06:     /// <summary>
+  07:     /// Base class for ScriptableObject Event Channels.
+  08:     /// Provides a decoupled way for systems to communicate without direct references.
+  09:     /// </summary>
+  10:     public abstract class EventChannelSO : ScriptableObject
+  11:     {
+  12:         [Header("Event Channel Info")]
+  13:         [SerializeField] protected string channelDescription = "Event channel for system communication";
+  14:         
+  15:         /// <summary>
+  16:         /// Description of what this event channel is used for.
+  17:         /// </summary>
+  18:         public string ChannelDescription => channelDescription;
+  19:         
+  20:         /// <summary>
+  21:         /// Called when the event channel is created or loaded.
+  22:         /// Override to perform initialization.
+  23:         /// </summary>
+  24:         protected virtual void OnEnable()
+  25:         {
+  26:             // Subclasses can override for initialization
+  27:         }
+  28:         
+  29:         /// <summary>
+  30:         /// Called when the event channel is unloaded.
+  ... (truncated)
+
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Architecture\EventListener.cs ===
+Total Lines: 221
+  Code Lines: 134
+  Comment Lines: 61
+  Empty Lines: 26
+First 30 lines:
+  01: using UnityEngine;
+  02: using UnityEngine.Events;
+  03: 
+  04: namespace Shogun.Core.Architecture
+  05: {
+  06:     /// <summary>
+  07:     /// Base class for event listeners that can be attached to GameObjects.
+  08:     /// Provides a way for GameObjects to respond to ScriptableObject events.
+  09:     /// </summary>
+  10:     public abstract class EventListener : MonoBehaviour
+  11:     {
+  12:         [Header("Event Listener Settings")]
+  13:         [SerializeField] protected bool logEvents = false;
+  14:         [SerializeField] protected bool listenOnStart = true;
+  15:         
+  16:         /// <summary>
+  17:         /// Whether to log events for debugging purposes.
+  18:         /// </summary>
+  19:         public bool LogEvents => logEvents;
+  20:         
+  21:         /// <summary>
+  22:         /// Whether to automatically start listening when the component starts.
+  23:         /// </summary>
+  24:         public bool ListenOnStart => listenOnStart;
+  25:         
+  26:         protected virtual void Start()
+  27:         {
+  28:             if (listenOnStart)
+  29:             {
+  30:                 StartListening();
+  ... (truncated)
+
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Editor\ProjectExportTool.cs ===
 Total Lines: 548
   Code Lines: 450
@@ -158,14 +272,20 @@ First 30 lines:
   ... (truncated)
 
 === SCRIPT SUMMARY ===
-Total Scripts: 5
-Total Classes: 5
+Total Scripts: 8
+Total Classes: 11
 Total Interfaces: 0
 Total Enums: 0
 
 Classes:
   - CharacterTests (G:/Workspace/Unity/Projects/Shogun/Assets\Tests\Characters\CharacterTests.cs)
   - CombatTests (G:/Workspace/Unity/Projects/Shogun/Assets\Tests\Combat\CombatTests.cs)
+  - SceneEventChannel (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\ScriptableObjects\Events\GameEvents.cs)
+  - CombatEventChannel (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\ScriptableObjects\Events\GameEvents.cs)
+  - CharacterEventChannel (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\ScriptableObjects\Events\GameEvents.cs)
+  - UIEventChannel (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\ScriptableObjects\Events\GameEvents.cs)
+  - GachaEventChannel (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\ScriptableObjects\Events\GameEvents.cs)
+  - InputEventChannel (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\ScriptableObjects\Events\GameEvents.cs)
   - ProjectExportTool (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Editor\ProjectExportTool.cs)
   - AppFrameRate (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Utilities\AppFrameRate.cs)
   - SafeAreaHandler (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Utilities\SafeAreaHandler.cs)

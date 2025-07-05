@@ -7,8 +7,8 @@
 * Game Title: "Shogun: Flowers Fall in Blood"
 * Brief Description: "Shogun: Flowers Fall in Blood" is an innovative mobile game that blends the engaging mechanics of 'Ninja Blazing' with the artistic flair of 'Ronin: The Last Samurai.' It combines the strategy and depth of classic martial arts with a modern interactive experience. Designed for portability and accessibility on mobile devices, it offers a deeply strategic, skill-based gameplay experience. Players can enjoy both solo and multiplayer modes, emphasizing precision, timing, and tactical depth. "Shogun: Flowers Fall in Blood" is not just another gacha game; it's a visually striking, replayable game crafted to appeal to both casual gamers and hardcore enthusiasts.
 2. Core Gameplay Mechanics
-* Combat System: The combat emphasizes player skill and timing, featuring gesture-based controls for sword fighting and special abilities. Players must master tapping, pressing, and swiping mechanics to effectively combat enemies, drawing inspiration from successful mechanics in 'Mortal Kombat Mobile.' The core of the gameplay involves precise control over character movement and attack ranges, where each character has a defined movement circle and an attack range circle, crucial for positioning and executing attacks.
-* Range and Movement Mechanics: Inspired by 'Naruto Ninja Blazing,' each character in "Shogun: Flowers Fall in Blood" possesses a unique range depicted as a circle around them, which dictates their movement and the reach of their jutsu or attacks. Each character has unique movement and attack ranges that dictate their strategic roles in battle. This system is fundamental to the gameplay, affecting how players approach both combat and environmental interactions. Some characters might excel in close combat with smaller, more potent ranges, while others might specialize in long-range attacks.
+* Combat System: The combat emphasizes player skill and timing, featuring gesture-based controls for sword fighting and special abilities. Players must master tapping, pressing, and swiping mechanics to effectively combat enemies, drawing inspiration from successful mechanics in 'Mortal Kombat Mobile.' The core of the gameplay involves precise control over character movement and attack ranges. Movement is free-form on the battlefield (not limited to a radius or circle), only restricted by obstacles and battlefield boundaries. Each character has a fixed attack range (short, mid, or long), visualized as a circle around the unit. Attacks are only possible if the target is within this circle. If a unit ends its turn within the attack range of an enemy, that enemy can perform a basic attack (counterattack) on the unit, even if not directly targeted. Multiple enemies can attack if the player ends their turn within multiple enemy ranges.
+* Range and Movement Mechanics: Inspired by 'Naruto Ninja Blazing,' each character in "Shogun: Flowers Fall in Blood" possesses a unique attack range depicted as a circle around them, which dictates the reach of their jutsu or attacks. Movement is not limited to a circle; it is free-form within the battlefield boundaries. Some characters might excel in close combat with smaller, more potent ranges, while others might specialize in long-range attacks.
 * Combo System: Elemental synergies and weapon-type combos are inspired by "The Book of Five Rings," with players exploiting strengths and weaknesses inherent to different elements and weapons. This system encourages strategic planning and execution to maximize effectiveness in battle. Combos can be initiated when characters within compatible range circles perform synchronized attacks, offering powerful effects against adversaries.
 * Environmental Interactions: The game includes dynamic environments that players can use to gain tactical advantages or that can change the course of battle. Features like destructible cover (trees, boulders) and elemental hazards (rivers affecting elemental powers, poison fogs) add layers of strategic depth. The impact of environmental interactions also varies depending on the character's range, with certain environmental features amplifying or reducing the effectiveness of character abilities based on their proximity and interaction.
 This enhancement emphasizes the importance of strategic positioning and movement, making the gameplay experience more dynamic and tactical. Players will need to consider both the range and the special abilities of their characters to excel in combat, reflecting a deeper layer of strategy and player engagement.
@@ -152,7 +152,7 @@ There is no current mobile game that blends:
          * Built fully for single-hand mobile accessibility, yet deep enough for long-term mastery.
 
 Shogun: Flowers Fall in Blood is designed to occupy this unique space.
-It is meant to be the “Sekiro of mobile tactics games”: punishing, rewarding, beautiful, and obsessively replayable.
+It is meant to be the "Sekiro of mobile tactics games": punishing, rewarding, beautiful, and obsessively replayable.
 
 
 1.8 Primary Target Audience
@@ -249,7 +249,7 @@ Units may also choose to move first, then act or act first, then move (flexible 
 
 
 2.5 Gesture Skill Execution
-Unique core system. Defines the game’s identity.
+Unique core system. Defines the game's identity.
 2.5.1 Gesture Types
 Gesture
 	Description
@@ -273,7 +273,7 @@ Failure results in:
 
                                     * Increased cooldown of that skill
 
-The player learns mastery through repetition, creating a true “skill expression layer” on top of traditional RPG stat combat.
+The player learns mastery through repetition, creating a true "skill expression layer" on top of traditional RPG stat combat.
 
 
 2.6 Range & Targeting Mechanics
@@ -298,9 +298,9 @@ If 2 or more allied units have overlapping attack radii on a target:
                                           * Adds combat depth by encouraging formation planning
 
 Example:
-                                             * Samurai + Ronin: “Cross Slash” (massive crit chance)
+                                             * Samurai + Ronin: "Cross Slash" (massive crit chance)
 
-                                             * Monk + Onmyoji: “Purification Ritual” (damage + cleanse debuffs)
+                                             * Monk + Onmyoji: "Purification Ritual" (damage + cleanse debuffs)
 
 
 
@@ -467,7 +467,7 @@ Shogun: Flowers Fall in Blood will feature an extensive and ever-growing roster 
 
                                                             * Narrative backstories
 
-The player’s squad is the heart of the experience. The goal is to create endless replayability and mastery through character choice, team composition, and customization.
+The player's squad is the heart of the experience. The goal is to create endless replayability and mastery through character choice, team composition, and customization.
 
 
 3.2 Character Archetypes
@@ -594,7 +594,7 @@ Every hero features a unique skill tree with player-chosen unlocks:
 
 Skill trees allow players to define roles within archetypes (example: tank Samurai vs DPS Samurai).
 3.6.2 Reset Option
-Players can spend premium currency or rare materials to respec a hero’s skill tree.
+Players can spend premium currency or rare materials to respec a hero's skill tree.
 
 
 3.7 Equipment & Gear System
@@ -621,7 +621,7 @@ Common ➔ Rare ➔ Epic ➔ Legendary ➔ Relic (event-exclusive)
 
 3.8 Synergy Bonuses
 Certain character combinations gain passive battle bonuses:
-                                                                                          * Faction-based (ex: Samurai + Onmyoji “Ancient Vow”: +5% DEF + RES)
+                                                                                          * Faction-based (ex: Samurai + Onmyoji "Ancient Vow": +5% DEF + RES)
 
                                                                                           * Story-linked pairings (ex: Master + Student characters gain boosted skill cooldown reductions)
 
@@ -722,9 +722,9 @@ Status effects always have a turn duration and may stack from multiple sources, 
                                                                                                          * Equipment and passives may grant partial or full status resistance
 
 Example:
-                                                                                                            * “Onmyoji's Prayer”: Removes 1 negative effect per turn
+                                                                                                            * "Onmyoji's Prayer": Removes 1 negative effect per turn
 
-                                                                                                            * “Talisman of Purity”: 30% chance to resist any incoming debuff
+                                                                                                            * "Talisman of Purity": 30% chance to resist any incoming debuff
 
 
 
@@ -915,7 +915,7 @@ ________________
 
                                                                                                                                                                   * Public Guild Chat is moderated and features anti-spam filters
 
-                                                                                                                                                                  * Any player can mute another player’s emotes or pings during co-op sessions
+                                                                                                                                                                  * Any player can mute another player's emotes or pings during co-op sessions
 
 Focus: Minimize toxicity + maximize strategic communication
 SECTION 6: PROGRESSION SYSTEMS
@@ -932,7 +932,7 @@ Player progression should provide:
                                                                                                                                                                      * Long-term engagement without burnout
 
 Our core design mantra:
-“Players should feel stronger every session without ever being forced to pay to advance.”
+"Players should feel stronger every session without ever being forced to pay to advance."
 
 
 6.2 Core Progression Systems
@@ -1066,7 +1066,7 @@ System
 
                                                                                                                                                                                                                * Generous free Spirit Seal drip (events, quests, logins)
 
-                                                                                                                                                                                                               * No permanent “must-have” gacha units locked behind limited banners
+                                                                                                                                                                                                               * No permanent "must-have" gacha units locked behind limited banners
 
 The game is built to respect player time while still rewarding investment.
 
@@ -1085,7 +1085,7 @@ We will offer monetization choices that are:
                                                                                                                                                                                                                   * Never impacting direct PvP competitive balance
 
 Design mantra:
-“Monetization should enhance enjoyment, not create frustration.”
+"Monetization should enhance enjoyment, not create frustration."
 
 
 7.2 Primary Monetization Channels
@@ -1100,7 +1100,7 @@ Type
 	Event Banner
 	Focused rate-ups for event-limited heroes
 	Festival Banner
-	Exclusive ultra-rare “Festival Units”; limited availability
+	Exclusive ultra-rare "Festival Units"; limited availability
 	Example Pull Rates:
 Tier
 	Name
@@ -1221,7 +1221,7 @@ No forced ads will ever interrupt gameplay.
 7.7 Ethical Design Commitment
                                                                                                                                                                                                                                              * We will be fully transparent with pull rates on all banners
 
-                                                                                                                                                                                                                                             * We will avoid predatory tactics (e.g., “fake time pressure” offers)
+                                                                                                                                                                                                                                             * We will avoid predatory tactics (e.g., "fake time pressure" offers)
 
                                                                                                                                                                                                                                              * All game content can eventually be earned through gameplay (albeit slower for F2P)
 
@@ -1239,7 +1239,7 @@ The UI/UX of Shogun: Flowers Fall in Blood must be:
                                                                                                                                                                                                                                                 * Delivering intuitive access to complex systems without clutter
 
 Design rule:
-“The player should never have to guess where to go next.”
+"The player should never have to guess where to go next."
 
 
 8.2 Core UI Screens & Navigation Flow
@@ -1384,7 +1384,7 @@ Screen Region
                                                                                                                                                                                                                                                                            * Countdown animations for time-limited skills or environmental hazards
 
 Goal:
-“Every system provides immediate feedback with minimal text explanation required.”
+"Every system provides immediate feedback with minimal text explanation required."
 
 
 8.5 Accessibility Features
@@ -1407,7 +1407,7 @@ Shogun: Flowers Fall in Blood must capture the duality of:
                                                                                                                                                                                                                                                                                  * The overwhelming dread of demonic invasion
 
 Our visual style goal:
-“Haunting elegance.”
+"Haunting elegance."
 Traditional brushstroke-inspired character designs with modern layered 2D animation.
 Target is high visual quality with mobile performance optimization.
 
@@ -1434,7 +1434,7 @@ Stage
 
                                                                                                                                                                                                                                                                                     * Animated VFX on weapons/clothing
 
-Festival heroes must visually “outclass” standard heroes without adding performance load.
+Festival heroes must visually "outclass" standard heroes without adding performance load.
 
 
 9.3 Enemy Design Pipeline
@@ -1552,7 +1552,7 @@ Our studio pipeline must enable:
                                                                                                                                                                                                                                                                                                                * Clear milestone tracking + deliverable expectations
 
 Production model:
-“Fail fast in prototype. Scale slow and safe after proof.”
+"Fail fast in prototype. Scale slow and safe after proof."
 
 
 10.2 Team Structure (Small Studio Phase)
@@ -1705,7 +1705,7 @@ Retention is built around giving players:
                                                                                                                                                                                                                                                                                                                                        * A feeling of fairness + meaningful progression at all stages
 
 Design Rule:
-“A player should never feel forced to quit or forced to spend to progress.”
+"A player should never feel forced to quit or forced to spend to progress."
 
 
 11.2 Player Onboarding Flow
@@ -1792,7 +1792,7 @@ Key principles:
 
                                                                                                                                                                                                                                                                                                                                              * Social Loop (Clans + Co-op Raids)
 
-All loops are optional and frictionless; we reject “punishing FOMO” tactics.
+All loops are optional and frictionless; we reject "punishing FOMO" tactics.
 
 
 11.8 Re-Engagement Systems
@@ -1835,7 +1835,7 @@ Content cadence and LiveOps systems will ensure:
                                                                                                                                                                                                                                                                                                                                                    * Sustainable internal production load for the team
 
 Design Rule:
-“Never surprise players with exploitative or misleading content drops.”
+"Never surprise players with exploitative or misleading content drops."
 
 
 12.2 Core Live Ops Pillars
@@ -1936,7 +1936,7 @@ Community will be treated as co-developers via feedback channels:
 
                                                                                                                                                                                                                                                                                                                                                                      * Strong official social media presence with player highlights
 
-We must earn the reputation of a “community listening studio.”
+We must earn the reputation of a "community listening studio."
 
 
 12.10 LiveOps Internal Tools

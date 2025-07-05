@@ -29,6 +29,19 @@
 - **InputEventData**: Input/gesture events (tap, swipe, hold, etc.)
 - **Status**: ✅ COMPLETE
 
+## ✅ Documentation Consistency Fixes
+
+### Movement and Attack Range Mechanics
+- **Issue**: Inconsistencies between Naruto Blazing analysis and GDD regarding movement and attack range mechanics
+- **Fixed**: Updated both documents to accurately reflect that:
+  - Movement is free-form on the battlefield (not limited to a circle/radius)
+  - Only attack range is a circle (short, mid, long)
+  - Counterattacks occur when ending turn in enemy attack range
+- **Files Updated**:
+  - `docs/Conceptual Synthesis for Naruto Shippuden_ Ultimate Ninja Blazing.txt`
+  - `docs/Game Design Document (GDD) for _Shogun_ Flowers Fall in Blood_.txt`
+- **Status**: ✅ COMPLETE
+
 ## 🎯 Next Priority Implementation
 
 ### Phase 1: Character Definition System

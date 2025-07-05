@@ -3,7 +3,7 @@ Assembly Definition: _Project\Scripts\Core\Shogun.Core.asmdef
 Content:
 {
     "name": "Shogun.Core",
-    "rootNamespace": "",
+    "rootNamespace": "Shogun.Core",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -20,7 +20,7 @@ Assembly Definition: _Project\Scripts\Input\Shogun.Input.asmdef
 Content:
 {
     "name": "Shogun.Input",
-    "rootNamespace": "",
+    "rootNamespace": "Shogun.Input",
     "references": [
         "GUID:716e414e3a6173047aa1b3dc9de87423"
     ],
@@ -39,7 +39,7 @@ Assembly Definition: _Project\Scripts\Networking\Shogun.Networking.asmdef
 Content:
 {
     "name": "Shogun.Networking",
-    "rootNamespace": "",
+    "rootNamespace": "Shogun.Networking",
     "references": [
         "GUID:716e414e3a6173047aa1b3dc9de87423"
     ],
@@ -58,7 +58,7 @@ Assembly Definition: _Project\Scripts\Features\Characters\Shogun.Characters.asmd
 Content:
 {
     "name": "Shogun.Characters",
-    "rootNamespace": "",
+    "rootNamespace": "Shogun.Features.Characters",
     "references": [
         "GUID:716e414e3a6173047aa1b3dc9de87423"
     ],
@@ -77,7 +77,7 @@ Assembly Definition: _Project\Scripts\Features\Combat\Shogun.Combat.asmdef
 Content:
 {
     "name": "Shogun.Combat",
-    "rootNamespace": "",
+    "rootNamespace": "Shogun.Features.Combat",
     "references": [
         "GUID:716e414e3a6173047aa1b3dc9de87423"
     ],
@@ -96,7 +96,7 @@ Assembly Definition: _Project\Scripts\Features\Gacha\Shogun.Gacha.asmdef
 Content:
 {
     "name": "Shogun.Gacha",
-    "rootNamespace": "",
+    "rootNamespace": "Shogun.Features.Gacha",
     "references": [
         "GUID:716e414e3a6173047aa1b3dc9de87423"
     ],
@@ -115,7 +115,7 @@ Assembly Definition: _Project\Scripts\Features\UI\Shogun.UI.asmdef
 Content:
 {
     "name": "Shogun.UI",
-    "rootNamespace": "",
+    "rootNamespace": "Shogun.Features.UI",
     "references": [
         "GUID:716e414e3a6173047aa1b3dc9de87423"
     ],

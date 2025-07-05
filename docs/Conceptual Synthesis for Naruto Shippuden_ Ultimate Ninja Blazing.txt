@@ -1,6 +1,6 @@
 ﻿Naruto Shippuden: Ultimate Ninja Blazing Personal Research
 Game Design Document (Conceptual Synthesis)
-My research is exclusively focused on the game design of Naruto Shippuden: Ultimate Ninja Blazing, based on publicly available online resources. It is a Vconceptual synthesis—not an official document—aimed at providing a deep and accurate understanding of Blazing’s mechanics, systems, and design choices.
+My research is exclusively focused on the game design of Naruto Shippuden: Ultimate Ninja Blazing, based on publicly available online resources. It is a Vconceptual synthesis—not an official document—aimed at providing a deep and accurate understanding of Blazing's mechanics, systems, and design choices.
 
 
   
@@ -71,8 +71,8 @@ Game Theme and Narrative:
    * Unique Battlefield: Battles unfold on a tactical sizes and layouts vary to create diverse scenarios.
    * Turn Structure: A traditional turn-based system where players and AI alternate actions. Each unit can move and act per turn.
    * Action Economy: Limited actions per turn (typically one per unit), emphasizing strategic allocation of movement, attacks, and special skills.
-  2.2. Unit Movement and Tactical Positioning
-   * Movement Range: Each ninja has a defined movement range per turn influenced by stats or abilities.
+2.2. Unit Movement and Tactical Positioning
+   * Movement: On a unit's turn, you can move your ninja anywhere on the battlefield (not limited to a radius or circle from their starting position). The same applies to enemies. Movement is only restricted by the battlefield boundaries and obstacles, not by a movement range circle.
    * Strategic Considerations:
  • Engaging Enemies: Positioning within attack range.
 • Flanking: Potential for positional advantages.
@@ -80,9 +80,12 @@ Game Theme and Narrative:
 • Evading Attacks: Moving out of enemy ranges or avoiding area effects.
 • Terrain Utilization: Though not explicitly detailed, terrain (obstacles, cover) likely affects combat.
 2.3. Attack Ranges and Engagement
-      * Circular Attack Ranges: Standard attacks occur within a circular area around the unit.
-      * Melee vs. Ranged: Differentiation between close-combat ninjas and those with longer-range ninjutsu.
-      * Line of Sight: Likely a factor in determining whether attacks can hit if obstacles or other units block the view.
+      * Circular Attack Ranges: Each character has a fixed attack range (short, mid, or long), visualized as a circle around the unit. Attacks are only possible if the target is within this circle.
+      * Range Types: There are three main attack range sizes: short (small circle), mid (medium circle), and long (large circle).
+      * Counterattacks: If a unit ends its turn within the attack range of an enemy, that enemy can perform a basic attack (counterattack) on the unit, even if not directly targeted. Multiple enemies can attack if the player ends their turn within multiple enemy ranges.
+      * Some skills/Ninjutsu have special AoE shapes, but normal attacks are always circular.
+
+[References: GameA Attack Range Guide (http://narutoblazing.gamea.co/c/8tnb5sx5), UrGameTips Battle Strategies (https://www.urgametips.com/2016/10/naruto-blazing-tips-battle-strategies.html)]
 2.4. Team Attacks and Synergy
       * Triggering Team Attacks: Aligning two or more ninjas to target a single enemy triggers a team attack.
       * Enhanced Damage: Team attacks significantly boost damage compared to individual strikes.
@@ -108,7 +111,7 @@ Game Theme and Narrative:
 2.8. Ninja Borrowing System (Social and Trial Feature)
          * Friend/Guest Ninja: At the start of each battle, players may borrow a ninja from a friend list or as a guest.
          * Benefits:
- • Trial of New Ninjas: Experience powerful or rare ninjas not in one’s own collection.
+ • Trial of New Ninjas: Experience powerful or rare ninjas not in one's own collection.
 • Strategic Advantage: Borrowed ninjas can provide elemental or skill advantages.
 • Social Interaction: Encourages adding friends and engaging in the community.
          * Limited Use: Borrowed units are available for a single stage or a limited number of uses per day.
@@ -131,7 +134,7 @@ Game Theme and Narrative:
 
 3.3. Character Upgrades and Enhancement Systems
             * Leveling: Characters gain EXP from battles to increase levels and base stats (HP, Attack, Defense).
-            * Awakening (Evolution): Characters can undergo “Awakening” to boost stats and unlock new abilities; requires specific materials.
+            * Awakening (Evolution): Characters can undergo "Awakening" to boost stats and unlock new abilities; requires specific materials.
             * Limit Breaking: A further upgrade system allowing players to increase the level cap, acquired through challenging missions (e.g., Trial Missions).
             * Skill Enhancement: Active and passive skills can be upgraded to increase effectiveness.
             * Equipment System: Characters can equip items (weapons, armor, accessories) that boost stats; equipment likely follows its own rarity and upgrade system.
@@ -165,9 +168,9 @@ Game Theme and Narrative:
 5.1. Authentic Naruto Anime Visuals
             * Faithful Art Style: Game assets (character sprites, backgrounds, UI) closely mimic the Naruto Shippuden anime style.
             * Color Palette and Shading: Vibrant colors and anime-style shading create a recognizable Naruto aesthetic.
-            * Character Design Accuracy: Art assets accurately represent characters’ appearances and costumes from the anime.
+            * Character Design Accuracy: Art assets accurately represent characters' appearances and costumes from the anime.
 5.2. Evolving Visual Presentation – Moving Artwork
-            * Animated Characters: Introduction of “moving artwork” for high-rarity units (e.g., Blazing Festival characters) to enhance visual appeal.
+            * Animated Characters: Introduction of "moving artwork" for high-rarity units (e.g., Blazing Festival characters) to enhance visual appeal.
             * Enhanced Visual Appeal: Animated sprites add dynamism and a premium feel, increasing desirability among collectors.
             * Technical Implementation: Likely utilizes skeletal or similar 2D animation techniques for fluid movements.
 5.3. 2D Graphics with Depth and Polish
@@ -177,7 +180,7 @@ Game Theme and Narrative:
             * Animation Quality: Fluid and impactful animations for attacks, special skills, and character movements.
 5.4. Immersive Sound and Voice Acting
             * Authentic Voice Acting: Key characters are voiced by their original voice actors (Japanese with subtitles or English dub, depending on region).
-            * Sound Effects and Music: Effects and music are inspired by or taken from the Naruto anime, further immersing players in the franchise’s atmosphere.
+            * Sound Effects and Music: Effects and music are inspired by or taken from the Naruto anime, further immersing players in the franchise's atmosphere.
 
 
 
@@ -256,7 +259,7 @@ Game Theme and Narrative:
 
 
 9. Closing Notes and Sources
-My research integrates verified mechanics—such as emergency missions, character variations, and advanced combat systems—and contextualizes the game’s legacy through community initiatives. A greatest resource is also the community databases and fan repositories.
+My research integrates verified mechanics—such as emergency missions, character variations, and advanced combat systems—and contextualizes the game's legacy through community initiatives. A greatest resource is also the community databases and fan repositories.
 Sources:
                         * viz.com
  VIZ Blog Post about Naruto Ninja Blazing
