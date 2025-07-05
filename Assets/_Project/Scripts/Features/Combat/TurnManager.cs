@@ -7,10 +7,11 @@
 using System;
 using System.Collections.Generic;
 using Shogun.Features.Characters;
+using UnityEngine;
 
 namespace Shogun.Features.Combat
 {
-    public class TurnManager
+    public class TurnManager : MonoBehaviour
     {
         private readonly List<CharacterInstance> combatants = new List<CharacterInstance>();
         private int currentTurnIndex = 0;

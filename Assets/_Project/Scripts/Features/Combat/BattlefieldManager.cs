@@ -10,7 +10,7 @@ using Shogun.Features.Characters;
 
 namespace Shogun.Features.Combat
 {
-    public class BattlefieldManager
+    public class BattlefieldManager : MonoBehaviour
     {
         private readonly Dictionary<CharacterInstance, Vector2> characterPositions = new Dictionary<CharacterInstance, Vector2>();
         private readonly List<Vector2> obstacles = new List<Vector2>(); // For future use

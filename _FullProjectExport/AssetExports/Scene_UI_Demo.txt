@@ -86,13 +86,13 @@ GUID: 2baa07fff971e704191bca2621ce6da8
     - GameObject: Canvas (Tag: Untagged, Layer: UI, Active: True)
         * RectTransform
             - Local Rotation: (0.00, 0.00, 0.00)
-            - Local Position: (492.50, 239.50, 0.00)
-            - Local Scale: (0.25, 0.25, 0.25)
+            - Local Position: (645.00, 1398.00, 0.00)
+            - Local Scale: (1.46, 1.46, 1.46)
             - Constrain Proportions Scale: False
             - Anchor Min: (0.00, 0.00)
             - Anchor Max: (0.00, 0.00)
-            - Anchored Position: (492.50, 239.50)
-            - Size Delta: (3948.23, 1920.00)
+            - Anchored Position: (645.00, 1398.00)
+            - Size Delta: (885.84, 1920.00)
             - Pivot: (0.50, 0.50)
         * Canvas
             - Render Mode: Screen Space - Overlay

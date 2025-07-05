@@ -5,6 +5,7 @@
 
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem; // New Input System
 
 namespace Shogun.Core.Architecture
 {
@@ -14,39 +15,73 @@ namespace Shogun.Core.Architecture
         public UnityEvent<Vector2, Vector2> OnSwipe; // start, end
         public UnityEvent<Vector2, float> OnHold; // position, duration
 
-        // For demonstration: simple mouse/touch detection (expand for full input system integration)
+        // New Input System
+        [SerializeField] private InputActionReference tapAction;
+        [SerializeField] private InputActionReference positionAction;
+        [SerializeField] private InputActionReference holdAction; // Optional, for custom hold logic
+
         private Vector2 touchStart;
         private float holdTime;
         private bool isHolding;
 
-        void Update()
+        private void OnEnable()
         {
-            if (Input.GetMouseButtonDown(0))
+            if (tapAction != null)
+                tapAction.action.performed += OnTapPerformed;
+            if (positionAction != null)
+                positionAction.action.performed += OnPositionPerformed;
+            if (tapAction != null)
+                tapAction.action.Enable();
+            if (positionAction != null)
+                positionAction.action.Enable();
+        }
+
+        private void OnDisable()
+        {
+            if (tapAction != null)
+                tapAction.action.performed -= OnTapPerformed;
+            if (positionAction != null)
+                positionAction.action.performed -= OnPositionPerformed;
+            if (tapAction != null)
+                tapAction.action.Disable();
+            if (positionAction != null)
+                positionAction.action.Disable();
+        }
+
+        private void OnTapPerformed(InputAction.CallbackContext ctx)
+        {
+            Vector2 pos = positionAction != null ? positionAction.action.ReadValue<Vector2>() : Vector2.zero;
+            if (isHolding)
             {
-                touchStart = Input.mousePosition;
-                holdTime = 0f;
-                isHolding = true;
-            }
-            if (Input.GetMouseButton(0) && isHolding)
-            {
-                holdTime += Time.deltaTime;
-            }
-            if (Input.GetMouseButtonUp(0) && isHolding)
-            {
-                Vector2 touchEnd = Input.mousePosition;
+                // End hold
                 if (holdTime > 0.5f)
                 {
                     OnHold?.Invoke(touchStart, holdTime);
                 }
-                else if (Vector2.Distance(touchStart, touchEnd) > 50f)
+                else if (Vector2.Distance(touchStart, pos) > 50f)
                 {
-                    OnSwipe?.Invoke(touchStart, touchEnd);
+                    OnSwipe?.Invoke(touchStart, pos);
                 }
                 else
                 {
-                    OnTap?.Invoke(touchEnd);
+                    OnTap?.Invoke(pos);
                 }
                 isHolding = false;
+            }
+            else
+            {
+                // Start touch
+                touchStart = pos;
+                holdTime = 0f;
+                isHolding = true;
+            }
+        }
+
+        private void OnPositionPerformed(InputAction.CallbackContext ctx)
+        {
+            if (isHolding)
+            {
+                holdTime += Time.deltaTime;
             }
         }
 

@@ -82,7 +82,8 @@ Content:
     "rootNamespace": "Shogun.Features.Combat",
     "references": [
         "GUID:716e414e3a6173047aa1b3dc9de87423",
-        "GUID:ff4be0973a4c07243a64d3180ba019c3"
+        "GUID:ff4be0973a4c07243a64d3180ba019c3",
+        "GUID:75469ad4d38634e559750d17036d5f7c"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

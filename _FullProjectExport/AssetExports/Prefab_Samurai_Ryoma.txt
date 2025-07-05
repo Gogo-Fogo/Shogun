@@ -1,0 +1,70 @@
+=== Prefab Export ===
+Prefab Path: Assets/_Project/Features/Characters/Prefabs/Samurai_Ryoma.prefab
+GUID: b212ad3f85ef4b3448b6c02559bb3875
+
+- GameObject: Samurai_Ryoma (Tag: Untagged, Layer: Default, Active: True)
+    * Transform
+        - Local Rotation: (0.00, 0.00, 0.00)
+        - Local Position: (-6.08, 0.24, 0.00)
+        - Local Scale: (2.50, 2.50, 2.50)
+        - Constrain Proportions Scale: True
+    * SpriteRenderer
+        - Cast Shadows: Off
+        - Receive Shadows: False
+        - Dynamic Occludee: True
+        - Static Shadow Caster: False
+        - Motion Vectors: Per Object Motion
+        - Light Probe Usage: 1
+        - Reflection Probe Usage: 1
+        - Ray Tracing Mode: 0
+        - Ray Trace Procedural: False
+        - Ray Tracing Accel Struct Build Flags Override: False
+        - Ray Tracing Accel Struct Build Flags: 1
+        - Small Mesh Culling: True
+        - Rendering Layer Mask: 1
+        - Renderer Priority: 0
+        - Materials: (complex value)
+        - Probe Anchor: null
+        - Light Probe Volume Override: null
+        - Lightmap Parameters: null
+        - Sprite: IDLE_0
+        - Color: RGBA(1.000, 1.000, 1.000, 1.000)
+        - Flip X: False
+        - Flip Y: False
+        - Draw Mode: Simple
+        - Size: (0.22, 0.36)
+        - Adaptive Mode Threshold: 0.5
+        - Sprite Tile Mode: Continuous
+        - Mask Interaction: None
+        - Sprite Sort Point: Center
+    * Animator
+        - Avatar: null
+        - Controller: IDLE_0
+        - Culling Mode: Always Animate
+        - Update Mode: Normal
+        - Apply Root Motion: False
+        - Linear Velocity Blending: False
+        - Stabilize Feet: False
+        - Animate Physics: False
+        - Warning Message: 
+        - Has Transform Hierarchy: True
+        - Allow Constant Clip Sampling Optimization: True
+        - Keep Animator State On Disable: False
+        - Write Default Values On Disable: False
+    * CapsuleCollider2D
+        - Density: 1
+        - Material: null
+        - Include Layers: 0
+        - Exclude Layers: 0
+        - Layer Override Priority: 0
+        - Force Send Layers: -1
+        - Force Receive Layers: -1
+        - Contact Capture Layers: -1
+        - Callback Layers: -1
+        - Is Trigger: False
+        - Used By Effector: False
+        - Composite Operation: None
+        - Composite Order: 0
+        - Offset: (0.08, -0.01)
+        - Size: (0.88, 1.44)
+        - Direction: Vertical

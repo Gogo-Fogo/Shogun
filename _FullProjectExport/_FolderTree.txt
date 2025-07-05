@@ -10615,6 +10615,7 @@ Assets/
         Audio/
         Features/
             Characters/
+                Animations/
                 Art/
                     Animations/
                     Licenses/
@@ -10819,6 +10820,9 @@ Assets/
                                     Take Hit.png
                             FULL_Samurai 2D Pixel Art v1.2/
                                 FULL_Samurai 2D Pixel Art v1.2/
+                                    Animations/
+                                        IDLE_0.controller
+                                        Samurai_IDLE.anim
                                     Sprites/
                                         AIR ATTACK.png
                                         ATTACK 1.png
@@ -11672,6 +11676,7 @@ Assets/
                                 License.txt
                     SpriteSheets/
                 Prefabs/
+                    Samurai_Ryoma.prefab
                 ScriptableObjects/
             Combat/
                 Art/

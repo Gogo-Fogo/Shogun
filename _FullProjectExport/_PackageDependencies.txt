@@ -5,6 +5,11 @@ Package: com.unity.2d.animation v11.0.0
 Package: com.unity.2d.aseprite v1.2.5
   Description: 2D Aseprite Importer is a package which enables the import of .aseprite files from the Pixel Art tool Aseprite.
 
+Package: com.unity.2d.pixel-perfect v5.1.0
+  Description: The 2D Pixel Perfect package contains the Pixel Perfect Camera component which ensures your pixel art remains crisp and clear at different resolutions, and stable in motion.
+
+It is a single component that makes all the calculations needed to scale the viewport with resolution changes, removing the hassle from the user. The user can adjust the definition of the pixel art rendered within the camera viewport through the component settings, as well preview any changes immediately in Game view by using the Run in Edit Mode feature.
+
 Package: com.unity.2d.psdimporter v10.1.1
   Description: A ScriptedImporter for importing Adobe Photoshop PSB (Photoshop Big) file format. The ScriptedImporter is currently targeted for users who wants to create multi Sprite character animation using Unity 2D Animation Package.
 

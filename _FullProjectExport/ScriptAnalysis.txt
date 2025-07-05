@@ -203,10 +203,10 @@ First 30 lines:
   ... (truncated)
 
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Architecture\GestureRecognizer.cs ===
-Total Lines: 58
-  Code Lines: 47
-  Comment Lines: 6
-  Empty Lines: 5
+Total Lines: 93
+  Code Lines: 76
+  Comment Lines: 8
+  Empty Lines: 9
 First 30 lines:
   01: // GestureRecognizer.cs
   02: // MonoBehaviour for detecting tap, swipe, and hold gestures on screen or UI elements.
@@ -215,29 +215,29 @@ First 30 lines:
   05: 
   06: using UnityEngine;
   07: using UnityEngine.Events;
-  08: 
-  09: namespace Shogun.Core.Architecture
-  10: {
-  11:     public class GestureRecognizer : MonoBehaviour
-  12:     {
-  13:         public UnityEvent<Vector2> OnTap;
-  14:         public UnityEvent<Vector2, Vector2> OnSwipe; // start, end
-  15:         public UnityEvent<Vector2, float> OnHold; // position, duration
-  16: 
-  17:         // For demonstration: simple mouse/touch detection (expand for full input system integration)
-  18:         private Vector2 touchStart;
-  19:         private float holdTime;
-  20:         private bool isHolding;
-  21: 
-  22:         void Update()
-  23:         {
-  24:             if (Input.GetMouseButtonDown(0))
-  25:             {
-  26:                 touchStart = Input.mousePosition;
-  27:                 holdTime = 0f;
-  28:                 isHolding = true;
-  29:             }
-  30:             if (Input.GetMouseButton(0) && isHolding)
+  08: using UnityEngine.InputSystem; // New Input System
+  09: 
+  10: namespace Shogun.Core.Architecture
+  11: {
+  12:     public class GestureRecognizer : MonoBehaviour
+  13:     {
+  14:         public UnityEvent<Vector2> OnTap;
+  15:         public UnityEvent<Vector2, Vector2> OnSwipe; // start, end
+  16:         public UnityEvent<Vector2, float> OnHold; // position, duration
+  17: 
+  18:         // New Input System
+  19:         [SerializeField] private InputActionReference tapAction;
+  20:         [SerializeField] private InputActionReference positionAction;
+  21:         [SerializeField] private InputActionReference holdAction; // Optional, for custom hold logic
+  22: 
+  23:         private Vector2 touchStart;
+  24:         private float holdTime;
+  25:         private bool isHolding;
+  26: 
+  27:         private void OnEnable()
+  28:         {
+  29:             if (tapAction != null)
+  30:                 tapAction.action.performed += OnTapPerformed;
   ... (truncated)
 
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Architecture\InputManager.cs ===
@@ -559,7 +559,7 @@ First 30 lines:
   10: 
   11: namespace Shogun.Features.Combat
   12: {
-  13:     public class BattlefieldManager
+  13:     public class BattlefieldManager : MonoBehaviour
   14:     {
   15:         private readonly Dictionary<CharacterInstance, Vector2> characterPositions = new Dictionary<CharacterInstance, Vector2>();
   16:         private readonly List<Vector2> obstacles = new List<Vector2>(); // For future use
@@ -693,10 +693,10 @@ First 30 lines:
   ... (truncated)
 
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\DefensiveMiniGames.cs ===
-Total Lines: 43
-  Code Lines: 34
-  Comment Lines: 4
-  Empty Lines: 5
+Total Lines: 73
+  Code Lines: 62
+  Comment Lines: 3
+  Empty Lines: 8
 First 30 lines:
   01: // DefensiveMiniGames.cs
   02: // Implements IMiniGame for defense execution mini-games (e.g., block timing, dodge, QTEs).
@@ -704,30 +704,30 @@ First 30 lines:
   04: 
   05: using UnityEngine;
   06: using System.Collections;
-  07: 
-  08: namespace Shogun.Features.Combat
-  09: {
-  10:     public class DefensiveMiniGames : MonoBehaviour, IMiniGame
-  11:     {
-  12:         public void StartGame(System.Action<bool> onComplete)
-  13:         {
-  14:             // Example: block timing mini-game
-  15:             StartCoroutine(BlockTimingMiniGame(onComplete));
-  16:         }
-  17: 
-  18:         private IEnumerator BlockTimingMiniGame(System.Action<bool> onComplete)
-  19:         {
-  20:             float blockWindow = Random.Range(1f, 2f);
-  21:             float timer = 0f;
-  22:             bool blocked = false;
-  23: 
-  24:             Debug.Log($"Block within {blockWindow:F2} seconds!");
-  25: 
-  26:             while (timer < 3f && !blocked)
-  27:             {
-  28:                 timer += Time.deltaTime;
-  29:                 if (Input.GetMouseButtonDown(1)) // Right-click for block
-  30:                 {
+  07: using UnityEngine.InputSystem; // New Input System
+  08: 
+  09: namespace Shogun.Features.Combat
+  10: {
+  11:     public class DefensiveMiniGames : MonoBehaviour, IMiniGame
+  12:     {
+  13:         [SerializeField] private InputActionReference blockAction;
+  14:         private System.Action<bool> onCompleteCallback;
+  15:         private float blockWindow;
+  16:         private float timer;
+  17:         private bool blocked;
+  18:         private Coroutine miniGameCoroutine;
+  19: 
+  20:         public void StartGame(System.Action<bool> onComplete)
+  21:         {
+  22:             onCompleteCallback = onComplete;
+  23:             miniGameCoroutine = StartCoroutine(BlockTimingMiniGame());
+  24:             if (blockAction != null)
+  25:                 blockAction.action.performed += OnBlockPerformed;
+  26:             if (blockAction != null)
+  27:                 blockAction.action.Enable();
+  28:         }
+  29: 
+  30:         private IEnumerator BlockTimingMiniGame()
   ... (truncated)
 
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\IMiniGame.cs ===
@@ -787,10 +787,10 @@ First 30 lines:
   ... (truncated)
 
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\OffensiveMiniGames.cs ===
-Total Lines: 44
-  Code Lines: 35
-  Comment Lines: 4
-  Empty Lines: 5
+Total Lines: 74
+  Code Lines: 63
+  Comment Lines: 3
+  Empty Lines: 8
 First 30 lines:
   01: // OffensiveMiniGames.cs
   02: // Implements IMiniGame for attack execution mini-games (e.g., timing, quick-tap, swipe challenges).
@@ -798,35 +798,35 @@ First 30 lines:
   04: 
   05: using UnityEngine;
   06: using System.Collections;
-  07: 
-  08: namespace Shogun.Features.Combat
-  09: {
-  10:     public class OffensiveMiniGames : MonoBehaviour, IMiniGame
-  11:     {
-  12:         public void StartGame(System.Action<bool> onComplete)
-  13:         {
-  14:             // Example: timing-based tap mini-game
-  15:             StartCoroutine(TimingTapMiniGame(onComplete));
-  16:         }
-  17: 
-  18:         private IEnumerator TimingTapMiniGame(System.Action<bool> onComplete)
-  19:         {
-  20:             float targetTime = Random.Range(1f, 3f);
-  21:             float timer = 0f;
-  22:             bool tapped = false;
-  23: 
-  24:             Debug.Log($"Tap when the timer reaches {targetTime:F2} seconds!");
-  25: 
-  26:             while (timer < 5f && !tapped)
-  27:             {
-  28:                 timer += Time.deltaTime;
-  29:                 if (Input.GetMouseButtonDown(0))
-  30:                 {
+  07: using UnityEngine.InputSystem; // New Input System
+  08: 
+  09: namespace Shogun.Features.Combat
+  10: {
+  11:     public class OffensiveMiniGames : MonoBehaviour, IMiniGame
+  12:     {
+  13:         [SerializeField] private InputActionReference tapAction;
+  14:         private System.Action<bool> onCompleteCallback;
+  15:         private float targetTime;
+  16:         private float timer;
+  17:         private bool tapped;
+  18:         private Coroutine miniGameCoroutine;
+  19: 
+  20:         public void StartGame(System.Action<bool> onComplete)
+  21:         {
+  22:             onCompleteCallback = onComplete;
+  23:             miniGameCoroutine = StartCoroutine(TimingTapMiniGame());
+  24:             if (tapAction != null)
+  25:                 tapAction.action.performed += OnTapPerformed;
+  26:             if (tapAction != null)
+  27:                 tapAction.action.Enable();
+  28:         }
+  29: 
+  30:         private IEnumerator TimingTapMiniGame()
   ... (truncated)
 
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\TurnManager.cs ===
-Total Lines: 73
-  Code Lines: 57
+Total Lines: 74
+  Code Lines: 58
   Comment Lines: 7
   Empty Lines: 9
 First 30 lines:
@@ -839,27 +839,27 @@ First 30 lines:
   07: using System;
   08: using System.Collections.Generic;
   09: using Shogun.Features.Characters;
-  10: 
-  11: namespace Shogun.Features.Combat
-  12: {
-  13:     public class TurnManager
-  14:     {
-  15:         private readonly List<CharacterInstance> combatants = new List<CharacterInstance>();
-  16:         private int currentTurnIndex = 0;
-  17:         public event Action<CharacterInstance> OnTurnStarted;
-  18:         public event Action<CharacterInstance> OnTurnEnded;
-  19:         public event Action OnBattleEnded;
-  20:         public bool IsBattleActive { get; private set; } = false;
-  21: 
-  22:         public void Initialize(List<CharacterInstance> participants)
-  23:         {
-  24:             combatants.Clear();
-  25:             combatants.AddRange(participants);
-  26:             currentTurnIndex = 0;
-  27:             IsBattleActive = combatants.Count > 0;
-  28:         }
-  29: 
-  30:         public void StartBattle()
+  10: using UnityEngine;
+  11: 
+  12: namespace Shogun.Features.Combat
+  13: {
+  14:     public class TurnManager : MonoBehaviour
+  15:     {
+  16:         private readonly List<CharacterInstance> combatants = new List<CharacterInstance>();
+  17:         private int currentTurnIndex = 0;
+  18:         public event Action<CharacterInstance> OnTurnStarted;
+  19:         public event Action<CharacterInstance> OnTurnEnded;
+  20:         public event Action OnBattleEnded;
+  21:         public bool IsBattleActive { get; private set; } = false;
+  22: 
+  23:         public void Initialize(List<CharacterInstance> participants)
+  24:         {
+  25:             combatants.Clear();
+  26:             combatants.AddRange(participants);
+  27:             currentTurnIndex = 0;
+  28:             IsBattleActive = combatants.Count > 0;
+  29:         }
+  30: 
   ... (truncated)
 
 === SCRIPT SUMMARY ===

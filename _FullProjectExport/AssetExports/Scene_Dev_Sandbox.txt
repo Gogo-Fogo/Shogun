@@ -44,7 +44,7 @@ GUID: 8c9cfa26abfee488c85f1582747f6a02
             - Far clip plane: 1000
             - Field of view: 34
             - Orthographic: True
-            - Orthographic size: 10
+            - Orthographic size: 29.125
             - Depth: -1
             - Culling Mask: -1
             - Rendering Path: Use Graphics Settings
@@ -83,16 +83,29 @@ GUID: 8c9cfa26abfee488c85f1582747f6a02
             - Requires Depth Texture: False
             - Requires Color Texture: False
             - Taa Settings: (complex value)
+        * PixelPerfectCamera
+            - Component Version: Version_1
+            - Assets PPU: 16
+            - Ref Resolution X: 360
+            - Ref Resolution Y: 640
+            - Crop Frame: None
+            - Grid Snapping: PixelSnapping
+            - Filter Mode: RetroAA
+            - Upscale RT: False
+            - Pixel Snapping: False
+            - Crop Frame X: False
+            - Crop Frame Y: False
+            - Stretch Fill: False
     - GameObject: Canvas (Tag: Untagged, Layer: UI, Active: True)
         * RectTransform
             - Local Rotation: (0.00, 0.00, 0.00)
-            - Local Position: (-90.55, -1165.97, 0.00)
-            - Local Scale: (0.25, 0.25, 0.25)
+            - Local Position: (61.95, -7.47, 0.00)
+            - Local Scale: (1.46, 1.46, 1.46)
             - Constrain Proportions Scale: False
             - Anchor Min: (0.00, 0.00)
             - Anchor Max: (0.00, 0.00)
-            - Anchored Position: (-90.55, -1165.97)
-            - Size Delta: (3948.23, 1920.00)
+            - Anchored Position: (61.95, -7.47)
+            - Size Delta: (885.84, 1920.00)
             - Pivot: (0.50, 0.50)
         * Canvas
             - Render Mode: Screen Space - Overlay
@@ -254,9 +267,9 @@ GUID: 8c9cfa26abfee488c85f1582747f6a02
 - GameObject: BackgroundBattlefield (Tag: Untagged, Layer: Default, Active: True)
     * Transform
         - Local Rotation: (0.00, 0.00, 0.00)
-        - Local Position: (638.50, 1385.50, 0.00)
-        - Local Scale: (1.00, 1.00, 1.00)
-        - Constrain Proportions Scale: False
+        - Local Position: (638.80, 1386.20, 0.00)
+        - Local Scale: (0.73, 0.73, 0.73)
+        - Constrain Proportions Scale: True
     - GameObject: Dojo_Interior_02_0 (Tag: Untagged, Layer: Default, Active: True)
         * Transform
             - Local Rotation: (0.00, 0.00, 0.00)
@@ -292,3 +305,122 @@ GUID: 8c9cfa26abfee488c85f1582747f6a02
             - Sprite Tile Mode: Continuous
             - Mask Interaction: None
             - Sprite Sort Point: Center
+- GameObject: CombatManagers (Tag: Untagged, Layer: Default, Active: True)
+    * Transform
+        - Local Rotation: (0.00, 0.00, 0.00)
+        - Local Position: (639.14, 1387.48, 0.00)
+        - Local Scale: (1.00, 1.00, 1.00)
+        - Constrain Proportions Scale: False
+    * CombatInputHandler
+    * GestureRecognizer
+        - On Tap: (complex value)
+        - On Swipe: (complex value)
+        - On Hold: (complex value)
+        - Tap Action: null
+        - Position Action: null
+        - Hold Action: null
+    - GameObject: TurnManager (Tag: Untagged, Layer: Default, Active: True)
+        * Transform
+            - Local Rotation: (0.00, 0.00, 0.00)
+            - Local Position: (0.00, 0.00, 0.00)
+            - Local Scale: (1.00, 1.00, 1.00)
+            - Constrain Proportions Scale: False
+        * TurnManager
+    - GameObject: BattlefieldManager (Tag: Untagged, Layer: Default, Active: True)
+        * Transform
+            - Local Rotation: (0.00, 0.00, 0.00)
+            - Local Position: (0.00, 0.00, 0.00)
+            - Local Scale: (1.00, 1.00, 1.00)
+            - Constrain Proportions Scale: False
+        * BattlefieldManager
+    - GameObject: MiniGameManager (Tag: Untagged, Layer: Default, Active: True)
+        * Transform
+            - Local Rotation: (0.00, 0.00, 0.00)
+            - Local Position: (0.00, 0.00, 0.00)
+            - Local Scale: (1.00, 1.00, 1.00)
+            - Constrain Proportions Scale: False
+        * MiniGameManager
+            - On Mini Game Started: (complex value)
+            - On Mini Game Ended: (complex value)
+            - On Mini Game Result: (complex value)
+    - GameObject: InputManager (Tag: Untagged, Layer: Default, Active: True)
+        * Transform
+            - Local Rotation: (0.00, 0.00, 0.00)
+            - Local Position: (0.00, 0.00, 0.00)
+            - Local Scale: (1.00, 1.00, 1.00)
+            - Constrain Proportions Scale: False
+        * InputManager
+            - On Combat Action: (complex value)
+            - On UI Action: (complex value)
+- GameObject: Characters (Tag: Untagged, Layer: Default, Active: True)
+    * Transform
+        - Local Rotation: (0.00, 0.00, 0.00)
+        - Local Position: (642.53, 1387.11, 0.00)
+        - Local Scale: (1.00, 1.00, 1.00)
+        - Constrain Proportions Scale: False
+    - GameObject: Samurai_Ryoma (Tag: Untagged, Layer: Default, Active: True)
+        * Transform
+            - Local Rotation: (0.00, 0.00, 0.00)
+            - Local Position: (-12.79, -1.41, 0.00)
+            - Local Scale: (2.50, 2.50, 2.50)
+            - Constrain Proportions Scale: True
+        * SpriteRenderer
+            - Cast Shadows: Off
+            - Receive Shadows: False
+            - Dynamic Occludee: True
+            - Static Shadow Caster: False
+            - Motion Vectors: Per Object Motion
+            - Light Probe Usage: 1
+            - Reflection Probe Usage: 1
+            - Ray Tracing Mode: 0
+            - Ray Trace Procedural: False
+            - Ray Tracing Accel Struct Build Flags Override: False
+            - Ray Tracing Accel Struct Build Flags: 1
+            - Small Mesh Culling: True
+            - Rendering Layer Mask: 1
+            - Renderer Priority: 0
+            - Materials: (complex value)
+            - Probe Anchor: null
+            - Light Probe Volume Override: null
+            - Lightmap Parameters: null
+            - Sprite: IDLE_0
+            - Color: RGBA(1.000, 1.000, 1.000, 1.000)
+            - Flip X: False
+            - Flip Y: False
+            - Draw Mode: Simple
+            - Size: (0.22, 0.36)
+            - Adaptive Mode Threshold: 0.5
+            - Sprite Tile Mode: Continuous
+            - Mask Interaction: None
+            - Sprite Sort Point: Center
+        * Animator
+            - Avatar: null
+            - Controller: IDLE_0
+            - Culling Mode: Always Animate
+            - Update Mode: Normal
+            - Apply Root Motion: False
+            - Linear Velocity Blending: False
+            - Stabilize Feet: False
+            - Animate Physics: False
+            - Warning Message: 
+            - Has Transform Hierarchy: True
+            - Allow Constant Clip Sampling Optimization: True
+            - Keep Animator State On Disable: False
+            - Write Default Values On Disable: False
+        * CapsuleCollider2D
+            - Density: 1
+            - Material: null
+            - Include Layers: 0
+            - Exclude Layers: 0
+            - Layer Override Priority: 0
+            - Force Send Layers: -1
+            - Force Receive Layers: -1
+            - Contact Capture Layers: -1
+            - Callback Layers: -1
+            - Is Trigger: False
+            - Used By Effector: False
+            - Composite Operation: None
+            - Composite Order: 0
+            - Offset: (0.08, -0.01)
+            - Size: (0.88, 1.44)
+            - Direction: Vertical

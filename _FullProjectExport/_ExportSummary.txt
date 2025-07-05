@@ -1,3 +1,4 @@
+Prefab: Assets/_Project/Features/Characters/Prefabs/Samurai_Ryoma.prefab => G:/Workspace/Unity/Projects/Shogun/Assets/..\_FullProjectExport\AssetExports\Prefab_Samurai_Ryoma.txt
 Prefab: Assets/_Project/Prefabs/System/SharedSceneRoot.prefab => G:/Workspace/Unity/Projects/Shogun/Assets/..\_FullProjectExport\AssetExports\Prefab_SharedSceneRoot.txt
 Prefab: Assets/_Project/Prefabs/System/SystemRoot.prefab => G:/Workspace/Unity/Projects/Shogun/Assets/..\_FullProjectExport\AssetExports\Prefab_SystemRoot.txt
 Scene: Assets/_Project/Scenes/Battle/Battle_Prototype.unity => G:/Workspace/Unity/Projects/Shogun/Assets/..\_FullProjectExport\AssetExports\Scene_Battle_Prototype.txt
