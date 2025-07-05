@@ -4,8 +4,9 @@ using System;
 namespace Shogun.Core.Architecture
 {
     /// <summary>
-    /// Base class for ScriptableObject Event Channels.
-    /// Provides a decoupled way for systems to communicate without direct references.
+    /// ScriptableObject-based event channel for decoupled communication between systems.
+    /// Used to raise and listen for events in a type-safe, inspector-friendly way.
+    /// Supports generic event data and is a core part of the project's event-driven architecture.
     /// </summary>
     public abstract class EventChannelSO : ScriptableObject
     {

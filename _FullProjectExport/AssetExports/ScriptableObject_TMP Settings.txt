@@ -1,0 +1,40 @@
+=== ScriptableObject Export ===
+Asset Path: Assets/TextMesh Pro/Resources/TMP Settings.asset
+GUID: 3f5b5dff67a942289a9defa416b206f3
+
+ScriptableObject: TMP Settings (Type: TMP_Settings)
+    - Asset Version: 2
+    - Text Wrapping Mode: Normal
+    - Enable Kerning: True
+    - Active Font Features: (complex value)
+    - Enable Extra Padding: False
+    - Enable Tint All Sprites: False
+    - Enable Parse Escape Characters: True
+    - Enable Raycast Target: True
+    - Get Font Features At Runtime: True
+    - Missing Glyph Character: 0
+    - Clear Dynamic Data On Build: True
+    - Warnings Disabled: False
+    - Default Font Asset: LiberationSans SDF
+    - Default Font Asset Path: Fonts & Materials/
+    - Default Font Size: 36
+    - Default Auto Size Min Ratio: 0.5
+    - Default Auto Size Max Ratio: 2
+    - Default Text Mesh Pro Text Container Size: (20.00, 5.00)
+    - Default Text Mesh Pro UI Text Container Size: (200.00, 50.00)
+    - Auto Size Text Container: False
+    - Is Text Object Scale Static: False
+    - Fallback Font Assets: (complex value)
+    - Match Material Preset: True
+    - Hide Sub Text Objects: False
+    - Default Sprite Asset: EmojiOne
+    - Default Sprite Asset Path: Sprite Assets/
+    - Enable Emoji Support: True
+    - Missing Character Sprite Unicode: 0
+    - Emoji Fallback Text Assets: (complex value)
+    - Default Color Gradient Presets Path: Color Gradient Presets/
+    - Default Style Sheet: Default Style Sheet
+    - Style Sheets Resource Path: 
+    - Leading Characters: LineBreaking Leading Characters
+    - Following Characters: LineBreaking Following Characters
+    - Use Modern Hangul Line Breaking Rules: False

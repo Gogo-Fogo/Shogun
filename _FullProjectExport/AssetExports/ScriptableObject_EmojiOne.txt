@@ -1,0 +1,13 @@
+=== ScriptableObject Export ===
+Asset Path: Assets/TextMesh Pro/Resources/Sprite Assets/EmojiOne.asset
+GUID: c41005c129ba4d66911b75229fd70b45
+
+ScriptableObject: EmojiOne (Type: TMP_SpriteAsset)
+    - Version: 1.1.0
+    - Face Info: (complex value)
+    - Material: TextMeshPro/Sprite
+    - Sprite Sheet: EmojiOne
+    - Sprite Character Table: (complex value)
+    - Glyph Table: (complex value)
+    - Sprite Info List: (complex value)
+    - Fallback Sprite Assets: (complex value)

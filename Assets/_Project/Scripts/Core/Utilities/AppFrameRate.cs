@@ -1,3 +1,7 @@
+// AppFrameRate.cs
+// Utility MonoBehaviour for setting and managing the application's target frame rate.
+// Attach to a GameObject in the initial scene to enforce consistent frame timing.
+
 using UnityEngine;
 
 public class AppFrameRate : MonoBehaviour

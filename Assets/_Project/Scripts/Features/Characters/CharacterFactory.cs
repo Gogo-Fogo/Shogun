@@ -4,6 +4,10 @@ using Shogun.Core.Architecture;
 
 namespace Shogun.Features.Characters
 {
+    // CharacterFactory.cs
+    // Static factory class for creating CharacterInstance objects from CharacterDefinition or by name.
+    // Handles initialization, level setting, and provides utility methods for character management and testing.
+
     /// <summary>
     /// Factory class for creating and managing character instances.
     /// Provides utility methods for character creation and validation.

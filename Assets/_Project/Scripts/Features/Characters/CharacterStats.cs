@@ -4,7 +4,9 @@ using UnityEngine;
 namespace Shogun.Features.Characters
 {
     /// <summary>
-    /// Handles character stats, level progression, and stat calculations.
+    /// Encapsulates all character stats (health, attack, defense, level, experience, etc.) and stat progression logic.
+    /// Used by CharacterInstance to manage stat changes, leveling, and calculations for combat.
+    /// Provides methods for elemental and martial arts effectiveness, reactions, and modifiers.
     /// </summary>
     [Serializable]
     public class CharacterStats

@@ -3,6 +3,11 @@ using UnityEngine.Events;
 
 namespace Shogun.Core.Architecture
 {
+    // EventListener.cs
+    // MonoBehaviour component for listening to ScriptableObject event channels.
+    // Attach to GameObjects to respond to events raised by EventChannelSO.
+    // Supports UnityEvents for inspector-based event wiring and decoupled system design.
+
     /// <summary>
     /// Base class for event listeners that can be attached to GameObjects.
     /// Provides a way for GameObjects to respond to ScriptableObject events.

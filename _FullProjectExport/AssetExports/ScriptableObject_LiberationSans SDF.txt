@@ -1,0 +1,43 @@
+=== ScriptableObject Export ===
+Asset Path: Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset
+GUID: 8f586378b4e144a9851e7b34d9b748ee
+
+ScriptableObject: LiberationSans SDF (Type: TMP_FontAsset)
+    - Version: 1.1.0
+    - Face Info: (complex value)
+    - Material: LiberationSans SDF Material
+    - Source Font File GUID: e3265ab4bf004d28a9537516768c1c75
+    - Creation Settings: (complex value)
+    - Source Font File: null
+    - Source Font File Path: 
+    - Atlas Population Mode: Static
+    - Internal Dynamic OS: False
+    - Glyph Table: (complex value)
+    - Character Table: (complex value)
+    - Atlas Textures: (complex value)
+    - Atlas Texture Index: 0
+    - Is Multi Atlas Textures Enabled: False
+    - Get Font Features: True
+    - Clear Dynamic Data On Build: False
+    - Atlas Width: 1024
+    - Atlas Height: 1024
+    - Atlas Padding: 9
+    - Atlas Render Mode: SDFAA_HINTED
+    - Used Glyph Rects: (complex value)
+    - Free Glyph Rects: (complex value)
+    - Font Feature Table: (complex value)
+    - Should Reimport Font Features: False
+    - Fallback Font Asset Table: (complex value)
+    - Font Weight Table: (complex value)
+    - Font Weights: (complex value)
+    - Normal Style: 0
+    - Normal Spacing Offset: 0
+    - Bold Style: 0.75
+    - Bold Spacing: 7
+    - Italic Style: 35
+    - Tab Size: 10
+    - Font Info: (complex value)
+    - Glyph Info List: (complex value)
+    - Kerning Table: (complex value)
+    - Fallback Font Assets: (complex value)
+    - Atlas: null

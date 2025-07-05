@@ -7,10 +7,56 @@ Assets/
         UniversalRP.asset
     Tests/
         Characters/
+            CharacterSystemTests.cs
             CharacterTests.cs
         Combat/
             CombatTests.cs
         README.md
+    TextMesh Pro/
+        Fonts/
+            LiberationSans - OFL.txt
+            LiberationSans.ttf
+        Resources/
+            Fonts & Materials/
+                LiberationSans SDF - Drop Shadow.mat
+                LiberationSans SDF - Fallback.asset
+                LiberationSans SDF - Outline.mat
+                LiberationSans SDF.asset
+            Sprite Assets/
+                EmojiOne.asset
+            Style Sheets/
+                Default Style Sheet.asset
+            LineBreaking Following Characters.txt
+            LineBreaking Leading Characters.txt
+            TMP Settings.asset
+        Shaders/
+            SDFFunctions.hlsl
+            TMPro.cginc
+            TMPro_Mobile.cginc
+            TMPro_Properties.cginc
+            TMPro_Surface.cginc
+            TMP_Bitmap-Custom-Atlas.shader
+            TMP_Bitmap-Mobile.shader
+            TMP_Bitmap.shader
+            TMP_SDF Overlay.shader
+            TMP_SDF SSD.shader
+            TMP_SDF-HDRP LIT.shadergraph
+            TMP_SDF-HDRP UNLIT.shadergraph
+            TMP_SDF-Mobile Masking.shader
+            TMP_SDF-Mobile Overlay.shader
+            TMP_SDF-Mobile SSD.shader
+            TMP_SDF-Mobile-2-Pass.shader
+            TMP_SDF-Mobile.shader
+            TMP_SDF-Surface-Mobile.shader
+            TMP_SDF-Surface.shader
+            TMP_SDF-URP Lit.shadergraph
+            TMP_SDF-URP Unlit.shadergraph
+            TMP_SDF.shader
+            TMP_Sprite.shader
+        Sprites/
+            EmojiOne Attribution.txt
+            EmojiOne.json
+            EmojiOne.png
     _Project/
         AddressableAssetsData/
         Art/
@@ -11661,6 +11707,8 @@ Assets/
                 Architecture/
                     EventChannelSO.cs
                     EventListener.cs
+                    GestureRecognizer.cs
+                    InputManager.cs
                 Data/
                 Editor/
                     ProjectExportTool.cs
@@ -11670,9 +11718,22 @@ Assets/
                 Shogun.Core.asmdef
             Features/
                 Characters/
+                    CharacterDefinition.cs
+                    CharacterFactory.cs
+                    CharacterInstance.cs
+                    CharacterStats.cs
                     Shogun.Characters.asmdef
                 Combat/
+                    BattlefieldManager.cs
+                    CombatInputHandler.cs
+                    CombatState.cs
+                    CombatStateMachine.cs
+                    DefensiveMiniGames.cs
+                    IMiniGame.cs
+                    MiniGameManager.cs
+                    OffensiveMiniGames.cs
                     Shogun.Combat.asmdef
+                    TurnManager.cs
                 Gacha/
                     Shogun.Gacha.asmdef
                 UI/

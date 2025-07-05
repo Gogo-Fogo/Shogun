@@ -1,5 +1,9 @@
 using UnityEngine;
 
+// SafeAreaHandler.cs
+// Utility MonoBehaviour for handling device safe areas (e.g., notches, rounded corners) on mobile devices.
+// Adjusts UI RectTransforms to fit within the safe area of the screen.
+
 [RequireComponent(typeof(RectTransform))]
 public class SafeAreaHandler : MonoBehaviour
 {

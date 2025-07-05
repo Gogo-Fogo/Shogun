@@ -107,3 +107,11 @@ docs/
 └── Combat_Mechanics_System.md ✅ Complete (New)
 
 IMPLEMENTATION_PROGRESS.md     ✅ Complete
+
+## ✅ Assembly & Namespace Fixes (Post-Core Implementation)
+
+- Fixed all assembly definition references between core, character, and combat feature assemblies.
+- Moved IMiniGame interface to its own file for proper accessibility across combat scripts.
+- Added/fixed using statements in Combat scripts for correct type resolution (CharacterInstance, GestureRecognizer, InputManager, etc.).
+- Removed duplicate interface definitions.
+- All core combat, input, and mini-game systems now compile and are ready for scene integration and playtesting.

@@ -4,6 +4,11 @@ using Shogun.Core.Architecture;
 
 namespace Shogun.Features.Characters
 {
+    // CharacterInstance.cs
+    // Represents a runtime instance of a character in battle, including health, status effects, position, and turn state.
+    // Used by the combat system to track and manipulate character state during gameplay.
+    // Interacts with CharacterDefinition, CharacterStats, and handles status effects, movement, and combat actions.
+
     /// <summary>
     /// Represents a runtime instance of a character with current state and stats.
     /// This is what gets used in battles and gameplay.

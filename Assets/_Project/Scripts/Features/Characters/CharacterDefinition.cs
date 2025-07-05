@@ -3,8 +3,9 @@ using UnityEngine;
 namespace Shogun.Features.Characters
 {
     /// <summary>
-    /// ScriptableObject that defines the base data for a character.
-    /// This is the template that all instances of a character are based on.
+    /// ScriptableObject that defines the base data for a character (stats, element, martial arts type, abilities, etc.).
+    /// Used as a template for creating CharacterInstance objects at runtime.
+    /// Editable in the Unity Editor for easy content creation and balancing.
     /// </summary>
     [CreateAssetMenu(fileName = "New Character Definition", menuName = "Shogun/Characters/Character Definition")]
     public class CharacterDefinition : ScriptableObject
