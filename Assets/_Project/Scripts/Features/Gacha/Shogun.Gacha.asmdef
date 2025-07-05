@@ -1,6 +1,6 @@
 {
     "name": "Shogun.Gacha",
-    "rootNamespace": "",
+    "rootNamespace": "Shogun.Features.Gacha",
     "references": [
         "GUID:716e414e3a6173047aa1b3dc9de87423"
     ],

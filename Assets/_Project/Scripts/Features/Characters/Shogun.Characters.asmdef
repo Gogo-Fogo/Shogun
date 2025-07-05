@@ -1,6 +1,6 @@
 {
     "name": "Shogun.Characters",
-    "rootNamespace": "",
+    "rootNamespace": "Shogun.Features.Characters",
     "references": [
         "GUID:716e414e3a6173047aa1b3dc9de87423"
     ],

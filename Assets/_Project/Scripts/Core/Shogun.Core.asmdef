@@ -1,6 +1,6 @@
 {
     "name": "Shogun.Core",
-    "rootNamespace": "",
+    "rootNamespace": "Shogun.Core",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -1,6 +1,4 @@
 Assets/
-    samurai_ninja_assets/
-        craftpix-net-123681-free-samurai-pixel-art-sprite-sheets/
     Settings/
         Scenes/
             URP2DSceneTemplate.unity
