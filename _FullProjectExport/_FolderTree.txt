@@ -11678,6 +11678,7 @@ Assets/
                 Prefabs/
                     Samurai_Ryoma.prefab
                 ScriptableObjects/
+                    Ryoma_CharacterDefinition.asset
             Combat/
                 Art/
                 Prefabs/
@@ -11689,6 +11690,7 @@ Assets/
             UI/
                 Art/
                 Prefabs/
+                    DragInputPanel.prefab
                 ScriptableObjects/
         Prefabs/
             System/
@@ -11729,16 +11731,19 @@ Assets/
                     CharacterStats.cs
                     Shogun.Characters.asmdef
                 Combat/
+                    BattleDragHandler.cs
                     BattlefieldManager.cs
                     BattleManager.cs
                     CombatInputHandler.cs
                     CombatState.cs
                     CombatStateMachine.cs
                     DefensiveMiniGames.cs
+                    DragInputTester.cs
                     IMiniGame.cs
                     MiniGameManager.cs
                     OffensiveMiniGames.cs
                     Shogun.Combat.asmdef
+                    TestBattleSetup.cs
                     TurnManager.cs
                 Gacha/
                     Shogun.Gacha.asmdef

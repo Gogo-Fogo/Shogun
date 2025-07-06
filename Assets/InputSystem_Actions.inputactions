@@ -139,8 +139,30 @@
                 },
                 {
                     "name": "",
+                    "id": "5a166c8f-e207-4340-b1ac-73a413cad03d",
+                    "path": "<Pointer>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Point",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "153f3f2e-e6cc-4612-bfde-66e68aaff1c0",
                     "path": "<Touchscreen>/Press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "be2d7d44-d75d-4bf5-8ebc-3b7e98280515",
+                    "path": "<Pointer>/press",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

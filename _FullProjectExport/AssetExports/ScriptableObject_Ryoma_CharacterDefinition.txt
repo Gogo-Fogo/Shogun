@@ -1,0 +1,31 @@
+=== ScriptableObject Export ===
+Asset Path: Assets/_Project/Features/Characters/ScriptableObjects/Ryoma_CharacterDefinition.asset
+GUID: e8d5d5e0979532040925a70dd3486f29
+
+ScriptableObject: Ryoma_CharacterDefinition (Type: CharacterDefinition)
+    - Character Name: Ryoma
+    - Description: A skilled samurai known for his honor and swordsmanship.
+    - Portrait: null
+    - Battle Sprite: null
+    - Animator Controller: IDLE_0
+    - Collider Size: (1.00, 2.00)
+    - Collider Offset: (0.00, 0.00)
+    - Character Scale: (2.50, 2.50, 1.00)
+    - Character Type: Samurai
+    - Elemental Type: Earth
+    - Martial Arts Type: Sword
+    - Rarity: Rare
+    - Attack Range: Mid
+    - Base Health: 180
+    - Base Attack: 65
+    - Base Defense: 40
+    - Base Speed: 12
+    - Special Ability Name: Iaido Strike
+    - Special Ability Description: Unleash a lightning-fast sword draw, dealing heavy damage and stunning the enemy for 1 turn.
+    - Special Ability Cooldown: 3
+    - Special Ability Damage: 180
+    - Base Stealth Effectiveness: 30
+    - Stealth Decay Rate: 15
+    - Base Counter Chance: 35
+    - Counter Damage Multiplier: 120
+    - Synergy Tags: (complex value)

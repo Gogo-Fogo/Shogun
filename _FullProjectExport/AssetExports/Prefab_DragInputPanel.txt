@@ -1,0 +1,53 @@
+=== Prefab Export ===
+Prefab Path: Assets/_Project/Features/UI/Prefabs/DragInputPanel.prefab
+GUID: 32b2b3fda32b9bb4b88b1d2e42d51495
+
+- GameObject: DragInputPanel (Tag: Untagged, Layer: UI, Active: True)
+    * RectTransform
+        - Local Rotation: (0.00, 0.00, 0.00)
+        - Local Position: (0.00, 0.00, 0.00)
+        - Local Scale: (1.00, 1.00, 1.00)
+        - Constrain Proportions Scale: False
+        - Anchor Min: (0.00, 0.00)
+        - Anchor Max: (1.00, 1.00)
+        - Anchored Position: (0.00, 0.00)
+        - Size Delta: (0.00, 0.00)
+        - Pivot: (0.50, 0.50)
+    * CanvasRenderer
+        - Cull Transparent Mesh: True
+    * CanvasScaler
+        - Ui Scale Mode: ScaleWithScreenSize
+        - Reference Pixels Per Unit: 100
+        - Scale Factor: 1
+        - Reference Resolution: (1920.00, 1080.00)
+        - Screen Match Mode: MatchWidthOrHeight
+        - Match Width Or Height: 0.5
+        - Physical Unit: Points
+        - Fallback Screen DPI: 96
+        - Default Sprite DPI: 96
+        - Dynamic Pixels Per Unit: 1
+        - Preset Info Is World: False
+    * Canvas
+        - Render Mode: World Space
+        - Camera: null
+        - Plane Distance: 100
+        - Pixel Perfect: False
+        - Receives Events: True
+        - Override Sorting: False
+        - Override Pixel Perfect: False
+        - Sorting Bucket Normalized Size: 0
+        - Vertex Color Always Gamma Space: False
+        - Additional Shader Channels Flag: -1
+        - Update Rect Transform For Standalone: Enabled
+    * CanvasScaler
+        - Ui Scale Mode: ConstantPixelSize
+        - Reference Pixels Per Unit: 100
+        - Scale Factor: 1
+        - Reference Resolution: (800.00, 600.00)
+        - Screen Match Mode: MatchWidthOrHeight
+        - Match Width Or Height: 0
+        - Physical Unit: Points
+        - Fallback Screen DPI: 96
+        - Default Sprite DPI: 96
+        - Dynamic Pixels Per Unit: 1
+        - Preset Info Is World: False

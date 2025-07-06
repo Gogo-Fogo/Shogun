@@ -1,4 +1,5 @@
 Prefab: Assets/_Project/Features/Characters/Prefabs/Samurai_Ryoma.prefab => G:/Workspace/Unity/Projects/Shogun/Assets/..\_FullProjectExport\AssetExports\Prefab_Samurai_Ryoma.txt
+Prefab: Assets/_Project/Features/UI/Prefabs/DragInputPanel.prefab => G:/Workspace/Unity/Projects/Shogun/Assets/..\_FullProjectExport\AssetExports\Prefab_DragInputPanel.txt
 Prefab: Assets/_Project/Prefabs/System/SharedSceneRoot.prefab => G:/Workspace/Unity/Projects/Shogun/Assets/..\_FullProjectExport\AssetExports\Prefab_SharedSceneRoot.txt
 Prefab: Assets/_Project/Prefabs/System/SystemRoot.prefab => G:/Workspace/Unity/Projects/Shogun/Assets/..\_FullProjectExport\AssetExports\Prefab_SystemRoot.txt
 Scene: Assets/_Project/Scenes/Battle/Battle_Prototype.unity => G:/Workspace/Unity/Projects/Shogun/Assets/..\_FullProjectExport\AssetExports\Scene_Battle_Prototype.txt
@@ -6,6 +7,7 @@ Scene: Assets/_Project/Scenes/Core/MainMenu.unity => G:/Workspace/Unity/Projects
 Scene: Assets/_Project/Scenes/Dev/Dev_Sandbox.unity => G:/Workspace/Unity/Projects/Shogun/Assets/..\_FullProjectExport\AssetExports\Scene_Dev_Sandbox.txt
 Scene: Assets/_Project/Scenes/UI/UI_Demo.unity => G:/Workspace/Unity/Projects/Shogun/Assets/..\_FullProjectExport\AssetExports\Scene_UI_Demo.txt
 Scene: Assets/Settings/Scenes/URP2DSceneTemplate.unity => G:/Workspace/Unity/Projects/Shogun/Assets/..\_FullProjectExport\AssetExports\Scene_URP2DSceneTemplate.txt
+ScriptableObject: Assets/_Project/Features/Characters/ScriptableObjects/Ryoma_CharacterDefinition.asset => G:/Workspace/Unity/Projects/Shogun/Assets/..\_FullProjectExport\AssetExports\ScriptableObject_Ryoma_CharacterDefinition.txt
 ScriptableObject: Assets/DefaultVolumeProfile.asset => G:/Workspace/Unity/Projects/Shogun/Assets/..\_FullProjectExport\AssetExports\ScriptableObject_DefaultVolumeProfile.txt
 ScriptableObject: Assets/InputSystem_Actions.inputactions => G:/Workspace/Unity/Projects/Shogun/Assets/..\_FullProjectExport\AssetExports\ScriptableObject_InputSystem_Actions.txt
 ScriptableObject: Assets/Settings/Lit2DSceneTemplate.scenetemplate => G:/Workspace/Unity/Projects/Shogun/Assets/..\_FullProjectExport\AssetExports\ScriptableObject_Lit2DSceneTemplate.txt

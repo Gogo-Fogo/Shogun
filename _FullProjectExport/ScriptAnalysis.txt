@@ -541,6 +541,44 @@ First 30 lines:
   30:         [SerializeField] private float speedModifier = 1f;
   ... (truncated)
 
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\BattleDragHandler.cs ===
+Total Lines: 188
+  Code Lines: 150
+  Comment Lines: 4
+  Empty Lines: 34
+First 30 lines:
+  01: using UnityEngine;
+  02: using UnityEngine.EventSystems;
+  03: using UnityEngine.UI;
+  04: 
+  05: namespace Shogun.Features.Combat
+  06: {
+  07:     [RequireComponent(typeof(Image))]
+  08:     public class BattleDragHandler : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
+  09:     {
+  10:         [Header("References")]
+  11:         public TurnManager turnManager; // Assign in Inspector
+  12:         
+  13:         [Header("Settings")]
+  14:         public float dragThreshold = 10f; // pixels
+  15:         public bool enableDebugLogs = true;
+  16:         
+  17:         [Header("Movement")]
+  18:         public bool snapToGrid = true;
+  19:         public float gridSize = 1f;
+  20:         
+  21:         private bool isDragging = false;
+  22:         private Vector2 dragStartPos;
+  23:         private Camera mainCamera;
+  24:         private Image panelImage;
+  25:         private bool isInitialized = false;
+  26: 
+  27:         void Awake()
+  28:         {
+  29:             Initialize();
+  30:         }
+  ... (truncated)
+
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\BattlefieldManager.cs ===
 Total Lines: 69
   Code Lines: 54
@@ -580,10 +618,10 @@ First 30 lines:
   ... (truncated)
 
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\BattleManager.cs ===
-Total Lines: 46
-  Code Lines: 40
-  Comment Lines: 2
-  Empty Lines: 4
+Total Lines: 53
+  Code Lines: 42
+  Comment Lines: 4
+  Empty Lines: 7
 First 30 lines:
   01: using System.Collections.Generic;
   02: using Shogun.Features.Characters;
@@ -599,22 +637,22 @@ First 30 lines:
   12:     {
   13:         activeCharacters.Clear();
   14:         reserveCharacters.Clear();
-  15:         for (int i = 0; i < 3; i++)
-  16:         {
-  17:             var go = Instantiate(characterPrefab, GetSpawnPosition(i), Quaternion.identity);
-  18:             var instance = go.GetComponent<CharacterInstance>();
-  19:             instance.Initialize(team[i]);
-  20:             activeCharacters.Add(instance);
-  21:         }
-  22:         for (int i = 3; i < 6; i++)
-  23:         {
-  24:             var go = Instantiate(characterPrefab, GetReservePosition(i-3), Quaternion.identity);
-  25:             var instance = go.GetComponent<CharacterInstance>();
-  26:             instance.Initialize(team[i]);
-  27:             reserveCharacters.Add(instance);
-  28:         }
-  29:     }
-  30: 
+  15: 
+  16:         int activeCount = Mathf.Min(3, team.Count);
+  17:         int reserveCount = team.Count - activeCount;
+  18: 
+  19:         // Spawn active characters
+  20:         for (int i = 0; i < activeCount; i++)
+  21:         {
+  22:             var go = Instantiate(characterPrefab, GetSpawnPosition(i), Quaternion.identity);
+  23:             var instance = go.GetComponent<CharacterInstance>();
+  24:             instance.Initialize(team[i]);
+  25:             activeCharacters.Add(instance);
+  26:         }
+  27: 
+  28:         // Spawn reserve characters (if any)
+  29:         for (int i = 0; i < reserveCount; i++)
+  30:         {
   ... (truncated)
 
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\CombatInputHandler.cs ===
@@ -768,6 +806,44 @@ First 30 lines:
   30:         private IEnumerator BlockTimingMiniGame()
   ... (truncated)
 
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\DragInputTester.cs ===
+Total Lines: 101
+  Code Lines: 81
+  Comment Lines: 7
+  Empty Lines: 13
+First 30 lines:
+  01: using UnityEngine;
+  02: using UnityEngine.UI;
+  03: using UnityEngine.EventSystems;
+  04: 
+  05: namespace Shogun.Features.Combat
+  06: {
+  07:     public class DragInputTester : MonoBehaviour
+  08:     {
+  09:         [Header("Test References")]
+  10:         public BattleDragHandler dragHandler;
+  11:         public Button testButton;
+  12:         
+  13:         [Header("Test Settings")]
+  14:         public bool autoTestOnStart = true;
+  15:         
+  16:         void Start()
+  17:         {
+  18:             if (autoTestOnStart)
+  19:             {
+  20:                 TestSetup();
+  21:             }
+  22:             
+  23:             if (testButton != null)
+  24:             {
+  25:                 testButton.onClick.AddListener(TestSetup);
+  26:             }
+  27:         }
+  28:         
+  29:         public void TestSetup()
+  30:         {
+  ... (truncated)
+
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\IMiniGame.cs ===
 Total Lines: 11
   Code Lines: 7
@@ -862,9 +938,41 @@ First 30 lines:
   30:         private IEnumerator TimingTapMiniGame()
   ... (truncated)
 
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\TestBattleSetup.cs ===
+Total Lines: 25
+  Code Lines: 22
+  Comment Lines: 0
+  Empty Lines: 3
+First 30 lines:
+  01: using UnityEngine;
+  02: using System.Collections.Generic;
+  03: using Shogun.Features.Characters;
+  04: using Shogun.Features.Combat;
+  05: 
+  06: public class TestBattleSetup : MonoBehaviour
+  07: {
+  08:     public BattleManager battleManager;
+  09:     public TurnManager turnManager;
+  10:     public List<CharacterDefinition> testTeam; // Assign 6 in Inspector
+  11: 
+  12:     void Start()
+  13:     {
+  14:         if (testTeam == null || testTeam.Count < 1)
+  15:         {
+  16:             Debug.LogError("Assign at least 1 CharacterDefinition asset to testTeam!");
+  17:             return;
+  18:         }
+  19: 
+  20:         battleManager.StartBattle(testTeam);
+  21:         turnManager.turnOrder = new List<CharacterInstance>(battleManager.activeCharacters);
+  22:         turnManager.CurrentTurnIndex = 0;
+  23:         Debug.Log("Battle started and turn order set!");
+  24:     }
+  25: } 
+
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\TurnManager.cs ===
-Total Lines: 87
-  Code Lines: 69
+Total Lines: 92
+  Code Lines: 74
   Comment Lines: 7
   Empty Lines: 11
 First 30 lines:
@@ -885,24 +993,24 @@ First 30 lines:
   15:     {
   16:         private readonly List<CharacterInstance> combatants = new List<CharacterInstance>();
   17:         private int currentTurnIndex = 0;
-  18:         public event Action<CharacterInstance> OnTurnStarted;
-  19:         public event Action<CharacterInstance> OnTurnEnded;
-  20:         public event Action OnBattleEnded;
-  21:         public bool IsBattleActive { get; private set; } = false;
-  22:         public List<CharacterInstance> turnOrder = new List<CharacterInstance>();
-  23: 
-  24:         public void Initialize(List<CharacterInstance> participants)
-  25:         {
-  26:             combatants.Clear();
-  27:             combatants.AddRange(participants);
-  28:             currentTurnIndex = 0;
-  29:             IsBattleActive = combatants.Count > 0;
-  30:         }
+  18:         public int CurrentTurnIndex
+  19:         {
+  20:             get => currentTurnIndex;
+  21:             set => currentTurnIndex = value;
+  22:         }
+  23:         public event Action<CharacterInstance> OnTurnStarted;
+  24:         public event Action<CharacterInstance> OnTurnEnded;
+  25:         public event Action OnBattleEnded;
+  26:         public bool IsBattleActive { get; private set; } = false;
+  27:         public List<CharacterInstance> turnOrder = new List<CharacterInstance>();
+  28: 
+  29:         public void Initialize(List<CharacterInstance> participants)
+  30:         {
   ... (truncated)
 
 === SCRIPT SUMMARY ===
-Total Scripts: 25
-Total Classes: 25
+Total Scripts: 28
+Total Classes: 28
 Total Interfaces: 1
 Total Enums: 0
 
@@ -924,13 +1032,16 @@ Classes:
   - CharacterDefinition (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\CharacterDefinition.cs)
   - CharacterInstance (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\CharacterInstance.cs)
   - CharacterStats (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\CharacterStats.cs)
+  - BattleDragHandler (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\BattleDragHandler.cs)
   - BattlefieldManager (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\BattlefieldManager.cs)
   - BattleManager (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\BattleManager.cs)
   - CombatInputHandler (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\CombatInputHandler.cs)
   - CombatStateMachine (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\CombatStateMachine.cs)
   - DefensiveMiniGames (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\DefensiveMiniGames.cs)
+  - DragInputTester (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\DragInputTester.cs)
   - MiniGameManager (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\MiniGameManager.cs)
   - OffensiveMiniGames (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\OffensiveMiniGames.cs)
+  - TestBattleSetup (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\TestBattleSetup.cs)
   - TurnManager (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\TurnManager.cs)
 
 Interfaces:
