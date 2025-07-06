@@ -127,3 +127,10 @@ For more details, see the architectural blueprint and research sources in the pr
 - These are the most important sources of truth, but you may review any other part of the project as needed to fully understand the context.
 - Use these as the source of truth for all design, architecture, and implementation decisions.
 - **Do not repeat this process once you have reviewed the files for the current session.**
+
+## Battle System (2024-07-05 Update)
+- The battle system now uses a single, generic CharacterPrefab for all characters. All character-specific visuals, stats, and abilities are set at runtime from CharacterDefinition ScriptableObjects.
+- Team size is fully flexible: you can start a battle with any number of characters (minimum 1).
+- Characters spawn at the position of the CharacterPrefab in the scene, making it easy to control spawn locations visually.
+- Character scale is set at runtime from the CharacterDefinition asset, so you can have different-sized characters without changing the prefab.
+- The system is robust to missing or incomplete teams and will not throw errors if fewer than 6 characters are assigned.

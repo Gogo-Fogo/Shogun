@@ -5,6 +5,7 @@
 
 using UnityEngine;
 using Shogun.Core.Architecture;
+using System.Collections.Generic;
 
 namespace Shogun.Features.Combat
 {
@@ -12,6 +13,10 @@ namespace Shogun.Features.Combat
     {
         private GestureRecognizer gestureRecognizer;
         private InputManager inputManager;
+        public List<GameObject> activeCharacters = new List<GameObject>();
+        public int selectedCharacterIndex = 0;
+        public BattleManager battleManager;
+        public TurnManager turnManager;
 
         void Awake()
         {
@@ -51,5 +56,23 @@ namespace Shogun.Features.Combat
         private void HandleSwipe(Vector2 start, Vector2 end) { /* Handle swipe input for combat */ }
         private void HandleHold(Vector2 pos, float duration) { /* Handle hold input for combat */ }
         private void HandleCombatAction() { /* Handle combat action input */ }
+
+        public void DebugTap(UnityEngine.Vector2 position)
+        {
+            if (battleManager == null || turnManager == null)
+            {
+                UnityEngine.Debug.LogWarning("BattleManager or TurnManager not assigned!");
+                return;
+            }
+            var currentCharacter = turnManager.GetCurrentCharacter();
+            if (battleManager.activeCharacters.Contains(currentCharacter))
+            {
+                currentCharacter.MoveTo(position); // Implement this in CharacterInstance
+            }
+            else
+            {
+                UnityEngine.Debug.Log("It's not your turn!");
+            }
+        }
     }
 } 

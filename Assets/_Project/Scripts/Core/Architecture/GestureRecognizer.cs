@@ -51,30 +51,7 @@ namespace Shogun.Core.Architecture
         private void OnTapPerformed(InputAction.CallbackContext ctx)
         {
             Vector2 pos = positionAction != null ? positionAction.action.ReadValue<Vector2>() : Vector2.zero;
-            if (isHolding)
-            {
-                // End hold
-                if (holdTime > 0.5f)
-                {
-                    OnHold?.Invoke(touchStart, holdTime);
-                }
-                else if (Vector2.Distance(touchStart, pos) > 50f)
-                {
-                    OnSwipe?.Invoke(touchStart, pos);
-                }
-                else
-                {
-                    OnTap?.Invoke(pos);
-                }
-                isHolding = false;
-            }
-            else
-            {
-                // Start touch
-                touchStart = pos;
-                holdTime = 0f;
-                isHolding = true;
-            }
+            OnTap?.Invoke(pos);
         }
 
         private void OnPositionPerformed(InputAction.CallbackContext ctx)

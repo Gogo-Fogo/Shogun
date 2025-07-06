@@ -65,6 +65,6 @@ GUID: b212ad3f85ef4b3448b6c02559bb3875
         - Used By Effector: False
         - Composite Operation: None
         - Composite Order: 0
-        - Offset: (0.08, -0.01)
-        - Size: (0.88, 1.44)
+        - Offset: (0.12, 0.00)
+        - Size: (1.38, 2.25)
         - Direction: Vertical

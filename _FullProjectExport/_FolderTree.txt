@@ -11730,6 +11730,7 @@ Assets/
                     Shogun.Characters.asmdef
                 Combat/
                     BattlefieldManager.cs
+                    BattleManager.cs
                     CombatInputHandler.cs
                     CombatState.cs
                     CombatStateMachine.cs

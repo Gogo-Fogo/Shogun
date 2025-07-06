@@ -115,3 +115,19 @@ IMPLEMENTATION_PROGRESS.md     ✅ Complete
 - Added/fixed using statements in Combat scripts for correct type resolution (CharacterInstance, GestureRecognizer, InputManager, etc.).
 - Removed duplicate interface definitions.
 - All core combat, input, and mini-game systems now compile and are ready for scene integration and playtesting.
+
+## Planned Team System (Blazing-Style)
+
+- **Team Size:** Each player has a team of 6 characters.
+- **Active/Reserve:** Only 3 characters are active on the battlefield at a time; the other 3 are in reserve.
+- **Swapping:** Players can swap any reserve character with an active one at any time (outside of certain restrictions, e.g., during an action).
+- **UI:** All 6 character portraits are visible at the bottom of the screen. Active characters are highlighted. Tapping a reserve character swaps them with the currently selected active character.
+- **Battlefield:** Only active characters can move, attack, or be targeted.
+- **Future Implementation:** Team management, synergy bonuses, and swap cooldowns will be added later.
+
+## ✅ Battle System Improvements (2024-07-05):
+- Character spawning is now fully data-driven: only one generic CharacterPrefab is needed, and all character differences are handled via CharacterDefinition assets.
+- Team size is now flexible: battles can start with any number of characters (minimum 1), not just 6.
+- Characters now spawn at the position of the CharacterPrefab in the scene, making layout intuitive.
+- Character scale is set at runtime from the CharacterDefinition asset, allowing per-character size customization.
+- All major errors and edge cases (e.g., out-of-range team lists) are handled gracefully.

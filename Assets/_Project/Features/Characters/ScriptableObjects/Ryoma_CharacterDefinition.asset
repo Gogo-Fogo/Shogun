@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cae84c2d5f140e44b6318b2af561392, type: 3}
+  m_Name: Ryoma_CharacterDefinition
+  m_EditorClassIdentifier: 
+  characterName: Ryoma
+  description: A skilled samurai known for his honor and swordsmanship.
+  portrait: {fileID: 0}
+  battleSprite: {fileID: 0}
+  animatorController: {fileID: 9100000, guid: 0b73a9b43c386ba438a68c085f373001, type: 2}
+  colliderSize: {x: 1, y: 2}
+  colliderOffset: {x: 0, y: 0}
+  characterScale: {x: 2.5, y: 2.5, z: 1}
+  characterType: 0
+  elementalType: 2
+  martialArtsType: 1
+  rarity: 3
+  attackRange: 1
+  baseHealth: 180
+  baseAttack: 65
+  baseDefense: 40
+  baseSpeed: 12
+  specialAbilityName: Iaido Strike
+  specialAbilityDescription: Unleash a lightning-fast sword draw, dealing heavy damage
+    and stunning the enemy for 1 turn.
+  specialAbilityCooldown: 3
+  specialAbilityDamage: 180
+  baseStealthEffectiveness: 30
+  stealthDecayRate: 15
+  baseCounterChance: 35
+  counterDamageMultiplier: 120
+  synergyTags:
+  - Samurai
+  - Leader

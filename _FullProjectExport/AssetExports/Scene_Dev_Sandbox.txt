@@ -312,13 +312,17 @@ GUID: 8c9cfa26abfee488c85f1582747f6a02
         - Local Scale: (1.00, 1.00, 1.00)
         - Constrain Proportions Scale: False
     * CombatInputHandler
+        - Active Characters: (complex value)
+        - Selected Character Index: 0
+        - Battle Manager: null
+        - Turn Manager: null
     * GestureRecognizer
         - On Tap: (complex value)
         - On Swipe: (complex value)
         - On Hold: (complex value)
-        - Tap Action: null
-        - Position Action: null
-        - Hold Action: null
+        - Tap Action: Gameplay/Tap
+        - Position Action: Gameplay/PointerPosition
+        - Hold Action: Gameplay/DragOrPress
     - GameObject: TurnManager (Tag: Untagged, Layer: Default, Active: True)
         * Transform
             - Local Rotation: (0.00, 0.00, 0.00)
@@ -326,6 +330,7 @@ GUID: 8c9cfa26abfee488c85f1582747f6a02
             - Local Scale: (1.00, 1.00, 1.00)
             - Constrain Proportions Scale: False
         * TurnManager
+            - Turn Order: (complex value)
     - GameObject: BattlefieldManager (Tag: Untagged, Layer: Default, Active: True)
         * Transform
             - Local Rotation: (0.00, 0.00, 0.00)
@@ -421,6 +426,87 @@ GUID: 8c9cfa26abfee488c85f1582747f6a02
             - Used By Effector: False
             - Composite Operation: None
             - Composite Order: 0
-            - Offset: (0.08, -0.01)
-            - Size: (0.88, 1.44)
+            - Offset: (0.12, 0.00)
+            - Size: (1.38, 2.25)
             - Direction: Vertical
+    - GameObject: CharacterPrefab (Tag: Untagged, Layer: Default, Active: True)
+        * Transform
+            - Local Rotation: (0.00, 0.00, 0.00)
+            - Local Position: (-12.79, -1.41, 0.00)
+            - Local Scale: (2.50, 2.50, 2.50)
+            - Constrain Proportions Scale: True
+        * SpriteRenderer
+            - Cast Shadows: Off
+            - Receive Shadows: False
+            - Dynamic Occludee: True
+            - Static Shadow Caster: False
+            - Motion Vectors: Per Object Motion
+            - Light Probe Usage: 1
+            - Reflection Probe Usage: 1
+            - Ray Tracing Mode: 0
+            - Ray Trace Procedural: False
+            - Ray Tracing Accel Struct Build Flags Override: False
+            - Ray Tracing Accel Struct Build Flags: 1
+            - Small Mesh Culling: True
+            - Rendering Layer Mask: 1
+            - Renderer Priority: 0
+            - Materials: (complex value)
+            - Probe Anchor: null
+            - Light Probe Volume Override: null
+            - Lightmap Parameters: null
+            - Sprite: null
+            - Color: RGBA(1.000, 1.000, 1.000, 1.000)
+            - Flip X: False
+            - Flip Y: False
+            - Draw Mode: Simple
+            - Size: (0.22, 0.36)
+            - Adaptive Mode Threshold: 0.5
+            - Sprite Tile Mode: Continuous
+            - Mask Interaction: None
+            - Sprite Sort Point: Center
+        * Animator
+            - Avatar: null
+            - Controller: null
+            - Culling Mode: Always Animate
+            - Update Mode: Normal
+            - Apply Root Motion: False
+            - Linear Velocity Blending: False
+            - Stabilize Feet: False
+            - Animate Physics: False
+            - Warning Message: 
+            - Has Transform Hierarchy: True
+            - Allow Constant Clip Sampling Optimization: True
+            - Keep Animator State On Disable: False
+            - Write Default Values On Disable: False
+        * CapsuleCollider2D
+            - Density: 1
+            - Material: null
+            - Include Layers: 0
+            - Exclude Layers: 0
+            - Layer Override Priority: 0
+            - Force Send Layers: -1
+            - Force Receive Layers: -1
+            - Contact Capture Layers: -1
+            - Callback Layers: -1
+            - Is Trigger: False
+            - Used By Effector: False
+            - Composite Operation: None
+            - Composite Order: 0
+            - Offset: (0.12, 0.00)
+            - Size: (1.38, 2.25)
+            - Direction: Vertical
+        * CharacterInstance
+            - Definition: null
+            - Stats: (complex value)
+            - Current Health: 0
+            - Is Alive: False
+            - Position: (complex value)
+            - Has Moved This Turn: False
+            - Has Attacked This Turn: False
+            - Special Ability Cooldown: 0
+            - Is Hidden: False
+            - Turns In Bush: 0
+            - Is In Bush: False
+            - Can Counter Attack: False
+            - Last Damage Taken: 0
+            - Active Status Effects: (complex value)

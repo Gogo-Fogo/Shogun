@@ -13,8 +13,7 @@ namespace Shogun.Features.Characters
     /// Represents a runtime instance of a character with current state and stats.
     /// This is what gets used in battles and gameplay.
     /// </summary>
-    [Serializable]
-    public class CharacterInstance
+    public class CharacterInstance : MonoBehaviour
     {
         [Header("Character Data")]
         [SerializeField] private CharacterDefinition definition;
@@ -140,20 +139,11 @@ namespace Shogun.Features.Characters
         /// <summary>
         /// Move the character to a new position.
         /// </summary>
-        public void MoveTo(Vector2Int newPosition)
+        public void MoveTo(Vector2 screenPosition)
         {
-            if (!CanMove) return;
-            
-            position = newPosition;
-            hasMovedThisTurn = true;
-            
-            // Moving breaks stealth
-            if (isHidden)
-            {
-                SetHidden(false);
-            }
-            
-            OnPositionChanged?.Invoke(position);
+            Vector3 worldPos = Camera.main.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, Mathf.Abs(Camera.main.transform.position.z)));
+            worldPos.z = 0;
+            transform.position = worldPos;
         }
         
         /// <summary>
@@ -399,6 +389,29 @@ namespace Shogun.Features.Characters
         public float GetElementalReactionMultiplier(CharacterInstance other)
         {
             return stats.GetElementalReactionMultiplier(definition.ElementalType, other.Definition.ElementalType);
+        }
+
+        public void Initialize(CharacterDefinition def)
+        {
+            // Set sprite
+            var sr = GetComponent<SpriteRenderer>();
+            if (sr != null && def.BattleSprite != null)
+                sr.sprite = def.BattleSprite;
+            // Set animator
+            var anim = GetComponent<Animator>();
+            if (anim != null && def.AnimatorController != null)
+                anim.runtimeAnimatorController = def.AnimatorController;
+            // Set collider size/offset if present in def
+            var col = GetComponent<CapsuleCollider2D>();
+            if (col != null)
+            {
+                col.size = def.ColliderSize;
+                col.offset = def.ColliderOffset;
+            }
+            // Set scale
+            transform.localScale = def.CharacterScale;
+            // Set other stats as needed (attack range, etc.)
+            // this.attackRange = def.attackRange; // Uncomment if you have this field
         }
     }
     

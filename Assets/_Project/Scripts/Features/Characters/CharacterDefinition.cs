@@ -15,6 +15,12 @@ namespace Shogun.Features.Characters
         [SerializeField] private string description = "";
         [SerializeField] private Sprite portrait;
         [SerializeField] private Sprite battleSprite;
+        [SerializeField] private RuntimeAnimatorController animatorController;
+        
+        [Header("Prefab/Collider Settings")]
+        [SerializeField] private Vector2 colliderSize = new Vector2(1, 2);
+        [SerializeField] private Vector2 colliderOffset = Vector2.zero;
+        [SerializeField] private Vector3 characterScale = Vector3.one;
         
         [Header("Character Type")]
         [SerializeField] private CharacterType characterType = CharacterType.Samurai;
@@ -51,6 +57,7 @@ namespace Shogun.Features.Characters
         public string Description => description;
         public Sprite Portrait => portrait;
         public Sprite BattleSprite => battleSprite;
+        public RuntimeAnimatorController AnimatorController => animatorController;
         public CharacterType CharacterType => characterType;
         public ElementalType ElementalType => elementalType;
         public MartialArtsType MartialArtsType => martialArtsType;
@@ -69,6 +76,9 @@ namespace Shogun.Features.Characters
         public float BaseCounterChance => baseCounterChance;
         public float CounterDamageMultiplier => counterDamageMultiplier;
         public string[] SynergyTags => synergyTags;
+        public Vector2 ColliderSize => colliderSize;
+        public Vector2 ColliderOffset => colliderOffset;
+        public Vector3 CharacterScale => characterScale;
         
         /// <summary>
         /// Creates a new CharacterInstance based on this definition.

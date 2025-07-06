@@ -15,10 +15,16 @@ namespace Shogun.Features.Combat
     {
         private readonly List<CharacterInstance> combatants = new List<CharacterInstance>();
         private int currentTurnIndex = 0;
+        public int CurrentTurnIndex
+        {
+            get => currentTurnIndex;
+            set => currentTurnIndex = value;
+        }
         public event Action<CharacterInstance> OnTurnStarted;
         public event Action<CharacterInstance> OnTurnEnded;
         public event Action OnBattleEnded;
         public bool IsBattleActive { get; private set; } = false;
+        public List<CharacterInstance> turnOrder = new List<CharacterInstance>();
 
         public void Initialize(List<CharacterInstance> participants)
         {
@@ -67,6 +73,18 @@ namespace Shogun.Features.Combat
         {
             if (!IsBattleActive || combatants.Count == 0) return null;
             return combatants[currentTurnIndex];
+        }
+
+        public CharacterInstance GetCurrentCharacter()
+        {
+            if (turnOrder.Count == 0) return null;
+            return turnOrder[currentTurnIndex];
+        }
+
+        public void NextTurn()
+        {
+            if (turnOrder.Count == 0) return;
+            currentTurnIndex = (currentTurnIndex + 1) % turnOrder.Count;
         }
 
         // For future extension: allow dynamic reordering, initiative, etc.

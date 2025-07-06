@@ -203,9 +203,9 @@ First 30 lines:
   ... (truncated)
 
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Architecture\GestureRecognizer.cs ===
-Total Lines: 93
-  Code Lines: 76
-  Comment Lines: 8
+Total Lines: 70
+  Code Lines: 55
+  Comment Lines: 6
   Empty Lines: 9
 First 30 lines:
   01: // GestureRecognizer.cs
@@ -390,10 +390,10 @@ First 30 lines:
   ... (truncated)
 
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\CharacterDefinition.cs ===
-Total Lines: 147
-  Code Lines: 108
+Total Lines: 157
+  Code Lines: 117
   Comment Lines: 25
-  Empty Lines: 14
+  Empty Lines: 15
 First 30 lines:
   01: using UnityEngine;
   02: 
@@ -412,19 +412,19 @@ First 30 lines:
   15:         [SerializeField] private string description = "";
   16:         [SerializeField] private Sprite portrait;
   17:         [SerializeField] private Sprite battleSprite;
-  18:         
-  19:         [Header("Character Type")]
-  20:         [SerializeField] private CharacterType characterType = CharacterType.Samurai;
-  21:         [SerializeField] private ElementalType elementalType = ElementalType.Earth;
-  22:         [SerializeField] private MartialArtsType martialArtsType = MartialArtsType.Sword;
-  23:         [SerializeField] private Rarity rarity = Rarity.Common;
+  18:         [SerializeField] private RuntimeAnimatorController animatorController;
+  19:         
+  20:         [Header("Prefab/Collider Settings")]
+  21:         [SerializeField] private Vector2 colliderSize = new Vector2(1, 2);
+  22:         [SerializeField] private Vector2 colliderOffset = Vector2.zero;
+  23:         [SerializeField] private Vector3 characterScale = Vector3.one;
   24:         
-  25:         [Header("Combat Properties")]
-  26:         [SerializeField] private AttackRange attackRange = AttackRange.Mid;
-  27:         [SerializeField] private float baseHealth = 100f;
-  28:         [SerializeField] private float baseAttack = 50f;
-  29:         [SerializeField] private float baseDefense = 30f;
-  30:         [SerializeField] private float baseSpeed = 10f;
+  25:         [Header("Character Type")]
+  26:         [SerializeField] private CharacterType characterType = CharacterType.Samurai;
+  27:         [SerializeField] private ElementalType elementalType = ElementalType.Earth;
+  28:         [SerializeField] private MartialArtsType martialArtsType = MartialArtsType.Sword;
+  29:         [SerializeField] private Rarity rarity = Rarity.Common;
+  30:         
   ... (truncated)
 
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\CharacterFactory.cs ===
@@ -466,10 +466,10 @@ First 30 lines:
   ... (truncated)
 
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\CharacterInstance.cs ===
-Total Lines: 455
-  Code Lines: 295
-  Comment Lines: 99
-  Empty Lines: 61
+Total Lines: 468
+  Code Lines: 305
+  Comment Lines: 104
+  Empty Lines: 59
 First 30 lines:
   01: using System;
   02: using UnityEngine;
@@ -486,21 +486,21 @@ First 30 lines:
   13:     /// Represents a runtime instance of a character with current state and stats.
   14:     /// This is what gets used in battles and gameplay.
   15:     /// </summary>
-  16:     [Serializable]
-  17:     public class CharacterInstance
-  18:     {
-  19:         [Header("Character Data")]
-  20:         [SerializeField] private CharacterDefinition definition;
-  21:         [SerializeField] private CharacterStats stats;
-  22:         
-  23:         [Header("Battle State")]
-  24:         [SerializeField] private float currentHealth;
-  25:         [SerializeField] private bool isAlive = true;
-  26:         [SerializeField] private Vector2Int position = Vector2Int.zero;
-  27:         [SerializeField] private bool hasMovedThisTurn = false;
-  28:         [SerializeField] private bool hasAttackedThisTurn = false;
-  29:         [SerializeField] private int specialAbilityCooldown = 0;
-  30:         
+  16:     public class CharacterInstance : MonoBehaviour
+  17:     {
+  18:         [Header("Character Data")]
+  19:         [SerializeField] private CharacterDefinition definition;
+  20:         [SerializeField] private CharacterStats stats;
+  21:         
+  22:         [Header("Battle State")]
+  23:         [SerializeField] private float currentHealth;
+  24:         [SerializeField] private bool isAlive = true;
+  25:         [SerializeField] private Vector2Int position = Vector2Int.zero;
+  26:         [SerializeField] private bool hasMovedThisTurn = false;
+  27:         [SerializeField] private bool hasAttackedThisTurn = false;
+  28:         [SerializeField] private int specialAbilityCooldown = 0;
+  29:         
+  30:         [Header("Stealth State")]
   ... (truncated)
 
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\CharacterStats.cs ===
@@ -579,11 +579,49 @@ First 30 lines:
   30:             characterPositions[character] = ClampToBattlefield(position);
   ... (truncated)
 
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\BattleManager.cs ===
+Total Lines: 46
+  Code Lines: 40
+  Comment Lines: 2
+  Empty Lines: 4
+First 30 lines:
+  01: using System.Collections.Generic;
+  02: using Shogun.Features.Characters;
+  03: using UnityEngine;
+  04: 
+  05: public class BattleManager : MonoBehaviour
+  06: {
+  07:     public GameObject characterPrefab; // Assign in Inspector
+  08:     public List<CharacterInstance> activeCharacters = new List<CharacterInstance>();
+  09:     public List<CharacterInstance> reserveCharacters = new List<CharacterInstance>();
+  10: 
+  11:     public void StartBattle(List<CharacterDefinition> team)
+  12:     {
+  13:         activeCharacters.Clear();
+  14:         reserveCharacters.Clear();
+  15:         for (int i = 0; i < 3; i++)
+  16:         {
+  17:             var go = Instantiate(characterPrefab, GetSpawnPosition(i), Quaternion.identity);
+  18:             var instance = go.GetComponent<CharacterInstance>();
+  19:             instance.Initialize(team[i]);
+  20:             activeCharacters.Add(instance);
+  21:         }
+  22:         for (int i = 3; i < 6; i++)
+  23:         {
+  24:             var go = Instantiate(characterPrefab, GetReservePosition(i-3), Quaternion.identity);
+  25:             var instance = go.GetComponent<CharacterInstance>();
+  26:             instance.Initialize(team[i]);
+  27:             reserveCharacters.Add(instance);
+  28:         }
+  29:     }
+  30: 
+  ... (truncated)
+
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\CombatInputHandler.cs ===
-Total Lines: 55
-  Code Lines: 45
+Total Lines: 78
+  Code Lines: 67
   Comment Lines: 4
-  Empty Lines: 6
+  Empty Lines: 7
 First 30 lines:
   01: // CombatInputHandler.cs
   02: // MonoBehaviour for handling combat-specific input (movement, attack, skill use, etc.).
@@ -592,29 +630,29 @@ First 30 lines:
   05: 
   06: using UnityEngine;
   07: using Shogun.Core.Architecture;
-  08: 
-  09: namespace Shogun.Features.Combat
-  10: {
-  11:     public class CombatInputHandler : MonoBehaviour
-  12:     {
-  13:         private GestureRecognizer gestureRecognizer;
-  14:         private InputManager inputManager;
-  15: 
-  16:         void Awake()
-  17:         {
-  18:             gestureRecognizer = GetComponent<GestureRecognizer>();
-  19:             inputManager = GetComponent<InputManager>();
-  20:         }
-  21: 
-  22:         void OnEnable()
-  23:         {
-  24:             if (gestureRecognizer != null)
-  25:             {
-  26:                 gestureRecognizer.OnTap.AddListener(HandleTap);
-  27:                 gestureRecognizer.OnSwipe.AddListener(HandleSwipe);
-  28:                 gestureRecognizer.OnHold.AddListener(HandleHold);
-  29:             }
-  30:             if (inputManager != null)
+  08: using System.Collections.Generic;
+  09: 
+  10: namespace Shogun.Features.Combat
+  11: {
+  12:     public class CombatInputHandler : MonoBehaviour
+  13:     {
+  14:         private GestureRecognizer gestureRecognizer;
+  15:         private InputManager inputManager;
+  16:         public List<GameObject> activeCharacters = new List<GameObject>();
+  17:         public int selectedCharacterIndex = 0;
+  18:         public BattleManager battleManager;
+  19:         public TurnManager turnManager;
+  20: 
+  21:         void Awake()
+  22:         {
+  23:             gestureRecognizer = GetComponent<GestureRecognizer>();
+  24:             inputManager = GetComponent<InputManager>();
+  25:         }
+  26: 
+  27:         void OnEnable()
+  28:         {
+  29:             if (gestureRecognizer != null)
+  30:             {
   ... (truncated)
 
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\CombatState.cs ===
@@ -825,10 +863,10 @@ First 30 lines:
   ... (truncated)
 
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\TurnManager.cs ===
-Total Lines: 74
-  Code Lines: 58
+Total Lines: 87
+  Code Lines: 69
   Comment Lines: 7
-  Empty Lines: 9
+  Empty Lines: 11
 First 30 lines:
   01: // TurnManager.cs
   02: // Manages the order of turns for all combatants in a turn-based battle.
@@ -851,20 +889,20 @@ First 30 lines:
   19:         public event Action<CharacterInstance> OnTurnEnded;
   20:         public event Action OnBattleEnded;
   21:         public bool IsBattleActive { get; private set; } = false;
-  22: 
-  23:         public void Initialize(List<CharacterInstance> participants)
-  24:         {
-  25:             combatants.Clear();
-  26:             combatants.AddRange(participants);
-  27:             currentTurnIndex = 0;
-  28:             IsBattleActive = combatants.Count > 0;
-  29:         }
-  30: 
+  22:         public List<CharacterInstance> turnOrder = new List<CharacterInstance>();
+  23: 
+  24:         public void Initialize(List<CharacterInstance> participants)
+  25:         {
+  26:             combatants.Clear();
+  27:             combatants.AddRange(participants);
+  28:             currentTurnIndex = 0;
+  29:             IsBattleActive = combatants.Count > 0;
+  30:         }
   ... (truncated)
 
 === SCRIPT SUMMARY ===
-Total Scripts: 24
-Total Classes: 24
+Total Scripts: 25
+Total Classes: 25
 Total Interfaces: 1
 Total Enums: 0
 
@@ -887,6 +925,7 @@ Classes:
   - CharacterInstance (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\CharacterInstance.cs)
   - CharacterStats (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\CharacterStats.cs)
   - BattlefieldManager (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\BattlefieldManager.cs)
+  - BattleManager (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\BattleManager.cs)
   - CombatInputHandler (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\CombatInputHandler.cs)
   - CombatStateMachine (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\CombatStateMachine.cs)
   - DefensiveMiniGames (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\DefensiveMiniGames.cs)
