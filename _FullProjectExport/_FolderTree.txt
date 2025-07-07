@@ -59,6 +59,7 @@ Assets/
             EmojiOne.png
     _Project/
         AddressableAssetsData/
+            .keep
         Art/
             Backgrounds/
                 Courtyard/
@@ -10612,23 +10613,16 @@ Assets/
                         img_icon_10014.png
                         img_icon_10015.png
                         img_icon_10019.png
-        Audio/
         Features/
             Characters/
-                Animations/
                 Art/
                     Animations/
                         Samurai/
-                            Clips/
                             Controllers/
                                 Samurai.controller
-                    Archive/
-                        FULL_Samurai_2D_Pixel_Art_v1.2/
                     Licenses/
                         Font.txt
                         Licens.txt
-                    Portraits/
-                    References/
                     SourceFiles/
                         PSD/
                             Samurai_Archer_Spritelist.psd
@@ -10678,7 +10672,6 @@ Assets/
                                             OkamiJin_RUN.png
                                     OkamiJin_License.txt
                                     OkamiJin_Preview.png
-                        Archive/
                         Demons/
                             Akaoni/
                                 RedDemon/
@@ -10846,7 +10839,6 @@ Assets/
                                 FULL_Samurai 2D Pixel Art v1.2/
                                     Animations/
                                         FULL_Samurai 2D Pixel Art v1.2_IDLE.anim
-                                    Sprites/
                                     FULL_Samurai 2D Pixel Art v1.2_Preview.png
                                     License.txt
                             Harada/
@@ -11707,24 +11699,13 @@ Assets/
                                 COUPON.pdf
                                 License.txt
                                 Tsukiko_COUPON.png
-                    SpriteSheets/
                 Prefabs/
                     Samurai_Ryoma.prefab
                 ScriptableObjects/
                     Ryoma_CharacterDefinition.asset
-            Combat/
-                Art/
-                Prefabs/
-                ScriptableObjects/
-            Gacha/
-                Art/
-                Prefabs/
-                ScriptableObjects/
             UI/
-                Art/
                 Prefabs/
                     DragInputPanel.prefab
-                ScriptableObjects/
         Prefabs/
             System/
                 SharedSceneRoot.prefab
@@ -11742,14 +11723,12 @@ Assets/
             Events/
                 GameEvents.cs
         Scripts/
-            ApplicationLifecycle/
             Core/
                 Architecture/
                     EventChannelSO.cs
                     EventListener.cs
                     GestureRecognizer.cs
                     InputManager.cs
-                Data/
                 Editor/
                     ProjectExportTool.cs
                 Utilities/
@@ -11765,6 +11744,7 @@ Assets/
                 BatchRenameCharacterSprites.cs
                 CharacterAssetBatchOrganizer.cs
                 OrganizeCharacterAssetsEditor.cs
+                ProjectCleanupTools.cs
             Features/
                 Characters/
                     AnimationClipDiagnosticTool.cs

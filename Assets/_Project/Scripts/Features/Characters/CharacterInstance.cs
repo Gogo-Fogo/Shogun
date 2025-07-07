@@ -142,17 +142,29 @@ namespace Shogun.Features.Characters
         }
         
         /// <summary>
+        /// Stop any current movement and reset animation.
+        /// </summary>
+        public void StopMovement()
+        {
+            if (currentMovementCoroutine != null)
+            {
+                StopCoroutine(currentMovementCoroutine);
+                currentMovementCoroutine = null;
+                var anim = GetComponent<Animator>();
+                if (anim != null) 
+                {
+                    anim.SetBool("isRunning", false);
+                }
+            }
+        }
+
+        /// <summary>
         /// Move the character to a new position with smooth running animation.
         /// </summary>
         public void MoveTo(Vector2 screenPosition)
         {
             // Stop any existing movement and ensure animation is reset
-            if (currentMovementCoroutine != null)
-            {
-                StopCoroutine(currentMovementCoroutine);
-                var anim = GetComponent<Animator>();
-                if (anim != null) anim.SetBool("isRunning", false);
-            }
+            StopMovement();
             
             currentMovementCoroutine = StartCoroutine(MoveToRoutine(screenPosition));
         }
@@ -162,7 +174,7 @@ namespace Shogun.Features.Characters
             Vector3 start = transform.position;
             Vector3 target = Camera.main.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, Mathf.Abs(Camera.main.transform.position.z)));
             target.z = 0;
-            float speed = 25f; // Increased from 15f to 25f for faster tap-to-move
+            float speed = 40f; // Increased for faster tap-to-move
             var anim = GetComponent<Animator>();
             if (anim != null) anim.SetBool("isRunning", true);
             

@@ -430,6 +430,44 @@ First 30 lines:
   30:         controllerSourceFolder = EditorGUILayout.TextField("Controller Source Folder", controllerSourceFolder);
   ... (truncated)
 
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Editor\ProjectCleanupTools.cs ===
+Total Lines: 133
+  Code Lines: 119
+  Comment Lines: 5
+  Empty Lines: 9
+First 30 lines:
+  01: #if UNITY_EDITOR
+  02: using UnityEngine;
+  03: using UnityEditor;
+  04: using System.IO;
+  05: using System.Collections.Generic;
+  06: using System.Linq;
+  07: using System.Security.Cryptography;
+  08: 
+  09: public class ProjectCleanupTools : EditorWindow
+  10: {
+  11:     private string projectRoot = "Assets/_Project";
+  12:     private bool deleteEmptyFolders = true;
+  13:     private bool reportOrphanedMetas = true;
+  14:     private bool reportDuplicates = true;
+  15:     private bool deleteOrphanedMetas = false;
+  16: 
+  17:     [MenuItem("Tools/Shogun/Project Cleanup Tools")]
+  18:     public static void ShowWindow()
+  19:     {
+  20:         GetWindow<ProjectCleanupTools>("Project Cleanup Tools");
+  21:     }
+  22: 
+  23:     private void OnGUI()
+  24:     {
+  25:         GUILayout.Label("Project Cleanup Tools", EditorStyles.boldLabel);
+  26:         projectRoot = EditorGUILayout.TextField("Project Root", projectRoot);
+  27:         deleteEmptyFolders = EditorGUILayout.Toggle("Delete Empty Folders", deleteEmptyFolders);
+  28:         reportOrphanedMetas = EditorGUILayout.Toggle("Report Orphaned .meta Files", reportOrphanedMetas);
+  29:         reportDuplicates = EditorGUILayout.Toggle("Report Duplicate Files (by name)", reportDuplicates);
+  30:         deleteOrphanedMetas = EditorGUILayout.Toggle("Delete Orphaned .meta Files", deleteOrphanedMetas);
+  ... (truncated)
+
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Architecture\EventChannelSO.cs ===
 Total Lines: 156
   Code Lines: 65
@@ -960,10 +998,10 @@ First 30 lines:
   ... (truncated)
 
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\CharacterInstance.cs ===
-Total Lines: 565
-  Code Lines: 377
-  Comment Lines: 119
-  Empty Lines: 69
+Total Lines: 577
+  Code Lines: 385
+  Comment Lines: 122
+  Empty Lines: 70
 First 30 lines:
   01: using System;
   02: using UnityEngine;
@@ -1036,41 +1074,41 @@ First 30 lines:
   ... (truncated)
 
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\BattleDragHandler.cs ===
-Total Lines: 222
-  Code Lines: 188
-  Comment Lines: 9
+Total Lines: 264
+  Code Lines: 225
+  Comment Lines: 14
   Empty Lines: 25
 First 30 lines:
   01: using UnityEngine;
   02: using UnityEngine.EventSystems;
   03: using UnityEngine.UI;
-  04: 
-  05: namespace Shogun.Features.Combat
-  06: {
-  07:     [RequireComponent(typeof(Image))]
-  08:     public class BattleDragHandler : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
-  09:     {
-  10:         [Header("References")]
-  11:         public TurnManager turnManager; // Assign in Inspector
-  12:         
-  13:         [Header("Settings")]
-  14:         public float dragThreshold = 10f; // pixels
-  15:         public bool enableDebugLogs = true;
-  16:         
-  17:         [Header("Movement")]
-  18:         public bool snapToGrid = true;
-  19:         public float gridSize = 1f;
-  20:         
-  21:         private bool isDragging = false;
-  22:         private Vector2 dragStartPos;
-  23:         private Camera mainCamera;
-  24:         private Image panelImage;
-  25:         private bool isInitialized = false;
-  26:         private float dragFollowLerpSpeed = 20f; // Increased from 10f to 20f for faster following
-  27:         private Vector3? dragTargetWorldPos = null;
-  28: 
-  29:         void Awake()
-  30:         {
+  04: using Shogun.Features.Characters;
+  05: 
+  06: namespace Shogun.Features.Combat
+  07: {
+  08:     [RequireComponent(typeof(Image))]
+  09:     public class BattleDragHandler : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
+  10:     {
+  11:         [Header("References")]
+  12:         public TurnManager turnManager; // Assign in Inspector
+  13:         
+  14:         [Header("Settings")]
+  15:         public float dragThreshold = 10f; // pixels
+  16:         public bool enableDebugLogs = true;
+  17:         
+  18:         [Header("Movement")]
+  19:         public bool snapToGrid = true;
+  20:         public float gridSize = 1f;
+  21:         [Tooltip("Springy smoothing time for drag-follow movement")] public float dragSmoothTime = 0.08f;
+  22:         private Vector3 dragVelocity = Vector3.zero;
+  23:         
+  24:         private bool isDragging = false;
+  25:         private Vector2 dragStartPos;
+  26:         private Camera mainCamera;
+  27:         private Image panelImage;
+  28:         private bool isInitialized = false;
+  29:         private Vector3? dragTargetWorldPos = null;
+  30:         private bool isReleasingDrag = false; // Flag to prevent Update interference during release
   ... (truncated)
 
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\BattlefieldManager.cs ===
@@ -1503,8 +1541,8 @@ First 30 lines:
   ... (truncated)
 
 === SCRIPT SUMMARY ===
-Total Scripts: 41
-Total Classes: 41
+Total Scripts: 42
+Total Classes: 42
 Total Interfaces: 1
 Total Enums: 0
 
@@ -1526,6 +1564,7 @@ Classes:
   - BatchRenameCharacterSprites (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Editor\BatchRenameCharacterSprites.cs)
   - CharacterAssetBatchOrganizer (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Editor\CharacterAssetBatchOrganizer.cs)
   - OrganizeCharacterAssetsEditor (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Editor\OrganizeCharacterAssetsEditor.cs)
+  - ProjectCleanupTools (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Editor\ProjectCleanupTools.cs)
   - GestureRecognizer (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Architecture\GestureRecognizer.cs)
   - InputManager (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Architecture\InputManager.cs)
   - ProjectExportTool (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Editor\ProjectExportTool.cs)

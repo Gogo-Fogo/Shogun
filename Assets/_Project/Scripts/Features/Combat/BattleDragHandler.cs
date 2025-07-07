@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Shogun.Features.Characters;
+using System.Collections;
 
 namespace Shogun.Features.Combat
 {
@@ -8,178 +10,169 @@ namespace Shogun.Features.Combat
     public class BattleDragHandler : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
     {
         [Header("References")]
-        public TurnManager turnManager; // Assign in Inspector
-        
+        public TurnManager turnManager;
         [Header("Settings")]
-        public float dragThreshold = 10f; // pixels
-        public bool enableDebugLogs = true;
-        
-        [Header("Movement")]
-        public bool snapToGrid = true;
+        public float dragThreshold = 10f;
+        public float dragSmoothTime = 0.08f;
         public float gridSize = 1f;
-        
-        private bool isDragging = false;
-        private Vector2 dragStartPos;
+        public bool snapToGrid = true;
+        public float tapMoveSpeed = 50f;
+        private const float tapTimeThreshold = 0.2f;
+        private const float tapMoveThreshold = 20f;
+
         private Camera mainCamera;
-        private Image panelImage;
-        private bool isInitialized = false;
-        private float dragFollowLerpSpeed = 20f; // Increased from 10f to 20f for faster following
-        private Vector3? dragTargetWorldPos = null;
+        private Vector2 pointerDownPos;
+        private float pointerDownTime;
+        private bool isDragging = false;
+        private Vector3 dragTargetWorldPos;
+        private Vector3 dragVelocity = Vector3.zero;
+        private CharacterInstance draggingCharacter = null;
+        private Animator characterAnimator = null;
+        private Coroutine tapMoveCoroutine = null;
 
         void Awake()
         {
-            Initialize();
-        }
-
-        void Start()
-        {
-            if (!isInitialized)
-            {
-                Initialize();
-            }
-        }
-
-        private void Initialize()
-        {
-            if (isInitialized) return;
-            
             mainCamera = Camera.main;
-            if (mainCamera == null)
-            {
-                Debug.LogError("BattleDragHandler: No main camera found!");
-                return;
-            }
-
-            panelImage = GetComponent<Image>();
-            if (panelImage == null)
-            {
-                Debug.LogError("BattleDragHandler: No Image component found! This script requires an Image component.");
-                return;
-            }
-
-            // Ensure the panel is set up correctly for input
-            panelImage.raycastTarget = true;
-            panelImage.color = new Color(0, 0, 0, 0); // Transparent but still raycastable
-            
-            // Get or add GraphicRaycaster if needed
-            var canvas = GetComponentInParent<Canvas>();
-            if (canvas != null && canvas.GetComponent<GraphicRaycaster>() == null)
-            {
-                canvas.gameObject.AddComponent<GraphicRaycaster>();
-            }
-
-            isInitialized = true;
-            LogDebug("BattleDragHandler initialized successfully");
         }
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            if (!isInitialized) return;
-            
-            LogDebug($"PointerDown: {eventData.position}");
-            dragStartPos = eventData.position;
+            pointerDownPos = eventData.position;
+            pointerDownTime = Time.unscaledTime;
             isDragging = false;
-        }
-
-        public void OnDrag(PointerEventData eventData)
-        {
-            Debug.Log("OnDrag called");
-            if (!isInitialized) return;
-            LogDebug($"Drag: {eventData.position}");
-            if (turnManager == null)
-            {
-                LogDebug("TurnManager is null, cannot process drag");
-                return;
-            }
-            var currentCharacter = turnManager.GetCurrentCharacter();
-            if (currentCharacter == null)
-            {
-                LogDebug("No current character, cannot process drag");
-                return;
-            }
-            if (!isDragging && Vector2.Distance(eventData.position, dragStartPos) > dragThreshold)
-            {
-                isDragging = true;
-                LogDebug("Drag threshold exceeded, starting drag");
-                // Set run animation ON
-                var anim = currentCharacter.GetComponent<Animator>();
-                if (anim != null) 
-                {
-                    anim.SetBool("isRunning", true);
-                    LogDebug("Set isRunning = true for drag start");
-                }
-            }
-            if (isDragging)
-            {
-                Vector3 worldPos = mainCamera.ScreenToWorldPoint(eventData.position);
-                worldPos.z = 0;
-                if (snapToGrid)
-                {
-                    worldPos = SnapToGrid(worldPos);
-                }
-                dragTargetWorldPos = worldPos;
-                LogDebug($"Set drag target to: {worldPos}");
-            }
         }
 
         public void OnPointerUp(PointerEventData eventData)
         {
-            if (!isInitialized) return;
-            LogDebug($"PointerUp: {eventData.position}");
+            float heldTime = Time.unscaledTime - pointerDownTime;
+            float movedDist = Vector2.Distance(eventData.position, pointerDownPos);
+            
+            // CLICK/TAP: Run to position
+            if (!isDragging && heldTime < tapTimeThreshold && movedDist < tapMoveThreshold)
+            {
+                StartTapMove(eventData.position);
+            }
+            // HOLD END: Snap to final position
+            else if (isDragging && draggingCharacter != null)
+            {
+                Vector3 pointerWorld = GetPointerWorld(eventData.position, draggingCharacter.transform);
+                Vector3 finalTargetPos = snapToGrid ? SnapToGrid(pointerWorld) : pointerWorld;
+                SetCharacterPosition(draggingCharacter.transform, finalTargetPos);
+                if (characterAnimator != null) characterAnimator.SetBool("isRunning", false);
+            }
+            
+            isDragging = false;
+            draggingCharacter = null;
+            characterAnimator = null;
+            dragVelocity = Vector3.zero;
+        }
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            if (turnManager == null) return;
+            var currentCharacter = turnManager.GetCurrentCharacter();
+            if (currentCharacter == null) return;
+            
+            // HOLD: Start dragging and teleport character under finger
             if (!isDragging)
             {
-                // This was a tap, call tap-to-move logic
-                OnTap(eventData.position);
+                if (tapMoveCoroutine != null) { StopCoroutine(tapMoveCoroutine); tapMoveCoroutine = null; }
+                isDragging = true;
+                draggingCharacter = currentCharacter;
+                characterAnimator = currentCharacter.GetComponentInChildren<Animator>();
+                
+                // INSTANT teleport under finger
+                Transform charTransform = currentCharacter.transform;
+                Vector3 pointerWorldPos = GetPointerWorld(eventData.position, charTransform);
+                SetCharacterPosition(charTransform, pointerWorldPos);
+                if (characterAnimator != null) characterAnimator.SetBool("isRunning", false);
+                dragVelocity = Vector3.zero;
+            }
+            
+            // Update drag target
+            if (isDragging && draggingCharacter != null)
+            {
+                Transform charTransform = currentCharacter.transform;
+                Vector3 pointerWorldPos = GetPointerWorld(eventData.position, charTransform);
+                dragTargetWorldPos = pointerWorldPos;
+            }
+        }
+
+        void Update()
+        {
+            if (isDragging && draggingCharacter != null)
+            {
+                Transform charTransform = draggingCharacter.transform;
+                Vector3 before = GetCharacterPosition(charTransform);
+                Vector3 newPos = Vector3.SmoothDamp(before, dragTargetWorldPos, ref dragVelocity, dragSmoothTime);
+                SetCharacterPosition(charTransform, newPos);
+            }
+        }
+
+        private void StartTapMove(Vector2 screenPosition)
+        {
+            if (turnManager == null) return;
+            var currentCharacter = turnManager.GetCurrentCharacter();
+            if (currentCharacter == null) return;
+            if (tapMoveCoroutine != null) StopCoroutine(tapMoveCoroutine);
+            Vector3 worldPos = GetPointerWorld(screenPosition, currentCharacter.transform);
+            if (snapToGrid) worldPos = SnapToGrid(worldPos);
+            tapMoveCoroutine = StartCoroutine(SmoothMoveToPosition(currentCharacter, worldPos));
+        }
+
+        private IEnumerator SmoothMoveToPosition(Component character, Vector3 targetWorldPos)
+        {
+            Transform charTransform = character.transform;
+            Transform charParent = charTransform.parent;
+            Animator anim = character.GetComponentInChildren<Animator>();
+            if (anim != null) anim.SetBool("isRunning", true);
+
+            if (charParent)
+            {
+                Vector3 startLocal = charTransform.localPosition;
+                Vector3 targetLocal = charParent.InverseTransformPoint(targetWorldPos);
+                float totalDist = Vector3.Distance(startLocal, targetLocal);
+                float minDuration = 0.1f;
+                float duration = Mathf.Max(minDuration, totalDist / tapMoveSpeed);
+                float elapsed = 0f;
+                while (elapsed < duration)
+                {
+                    elapsed += Time.deltaTime;
+                    float t = Mathf.Clamp01(elapsed / duration);
+                    Vector3 nextLocal = Vector3.Lerp(startLocal, targetLocal, t);
+                    charTransform.localPosition = nextLocal;
+                    yield return null;
+                }
+                charTransform.localPosition = targetLocal;
             }
             else
             {
-                // Snap to final drag position
-                if (turnManager != null)
+                Vector3 startWorld = charTransform.position;
+                float totalDist = Vector3.Distance(startWorld, targetWorldPos);
+                float minDuration = 0.1f;
+                float duration = Mathf.Max(minDuration, totalDist / tapMoveSpeed);
+                float elapsed = 0f;
+                while (elapsed < duration)
                 {
-                    var currentCharacter = turnManager.GetCurrentCharacter();
-                    if (currentCharacter != null && dragTargetWorldPos.HasValue)
-                    {
-                        currentCharacter.transform.position = dragTargetWorldPos.Value;
-                        // Set run animation OFF
-                        var anim = currentCharacter.GetComponent<Animator>();
-                        if (anim != null) 
-                        {
-                            anim.SetBool("isRunning", false);
-                            LogDebug("Set isRunning = false for drag end");
-                        }
-                    }
+                    elapsed += Time.deltaTime;
+                    float t = Mathf.Clamp01(elapsed / duration);
+                    Vector3 nextWorld = Vector3.Lerp(startWorld, targetWorldPos, t);
+                    charTransform.position = nextWorld;
+                    yield return null;
                 }
+                charTransform.position = targetWorldPos;
             }
-            isDragging = false;
-            dragTargetWorldPos = null;
+            if (anim != null) anim.SetBool("isRunning", false);
+            tapMoveCoroutine = null;
         }
 
-        private void OnTap(Vector2 screenPosition)
+        private Vector3 GetPointerWorld(Vector2 screenPosition, Transform charTransform)
         {
-            if (turnManager == null)
-            {
-                LogDebug("TurnManager is null, cannot process tap");
-                return;
-            }
-            
-            var currentCharacter = turnManager.GetCurrentCharacter();
-            if (currentCharacter == null)
-            {
-                LogDebug("No current character, cannot process tap");
-                return;
-            }
-
-            Vector3 worldPos = mainCamera.ScreenToWorldPoint(screenPosition);
-            worldPos.z = 0;
-            
-            if (snapToGrid)
-            {
-                worldPos = SnapToGrid(worldPos);
-            }
-            
-            // Use the character's MoveTo method which handles run animation properly
-            currentCharacter.MoveTo(screenPosition);
-            LogDebug($"Tapped to move character to: {worldPos}");
+            Transform charParent = charTransform.parent;
+            float z = charParent ? Mathf.Abs(mainCamera.transform.position.z - charParent.position.z) : Mathf.Abs(mainCamera.transform.position.z - charTransform.position.z);
+            Vector3 pointerWorld = mainCamera.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, z));
+            pointerWorld.z = charTransform.position.z;
+            return pointerWorld;
         }
 
         private Vector3 SnapToGrid(Vector3 worldPosition)
@@ -187,36 +180,26 @@ namespace Shogun.Features.Combat
             return new Vector3(
                 Mathf.Round(worldPosition.x / gridSize) * gridSize,
                 Mathf.Round(worldPosition.y / gridSize) * gridSize,
-                0
+                worldPosition.z
             );
         }
 
-        private void LogDebug(string message)
+        private void SetCharacterPosition(Transform charTransform, Vector3 worldPos)
         {
-            if (enableDebugLogs)
-            {
-                Debug.Log($"[BattleDragHandler] {message}");
-            }
+            Transform charParent = charTransform.parent;
+            if (charParent)
+                charTransform.localPosition = charParent.InverseTransformPoint(worldPos);
+            else
+                charTransform.position = worldPos;
         }
 
-        // Public method to test if the handler is working
-        public void TestInput()
+        private Vector3 GetCharacterPosition(Transform charTransform)
         {
-            LogDebug("Test input called - handler is working!");
-        }
-
-        void Update()
-        {
-            // If dragging, smoothly move the character toward the drag target
-            if (isDragging && dragTargetWorldPos.HasValue && turnManager != null)
-            {
-                var currentCharacter = turnManager.GetCurrentCharacter();
-                if (currentCharacter != null)
-                {
-                    var t = currentCharacter.transform;
-                    t.position = Vector3.MoveTowards(t.position, dragTargetWorldPos.Value, dragFollowLerpSpeed * Time.deltaTime);
-                }
-            }
+            Transform charParent = charTransform.parent;
+            if (charParent)
+                return charParent.TransformPoint(charTransform.localPosition);
+            else
+                return charTransform.position;
         }
     }
 } 

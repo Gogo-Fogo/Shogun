@@ -238,6 +238,7 @@ GUID: 8c9cfa26abfee488c85f1582747f6a02
                 - Enable Debug Logs: True
                 - Snap To Grid: True
                 - Grid Size: 1
+                - Drag Smooth Time: 0.08
             * DragInputTester
                 - Drag Handler: DragInputPanel
                 - Test Button: null
