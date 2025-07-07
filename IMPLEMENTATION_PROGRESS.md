@@ -139,3 +139,13 @@ IMPLEMENTATION_PROGRESS.md     ✅ Complete
 - Characters now spawn at the position of the CharacterPrefab in the scene, making layout intuitive.
 - Character scale is set at runtime from the CharacterDefinition asset, allowing per-character size customization.
 - All major errors and edge cases (e.g., out-of-range team lists) are handled gracefully.
+
+## ✅ BattleDragHandler Complete Rewrite (2025-07-06):
+- **Complete system rewrite** for robust tap-to-move and hold-to-drag functionality
+- **Tap behavior**: Character runs smoothly to tap position with running animation (no teleport)
+- **Hold behavior**: Character instantly teleports under pointer and follows smoothly (no running animation)
+- **Fixed animation conflicts**: Proper state management prevents animation bugs
+- **Transform handling**: Works correctly with both parented and unparented characters
+- **Coroutine management**: Prevents movement conflicts and ensures clean state transitions
+- **Performance**: Optimized movement with configurable speed and smoothing parameters
+- **Status**: ✅ COMPLETE - Production ready drag/tap movement system

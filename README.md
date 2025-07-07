@@ -68,14 +68,16 @@ Assets/
 - All owned/usable art assets, source files, and licenses are tracked for backup and collaboration.
 
 ## Input & Battle Drag System (2025-07-06 Update)
-- The battle system now features a robust, Blazing-style drag/tap input system for both mouse and touch.
-- **DragInputPanel**: A single, invisible UI panel under the main Canvas captures all pointer events for character movement.
-- **BattleDragHandler**: Handles both tap-to-move and drag-to-move, with grid snapping and debug logging.
+- **Complete BattleDragHandler rewrite** with robust tap-to-move and hold-to-drag functionality
+- **Tap behavior**: Character runs smoothly to tap position with running animation (no teleport)
+- **Hold behavior**: Character instantly teleports under pointer and follows smoothly (no running animation)
+- **DragInputPanel**: A single, invisible UI panel under the main Canvas captures all pointer events for character movement
+- **BattleDragHandler**: Handles both tap-to-move and drag-to-move, with grid snapping and proper animation state management
 - **Input System UI Integration**: The Input System UI Input Module must have the following bindings in the UI action map:
   - `Point`: `<Pointer>/position` and `<Touchscreen>/position`
   - `Click`: `<Pointer>/press` and `<Touchscreen>/press`
-- **No test/debug scripts**: All test and debug scripts (PointerLogger, DragInputTester, Fix/Nuke/CleanupDragInputPanelEditor) have been removed for a clean production setup.
-- **Troubleshooting**: If drag does not work, check the Input System UI Input Module bindings and ensure only one DragInputPanel exists under the main Canvas.
+- **Production ready**: All test/debug scripts removed, proper coroutine management, and transform handling for both parented/unparented characters
+- **Troubleshooting**: If drag does not work, check the Input System UI Input Module bindings and ensure only one DragInputPanel exists under the main Canvas
 
 ## Getting Started
 - Ensure your Input System UI Input Module is configured as above for pointer events.
