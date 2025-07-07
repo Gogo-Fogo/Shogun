@@ -3,11 +3,13 @@ Asset Path: Assets/_Project/Features/Characters/ScriptableObjects/Ryoma_Characte
 GUID: e8d5d5e0979532040925a70dd3486f29
 
 ScriptableObject: Ryoma_CharacterDefinition (Type: CharacterDefinition)
+    - Surname: 
+    - Given Name: Unknown
     - Character Name: Ryoma
     - Description: A skilled samurai known for his honor and swordsmanship.
     - Portrait: null
     - Battle Sprite: null
-    - Animator Controller: IDLE_0
+    - Animator Controller: Ryoma_Ryoma
     - Collider Size: (1.00, 2.00)
     - Collider Offset: (0.00, 0.00)
     - Character Scale: (2.50, 2.50, 1.00)
@@ -29,3 +31,4 @@ ScriptableObject: Ryoma_CharacterDefinition (Type: CharacterDefinition)
     - Base Counter Chance: 35
     - Counter Damage Multiplier: 120
     - Synergy Tags: (complex value)
+    - Animation Mappings: (complex value)

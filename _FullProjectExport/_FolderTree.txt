@@ -10618,6 +10618,12 @@ Assets/
                 Animations/
                 Art/
                     Animations/
+                        Samurai/
+                            Clips/
+                            Controllers/
+                                Samurai.controller
+                    Archive/
+                        FULL_Samurai_2D_Pixel_Art_v1.2/
                     Licenses/
                         Font.txt
                         Licens.txt
@@ -10630,151 +10636,152 @@ Assets/
                             Samurai_Spritelist.psd
                     Sprites/
                         Animals/
-                            Samurai Panda 2D Pixel Art/
+                            Kumada/
                                 Samurai Panda 2D Pixel Art/
                                     Samurai Panda 2D Pixel Art/
                                         Sprites/
-                                            ATTACK 1.png
-                                            ATTACK 2.png
-                                            ATTACK 3.png
-                                            DASH ATTACK.png
-                                            DASH.png
-                                            DEATH.png
-                                            DEFEND.png
-                                            HURT.png
-                                            IDLE.png
-                                            JUMP.png
-                                            RUN.png
+                                            Kumada_ATTACK 1.png
+                                            Kumada_ATTACK 2.png
+                                            Kumada_ATTACK 3.png
+                                            Kumada_DASH ATTACK.png
+                                            Kumada_DASH.png
+                                            Kumada_DEATH.png
+                                            Kumada_DEFEND.png
+                                            Kumada_HURT.png
+                                            Kumada_IDLE.png
+                                            Kumada_JUMP.png
+                                            Kumada_RUN.png
                                         License.txt
                                         preview.gif
-                            Wolf Samurai 2D Pixel Art v1.1/
+                            OkamiJin/
                                 Wolf Samurai 2D Pixel Art v1.1/
                                     Sprites/
                                         without_outline/
-                                            ATTACK 1.png
-                                            ATTACK 2.png
-                                            ATTACK 3.png
-                                            DASH ATTACK.png
-                                            DEATH.png
-                                            HURT.png
-                                            IDLE.png
-                                            JUMP.png
-                                            RUN.png
+                                            OkamiJin_ATTACK 1.png
+                                            OkamiJin_ATTACK 2.png
+                                            OkamiJin_ATTACK 3.png
+                                            OkamiJin_DASH ATTACK.png
+                                            OkamiJin_DEATH.png
+                                            OkamiJin_HURT.png
+                                            OkamiJin_IDLE.png
+                                            OkamiJin_JUMP.png
+                                            OkamiJin_RUN.png
                                         with_outline/
-                                            ATTACK 1.png
-                                            ATTACK 2.png
-                                            ATTACK 3.png
-                                            DASH ATTACK.png
-                                            DEATH.png
-                                            HURT.png
-                                            IDLE.png
-                                            JUMP.png
-                                            RUN.png
-                                    License.txt
-                                    Preview.png
+                                            OkamiJin_ATTACK 1.png
+                                            OkamiJin_ATTACK 2.png
+                                            OkamiJin_ATTACK 3.png
+                                            OkamiJin_DASH ATTACK.png
+                                            OkamiJin_DEATH.png
+                                            OkamiJin_HURT.png
+                                            OkamiJin_IDLE.png
+                                            OkamiJin_JUMP.png
+                                            OkamiJin_RUN.png
+                                    OkamiJin_License.txt
+                                    OkamiJin_Preview.png
+                        Archive/
                         Demons/
-                            Demon Samurai 2D Pixel Art/
+                            Akaoni/
+                                RedDemon/
+                                    Akaoni_Attack1.png
+                                    Akaoni_Attack2.png
+                                    Akaoni_Death.png
+                                    Akaoni_Fall.png
+                                    Akaoni_Idle.png
+                                    Akaoni_Jump.png
+                                    Akaoni_Run.png
+                                    Akaoni_Take hit.png
+                            Hyoga/
+                                FrozenDemon/
+                                    Hyoga_Attack1.png
+                                    Hyoga_Attack2.png
+                                    Hyoga_Death.png
+                                    Hyoga_Fall.png
+                                    Hyoga_Idle.png
+                                    Hyoga_Jump.png
+                                    Hyoga_Run.png
+                                    Hyoga_Take hit.png
+                            Oniro/
                                 Demon Samurai 2D Pixel Art/
                                     Demon Samurai 2D Pixel Art/
                                         Sprites/
-                                            ATTACK 1 (FLAMING SWORD).png
-                                            ATTACK 1.png
-                                            ATTACK 2 (FLAMING SWORD).png
-                                            ATTACK 2.png
-                                            ATTACK 3 (FLAMING SWORD).png
-                                            ATTACK 3.png
-                                            DEATH.png
-                                            DEFEND.png
-                                            HURT (FLAMING SWORD).png
-                                            HURT.png
-                                            IDLE (FLAMING SWORD).png
-                                            IDLE.png
-                                            JUMP ATTACK (FLAMING SWORD).png
-                                            JUMP ATTACK.png
-                                            RUN (FLAMING SWORD).png
-                                            RUN.png
-                                            SHOUT.png
+                                            Oniro_ATTACK 1 (FLAMING SWORD).png
+                                            Oniro_ATTACK 1.png
+                                            Oniro_ATTACK 2 (FLAMING SWORD).png
+                                            Oniro_ATTACK 2.png
+                                            Oniro_ATTACK 3 (FLAMING SWORD).png
+                                            Oniro_ATTACK 3.png
+                                            Oniro_DEATH.png
+                                            Oniro_DEFEND.png
+                                            Oniro_HURT (FLAMING SWORD).png
+                                            Oniro_HURT.png
+                                            Oniro_IDLE (FLAMING SWORD).png
+                                            Oniro_IDLE.png
+                                            Oniro_JUMP ATTACK (FLAMING SWORD).png
+                                            Oniro_JUMP ATTACK.png
+                                            Oniro_RUN (FLAMING SWORD).png
+                                            Oniro_RUN.png
+                                            Oniro_SHOUT.png
                                         License.txt
                                         preview.gif
-                            Executioner 2D Pixel Art/
+                            Shokeinin/
                                 Executioner 2D Pixel Art/
                                     Sprites/
-                                        ATTACK 1.png
-                                        ATTACK 2.png
-                                        DEATH.png
-                                        HURT.png
-                                        IDLE.png
-                                        WALK.png
-                                    License.txt
-                                    Preview.gif
-                            FrozenDemon/
-                                FrozenDemon/
-                                    Attack1.png
-                                    Attack2.png
-                                    Death.png
-                                    Fall.png
-                                    Idle.png
-                                    Jump.png
-                                    Run.png
-                                    Take hit.png
-                            GhostSentinel/
+                                        Shokeinin_ATTACK 1.png
+                                        Shokeinin_ATTACK 2.png
+                                        Shokeinin_DEATH.png
+                                        Shokeinin_HURT.png
+                                        Shokeinin_IDLE.png
+                                        Shokeinin_WALK.png
+                                    Shokeinin_License.txt
+                                    Shokeinin_Preview.gif
+                            Yurei/
                                 GhostSentinel/
-                                    Attack1.png
-                                    Attack2.png
-                                    Death.png
-                                    Fall.png
-                                    Idle.png
-                                    Jump.png
-                                    Run.png
-                                    Take hit.png
-                            RedDemon/
-                                RedDemon/
-                                    Attack1.png
-                                    Attack2.png
-                                    Death.png
-                                    Fall.png
-                                    Idle.png
-                                    Jump.png
-                                    Run.png
-                                    Take hit.png
+                                    Yurei_Attack1.png
+                                    Yurei_Attack2.png
+                                    Yurei_Death.png
+                                    Yurei_Fall.png
+                                    Yurei_Idle.png
+                                    Yurei_Jump.png
+                                    Yurei_Run.png
+                                    Yurei_Take hit.png
                         Ninja/
                             craftpix-net-407836-free-ninja-sprite-sheets-pixel-art/
                                 Kunoichi/
-                                    Attack_1.png
-                                    Attack_2.png
-                                    Cast.png
-                                    Dead.png
-                                    Eating.png
-                                    Hurt.png
-                                    Idle.png
-                                    Jump.png
-                                    Run.png
-                                    Spine.png
-                                    Walk.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_1.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_2.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Cast.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Dead.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Eating.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Hurt.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Idle.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Jump.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Run.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Spine.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Walk.png
                                 Ninja_Monk/
-                                    Attack_1.png
-                                    Attack_2.png
-                                    Blade.png
-                                    Cast.png
-                                    Dead.png
-                                    Hurt.png
-                                    Idle.png
-                                    Jump.png
-                                    Kunai.png
-                                    Run.png
-                                    Walk.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_1.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_2.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Blade.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Cast.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Dead.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Hurt.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Idle.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Jump.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Kunai.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Run.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Walk.png
                                 Ninja_Peasant/
-                                    Attack_1.png
-                                    Attack_2.png
-                                    Dart.png
-                                    Dead.png
-                                    Disguise.png
-                                    Hurt.png
-                                    Idle.png
-                                    Jump.png
-                                    Run.png
-                                    Shot.png
-                                    Walk.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_1.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_2.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Dart.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Dead.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Disguise.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Hurt.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Idle.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Jump.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Run.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Shot.png
+                                    craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_Walk.png
                                 PSD/
                                     Gif_Previev.psd
                                     Kunoichi_Previev.psd
@@ -10785,895 +10792,921 @@ Assets/
                                     Ninja_Peasant_Previev.psd
                                     Ninja_Peasant_spritelist.psd
                                 COUPON.pdf
-                                COUPON.png
+                                craftpix-net-407836-free-ninja-sprite-sheets-pixel-art_COUPON.png
                                 Font.txt
                                 Licens.txt
-                            FreeNinja/
+                            Jin/
                                 FreeNinja/
                                     YellowNinja/
-                                        yellowNinja - attack.png
-                                        yellowNinja - Death.png
-                                        yellowNinja - hit.png
-                                        yellowNinja - idle.png
-                                        yellowNinja - walk.png
-                                        yellowNinja - Whitehit.png
-                            ShadowNinja/
+                                        Jin_yellowNinja - attack.png
+                                        Jin_yellowNinja - Death.png
+                                        Jin_yellowNinja - hit.png
+                                        Jin_yellowNinja - idle.png
+                                        Jin_yellowNinja - walk.png
+                                        Jin_yellowNinja - Whitehit.png
+                            Kuro/
                                 ShadowNinja/
-                                    Attack1.png
-                                    Attack2.png
-                                    Death.png
-                                    Fall.png
-                                    Idle.png
-                                    Jump.png
-                                    Run.png
-                                    Take hit.png
+                                    Kuro_Attack1.png
+                                    Kuro_Attack2.png
+                                    Kuro_Death.png
+                                    Kuro_Fall.png
+                                    Kuro_Idle.png
+                                    Kuro_Jump.png
+                                    Kuro_Run.png
+                                    Kuro_Take hit.png
                         Samurai/
-                            EmeraldProtector/
-                                EmeraldProtector/
-                                    Attack1.png
-                                    Attack2.png
-                                    Death.png
-                                    Fall.png
-                                    Idle.png
-                                    Jump.png
-                                    Run.png
-                                    Take Hit.png
+                            Akai/
+                                TheDarkRedOne/
+                                    Akai_Attack1.png
+                                    Akai_Attack2.png
+                                    Akai_Death.png
+                                    Akai_Fall.png
+                                    Akai_Idle.png
+                                    Akai_Jump.png
+                                    Akai_Run.png
+                                    Akai_Take Hit.png
+                            Daichi/
+                                Samurai #4 2D Pixel Art v1.1/
+                                    Samurai #4 2D Pixel Art v1.1/
+                                        Sprites/
+                                            Samurai #4 2D Pixel Art v1.1_ATTACK 1.png
+                                            Samurai #4 2D Pixel Art v1.1_ATTACK 2.png
+                                            Samurai #4 2D Pixel Art v1.1_ATTACK 3.png
+                                            Samurai #4 2D Pixel Art v1.1_DEATH.png
+                                            Samurai #4 2D Pixel Art v1.1_DEFEND.png
+                                            Samurai #4 2D Pixel Art v1.1_HURT.png
+                                            Samurai #4 2D Pixel Art v1.1_IDLE.png
+                                            Samurai #4 2D Pixel Art v1.1_JUMP.png
+                                            Samurai #4 2D Pixel Art v1.1_RUN.png
+                                            Samurai #4 2D Pixel Art v1.1_THROW.png
+                                        License.txt
+                                        Preview.gif
+                                        Samurai #4 2D Pixel Art v1.1_shuriken.png
                             FULL_Samurai 2D Pixel Art v1.2/
                                 FULL_Samurai 2D Pixel Art v1.2/
                                     Animations/
-                                        IDLE_0.controller
-                                        Samurai_IDLE.anim
+                                        FULL_Samurai 2D Pixel Art v1.2_IDLE.anim
                                     Sprites/
-                                        AIR ATTACK.png
-                                        ATTACK 1.png
-                                        ATTACK 2.png
-                                        ATTACK 3.png
-                                        CLIMBING.png
-                                        DASH.png
-                                        DEATH.png
-                                        DEFEND.png
-                                        HEALING NO EFFECT.png
-                                        HEALING.png
-                                        HURT.png
-                                        IDLE.png
-                                        JUMP-FALL.png
-                                        JUMP-START.png
-                                        JUMP-TRANSITION.png
-                                        JUMP.png
-                                        RUN.png
-                                        SPECIAL ATTACK.png
-                                        THROW.png
-                                        WALK.png
-                                        WALL CONTACT.png
-                                        WALL JUMP.png
-                                        WALL SLIDE.png
+                                    FULL_Samurai 2D Pixel Art v1.2_Preview.png
                                     License.txt
-                                    Preview.png
-                                    shuriken.png
-                            GandalfHardcore Samurai/
-                                GandalfHardcore Samurai/
-                                    Samurai 640x640 Portrait1.png
-                                    Samurai 640x640 Portrait2.png
-                                    Samurai 640x640 Portrait3.png
-                                    Samurai 640x640 Portrait4.png
-                                    Samurai 640x640 Portrait5.png
-                                    Samurai 640x640 Portrait6.png
-                                    Samurai 640x640 Portrait7.png
-                                    Samurai 640x640 Portrait8.png
-                                    Samurai 64x64 Portrait1.png
-                                    Samurai 64x64 Portrait2.png
-                                    Samurai 64x64 Portrait3.png
-                                    Samurai 64x64 Portrait4.png
-                                    Samurai 64x64 Portrait5.png
-                                    Samurai 64x64 Portrait6.png
-                                    Samurai 64x64 Portrait7.png
-                                    Samurai 64x64 Portrait8.png
-                                    Samurai Colors.png
-                                    Samurai Sheet black.png
-                                    Samurai Sheet blue.png
-                                    Samurai Sheet brown.png
-                                    Samurai Sheet green.png
-                                    Samurai Sheet purple.png
-                                    Samurai Sheet red.png
-                                    Samurai Sheet white.png
-                                    Samurai Sheet yellow.png
-                                    Samurai.ase
-                            Martial Hero 2/
+                            Harada/
+                                Harada_1.png
+                                Harada_2.png
+                                Harada_3.png
+                                Harada_Arrow.png
+                                Harada_Dead.png
+                                Harada_Hurt.png
+                                Harada_Idle.png
+                                Harada_Jump.png
+                                Harada_Run.png
+                                Harada_Shot.png
+                                Harada_Walk.png
+                            Hayato/
                                 Martial Hero 2/
                                     Sprites/
-                                        Attack1.png
-                                        Attack2.png
-                                        Death.png
-                                        Fall.png
-                                        Idle.png
-                                        Jump.png
-                                        Run.png
-                                        Take hit.png
-                                    License.txt
-                            MidnightSlash/
-                                MidnightSlash/
-                                    Attack1.png
-                                    Attack2.png
-                                    Death.png
-                                    Fall.png
-                                    Idle.png
-                                    Jump.png
-                                    Run.png
-                                    Take Hit.png
-                            NeonPhantom/
+                                        Hayato_Attack1.png
+                                        Hayato_Attack2.png
+                                        Hayato_Death.png
+                                        Hayato_Fall.png
+                                        Hayato_Idle.png
+                                        Hayato_Jump.png
+                                        Hayato_Run.png
+                                        Hayato_Take hit.png
+                                    Hayato_License.txt
+                            Kagero/
                                 NeonPhantom/
-                                    Attack1.png
-                                    Attack2.png
-                                    Death.png
-                                    Fall.png
-                                    Idle.png
-                                    Jump.png
-                                    Run.png
-                                    Take Hit.png
-                            NightBorne/
-                                NightBorne.png
+                                    Kagero_Attack1.png
+                                    Kagero_Attack2.png
+                                    Kagero_Death.png
+                                    Kagero_Fall.png
+                                    Kagero_Idle.png
+                                    Kagero_Jump.png
+                                    Kagero_Run.png
+                                    Kagero_Take Hit.png
+                            Katsuro/
+                                Samurai #2 2D Pixel Art/
+                                    Sprites/
+                                        Samurai #2 2D Pixel Art_ATTACK1.png
+                                        Samurai #2 2D Pixel Art_ATTACK2.png
+                                        Samurai #2 2D Pixel Art_ATTACK3.png
+                                        Samurai #2 2D Pixel Art_DASH ATTACK.png
+                                        Samurai #2 2D Pixel Art_DASH.png
+                                        Samurai #2 2D Pixel Art_DEATH.png
+                                        Samurai #2 2D Pixel Art_DEFENCE.png
+                                        Samurai #2 2D Pixel Art_DUST EFFECT.png
+                                        Samurai #2 2D Pixel Art_HURT.png
+                                        Samurai #2 2D Pixel Art_IDLE.png
+                                        Samurai #2 2D Pixel Art_JUMP.png
+                                        Samurai #2 2D Pixel Art_RUN.png
+                                        Samurai #2 2D Pixel Art_SHURIKEN.png
+                                        Samurai #2 2D Pixel Art_THROW.png
+                                    License.txt
+                                    Samurai #2 2D Pixel Art_Preview.png
+                            Midori/
+                                EmeraldProtector/
+                                    Midori_Attack1.png
+                                    Midori_Attack2.png
+                                    Midori_Death.png
+                                    Midori_Fall.png
+                                    Midori_Idle.png
+                                    Midori_Jump.png
+                                    Midori_Run.png
+                                    Midori_Take Hit.png
+                            Musashi/
+                                GandalfHardcore Samurai/
+                                    Musashi_Samurai 640x640 Portrait1.png
+                                    Musashi_Samurai 640x640 Portrait2.png
+                                    Musashi_Samurai 640x640 Portrait3.png
+                                    Musashi_Samurai 640x640 Portrait4.png
+                                    Musashi_Samurai 640x640 Portrait5.png
+                                    Musashi_Samurai 640x640 Portrait6.png
+                                    Musashi_Samurai 640x640 Portrait7.png
+                                    Musashi_Samurai 640x640 Portrait8.png
+                                    Musashi_Samurai 64x64 Portrait1.png
+                                    Musashi_Samurai 64x64 Portrait2.png
+                                    Musashi_Samurai 64x64 Portrait3.png
+                                    Musashi_Samurai 64x64 Portrait4.png
+                                    Musashi_Samurai 64x64 Portrait5.png
+                                    Musashi_Samurai 64x64 Portrait6.png
+                                    Musashi_Samurai 64x64 Portrait7.png
+                                    Musashi_Samurai 64x64 Portrait8.png
+                                    Musashi_Samurai Colors.png
+                                    Musashi_Samurai Sheet black.png
+                                    Musashi_Samurai Sheet blue.png
+                                    Musashi_Samurai Sheet brown.png
+                                    Musashi_Samurai Sheet green.png
+                                    Musashi_Samurai Sheet purple.png
+                                    Musashi_Samurai Sheet red.png
+                                    Musashi_Samurai Sheet white.png
+                                    Musashi_Samurai Sheet yellow.png
+                                    Musashi_Samurai.ase
+                            Reiji/
+                                MidnightSlash/
+                                    Reiji_Attack1.png
+                                    Reiji_Attack2.png
+                                    Reiji_Death.png
+                                    Reiji_Fall.png
+                                    Reiji_Idle.png
+                                    Reiji_Jump.png
+                                    Reiji_Run.png
+                                    Reiji_Take Hit.png
+                            Ryoma/
+                                Animations/
+                                    Ryoma_AIR ATTACK.anim
+                                    Ryoma_ATTACK 1.anim
+                                    Ryoma_ATTACK 2.anim
+                                    Ryoma_ATTACK 3.anim
+                                    Ryoma_CLIMBING.anim
+                                    Ryoma_DASH.anim
+                                    Ryoma_DEATH.anim
+                                    Ryoma_DEFEND.anim
+                                    Ryoma_HEALING NO EFFECT.anim
+                                    Ryoma_HEALING.anim
+                                    Ryoma_HURT.anim
+                                    Ryoma_IDLE.anim
+                                    Ryoma_JUMP-FALL.anim
+                                    Ryoma_JUMP-START.anim
+                                    Ryoma_JUMP-TRANSITION.anim
+                                    Ryoma_JUMP.anim
+                                    Ryoma_RUN.anim
+                                    Ryoma_Ryoma.controller
+                                    Ryoma_SPECIAL ATTACK.anim
+                                    Ryoma_THROW.anim
+                                    Ryoma_WALK.anim
+                                    Ryoma_WALL CONTACT.anim
+                                    Ryoma_WALL JUMP.anim
+                                    Ryoma_WALL SLIDE.anim
+                                Sprites/
+                                    Ryoma_AIR ATTACK.png
+                                    Ryoma_ATTACK 1.png
+                                    Ryoma_ATTACK 2.png
+                                    Ryoma_ATTACK 3.png
+                                    Ryoma_CLIMBING.png
+                                    Ryoma_DASH.png
+                                    Ryoma_DEATH.png
+                                    Ryoma_DEFEND.png
+                                    Ryoma_HEALING NO EFFECT.png
+                                    Ryoma_HEALING.png
+                                    Ryoma_HURT.png
+                                    Ryoma_IDLE.png
+                                    Ryoma_JUMP-FALL.png
+                                    Ryoma_JUMP-START.png
+                                    Ryoma_JUMP-TRANSITION.png
+                                    Ryoma_JUMP.png
+                                    Ryoma_RUN.png
+                                    Ryoma_shuriken.png
+                                    Ryoma_SPECIAL ATTACK.png
+                                    Ryoma_THROW.png
+                                    Ryoma_WALK.png
+                                    Ryoma_WALL CONTACT.png
+                                    Ryoma_WALL JUMP.png
+                                    Ryoma_WALL SLIDE.png
+                            Samurai/
+                                Samurai_1.png
+                                Samurai_2.png
+                                Samurai_3.png
+                                Samurai_Dead.png
+                                Samurai_Hurt.png
+                                Samurai_Idle.png
+                                Samurai_Jump.png
+                                Samurai_Protection.png
+                                Samurai_Run.png
+                                Samurai_Walk.png
+                            Samurai #3 2D Pixel Art v1.2/
+                                Samurai #3 2D Pixel Art v1.2/
+                                    Samurai #3 2D Pixel Art v1.2/
+                                        Sprites/
+                                            Samurai #3 2D Pixel Art v1.2_ATTACK 1.png
+                                            Samurai #3 2D Pixel Art v1.2_ATTACK 2.png
+                                            Samurai #3 2D Pixel Art v1.2_ATTACK 3.png
+                                            Samurai #3 2D Pixel Art v1.2_DASH ATTACK.png
+                                            Samurai #3 2D Pixel Art v1.2_DASH.png
+                                            Samurai #3 2D Pixel Art v1.2_DEATH.png
+                                            Samurai #3 2D Pixel Art v1.2_DEFEND.png
+                                            Samurai #3 2D Pixel Art v1.2_HURT.png
+                                            Samurai #3 2D Pixel Art v1.2_IDLE.png
+                                            Samurai #3 2D Pixel Art v1.2_JUMP.png
+                                            Samurai #3 2D Pixel Art v1.2_RUN.png
+                                            Samurai #3 2D Pixel Art v1.2_STRONG ATTACK.png
+                                            Samurai #3 2D Pixel Art v1.2_THROW.png
+                                        License.txt
+                                        preview.gif
+                                        Samurai #3 2D Pixel Art v1.2_shuriken.png
+                            Samurai #5 2D Pixel Art v1.1/
+                                Samurai #5 2D Pixel Art v1.1/
+                                    Samurai #5 2D Pixel Art v1.1/
+                                        Sprites/
+                                            Samurai #5 2D Pixel Art v1.1_ATTACK 1.png
+                                            Samurai #5 2D Pixel Art v1.1_ATTACK 2.png
+                                            Samurai #5 2D Pixel Art v1.1_ATTACK 3.png
+                                            Samurai #5 2D Pixel Art v1.1_DEATH.png
+                                            Samurai #5 2D Pixel Art v1.1_DEFEND.png
+                                            Samurai #5 2D Pixel Art v1.1_HURT.png
+                                            Samurai #5 2D Pixel Art v1.1_IDLE.png
+                                            Samurai #5 2D Pixel Art v1.1_JUMP.png
+                                            Samurai #5 2D Pixel Art v1.1_RUN.png
+                                        License.txt
+                                        preview.gif
+                            Shinobu/
+                                Shinobu_Idle-Sheet.png
+                            Takeda/
+                                Takeda_1.png
+                                Takeda_2.png
+                                Takeda_3.png
+                                Takeda_Dead.png
+                                Takeda_Hurt.png
+                                Takeda_Idle.png
+                                Takeda_Jump.png
+                                Takeda_Protect.png
+                                Takeda_Run.png
+                                Takeda_Walk.png
+                            Takeshi/
+                                Samurai #6 2D Pixel Art v1.1/
+                                    Samurai #6 2D Pixel Art v1.1/
+                                        Sprites/
+                                            Samurai #6 2D Pixel Art v1.1_ATTACK 1.png
+                                            Samurai #6 2D Pixel Art v1.1_ATTACK 2.png
+                                            Samurai #6 2D Pixel Art v1.1_ATTACK 3.png
+                                            Samurai #6 2D Pixel Art v1.1_DEATH.png
+                                            Samurai #6 2D Pixel Art v1.1_DEFEND.png
+                                            Samurai #6 2D Pixel Art v1.1_HURT.png
+                                            Samurai #6 2D Pixel Art v1.1_IDLE.png
+                                            Samurai #6 2D Pixel Art v1.1_JUMP.png
+                                            Samurai #6 2D Pixel Art v1.1_RUN.png
+                                        License.txt
+                                        preview.gif
+                            Yoruichi/
                                 NightBorne_attack.gif
                                 NightBorne_death..gif
                                 NightBorne_hurt.gif
                                 NightBorne_idle.gif
                                 NightBorne_run.gif
-                            Samurai/
-                                Attack_1.png
-                                Attack_2.png
-                                Attack_3.png
-                                Dead.png
-                                Hurt.png
-                                Idle.png
-                                Jump.png
-                                Protection.png
-                                Run.png
-                                Walk.png
-                            Samurai #2 2D Pixel Art/
-                                Samurai #2 2D Pixel Art/
-                                    Sprites/
-                                        ATTACK1.png
-                                        ATTACK2.png
-                                        ATTACK3.png
-                                        DASH ATTACK.png
-                                        DASH.png
-                                        DEATH.png
-                                        DEFENCE.png
-                                        DUST EFFECT.png
-                                        HURT.png
-                                        IDLE.png
-                                        JUMP.png
-                                        RUN.png
-                                        SHURIKEN.png
-                                        THROW.png
-                                    License.txt
-                                    Preview.png
-                            Samurai #3 2D Pixel Art v1.2/
-                                Samurai #3 2D Pixel Art v1.2/
-                                    Samurai #3 2D Pixel Art v1.2/
-                                        Sprites/
-                                            ATTACK 1.png
-                                            ATTACK 2.png
-                                            ATTACK 3.png
-                                            DASH ATTACK.png
-                                            DASH.png
-                                            DEATH.png
-                                            DEFEND.png
-                                            HURT.png
-                                            IDLE.png
-                                            JUMP.png
-                                            RUN.png
-                                            STRONG ATTACK.png
-                                            THROW.png
-                                        License.txt
-                                        preview.gif
-                                        shuriken.png
-                            Samurai #4 2D Pixel Art v1.1/
-                                Samurai #4 2D Pixel Art v1.1/
-                                    Samurai #4 2D Pixel Art v1.1/
-                                        Sprites/
-                                            ATTACK 1.png
-                                            ATTACK 2.png
-                                            ATTACK 3.png
-                                            DEATH.png
-                                            DEFEND.png
-                                            HURT.png
-                                            IDLE.png
-                                            JUMP.png
-                                            RUN.png
-                                            THROW.png
-                                        License.txt
-                                        Preview.gif
-                                        shuriken.png
-                            Samurai #5 2D Pixel Art v1.1/
-                                Samurai #5 2D Pixel Art v1.1/
-                                    Samurai #5 2D Pixel Art v1.1/
-                                        Sprites/
-                                            ATTACK 1.png
-                                            ATTACK 2.png
-                                            ATTACK 3.png
-                                            DEATH.png
-                                            DEFEND.png
-                                            HURT.png
-                                            IDLE.png
-                                            JUMP.png
-                                            RUN.png
-                                        License.txt
-                                        preview.gif
-                            Samurai #6 2D Pixel Art v1.1/
-                                Samurai #6 2D Pixel Art v1.1/
-                                    Samurai #6 2D Pixel Art v1.1/
-                                        Sprites/
-                                            ATTACK 1.png
-                                            ATTACK 2.png
-                                            ATTACK 3.png
-                                            DEATH.png
-                                            DEFEND.png
-                                            HURT.png
-                                            IDLE.png
-                                            JUMP.png
-                                            RUN.png
-                                        License.txt
-                                        preview.gif
-                            Samurai_Archer/
-                                Arrow.png
-                                Attack_1.png
-                                Attack_2.png
-                                Attack_3.png
-                                Dead.png
-                                Hurt.png
-                                Idle.png
-                                Jump.png
-                                Run.png
-                                Shot.png
-                                Walk.png
-                            Samurai_Commander/
-                                Attack_1.png
-                                Attack_2.png
-                                Attack_3.png
-                                Dead.png
-                                Hurt.png
-                                Idle.png
-                                Jump.png
-                                Protect.png
-                                Run.png
-                                Walk.png
-                            TheDarkRedOne/
-                                TheDarkRedOne/
-                                    Attack1.png
-                                    Attack2.png
-                                    Death.png
-                                    Fall.png
-                                    Idle.png
-                                    Jump.png
-                                    Run.png
-                                    Take Hit.png
-                            Warrior-in-Red Free/
-                                Idle-Sheet.png
+                                Yoruichi_NightBorne.png
                         Special/
-                            Cyber samurai girl/
+                            Aiko/
                                 Cyber samurai girl Attack/
-                                    1.png
-                                    10.png
-                                    11.png
-                                    12.png
-                                    13.png
-                                    2.png
-                                    3.png
-                                    4.png
-                                    5.png
-                                    6.png
-                                    7.png
-                                    8.png
-                                    9.png
+                                    Aiko_1.png
+                                    Aiko_10.png
+                                    Aiko_11.png
+                                    Aiko_12.png
+                                    Aiko_13.png
+                                    Aiko_2.png
+                                    Aiko_3.png
+                                    Aiko_4.png
+                                    Aiko_5.png
+                                    Aiko_6.png
+                                    Aiko_7.png
+                                    Aiko_8.png
+                                    Aiko_9.png
                                 Cyber samurai girl Attack 2/
-                                    1.png
-                                    10.png
-                                    11.png
-                                    12.png
-                                    2.png
-                                    3.png
-                                    4.png
-                                    5.png
-                                    6.png
-                                    7.png
-                                    8.png
-                                    9.png
+                                    Aiko_1.png
+                                    Aiko_10.png
+                                    Aiko_11.png
+                                    Aiko_12.png
+                                    Aiko_2.png
+                                    Aiko_3.png
+                                    Aiko_4.png
+                                    Aiko_5.png
+                                    Aiko_6.png
+                                    Aiko_7.png
+                                    Aiko_8.png
+                                    Aiko_9.png
                                 Cyber samurai girl Dead/
-                                    1.png
-                                    2.png
-                                    3.png
-                                    4.png
-                                    5.png
-                                    6.png
-                                    7.png
-                                    8.png
+                                    Aiko_1.png
+                                    Aiko_2.png
+                                    Aiko_3.png
+                                    Aiko_4.png
+                                    Aiko_5.png
+                                    Aiko_6.png
+                                    Aiko_7.png
+                                    Aiko_8.png
                                 Cyber samurai girl Dead 2/
-                                    1.png
-                                    2.png
-                                    3.png
-                                    4.png
-                                    5.png
-                                    6.png
-                                    7.png
-                                    8.png
+                                    Aiko_1.png
+                                    Aiko_2.png
+                                    Aiko_3.png
+                                    Aiko_4.png
+                                    Aiko_5.png
+                                    Aiko_6.png
+                                    Aiko_7.png
+                                    Aiko_8.png
                                 Cyber samurai girl Dead 3/
-                                    1.png
-                                    2.png
-                                    3.png
-                                    4.png
-                                    5.png
-                                    6.png
-                                    7.png
-                                    8.png
+                                    Aiko_1.png
+                                    Aiko_2.png
+                                    Aiko_3.png
+                                    Aiko_4.png
+                                    Aiko_5.png
+                                    Aiko_6.png
+                                    Aiko_7.png
+                                    Aiko_8.png
                                 Cyber samurai girl Idle/
-                                    1.png
-                                    2.png
-                                    3.png
-                                    4.png
-                                    5.png
-                                    6.png
-                                    7.png
-                                    8.png
+                                    Aiko_1.png
+                                    Aiko_2.png
+                                    Aiko_3.png
+                                    Aiko_4.png
+                                    Aiko_5.png
+                                    Aiko_6.png
+                                    Aiko_7.png
+                                    Aiko_8.png
                                 Cyber samurai girl Jump/
-                                    1.png
-                                    10.png
-                                    2.png
-                                    3.png
-                                    4.png
-                                    5.png
-                                    6.png
-                                    7.png
-                                    8.png
-                                    9.png
+                                    Aiko_1.png
+                                    Aiko_10.png
+                                    Aiko_2.png
+                                    Aiko_3.png
+                                    Aiko_4.png
+                                    Aiko_5.png
+                                    Aiko_6.png
+                                    Aiko_7.png
+                                    Aiko_8.png
+                                    Aiko_9.png
                                 Cyber samurai girl Run/
-                                    1.png
-                                    2.png
-                                    3.png
-                                    4.png
-                                    5.png
-                                    6.png
-                                    7.png
-                                    8.png
-                                    9.png
+                                    Aiko_1.png
+                                    Aiko_2.png
+                                    Aiko_3.png
+                                    Aiko_4.png
+                                    Aiko_5.png
+                                    Aiko_6.png
+                                    Aiko_7.png
+                                    Aiko_8.png
+                                    Aiko_9.png
                                 Cyber samurai girl Ultimate/
-                                    1.png
-                                    10.png
-                                    11.png
-                                    12.png
-                                    13.png
-                                    14.png
-                                    15.png
-                                    16.png
-                                    17.png
-                                    18.png
-                                    19.png
-                                    2.png
-                                    20.png
-                                    21.png
-                                    3.png
-                                    4.png
-                                    5.png
-                                    6.png
-                                    7.png
-                                    8.png
-                                    9.png
+                                    Aiko_1.png
+                                    Aiko_10.png
+                                    Aiko_11.png
+                                    Aiko_12.png
+                                    Aiko_13.png
+                                    Aiko_14.png
+                                    Aiko_15.png
+                                    Aiko_16.png
+                                    Aiko_17.png
+                                    Aiko_18.png
+                                    Aiko_19.png
+                                    Aiko_2.png
+                                    Aiko_20.png
+                                    Aiko_21.png
+                                    Aiko_3.png
+                                    Aiko_4.png
+                                    Aiko_5.png
+                                    Aiko_6.png
+                                    Aiko_7.png
+                                    Aiko_8.png
+                                    Aiko_9.png
                             Fantasy Martial Characters/
                                 Fantasy Martial Characters/
                                     Character_1/
                                         individual frames/
                                             Attack1/
-                                                Attack1_1.png
-                                                Attack1_2.png
-                                                Attack1_3.png
-                                                Attack1_4.png
+                                                Fantasy Martial Characters_1.png
+                                                Fantasy Martial Characters_2.png
+                                                Fantasy Martial Characters_3.png
+                                                Fantasy Martial Characters_4.png
                                             Attack2/
-                                                Attack2_1.png
-                                                Attack2_2.png
-                                                Attack2_3.png
-                                                Attack2_4.png
+                                                Fantasy Martial Characters_1.png
+                                                Fantasy Martial Characters_2.png
+                                                Fantasy Martial Characters_3.png
+                                                Fantasy Martial Characters_4.png
                                             Death/
-                                                Death1.png
-                                                Death2.png
-                                                Death3.png
-                                                Death4.png
+                                                Fantasy Martial Characters_Death1.png
+                                                Fantasy Martial Characters_Death2.png
+                                                Fantasy Martial Characters_Death3.png
+                                                Fantasy Martial Characters_Death4.png
                                             Fall/
-                                                Fall1.png
-                                                Fall2.png
+                                                Fantasy Martial Characters_Fall1.png
+                                                Fantasy Martial Characters_Fall2.png
                                             Hit/
-                                                Hit1.png
-                                                Hit2.png
-                                                Hit3.png
-                                                Hit4.png
+                                                Fantasy Martial Characters_Hit1.png
+                                                Fantasy Martial Characters_Hit2.png
+                                                Fantasy Martial Characters_Hit3.png
+                                                Fantasy Martial Characters_Hit4.png
                                             Idle/
-                                                idle1.png
-                                                idle2.png
-                                                idle3.png
-                                                idle4.png
+                                                Fantasy Martial Characters_idle1.png
+                                                Fantasy Martial Characters_idle2.png
+                                                Fantasy Martial Characters_idle3.png
+                                                Fantasy Martial Characters_idle4.png
                                             Jump/
-                                                Jump1.png
-                                                Jump2.png
+                                                Fantasy Martial Characters_Jump1.png
+                                                Fantasy Martial Characters_Jump2.png
                                             Run/
-                                                Run1.png
-                                                Run2.png
-                                                Run3.png
-                                                Run4.png
-                                                Run5.png
-                                                Run6.png
-                                                Run7.png
-                                                Run8.png
+                                                Fantasy Martial Characters_Run1.png
+                                                Fantasy Martial Characters_Run2.png
+                                                Fantasy Martial Characters_Run3.png
+                                                Fantasy Martial Characters_Run4.png
+                                                Fantasy Martial Characters_Run5.png
+                                                Fantasy Martial Characters_Run6.png
+                                                Fantasy Martial Characters_Run7.png
+                                                Fantasy Martial Characters_Run8.png
                                         sprite sheets/
-                                            Attack1.png
-                                            Attack2.png
-                                            Death.png
-                                            Fall.png
-                                            Hit.png
-                                            Idle.png
-                                            Jump.png
-                                            Run.png
+                                            Fantasy Martial Characters_Attack1.png
+                                            Fantasy Martial Characters_Attack2.png
+                                            Fantasy Martial Characters_Death.png
+                                            Fantasy Martial Characters_Fall.png
+                                            Fantasy Martial Characters_Hit.png
+                                            Fantasy Martial Characters_Idle.png
+                                            Fantasy Martial Characters_Jump.png
+                                            Fantasy Martial Characters_Run.png
                                     Character_2/
                                         individual frames/
                                             Attack1/
-                                                Attack1_1.png
-                                                Attack1_2.png
-                                                Attack1_3.png
-                                                Attack1_4.png
+                                                Fantasy Martial Characters_1.png
+                                                Fantasy Martial Characters_2.png
+                                                Fantasy Martial Characters_3.png
+                                                Fantasy Martial Characters_4.png
                                             Attack2/
-                                                Attack2_1.png
-                                                Attack2_2.png
-                                                Attack2_3.png
-                                                Attack2_4.png
+                                                Fantasy Martial Characters_1.png
+                                                Fantasy Martial Characters_2.png
+                                                Fantasy Martial Characters_3.png
+                                                Fantasy Martial Characters_4.png
                                             Death/
-                                                Death1.png
-                                                Death2.png
-                                                Death3.png
-                                                Death4.png
+                                                Fantasy Martial Characters_Death1.png
+                                                Fantasy Martial Characters_Death2.png
+                                                Fantasy Martial Characters_Death3.png
+                                                Fantasy Martial Characters_Death4.png
                                             Fall/
-                                                Fall1.png
-                                                Fall2.png
+                                                Fantasy Martial Characters_Fall1.png
+                                                Fantasy Martial Characters_Fall2.png
                                             Hit/
-                                                Hit1.png
-                                                Hit2.png
-                                                Hit3.png
-                                                Hit4.png
+                                                Fantasy Martial Characters_Hit1.png
+                                                Fantasy Martial Characters_Hit2.png
+                                                Fantasy Martial Characters_Hit3.png
+                                                Fantasy Martial Characters_Hit4.png
                                             Idle/
-                                                Idle1.png
-                                                Idle2.png
-                                                Idle3.png
-                                                Idle4.png
+                                                Fantasy Martial Characters_Idle1.png
+                                                Fantasy Martial Characters_Idle2.png
+                                                Fantasy Martial Characters_Idle3.png
+                                                Fantasy Martial Characters_Idle4.png
                                             Jump/
-                                                Jump1.png
-                                                Jump2.png
+                                                Fantasy Martial Characters_Jump1.png
+                                                Fantasy Martial Characters_Jump2.png
                                             Run/
-                                                Run1.png
-                                                Run2.png
-                                                Run3.png
-                                                Run4.png
-                                                Run5.png
-                                                Run6.png
-                                                Run7.png
-                                                Run8.png
+                                                Fantasy Martial Characters_Run1.png
+                                                Fantasy Martial Characters_Run2.png
+                                                Fantasy Martial Characters_Run3.png
+                                                Fantasy Martial Characters_Run4.png
+                                                Fantasy Martial Characters_Run5.png
+                                                Fantasy Martial Characters_Run6.png
+                                                Fantasy Martial Characters_Run7.png
+                                                Fantasy Martial Characters_Run8.png
                                         sprite sheets/
-                                            Attack1.png
-                                            Attack2.png
-                                            Death.png
-                                            Fall.png
-                                            Hit.png
-                                            Idle.png
-                                            Jump.png
-                                            Run.png
+                                            Fantasy Martial Characters_Attack1.png
+                                            Fantasy Martial Characters_Attack2.png
+                                            Fantasy Martial Characters_Death.png
+                                            Fantasy Martial Characters_Fall.png
+                                            Fantasy Martial Characters_Hit.png
+                                            Fantasy Martial Characters_Idle.png
+                                            Fantasy Martial Characters_Jump.png
+                                            Fantasy Martial Characters_Run.png
                                     Character_3/
                                         individual frames/
                                             Attack1/
-                                                Attack1_1.png
-                                                Attack1_2.png
-                                                Attack1_3.png
-                                                Attack1_4.png
+                                                Fantasy Martial Characters_1.png
+                                                Fantasy Martial Characters_2.png
+                                                Fantasy Martial Characters_3.png
+                                                Fantasy Martial Characters_4.png
                                             Attack2/
-                                                Attack2_1.png
-                                                Attack2_2.png
-                                                Attack2_3.png
-                                                Attack2_4.png
+                                                Fantasy Martial Characters_1.png
+                                                Fantasy Martial Characters_2.png
+                                                Fantasy Martial Characters_3.png
+                                                Fantasy Martial Characters_4.png
                                             Death/
-                                                Death1.png
-                                                Death2.png
-                                                Death3.png
-                                                Death4.png
+                                                Fantasy Martial Characters_Death1.png
+                                                Fantasy Martial Characters_Death2.png
+                                                Fantasy Martial Characters_Death3.png
+                                                Fantasy Martial Characters_Death4.png
                                             Fall/
-                                                Fall1.png
-                                                Fall2.png
+                                                Fantasy Martial Characters_Fall1.png
+                                                Fantasy Martial Characters_Fall2.png
                                             Hit/
-                                                Hit1.png
-                                                Hit2.png
-                                                Hit3.png
-                                                Hit4.png
+                                                Fantasy Martial Characters_Hit1.png
+                                                Fantasy Martial Characters_Hit2.png
+                                                Fantasy Martial Characters_Hit3.png
+                                                Fantasy Martial Characters_Hit4.png
                                             Idle/
-                                                Idle1.png
-                                                Idle2.png
-                                                Idle3.png
-                                                Idle4.png
+                                                Fantasy Martial Characters_Idle1.png
+                                                Fantasy Martial Characters_Idle2.png
+                                                Fantasy Martial Characters_Idle3.png
+                                                Fantasy Martial Characters_Idle4.png
                                             Jump/
-                                                Jump1.png
-                                                Jump2.png
+                                                Fantasy Martial Characters_Jump1.png
+                                                Fantasy Martial Characters_Jump2.png
                                             Run/
-                                                Run1.png
-                                                Run2.png
-                                                Run3.png
-                                                Run4.png
-                                                Run5.png
-                                                Run6.png
-                                                Run7.png
-                                                Run8.png
+                                                Fantasy Martial Characters_Run1.png
+                                                Fantasy Martial Characters_Run2.png
+                                                Fantasy Martial Characters_Run3.png
+                                                Fantasy Martial Characters_Run4.png
+                                                Fantasy Martial Characters_Run5.png
+                                                Fantasy Martial Characters_Run6.png
+                                                Fantasy Martial Characters_Run7.png
+                                                Fantasy Martial Characters_Run8.png
                                         sprite sheets/
-                                            Attack1.png
-                                            Attack2.png
-                                            Death.png
-                                            Fall.png
-                                            Hit.png
-                                            Idle.png
-                                            Jump.png
-                                            Run.png
+                                            Fantasy Martial Characters_Attack1.png
+                                            Fantasy Martial Characters_Attack2.png
+                                            Fantasy Martial Characters_Death.png
+                                            Fantasy Martial Characters_Fall.png
+                                            Fantasy Martial Characters_Hit.png
+                                            Fantasy Martial Characters_Idle.png
+                                            Fantasy Martial Characters_Jump.png
+                                            Fantasy Martial Characters_Run.png
                                     Character_4/
                                         individual frames/
                                             Attack1/
-                                                Attack1_1.png
-                                                Attack1_2.png
-                                                Attack1_3.png
-                                                Attack1_4.png
+                                                Fantasy Martial Characters_1.png
+                                                Fantasy Martial Characters_2.png
+                                                Fantasy Martial Characters_3.png
+                                                Fantasy Martial Characters_4.png
                                             Attack2/
-                                                Attack2_1.png
-                                                Attack2_2.png
-                                                Attack2_3.png
-                                                Attack2_4.png
+                                                Fantasy Martial Characters_1.png
+                                                Fantasy Martial Characters_2.png
+                                                Fantasy Martial Characters_3.png
+                                                Fantasy Martial Characters_4.png
                                             Death/
-                                                Death1.png
-                                                Death2.png
-                                                Death3.png
-                                                Death4.png
+                                                Fantasy Martial Characters_Death1.png
+                                                Fantasy Martial Characters_Death2.png
+                                                Fantasy Martial Characters_Death3.png
+                                                Fantasy Martial Characters_Death4.png
                                             Fall/
-                                                Fall1.png
-                                                Fall2.png
+                                                Fantasy Martial Characters_Fall1.png
+                                                Fantasy Martial Characters_Fall2.png
                                             Hit/
-                                                Hit1.png
-                                                Hit2.png
-                                                Hit3.png
-                                                Hit4.png
+                                                Fantasy Martial Characters_Hit1.png
+                                                Fantasy Martial Characters_Hit2.png
+                                                Fantasy Martial Characters_Hit3.png
+                                                Fantasy Martial Characters_Hit4.png
                                             Idle/
-                                                Idle1.png
-                                                Idle2.png
-                                                Idle3.png
-                                                Idle4.png
+                                                Fantasy Martial Characters_Idle1.png
+                                                Fantasy Martial Characters_Idle2.png
+                                                Fantasy Martial Characters_Idle3.png
+                                                Fantasy Martial Characters_Idle4.png
                                             Jump/
-                                                Jump1.png
-                                                Jump2.png
+                                                Fantasy Martial Characters_Jump1.png
+                                                Fantasy Martial Characters_Jump2.png
                                             Run/
-                                                Run1.png
-                                                Run2.png
-                                                Run3.png
-                                                Run4.png
-                                                Run5.png
-                                                Run6.png
-                                                Run7.png
-                                                Run8.png
+                                                Fantasy Martial Characters_Run1.png
+                                                Fantasy Martial Characters_Run2.png
+                                                Fantasy Martial Characters_Run3.png
+                                                Fantasy Martial Characters_Run4.png
+                                                Fantasy Martial Characters_Run5.png
+                                                Fantasy Martial Characters_Run6.png
+                                                Fantasy Martial Characters_Run7.png
+                                                Fantasy Martial Characters_Run8.png
                                         sprite sheets/
-                                            Attack1.png
-                                            Attack2.png
-                                            Death.png
-                                            Fall.png
-                                            Hit.png
-                                            Idle.png
-                                            Jump.png
-                                            Run.png
+                                            Fantasy Martial Characters_Attack1.png
+                                            Fantasy Martial Characters_Attack2.png
+                                            Fantasy Martial Characters_Death.png
+                                            Fantasy Martial Characters_Fall.png
+                                            Fantasy Martial Characters_Hit.png
+                                            Fantasy Martial Characters_Idle.png
+                                            Fantasy Martial Characters_Jump.png
+                                            Fantasy Martial Characters_Run.png
                                     Character_5/
                                         individual frames/
                                             Attack1/
-                                                Attack1_1.png
-                                                Attack1_2.png
-                                                Attack1_3.png
-                                                Attack1_4.png
+                                                Fantasy Martial Characters_1.png
+                                                Fantasy Martial Characters_2.png
+                                                Fantasy Martial Characters_3.png
+                                                Fantasy Martial Characters_4.png
                                             Attack2/
-                                                Attack2_1.png
-                                                Attack2_2.png
-                                                Attack2_3.png
-                                                Attack2_4.png
+                                                Fantasy Martial Characters_1.png
+                                                Fantasy Martial Characters_2.png
+                                                Fantasy Martial Characters_3.png
+                                                Fantasy Martial Characters_4.png
                                             Death/
-                                                Death1.png
-                                                Death2.png
-                                                Death3.png
-                                                Death4.png
+                                                Fantasy Martial Characters_Death1.png
+                                                Fantasy Martial Characters_Death2.png
+                                                Fantasy Martial Characters_Death3.png
+                                                Fantasy Martial Characters_Death4.png
                                             Fall/
-                                                Fall1.png
-                                                Fall2.png
+                                                Fantasy Martial Characters_Fall1.png
+                                                Fantasy Martial Characters_Fall2.png
                                             Hit/
-                                                Hit1.png
-                                                Hit2.png
-                                                Hit3.png
-                                                Hit4.png
+                                                Fantasy Martial Characters_Hit1.png
+                                                Fantasy Martial Characters_Hit2.png
+                                                Fantasy Martial Characters_Hit3.png
+                                                Fantasy Martial Characters_Hit4.png
                                             Idle/
-                                                Idle1.png
-                                                Idle2.png
-                                                Idle3.png
-                                                Idle4.png
+                                                Fantasy Martial Characters_Idle1.png
+                                                Fantasy Martial Characters_Idle2.png
+                                                Fantasy Martial Characters_Idle3.png
+                                                Fantasy Martial Characters_Idle4.png
                                             Jump/
-                                                Jump1.png
-                                                Jump2.png
+                                                Fantasy Martial Characters_Jump1.png
+                                                Fantasy Martial Characters_Jump2.png
                                             Run/
-                                                Run1.png
-                                                Run2.png
-                                                Run3.png
-                                                Run4.png
-                                                Run5.png
-                                                Run6.png
-                                                Run7.png
-                                                Run8.png
+                                                Fantasy Martial Characters_Run1.png
+                                                Fantasy Martial Characters_Run2.png
+                                                Fantasy Martial Characters_Run3.png
+                                                Fantasy Martial Characters_Run4.png
+                                                Fantasy Martial Characters_Run5.png
+                                                Fantasy Martial Characters_Run6.png
+                                                Fantasy Martial Characters_Run7.png
+                                                Fantasy Martial Characters_Run8.png
                                         sprite sheets/
-                                            Attack1.png
-                                            Attack2.png
-                                            Attack3.png
-                                            Death.png
-                                            Fall.png
-                                            Hit.png
-                                            Idle.png
-                                            Jump.png
-                                            Run.png
+                                            Fantasy Martial Characters_Attack1.png
+                                            Fantasy Martial Characters_Attack2.png
+                                            Fantasy Martial Characters_Attack3.png
+                                            Fantasy Martial Characters_Death.png
+                                            Fantasy Martial Characters_Fall.png
+                                            Fantasy Martial Characters_Hit.png
+                                            Fantasy Martial Characters_Idle.png
+                                            Fantasy Martial Characters_Jump.png
+                                            Fantasy Martial Characters_Run.png
                                     Character_6/
                                         individual frames/
                                             Attack1/
-                                                Attack1_1.png
-                                                Attack1_2.png
-                                                Attack1_3.png
-                                                Attack1_4.png
+                                                Fantasy Martial Characters_1.png
+                                                Fantasy Martial Characters_2.png
+                                                Fantasy Martial Characters_3.png
+                                                Fantasy Martial Characters_4.png
                                             Attack2/
-                                                Attack2_1.png
-                                                Attack2_2.png
-                                                Attack2_3.png
-                                                Attack2_4.png
+                                                Fantasy Martial Characters_1.png
+                                                Fantasy Martial Characters_2.png
+                                                Fantasy Martial Characters_3.png
+                                                Fantasy Martial Characters_4.png
                                             Death/
-                                                Death1.png
-                                                Death2.png
-                                                Death3.png
-                                                Death4.png
+                                                Fantasy Martial Characters_Death1.png
+                                                Fantasy Martial Characters_Death2.png
+                                                Fantasy Martial Characters_Death3.png
+                                                Fantasy Martial Characters_Death4.png
                                             Fall/
-                                                Fall1.png
-                                                Fall2.png
+                                                Fantasy Martial Characters_Fall1.png
+                                                Fantasy Martial Characters_Fall2.png
                                             Hit/
-                                                Hit1.png
-                                                Hit2.png
-                                                Hit3.png
-                                                Hit4.png
+                                                Fantasy Martial Characters_Hit1.png
+                                                Fantasy Martial Characters_Hit2.png
+                                                Fantasy Martial Characters_Hit3.png
+                                                Fantasy Martial Characters_Hit4.png
                                             Idle/
-                                                Idle1.png
-                                                Idle2.png
-                                                Idle3.png
-                                                Idle4.png
+                                                Fantasy Martial Characters_Idle1.png
+                                                Fantasy Martial Characters_Idle2.png
+                                                Fantasy Martial Characters_Idle3.png
+                                                Fantasy Martial Characters_Idle4.png
                                             Jump/
-                                                Jump1.png
-                                                Jump2.png
+                                                Fantasy Martial Characters_Jump1.png
+                                                Fantasy Martial Characters_Jump2.png
                                             Run/
-                                                Run1.png
-                                                Run2.png
-                                                Run3.png
-                                                Run4.png
-                                                Run5.png
-                                                Run6.png
-                                                Run7.png
-                                                Run8.png
+                                                Fantasy Martial Characters_Run1.png
+                                                Fantasy Martial Characters_Run2.png
+                                                Fantasy Martial Characters_Run3.png
+                                                Fantasy Martial Characters_Run4.png
+                                                Fantasy Martial Characters_Run5.png
+                                                Fantasy Martial Characters_Run6.png
+                                                Fantasy Martial Characters_Run7.png
+                                                Fantasy Martial Characters_Run8.png
                                         sprite sheets/
-                                            Attack1.png
-                                            Attack2.png
-                                            Death.png
-                                            Fall.png
-                                            Hit.png
-                                            Idle.png
-                                            Jump.png
-                                            Run.png
-                                    All Characters.png
+                                            Fantasy Martial Characters_Attack1.png
+                                            Fantasy Martial Characters_Attack2.png
+                                            Fantasy Martial Characters_Death.png
+                                            Fantasy Martial Characters_Fall.png
+                                            Fantasy Martial Characters_Hit.png
+                                            Fantasy Martial Characters_Idle.png
+                                            Fantasy Martial Characters_Jump.png
+                                            Fantasy Martial Characters_Run.png
+                                    Fantasy Martial Characters_All Characters.png
                             Fantasy Martial Characters 3/
                                 Fantasy Martial Characters 3/
                                     Character_1/
-                                        attack1.png
-                                        attack2.png
-                                        Death.png
-                                        Fall.png
-                                        Idle.png
-                                        Jump.png
-                                        Run.png
-                                        Take Hit - white silhouette.png
-                                        Take Hit.png
+                                        Fantasy Martial Characters 3_attack1.png
+                                        Fantasy Martial Characters 3_attack2.png
+                                        Fantasy Martial Characters 3_Death.png
+                                        Fantasy Martial Characters 3_Fall.png
+                                        Fantasy Martial Characters 3_Idle.png
+                                        Fantasy Martial Characters 3_Jump.png
+                                        Fantasy Martial Characters 3_Run.png
+                                        Fantasy Martial Characters 3_Take Hit - white silhouette.png
+                                        Fantasy Martial Characters 3_Take Hit.png
                                     Character_2/
-                                        Attack1.png
-                                        Attack2.png
-                                        Death.png
-                                        Fall.png
-                                        Idle.png
-                                        Jump.png
-                                        Run.png
-                                        Take Hit - white silhouette.png
-                                        Take Hit.png
+                                        Fantasy Martial Characters 3_Attack1.png
+                                        Fantasy Martial Characters 3_Attack2.png
+                                        Fantasy Martial Characters 3_Death.png
+                                        Fantasy Martial Characters 3_Fall.png
+                                        Fantasy Martial Characters 3_Idle.png
+                                        Fantasy Martial Characters 3_Jump.png
+                                        Fantasy Martial Characters 3_Run.png
+                                        Fantasy Martial Characters 3_Take Hit - white silhouette.png
+                                        Fantasy Martial Characters 3_Take Hit.png
                                     Character_3/
-                                        Attack1.png
-                                        Attack2.png
-                                        Death.png
-                                        Fall.png
-                                        Idle.png
-                                        Jump.png
-                                        Run.png
-                                        Take Hit - white silhouette.png
-                                        Take Hit.png
+                                        Fantasy Martial Characters 3_Attack1.png
+                                        Fantasy Martial Characters 3_Attack2.png
+                                        Fantasy Martial Characters 3_Death.png
+                                        Fantasy Martial Characters 3_Fall.png
+                                        Fantasy Martial Characters 3_Idle.png
+                                        Fantasy Martial Characters 3_Jump.png
+                                        Fantasy Martial Characters 3_Run.png
+                                        Fantasy Martial Characters 3_Take Hit - white silhouette.png
+                                        Fantasy Martial Characters 3_Take Hit.png
                                     Character_4/
-                                        Attack1.png
-                                        Attack2.png
-                                        Death.png
-                                        Fall.png
-                                        Idle.png
-                                        Jump.png
-                                        Run.png
-                                        Take Hit - white silhouette.png
-                                        Take Hit.png
+                                        Fantasy Martial Characters 3_Attack1.png
+                                        Fantasy Martial Characters 3_Attack2.png
+                                        Fantasy Martial Characters 3_Death.png
+                                        Fantasy Martial Characters 3_Fall.png
+                                        Fantasy Martial Characters 3_Idle.png
+                                        Fantasy Martial Characters 3_Jump.png
+                                        Fantasy Martial Characters 3_Run.png
+                                        Fantasy Martial Characters 3_Take Hit - white silhouette.png
+                                        Fantasy Martial Characters 3_Take Hit.png
                                     Character_5/
-                                        Attack1.png
-                                        Attack2.png
-                                        Death.png
-                                        Fall.png
-                                        Idle.png
-                                        Jump.png
-                                        Run.png
-                                        Take Hit - white silhouette.png
-                                        Take Hit.png
+                                        Fantasy Martial Characters 3_Attack1.png
+                                        Fantasy Martial Characters 3_Attack2.png
+                                        Fantasy Martial Characters 3_Death.png
+                                        Fantasy Martial Characters 3_Fall.png
+                                        Fantasy Martial Characters 3_Idle.png
+                                        Fantasy Martial Characters 3_Jump.png
+                                        Fantasy Martial Characters 3_Run.png
+                                        Fantasy Martial Characters 3_Take Hit - white silhouette.png
+                                        Fantasy Martial Characters 3_Take Hit.png
                                     Character_6/
-                                        Attack1.png
-                                        Attack2.png
-                                        Death.png
-                                        Fall.png
-                                        Idle.png
-                                        Jump.png
-                                        Run.png
-                                        Take Hit - white silhouette.png
-                                        Take Hit.png
-                                    Characters preview.png
+                                        Fantasy Martial Characters 3_Attack1.png
+                                        Fantasy Martial Characters 3_Attack2.png
+                                        Fantasy Martial Characters 3_Death.png
+                                        Fantasy Martial Characters 3_Fall.png
+                                        Fantasy Martial Characters 3_Idle.png
+                                        Fantasy Martial Characters 3_Jump.png
+                                        Fantasy Martial Characters 3_Run.png
+                                        Fantasy Martial Characters 3_Take Hit - white silhouette.png
+                                        Fantasy Martial Characters 3_Take Hit.png
+                                    Fantasy Martial Characters 3_Characters preview.png
                                     License.txt
                             Fantasy Martial Characters1.1/
                                 Fantasy Martial Characters1.1/
                                     Character_1/
                                         individual frames/
-                                            Attack3_1.png
-                                            Attack3_2.png
-                                            Attack3_3.png
-                                            Attack3_4.png
+                                            Fantasy Martial Characters1.1_1.png
+                                            Fantasy Martial Characters1.1_2.png
+                                            Fantasy Martial Characters1.1_3.png
+                                            Fantasy Martial Characters1.1_4.png
                                         sprite sheets/
-                                            Attack3.png
+                                            Fantasy Martial Characters1.1_Attack3.png
                                     Character_2/
                                         individual frames/
-                                            Attack3_1.png
-                                            Attack3_2.png
-                                            Attack3_3.png
-                                            Attack3_4.png
+                                            Fantasy Martial Characters1.1_1.png
+                                            Fantasy Martial Characters1.1_2.png
+                                            Fantasy Martial Characters1.1_3.png
+                                            Fantasy Martial Characters1.1_4.png
                                         sprite sheets/
-                                            Attack3.png
+                                            Fantasy Martial Characters1.1_Attack3.png
                                     Character_3/
                                         individual frames/
-                                            Attack3_1.png
-                                            Attack3_2.png
-                                            Attack3_3.png
-                                            Attack3_4.png
+                                            Fantasy Martial Characters1.1_1.png
+                                            Fantasy Martial Characters1.1_2.png
+                                            Fantasy Martial Characters1.1_3.png
+                                            Fantasy Martial Characters1.1_4.png
                                         sprite sheets/
-                                            Attack3.png
+                                            Fantasy Martial Characters1.1_Attack3.png
                                     Character_4/
                                         individual frames/
-                                            Attack3_1.png
-                                            Attack3_2.png
-                                            Attack3_3.png
-                                            Attack3_4.png
+                                            Fantasy Martial Characters1.1_1.png
+                                            Fantasy Martial Characters1.1_2.png
+                                            Fantasy Martial Characters1.1_3.png
+                                            Fantasy Martial Characters1.1_4.png
                                         sprite sheets/
-                                            Attack3.png
+                                            Fantasy Martial Characters1.1_Attack3.png
                                     Character_5/
                                         individual frames/
-                                            Attack3_1.png
-                                            Attack3_2.png
-                                            Attack3_3.png
-                                            Attack3_4.png
+                                            Fantasy Martial Characters1.1_1.png
+                                            Fantasy Martial Characters1.1_2.png
+                                            Fantasy Martial Characters1.1_3.png
+                                            Fantasy Martial Characters1.1_4.png
                                         sprite sheets/
-                                            Attack3.png
+                                            Fantasy Martial Characters1.1_Attack3.png
                                     Character_6/
                                         individual frames/
-                                            Attack3_1.png
-                                            Attack3_2.png
-                                            Attack3_3.png
-                                            Attack3_4.png
+                                            Fantasy Martial Characters1.1_1.png
+                                            Fantasy Martial Characters1.1_2.png
+                                            Fantasy Martial Characters1.1_3.png
+                                            Fantasy Martial Characters1.1_4.png
                                         sprite sheets/
-                                            Attack3.png
+                                            Fantasy Martial Characters1.1_Attack3.png
                             Producto/
                                 Producto/
+                                    Producto_Tileset samurai division.png
+                                    Producto_Tileset samurai.png
                                     Samurai busto 1 .jpg
-                                    Tileset samurai division.png
-                                    Tileset samurai.png
                         Yokai/
                             craftpix-net-605776-free-yokai-pixel-art-character-sprites/
                                 Karasu_tengu/
-                                    Attack_1.png
-                                    Attack_2.png
-                                    Attack_3.png
-                                    Dead.png
-                                    Hurt.png
-                                    Idle.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_1.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_2.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_3.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_Dead.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_Hurt.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_Idle.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_Jump.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_Run.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_Walk.png
                                     Idle_2.png
-                                    Jump.png
-                                    Run.png
-                                    Walk.png
                                 Kitsune/
-                                    Attack_1.png
-                                    Attack_2.png
-                                    Attack_3.png
-                                    Dead.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_1.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_2.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_3.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_Dead.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_Hurt.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_Idle.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_Jump.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_Run.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_Walk.png
                                     Fire_1.png
                                     Fire_2.png
-                                    Hurt.png
-                                    Idle.png
                                     Idle_2.png
-                                    Jump.png
-                                    Run.png
-                                    Walk.png
                                 PSD/
                                     Karasu_tengu_Spritelist.psd
                                     Kitcune_Spritelist.psd
                                     Yamabushi_tengu_Spritelist.psd
                                 Yamabushi_tengu/
-                                    Attack_1.png
-                                    Attack_2.png
-                                    Attack_3.png
-                                    Dead.png
-                                    Hurt.png
-                                    Idle.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_1.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_2.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_3.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_Dead.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_Hurt.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_Idle.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_Jump.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_Run.png
+                                    craftpix-net-605776-free-yokai-pixel-art-character-sprites_Walk.png
                                     Idle_2.png
-                                    Jump.png
-                                    Run.png
-                                    Walk.png
                                 COUPON.pdf
-                                COUPON.png
+                                craftpix-net-605776-free-yokai-pixel-art-character-sprites_COUPON.png
                                 Font.txt
                                 Licens.txt
-                            Yokai/
+                            Tsukiko/
                                 Gotoku/
-                                    Attack_1.png
-                                    Attack_2.png
-                                    Attack_3.png
-                                    Dead.png
-                                    Hurt.png
-                                    Idle.png
-                                    Jump.png
-                                    Run.png
-                                    Scream.png
-                                    Walk.png
+                                    Tsukiko_1.png
+                                    Tsukiko_2.png
+                                    Tsukiko_3.png
+                                    Tsukiko_Dead.png
+                                    Tsukiko_Hurt.png
+                                    Tsukiko_Idle.png
+                                    Tsukiko_Jump.png
+                                    Tsukiko_Run.png
+                                    Tsukiko_Scream.png
+                                    Tsukiko_Walk.png
                                 Onre/
-                                    Attack_1.png
-                                    Attack_2.png
-                                    Attack_3.png
-                                    Dead.png
-                                    Flight.png
-                                    Hurt.png
-                                    Idle.png
-                                    Run.png
-                                    Scream.png
-                                    Walk.png
+                                    Tsukiko_1.png
+                                    Tsukiko_2.png
+                                    Tsukiko_3.png
+                                    Tsukiko_Dead.png
+                                    Tsukiko_Flight.png
+                                    Tsukiko_Hurt.png
+                                    Tsukiko_Idle.png
+                                    Tsukiko_Run.png
+                                    Tsukiko_Scream.png
+                                    Tsukiko_Walk.png
                                 PSD/
-                                    Gotoku_spritelist.psd
                                     Onre_spritelist.psd
+                                    Tsukiko_spritelist.psd
                                     Yurei_spritelist.psd
                                 Yurei/
-                                    Attack_1.png
-                                    Attack_2.png
-                                    Attack_3.png
-                                    Attack_4.png
                                     Charge_1.png
                                     Charge_2.png
-                                    Dead.png
-                                    Hurt.png
-                                    Idle.png
-                                    Run.png
-                                    Scream.png
-                                    Walk.png
+                                    Tsukiko_1.png
+                                    Tsukiko_2.png
+                                    Tsukiko_3.png
+                                    Tsukiko_4.png
+                                    Tsukiko_Dead.png
+                                    Tsukiko_Hurt.png
+                                    Tsukiko_Idle.png
+                                    Tsukiko_Run.png
+                                    Tsukiko_Scream.png
+                                    Tsukiko_Walk.png
                                 COUPON.pdf
-                                COUPON.png
                                 License.txt
+                                Tsukiko_COUPON.png
                     SpriteSheets/
                 Prefabs/
                     Samurai_Ryoma.prefab
@@ -11723,12 +11756,27 @@ Assets/
                     AppFrameRate.cs
                     SafeAreaHandler.cs
                 Shogun.Core.asmdef
+            Editor/
+                ArchiveOriginalAssetPackEditor.cs
+                AutoMoveAllSpriteSheets.cs
+                BatchMoveAndRenameSpriteSheets.cs
+                BatchRenameAllCharacterSprites.cs
+                BatchRenameCharacterFolders.cs
+                BatchRenameCharacterSprites.cs
+                CharacterAssetBatchOrganizer.cs
+                OrganizeCharacterAssetsEditor.cs
             Features/
                 Characters/
+                    AnimationClipDiagnosticTool.cs
+                    AnimatorAutoSetupEditor.cs
+                    CharacterAnimatorAutoLinker.cs
                     CharacterDefinition.cs
+                    CharacterDefinitionBatchProcessor.cs
+                    CharacterDefinitionEditor.cs
                     CharacterFactory.cs
                     CharacterInstance.cs
                     CharacterStats.cs
+                    README_AnimationSystem.md
                     Shogun.Characters.asmdef
                 Combat/
                     BattleDragHandler.cs

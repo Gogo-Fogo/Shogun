@@ -280,7 +280,7 @@ namespace Shogun.Tests.Characters
             
             // Act
             instance.MoveTo(new Vector2Int(1, 1));
-            instance.PerformAttack();
+            instance.PerformBasicAttack();
             
             // Assert
             Assert.IsTrue(instance.HasMovedThisTurn);

@@ -23,6 +23,8 @@ namespace Shogun.Features.Combat
         private Camera mainCamera;
         private Image panelImage;
         private bool isInitialized = false;
+        private float dragFollowLerpSpeed = 20f; // Increased from 10f to 20f for faster following
+        private Vector3? dragTargetWorldPos = null;
 
         void Awake()
         {
@@ -83,56 +85,73 @@ namespace Shogun.Features.Combat
         {
             Debug.Log("OnDrag called");
             if (!isInitialized) return;
-            
             LogDebug($"Drag: {eventData.position}");
-            
             if (turnManager == null)
             {
                 LogDebug("TurnManager is null, cannot process drag");
                 return;
             }
-            
             var currentCharacter = turnManager.GetCurrentCharacter();
             if (currentCharacter == null)
             {
                 LogDebug("No current character, cannot process drag");
                 return;
             }
-
             if (!isDragging && Vector2.Distance(eventData.position, dragStartPos) > dragThreshold)
             {
                 isDragging = true;
                 LogDebug("Drag threshold exceeded, starting drag");
+                // Set run animation ON
+                var anim = currentCharacter.GetComponent<Animator>();
+                if (anim != null) 
+                {
+                    anim.SetBool("isRunning", true);
+                    LogDebug("Set isRunning = true for drag start");
+                }
             }
-            
             if (isDragging)
             {
                 Vector3 worldPos = mainCamera.ScreenToWorldPoint(eventData.position);
                 worldPos.z = 0;
-                
                 if (snapToGrid)
                 {
                     worldPos = SnapToGrid(worldPos);
                 }
-                
-                currentCharacter.transform.position = worldPos;
-                LogDebug($"Moved character to: {worldPos}");
+                dragTargetWorldPos = worldPos;
+                LogDebug($"Set drag target to: {worldPos}");
             }
         }
 
         public void OnPointerUp(PointerEventData eventData)
         {
             if (!isInitialized) return;
-            
             LogDebug($"PointerUp: {eventData.position}");
-            
             if (!isDragging)
             {
                 // This was a tap, call tap-to-move logic
                 OnTap(eventData.position);
             }
-            
+            else
+            {
+                // Snap to final drag position
+                if (turnManager != null)
+                {
+                    var currentCharacter = turnManager.GetCurrentCharacter();
+                    if (currentCharacter != null && dragTargetWorldPos.HasValue)
+                    {
+                        currentCharacter.transform.position = dragTargetWorldPos.Value;
+                        // Set run animation OFF
+                        var anim = currentCharacter.GetComponent<Animator>();
+                        if (anim != null) 
+                        {
+                            anim.SetBool("isRunning", false);
+                            LogDebug("Set isRunning = false for drag end");
+                        }
+                    }
+                }
+            }
             isDragging = false;
+            dragTargetWorldPos = null;
         }
 
         private void OnTap(Vector2 screenPosition)
@@ -158,7 +177,8 @@ namespace Shogun.Features.Combat
                 worldPos = SnapToGrid(worldPos);
             }
             
-            currentCharacter.transform.position = worldPos;
+            // Use the character's MoveTo method which handles run animation properly
+            currentCharacter.MoveTo(screenPosition);
             LogDebug($"Tapped to move character to: {worldPos}");
         }
 
@@ -183,6 +203,20 @@ namespace Shogun.Features.Combat
         public void TestInput()
         {
             LogDebug("Test input called - handler is working!");
+        }
+
+        void Update()
+        {
+            // If dragging, smoothly move the character toward the drag target
+            if (isDragging && dragTargetWorldPos.HasValue && turnManager != null)
+            {
+                var currentCharacter = turnManager.GetCurrentCharacter();
+                if (currentCharacter != null)
+                {
+                    var t = currentCharacter.transform;
+                    t.position = Vector3.MoveTowards(t.position, dragTargetWorldPos.Value, dragFollowLerpSpeed * Time.deltaTime);
+                }
+            }
         }
     }
 } 

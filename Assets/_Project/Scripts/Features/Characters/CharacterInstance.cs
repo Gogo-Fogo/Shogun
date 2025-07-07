@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 using Shogun.Core.Architecture;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Shogun.Features.Characters
 {
@@ -38,6 +40,9 @@ namespace Shogun.Features.Characters
         
         [Header("Status Effects")]
         [SerializeField] private StatusEffect[] activeStatusEffects = new StatusEffect[0];
+        
+        // Movement tracking
+        private Coroutine currentMovementCoroutine = null;
         
         // Events
         public event Action<float> OnHealthChanged;
@@ -137,13 +142,49 @@ namespace Shogun.Features.Characters
         }
         
         /// <summary>
-        /// Move the character to a new position.
+        /// Move the character to a new position with smooth running animation.
         /// </summary>
         public void MoveTo(Vector2 screenPosition)
         {
-            Vector3 worldPos = Camera.main.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, Mathf.Abs(Camera.main.transform.position.z)));
-            worldPos.z = 0;
-            transform.position = worldPos;
+            // Stop any existing movement and ensure animation is reset
+            if (currentMovementCoroutine != null)
+            {
+                StopCoroutine(currentMovementCoroutine);
+                var anim = GetComponent<Animator>();
+                if (anim != null) anim.SetBool("isRunning", false);
+            }
+            
+            currentMovementCoroutine = StartCoroutine(MoveToRoutine(screenPosition));
+        }
+
+        private System.Collections.IEnumerator MoveToRoutine(Vector2 screenPosition)
+        {
+            Vector3 start = transform.position;
+            Vector3 target = Camera.main.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, Mathf.Abs(Camera.main.transform.position.z)));
+            target.z = 0;
+            float speed = 25f; // Increased from 15f to 25f for faster tap-to-move
+            var anim = GetComponent<Animator>();
+            if (anim != null) anim.SetBool("isRunning", true);
+            
+            // Keep running animation until we actually reach the target
+            while (Vector3.Distance(transform.position, target) > 0.05f)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
+                yield return null;
+            }
+            
+            // Ensure we're exactly at the target
+            transform.position = target;
+            
+            // Only stop running animation after we've reached the destination
+            if (anim != null) 
+            {
+                anim.SetBool("isRunning", false);
+                Debug.Log("Tap-to-move completed, stopped running animation");
+            }
+            
+            // Clear the coroutine reference
+            currentMovementCoroutine = null;
         }
         
         /// <summary>
@@ -191,37 +232,51 @@ namespace Shogun.Features.Characters
         }
         
         /// <summary>
-        /// Perform an attack.
+        /// Perform a Blazing-style basic attack: randomly triggers ATTACK 1, 2, or 3 animation.
         /// </summary>
-        public void PerformAttack()
+        public void PerformBasicAttack()
         {
             if (!CanAttack) return;
-            
             hasAttackedThisTurn = true;
-            
-            // Attacking breaks stealth
-            if (isHidden)
+            // Randomly pick one of the three attack animations
+            string[] attackStates = { "ATTACK 1", "ATTACK 2", "ATTACK 3" };
+            string chosen = attackStates[UnityEngine.Random.Range(0, attackStates.Length)];
+            var anim = GetComponent<Animator>();
+            if (anim != null)
             {
-                SetHidden(false);
+                anim.SetTrigger("AttackTrigger");
+                // Optionally, set a parameter to indicate which attack (if you want to use sub-states)
+                // anim.SetInteger("AttackIndex", Array.IndexOf(attackStates, chosen));
             }
+            // TODO: Apply attack logic/effects here
         }
-        
+
         /// <summary>
-        /// Use special ability.
+        /// Perform the first special ability (e.g., healing jutsu).
         /// </summary>
-        public void UseSpecialAbility()
+        public void PerformJutsu()
         {
             if (!CanUseSpecialAbility) return;
-            
             specialAbilityCooldown = definition.SpecialAbilityCooldown;
-            
-            // Using special ability breaks stealth
-            if (isHidden)
-            {
-                SetHidden(false);
-            }
+            var anim = GetComponent<Animator>();
+            if (anim != null)
+                anim.SetTrigger("isHealing");
+            // TODO: Apply healing logic/effects here
         }
-        
+
+        /// <summary>
+        /// Perform the ultimate (e.g., special attack, double-tap).
+        /// </summary>
+        public void PerformUltimate()
+        {
+            if (!CanUseSpecialAbility) return;
+            specialAbilityCooldown = definition.SpecialAbilityCooldown * 2; // Example: ult has longer cooldown
+            var anim = GetComponent<Animator>();
+            if (anim != null)
+                anim.SetTrigger("SpecialTrigger");
+            // TODO: Apply ultimate logic/effects here
+        }
+
         /// <summary>
         /// Attempt to counter-attack when taking damage.
         /// </summary>
@@ -412,6 +467,48 @@ namespace Shogun.Features.Characters
             transform.localScale = def.CharacterScale;
             // Set other stats as needed (attack range, etc.)
             // this.attackRange = def.attackRange; // Uncomment if you have this field
+        }
+
+        private void Awake()
+        {
+            SetupAnimatorOverrides();
+        }
+
+        private void SetupAnimatorOverrides()
+        {
+            var anim = GetComponent<Animator>();
+            if (anim == null || definition == null || definition.animationMappings == null || definition.animationMappings.Count == 0)
+                return;
+
+            var baseController = anim.runtimeAnimatorController;
+            if (baseController == null)
+                return;
+
+            var overrideController = new AnimatorOverrideController(baseController);
+            var overrides = new List<KeyValuePair<AnimationClip, AnimationClip>>();
+
+            // Build a dictionary for quick lookup
+            var mappingDict = new Dictionary<string, AnimationClip>(System.StringComparer.OrdinalIgnoreCase);
+            foreach (var mapping in definition.animationMappings)
+            {
+                if (!string.IsNullOrEmpty(mapping.logicalName) && mapping.clip != null)
+                    mappingDict[mapping.logicalName] = mapping.clip;
+            }
+
+            // For each clip in the base controller, try to override
+            foreach (var clip in overrideController.animationClips)
+            {
+                if (mappingDict.TryGetValue(clip.name, out var mappedClip))
+                {
+                    overrides.Add(new KeyValuePair<AnimationClip, AnimationClip>(clip, mappedClip));
+                }
+                else
+                {
+                    overrides.Add(new KeyValuePair<AnimationClip, AnimationClip>(clip, clip)); // fallback to original
+                }
+            }
+            overrideController.ApplyOverrides(overrides);
+            anim.runtimeAnimatorController = overrideController;
         }
     }
     

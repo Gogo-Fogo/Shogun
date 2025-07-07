@@ -66,6 +66,14 @@
 - Updated CharacterSystemTests.cs to use the correct CreateCharacter overload and set character level by adding experience.
 - Removed all grid-based references from documentation and replaced with free-form/battlefield terminology in README.md, IMPLEMENTATION_PROGRESS.md, and docs.
 
+## ✅ Drag/Tap Input System Fix & Cleanup (2025-07-06)
+- Fixed: Drag and tap input for both mouse and touch now work reliably in the battle system.
+- Cause: Missing `<Pointer>/position` and `<Pointer>/press` bindings in the UI action map for the Input System UI Input Module.
+- Solution: Added required bindings and verified pointer events fire for both tap and drag.
+- Cleanup: Removed all test/debug scripts (PointerLogger, DragInputTester, Fix/Nuke/CleanupDragInputPanelEditor) and ensured only one DragInputPanel exists under the main Canvas.
+- Production: Drag threshold reset to 10 for best UX; all debug/test artifacts removed.
+- Documentation: Updated README.md and this file to reflect the new, robust input system and required Input System configuration.
+
 ## 🎯 Next Priority Implementation
 
 ### Phase 2: Combat State Machine
@@ -125,7 +133,7 @@ IMPLEMENTATION_PROGRESS.md     ✅ Complete
 - **Battlefield:** Only active characters can move, attack, or be targeted.
 - **Future Implementation:** Team management, synergy bonuses, and swap cooldowns will be added later.
 
-## ✅ Battle System Improvements (2024-07-05):
+## ✅ Battle System Improvements (2025-07-05):
 - Character spawning is now fully data-driven: only one generic CharacterPrefab is needed, and all character differences are handled via CharacterDefinition assets.
 - Team size is now flexible: battles can start with any number of characters (minimum 1), not just 6.
 - Characters now spawn at the position of the CharacterPrefab in the scene, making layout intuitive.

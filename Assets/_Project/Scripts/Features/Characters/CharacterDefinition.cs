@@ -1,4 +1,8 @@
 using UnityEngine;
+using System.Collections.Generic;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Shogun.Features.Characters
 {
@@ -11,7 +15,9 @@ namespace Shogun.Features.Characters
     public class CharacterDefinition : ScriptableObject
     {
         [Header("Basic Information")]
-        [SerializeField] private string characterName = "Unknown";
+        [SerializeField] private string surname = "";
+        [SerializeField] private string givenName = "Unknown";
+        [SerializeField] private string characterName = "Unknown"; // Deprecated, use surname/givenName
         [SerializeField] private string description = "";
         [SerializeField] private Sprite portrait;
         [SerializeField] private Sprite battleSprite;
@@ -52,8 +58,15 @@ namespace Shogun.Features.Characters
         [Header("Team Synergy")]
         [SerializeField] private string[] synergyTags = new string[0];
         
+        [Header("Animation Mapping")]
+        public List<AnimationMapping> animationMappings = new List<AnimationMapping>();
+        
         // Public properties
-        public string CharacterName => characterName;
+        public string Surname => surname;
+        public string GivenName => givenName;
+        public string DisplayNameJP => string.IsNullOrEmpty(surname) ? givenName : $"{surname} {givenName}";
+        public string DisplayNameEN => string.IsNullOrEmpty(surname) ? givenName : $"{givenName} {surname}";
+        public string CharacterName => GivenName; // For legacy compatibility
         public string Description => description;
         public Sprite Portrait => portrait;
         public Sprite BattleSprite => battleSprite;
@@ -153,5 +166,81 @@ namespace Shogun.Features.Characters
         Short,  // Small circle - Close combat specialists
         Mid,    // Medium circle - Balanced fighters
         Long    // Large circle - Ranged attackers
+    }
+
+    [System.Serializable]
+    public class AnimationMapping
+    {
+        [Header("Animation Action")]
+        public string logicalName; // e.g., "Idle", "Run", "Attack1"
+        
+        [Header("Animation Clip")]
+        public AnimationClip clip; // The actual AnimationClip for this action
+        
+        [Header("Auto-Assignment")]
+        [SerializeField] private bool useAutoAssignment = true;
+        [SerializeField] private string customSearchPattern = ""; // e.g., "Ryoma_Attack1" or "Attack1"
+        
+        // Validation and helper properties
+        public bool IsValid => !string.IsNullOrEmpty(logicalName) && clip != null;
+        public bool UseAutoAssignment => useAutoAssignment;
+        public string SearchPattern => string.IsNullOrEmpty(customSearchPattern) ? logicalName : customSearchPattern;
+        
+        // Constructor for easy creation
+        public AnimationMapping(string actionName, AnimationClip animationClip = null)
+        {
+            logicalName = actionName;
+            clip = animationClip;
+            useAutoAssignment = true;
+            customSearchPattern = "";
+        }
+        
+        // Auto-assign clip based on naming convention
+        public bool TryAutoAssignClip(string characterName)
+        {
+            if (!useAutoAssignment) return false;
+            
+            // Try different naming patterns
+            string[] searchPatterns = {
+                $"{characterName}_{logicalName}",
+                $"{characterName}{logicalName}",
+                logicalName,
+                SearchPattern
+            };
+            
+            foreach (string pattern in searchPatterns)
+            {
+                AnimationClip foundClip = FindAnimationClipByName(pattern);
+                if (foundClip != null)
+                {
+                    clip = foundClip;
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+        
+        private AnimationClip FindAnimationClipByName(string clipName)
+        {
+#if UNITY_EDITOR
+            // Search in common animation folders
+            string[] searchPaths = {
+                "Assets/_Project/Features/Characters/Art/Animations",
+                "Assets/_Project/Features/Characters/Art/Sprites"
+            };
+            
+            foreach (string path in searchPaths)
+            {
+                string[] guids = AssetDatabase.FindAssets($"{clipName} t:AnimationClip", new[] { path });
+                if (guids.Length > 0)
+                {
+                    string assetPath = AssetDatabase.GUIDToAssetPath(guids[0]);
+                    return AssetDatabase.LoadAssetAtPath<AnimationClip>(assetPath);
+                }
+            }
+#endif
+            return null;
+        }
     }
 } 

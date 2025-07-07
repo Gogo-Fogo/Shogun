@@ -39,7 +39,7 @@ GUID: b212ad3f85ef4b3448b6c02559bb3875
         - Sprite Sort Point: Center
     * Animator
         - Avatar: null
-        - Controller: IDLE_0
+        - Controller: Ryoma_Ryoma
         - Culling Mode: Always Animate
         - Update Mode: Normal
         - Apply Root Motion: False

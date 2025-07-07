@@ -126,6 +126,310 @@ First 30 lines:
   30:     /// <summary>
   ... (truncated)
 
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Editor\ArchiveOriginalAssetPackEditor.cs ===
+Total Lines: 74
+  Code Lines: 67
+  Comment Lines: 0
+  Empty Lines: 7
+First 30 lines:
+  01: #if UNITY_EDITOR
+  02: using UnityEngine;
+  03: using UnityEditor;
+  04: using System.IO;
+  05: 
+  06: public class ArchiveOriginalAssetPackEditor : EditorWindow
+  07: {
+  08:     private string sourceFolder = "Assets/_Project/Features/Characters/Art/Sprites/Samurai/FULL_Samurai 2D Pixel Art v1.2/FULL_Samurai 2D Pixel Art v1.2";
+  09:     private string archiveFolder = "Assets/_Project/Features/Characters/Art/Archive/FULL_Samurai_2D_Pixel_Art_v1.2";
+  10:     private string[] excludeFolders = new string[] { "Ryoma" }; // Add any character folders to exclude
+  11: 
+  12:     [MenuItem("Tools/Shogun/Archive Original Asset Pack")]
+  13:     public static void ShowWindow()
+  14:     {
+  15:         GetWindow<ArchiveOriginalAssetPackEditor>("Archive Original Asset Pack");
+  16:     }
+  17: 
+  18:     private void OnGUI()
+  19:     {
+  20:         GUILayout.Label("Archive Original Asset Pack", EditorStyles.boldLabel);
+  21:         sourceFolder = EditorGUILayout.TextField("Source Folder", sourceFolder);
+  22:         archiveFolder = EditorGUILayout.TextField("Archive Folder", archiveFolder);
+  23:         EditorGUILayout.HelpBox("This will move all files and folders from the source to the archive, except any folders you list below (e.g., character folders you already organized).", MessageType.Info);
+  24:         string exclude = string.Join(", ", excludeFolders);
+  25:         exclude = EditorGUILayout.TextField("Exclude Folders (comma-separated)", exclude);
+  26:         excludeFolders = exclude.Split(new char[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries);
+  27:         for (int i = 0; i < excludeFolders.Length; i++) excludeFolders[i] = excludeFolders[i].Trim();
+  28: 
+  29:         if (GUILayout.Button("Archive Now"))
+  30:         {
+  ... (truncated)
+
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Editor\AutoMoveAllSpriteSheets.cs ===
+Total Lines: 67
+  Code Lines: 62
+  Comment Lines: 1
+  Empty Lines: 4
+First 30 lines:
+  01: #if UNITY_EDITOR
+  02: using UnityEngine;
+  03: using UnityEditor;
+  04: using System.IO;
+  05: 
+  06: public class AutoMoveAllSpriteSheets : EditorWindow
+  07: {
+  08:     private string spritesRoot = "Assets/_Project/Features/Characters/Art/Sprites";
+  09:     private string archiveRoot = "Assets/_Project/Features/Characters/Art/Sprites/Archive";
+  10: 
+  11:     [MenuItem("Tools/Shogun/Auto Move All Sprite Sheets")]
+  12:     public static void ShowWindow()
+  13:     {
+  14:         GetWindow<AutoMoveAllSpriteSheets>("Auto Move All Sprite Sheets");
+  15:     }
+  16: 
+  17:     private void OnGUI()
+  18:     {
+  19:         GUILayout.Label("Auto Move All Sprite Sheets", EditorStyles.boldLabel);
+  20:         spritesRoot = EditorGUILayout.TextField("Sprites Root", spritesRoot);
+  21:         archiveRoot = EditorGUILayout.TextField("Archive Root", archiveRoot);
+  22:         if (GUILayout.Button("Move All Sprite Sheets"))
+  23:         {
+  24:             MoveAllSpriteSheets();
+  25:         }
+  26:     }
+  27: 
+  28:     private void MoveAllSpriteSheets()
+  29:     {
+  30:         int moved = 0;
+  ... (truncated)
+
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Editor\BatchMoveAndRenameSpriteSheets.cs ===
+Total Lines: 65
+  Code Lines: 58
+  Comment Lines: 3
+  Empty Lines: 4
+First 30 lines:
+  01: #if UNITY_EDITOR
+  02: using UnityEngine;
+  03: using UnityEditor;
+  04: using System.IO;
+  05: using System.Collections.Generic;
+  06: 
+  07: public class BatchMoveAndRenameSpriteSheets : EditorWindow
+  08: {
+  09:     private string spritesRoot = "Assets/_Project/Features/Characters/Art/Sprites";
+  10:     private string archiveRoot = "Assets/_Project/Features/Characters/Art/Sprites/Archive";
+  11:     // Map from asset pack file name to (character, action)
+  12:     private Dictionary<string, (string character, string action)> spriteSheetMap = new Dictionary<string, (string, string)> {
+  13:         // Example: {"cyber_samurai_girl_cast.png", ("Aiko", "CastSpell")}
+  14:         // Add more mappings as needed
+  15:     };
+  16: 
+  17:     [MenuItem("Tools/Shogun/Batch Move & Rename Sprite Sheets")]
+  18:     public static void ShowWindow()
+  19:     {
+  20:         GetWindow<BatchMoveAndRenameSpriteSheets>("Batch Move & Rename Sprite Sheets");
+  21:     }
+  22: 
+  23:     private void OnGUI()
+  24:     {
+  25:         GUILayout.Label("Batch Move & Rename Sprite Sheets", EditorStyles.boldLabel);
+  26:         spritesRoot = EditorGUILayout.TextField("Sprites Root", spritesRoot);
+  27:         archiveRoot = EditorGUILayout.TextField("Archive Root", archiveRoot);
+  28:         if (GUILayout.Button("Move & Rename Sprite Sheets"))
+  29:         {
+  30:             MoveAndRenameSpriteSheets();
+  ... (truncated)
+
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Editor\BatchRenameAllCharacterSprites.cs ===
+Total Lines: 72
+  Code Lines: 66
+  Comment Lines: 1
+  Empty Lines: 5
+First 30 lines:
+  01: #if UNITY_EDITOR
+  02: using UnityEngine;
+  03: using UnityEditor;
+  04: using System.IO;
+  05: 
+  06: public class BatchRenameAllCharacterSprites : EditorWindow
+  07: {
+  08:     private string spritesRoot = "Assets/_Project/Features/Characters/Art/Sprites";
+  09: 
+  10:     [MenuItem("Tools/Shogun/Batch Rename All Character Sprites")]
+  11:     public static void ShowWindow()
+  12:     {
+  13:         GetWindow<BatchRenameAllCharacterSprites>("Batch Rename All Character Sprites");
+  14:     }
+  15: 
+  16:     private void OnGUI()
+  17:     {
+  18:         GUILayout.Label("Batch Rename All Character Sprites", EditorStyles.boldLabel);
+  19:         spritesRoot = EditorGUILayout.TextField("Sprites Root", spritesRoot);
+  20:         if (GUILayout.Button("Rename All Sprites & Anims"))
+  21:         {
+  22:             RenameAllCharacterSprites();
+  23:         }
+  24:     }
+  25: 
+  26:     private void RenameAllCharacterSprites()
+  27:     {
+  28:         int totalRenamed = 0;
+  29:         int foldersProcessed = 0;
+  30:         foreach (var categoryDir in Directory.GetDirectories(spritesRoot))
+  ... (truncated)
+
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Editor\BatchRenameCharacterFolders.cs ===
+Total Lines: 61
+  Code Lines: 55
+  Comment Lines: 2
+  Empty Lines: 4
+First 30 lines:
+  01: #if UNITY_EDITOR
+  02: using UnityEngine;
+  03: using UnityEditor;
+  04: using System.IO;
+  05: using System.Collections.Generic;
+  06: 
+  07: public class BatchRenameCharacterFolders : EditorWindow
+  08: {
+  09:     private string spritesRoot = "Assets/_Project/Features/Characters/Art/Sprites";
+  10:     private Dictionary<string, string> folderRenameMap = new Dictionary<string, string> {
+  11:         // Samurai asset-pack folders to unique names
+  12:         {"Samurai #2 2D Pixel Art", "Katsuro"},
+  13:         {"Samurai #3 2D Pixel Art v1.2", "Hayato"},
+  14:         {"Samurai #4 2D Pixel Art v1.1", "Daichi"},
+  15:         {"Samurai #5 2D Pixel Art v1.1", "Shinobu"},
+  16:         {"Samurai #6 2D Pixel Art v1.1", "Takeshi"},
+  17:         // Add more mappings as needed for other categories
+  18:     };
+  19: 
+  20:     [MenuItem("Tools/Shogun/Batch Rename Character Folders")]
+  21:     public static void ShowWindow()
+  22:     {
+  23:         GetWindow<BatchRenameCharacterFolders>("Batch Rename Character Folders");
+  24:     }
+  25: 
+  26:     private void OnGUI()
+  27:     {
+  28:         GUILayout.Label("Batch Rename Character Folders", EditorStyles.boldLabel);
+  29:         spritesRoot = EditorGUILayout.TextField("Sprites Root", spritesRoot);
+  30:         if (GUILayout.Button("Rename All Generic Character Folders"))
+  ... (truncated)
+
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Editor\BatchRenameCharacterSprites.cs ===
+Total Lines: 60
+  Code Lines: 55
+  Comment Lines: 1
+  Empty Lines: 4
+First 30 lines:
+  01: #if UNITY_EDITOR
+  02: using UnityEngine;
+  03: using UnityEditor;
+  04: using System.IO;
+  05: 
+  06: public class BatchRenameCharacterSprites : EditorWindow
+  07: {
+  08:     private string characterName = "Hayato";
+  09:     private string targetFolder = "Assets/_Project/Features/Characters/Art/Sprites/Samurai/Hayato";
+  10: 
+  11:     [MenuItem("Tools/Shogun/Batch Rename Character Sprites")]
+  12:     public static void ShowWindow()
+  13:     {
+  14:         GetWindow<BatchRenameCharacterSprites>("Batch Rename Character Sprites");
+  15:     }
+  16: 
+  17:     private void OnGUI()
+  18:     {
+  19:         GUILayout.Label("Batch Rename Character Sprites", EditorStyles.boldLabel);
+  20:         characterName = EditorGUILayout.TextField("Character Name", characterName);
+  21:         targetFolder = EditorGUILayout.TextField("Target Folder", targetFolder);
+  22:         if (GUILayout.Button("Rename All Sprites & Anims"))
+  23:         {
+  24:             RenameAllSpritesAndAnims();
+  25:         }
+  26:     }
+  27: 
+  28:     private void RenameAllSpritesAndAnims()
+  29:     {
+  30:         int renamed = 0;
+  ... (truncated)
+
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Editor\CharacterAssetBatchOrganizer.cs ===
+Total Lines: 146
+  Code Lines: 123
+  Comment Lines: 18
+  Empty Lines: 5
+First 30 lines:
+  01: #if UNITY_EDITOR
+  02: using UnityEngine;
+  03: using UnityEditor;
+  04: using System.IO;
+  05: using System.Collections.Generic;
+  06: using Shogun.Features.Characters;
+  07: 
+  08: public class CharacterAssetBatchOrganizer : EditorWindow
+  09: {
+  10:     private string spritesRoot = "Assets/_Project/Features/Characters/Art/Sprites";
+  11:     private string archiveRoot = "Assets/_Project/Features/Characters/Art/Sprites/Archive";
+  12:     private Dictionary<string, string> nameMap = new Dictionary<string, string> {
+  13:         // Samurai
+  14:         {"Samurai_Archer", "Harada"},
+  15:         {"Samurai_Commander", "Takeda"},
+  16:         {"NightBorne", "Yoruichi"},
+  17:         {"NeonPhantom", "Kagero"},
+  18:         {"GandalfHardcore Samurai", "Musashi"},
+  19:         {"TheDarkRedOne", "Akai"},
+  20:         {"EmeraldProtector", "Midori"},
+  21:         {"Martial Hero 2", "Hayato"},
+  22:         {"Warrior-in-Red Free", "Shinobu"},
+  23:         {"MidnightSlash", "Reiji"},
+  24:         // Demons
+  25:         {"Demon Samurai 2D Pixel Art", "Oniro"},
+  26:         {"FrozenDemon", "Hyoga"},
+  27:         {"GhostSentinel", "Yurei"},
+  28:         {"Executioner 2D Pixel Art", "Shokeinin"},
+  29:         {"RedDemon", "Akaoni"},
+  30:         // Animals
+  ... (truncated)
+
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Editor\OrganizeCharacterAssetsEditor.cs ===
+Total Lines: 132
+  Code Lines: 112
+  Comment Lines: 9
+  Empty Lines: 11
+First 30 lines:
+  01: #if UNITY_EDITOR
+  02: using UnityEngine;
+  03: using UnityEditor;
+  04: using System.IO;
+  05: using System.Collections.Generic;
+  06: using Shogun.Features.Characters;
+  07: 
+  08: public class OrganizeCharacterAssetsEditor : EditorWindow
+  09: {
+  10:     private string characterName = "Ryoma";
+  11:     private string spriteSourceFolder = "Assets/_Project/Features/Characters/Art/Sprites/Samurai/FULL_Samurai 2D Pixel Art v1.2/FULL_Samurai 2D Pixel Art v1.2/Sprites";
+  12:     private string animClipSourceFolder = "Assets/_Project/Features/Characters/Art/Animations/Samurai/Clips";
+  13:     private string controllerSourceFolder = "Assets/_Project/Features/Characters/Art/Sprites/Samurai/FULL_Samurai 2D Pixel Art v1.2/FULL_Samurai 2D Pixel Art v1.2/Animations";
+  14:     private string charDefPath = "Assets/_Project/Features/Characters/ScriptableObjects/Ryoma_CharacterDefinition.asset";
+  15: 
+  16:     private string targetRoot = "Assets/_Project/Features/Characters/Art/Sprites/Samurai";
+  17: 
+  18:     [MenuItem("Tools/Shogun/Organize Character Assets")]
+  19:     public static void ShowWindow()
+  20:     {
+  21:         GetWindow<OrganizeCharacterAssetsEditor>("Organize Character Assets");
+  22:     }
+  23: 
+  24:     private void OnGUI()
+  25:     {
+  26:         GUILayout.Label("Organize & Rename Character Assets", EditorStyles.boldLabel);
+  27:         characterName = EditorGUILayout.TextField("Character Name", characterName);
+  28:         spriteSourceFolder = EditorGUILayout.TextField("Sprite Source Folder", spriteSourceFolder);
+  29:         animClipSourceFolder = EditorGUILayout.TextField("AnimClip Source Folder", animClipSourceFolder);
+  30:         controllerSourceFolder = EditorGUILayout.TextField("Controller Source Folder", controllerSourceFolder);
+  ... (truncated)
+
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Architecture\EventChannelSO.cs ===
 Total Lines: 156
   Code Lines: 65
@@ -389,42 +693,232 @@ First 30 lines:
   30: 
   ... (truncated)
 
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\AnimationClipDiagnosticTool.cs ===
+Total Lines: 65
+  Code Lines: 61
+  Comment Lines: 0
+  Empty Lines: 4
+First 30 lines:
+  01: #if UNITY_EDITOR
+  02: using UnityEngine;
+  03: using UnityEditor;
+  04: using System.IO;
+  05: using System.Linq;
+  06: 
+  07: public class AnimationClipDiagnosticTool : EditorWindow
+  08: {
+  09:     private string animClipsFolder = "Assets/_Project/Features/Characters/Art/Animations/Samurai/Clips";
+  10:     private bool offerAutoFix = false;
+  11: 
+  12:     [MenuItem("Shogun/Diagnose Samurai Animation Clips")]
+  13:     public static void ShowWindow()
+  14:     {
+  15:         GetWindow<AnimationClipDiagnosticTool>("AnimationClip Diagnostic Tool");
+  16:     }
+  17: 
+  18:     private void OnGUI()
+  19:     {
+  20:         GUILayout.Label("Samurai Animation Clip Diagnostic Tool", EditorStyles.boldLabel);
+  21:         animClipsFolder = EditorGUILayout.TextField("Anim Clips Folder", animClipsFolder);
+  22:         offerAutoFix = EditorGUILayout.Toggle("Offer Auto-Fix", offerAutoFix);
+  23:         if (GUILayout.Button("Scan Animation Clips"))
+  24:         {
+  25:             ScanAnimationClips();
+  26:         }
+  27:     }
+  28: 
+  29:     private void ScanAnimationClips()
+  30:     {
+  ... (truncated)
+
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\AnimatorAutoSetupEditor.cs ===
+Total Lines: 304
+  Code Lines: 247
+  Comment Lines: 28
+  Empty Lines: 29
+First 30 lines:
+  01: #if UNITY_EDITOR
+  02: using UnityEngine;
+  03: using UnityEditor;
+  04: using UnityEditor.Animations;
+  05: using System;
+  06: using System.IO;
+  07: using System.Linq;
+  08: using System.Collections.Generic;
+  09: 
+  10: public class AnimatorAutoSetupEditor : EditorWindow
+  11: {
+  12:     private string spritesFolder = "Assets/_Project/Features/Characters/Art/Sprites/Samurai/FULL_Samurai 2D Pixel Art v1.2/FULL_Samurai 2D Pixel Art v1.2/Sprites";
+  13:     private string animClipsFolder = "Assets/_Project/Features/Characters/Art/Animations/Samurai/Clips";
+  14:     private string animatorControllerPath = "Assets/_Project/Features/Characters/Art/Sprites/Samurai/FULL_Samurai 2D Pixel Art v1.2/FULL_Samurai 2D Pixel Art v1.2/Animations/IDLE_0.controller";
+  15:     private string[] animationNames = new string[] { "IDLE", "RUN", "ATTACK 1", "ATTACK 2", "ATTACK 3", "HURT", "HEALING", "DEATH", "DEFEND", "SPECIAL ATTACK", "DASH", "CLIMBING", "JUMP", "JUMP-START", "JUMP-FALL", "JUMP-TRANSITION", "THROW", "WALK", "WALL CONTACT", "WALL JUMP", "WALL SLIDE", "HEALING NO EFFECT", "AIR ATTACK" };
+  16:     private struct StateParam
+  17:     {
+  18:         public string state;
+  19:         public string param;
+  20:         public AnimatorControllerParameterType type;
+  21:         public object value;
+  22:     }
+  23:     private StateParam[] stateParams = new StateParam[] {
+  24:         new StateParam { state = "RUN", param = "isRunning", type = AnimatorControllerParameterType.Bool, value = true },
+  25:         new StateParam { state = "IDLE", param = "isRunning", type = AnimatorControllerParameterType.Bool, value = false },
+  26:         new StateParam { state = "ATTACK 1", param = "AttackTrigger", type = AnimatorControllerParameterType.Trigger },
+  27:         new StateParam { state = "ATTACK 2", param = "AttackTrigger", type = AnimatorControllerParameterType.Trigger },
+  28:         new StateParam { state = "ATTACK 3", param = "AttackTrigger", type = AnimatorControllerParameterType.Trigger },
+  29:         new StateParam { state = "HURT", param = "isHurt", type = AnimatorControllerParameterType.Trigger },
+  30:         new StateParam { state = "DEATH", param = "isDead", type = AnimatorControllerParameterType.Bool, value = true },
+  ... (truncated)
+
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\CharacterAnimatorAutoLinker.cs ===
+Total Lines: 111
+  Code Lines: 105
+  Comment Lines: 0
+  Empty Lines: 6
+First 30 lines:
+  01: #if UNITY_EDITOR
+  02: using UnityEngine;
+  03: using UnityEditor;
+  04: using System.IO;
+  05: using System.Collections.Generic;
+  06: using Shogun.Features.Characters;
+  07: 
+  08: public class CharacterAnimatorAutoLinker : EditorWindow
+  09: {
+  10:     private RuntimeAnimatorController animatorController;
+  11:     private List<RuntimeAnimatorController> allControllers = new List<RuntimeAnimatorController>();
+  12:     private string[] controllerNames;
+  13:     private int selectedControllerIndex = 0;
+  14: 
+  15:     [MenuItem("Shogun/Batch Assign Animator Controller (Robust)")]
+  16:     public static void ShowWindow()
+  17:     {
+  18:         GetWindow<CharacterAnimatorAutoLinker>("Batch Assign Animator Controller");
+  19:     }
+  20: 
+  21:     private void OnEnable()
+  22:     {
+  23:         LoadAllAnimatorControllers();
+  24:     }
+  25: 
+  26:     private void LoadAllAnimatorControllers()
+  27:     {
+  28:         allControllers.Clear();
+  29:         List<string> names = new List<string>();
+  30:         string[] guids = AssetDatabase.FindAssets("t:RuntimeAnimatorController");
+  ... (truncated)
+
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\CharacterDefinition.cs ===
-Total Lines: 157
-  Code Lines: 117
-  Comment Lines: 25
-  Empty Lines: 15
+Total Lines: 246
+  Code Lines: 189
+  Comment Lines: 30
+  Empty Lines: 27
 First 30 lines:
   01: using UnityEngine;
-  02: 
-  03: namespace Shogun.Features.Characters
-  04: {
-  05:     /// <summary>
-  06:     /// ScriptableObject that defines the base data for a character (stats, element, martial arts type, abilities, etc.).
-  07:     /// Used as a template for creating CharacterInstance objects at runtime.
-  08:     /// Editable in the Unity Editor for easy content creation and balancing.
-  09:     /// </summary>
-  10:     [CreateAssetMenu(fileName = "New Character Definition", menuName = "Shogun/Characters/Character Definition")]
-  11:     public class CharacterDefinition : ScriptableObject
-  12:     {
-  13:         [Header("Basic Information")]
-  14:         [SerializeField] private string characterName = "Unknown";
-  15:         [SerializeField] private string description = "";
-  16:         [SerializeField] private Sprite portrait;
-  17:         [SerializeField] private Sprite battleSprite;
-  18:         [SerializeField] private RuntimeAnimatorController animatorController;
-  19:         
-  20:         [Header("Prefab/Collider Settings")]
-  21:         [SerializeField] private Vector2 colliderSize = new Vector2(1, 2);
-  22:         [SerializeField] private Vector2 colliderOffset = Vector2.zero;
-  23:         [SerializeField] private Vector3 characterScale = Vector3.one;
-  24:         
-  25:         [Header("Character Type")]
-  26:         [SerializeField] private CharacterType characterType = CharacterType.Samurai;
-  27:         [SerializeField] private ElementalType elementalType = ElementalType.Earth;
-  28:         [SerializeField] private MartialArtsType martialArtsType = MartialArtsType.Sword;
-  29:         [SerializeField] private Rarity rarity = Rarity.Common;
+  02: using System.Collections.Generic;
+  03: #if UNITY_EDITOR
+  04: using UnityEditor;
+  05: #endif
+  06: 
+  07: namespace Shogun.Features.Characters
+  08: {
+  09:     /// <summary>
+  10:     /// ScriptableObject that defines the base data for a character (stats, element, martial arts type, abilities, etc.).
+  11:     /// Used as a template for creating CharacterInstance objects at runtime.
+  12:     /// Editable in the Unity Editor for easy content creation and balancing.
+  13:     /// </summary>
+  14:     [CreateAssetMenu(fileName = "New Character Definition", menuName = "Shogun/Characters/Character Definition")]
+  15:     public class CharacterDefinition : ScriptableObject
+  16:     {
+  17:         [Header("Basic Information")]
+  18:         [SerializeField] private string surname = "";
+  19:         [SerializeField] private string givenName = "Unknown";
+  20:         [SerializeField] private string characterName = "Unknown"; // Deprecated, use surname/givenName
+  21:         [SerializeField] private string description = "";
+  22:         [SerializeField] private Sprite portrait;
+  23:         [SerializeField] private Sprite battleSprite;
+  24:         [SerializeField] private RuntimeAnimatorController animatorController;
+  25:         
+  26:         [Header("Prefab/Collider Settings")]
+  27:         [SerializeField] private Vector2 colliderSize = new Vector2(1, 2);
+  28:         [SerializeField] private Vector2 colliderOffset = Vector2.zero;
+  29:         [SerializeField] private Vector3 characterScale = Vector3.one;
   30:         
+  ... (truncated)
+
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\CharacterDefinitionBatchProcessor.cs ===
+Total Lines: 306
+  Code Lines: 235
+  Comment Lines: 13
+  Empty Lines: 58
+First 30 lines:
+  01: #if UNITY_EDITOR
+  02: using UnityEngine;
+  03: using UnityEditor;
+  04: using System.Collections.Generic;
+  05: using System.Linq;
+  06: 
+  07: namespace Shogun.Features.Characters
+  08: {
+  09:     public class CharacterDefinitionBatchProcessor : EditorWindow
+  10:     {
+  11:         private Vector2 scrollPosition;
+  12:         private List<CharacterDefinition> allCharacterDefinitions = new List<CharacterDefinition>();
+  13:         private bool[] selectedCharacters;
+  14:         private bool selectAll = true;
+  15:         
+  16:         // Common animation actions
+  17:         private readonly string[] commonAnimationActions = {
+  18:             "IDLE", "RUN", "WALK", "ATTACK 1", "ATTACK 2", "ATTACK 3", 
+  19:             "HURT", "HEALING", "DEATH", "DEFEND", "SPECIAL ATTACK",
+  20:             "DASH", "JUMP", "JUMP-START", "JUMP-FALL", "JUMP-TRANSITION"
+  21:         };
+  22:         
+  23:         [MenuItem("Shogun/Characters/Batch Process Character Definitions")]
+  24:         public static void ShowWindow()
+  25:         {
+  26:             GetWindow<CharacterDefinitionBatchProcessor>("Character Batch Processor");
+  27:         }
+  28:         
+  29:         private void OnEnable()
+  30:         {
+  ... (truncated)
+
+=== Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\CharacterDefinitionEditor.cs ===
+Total Lines: 271
+  Code Lines: 208
+  Comment Lines: 17
+  Empty Lines: 46
+First 30 lines:
+  01: #if UNITY_EDITOR
+  02: using UnityEngine;
+  03: using UnityEditor;
+  04: using System.Collections.Generic;
+  05: using System.Linq;
+  06: 
+  07: namespace Shogun.Features.Characters
+  08: {
+  09:     [CustomEditor(typeof(CharacterDefinition))]
+  10:     public class CharacterDefinitionEditor : Editor
+  11:     {
+  12:         private CharacterDefinition characterDef;
+  13:         private bool showAnimationMappings = true;
+  14:         private bool showValidation = true;
+  15:         private Vector2 scrollPosition;
+  16:         
+  17:         // Common animation actions that most characters will need
+  18:         private readonly string[] commonAnimationActions = {
+  19:             "IDLE", "RUN", "WALK", "ATTACK 1", "ATTACK 2", "ATTACK 3", 
+  20:             "HURT", "HEALING", "DEATH", "DEFEND", "SPECIAL ATTACK",
+  21:             "DASH", "JUMP", "JUMP-START", "JUMP-FALL", "JUMP-TRANSITION"
+  22:         };
+  23:         
+  24:         private void OnEnable()
+  25:         {
+  26:             characterDef = (CharacterDefinition)target;
+  27:         }
+  28:         
+  29:         public override void OnInspectorGUI()
+  30:         {
   ... (truncated)
 
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\CharacterFactory.cs ===
@@ -466,41 +960,41 @@ First 30 lines:
   ... (truncated)
 
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\CharacterInstance.cs ===
-Total Lines: 468
-  Code Lines: 305
-  Comment Lines: 104
-  Empty Lines: 59
+Total Lines: 565
+  Code Lines: 377
+  Comment Lines: 119
+  Empty Lines: 69
 First 30 lines:
   01: using System;
   02: using UnityEngine;
   03: using Shogun.Core.Architecture;
-  04: 
-  05: namespace Shogun.Features.Characters
-  06: {
-  07:     // CharacterInstance.cs
-  08:     // Represents a runtime instance of a character in battle, including health, status effects, position, and turn state.
-  09:     // Used by the combat system to track and manipulate character state during gameplay.
-  10:     // Interacts with CharacterDefinition, CharacterStats, and handles status effects, movement, and combat actions.
-  11: 
-  12:     /// <summary>
-  13:     /// Represents a runtime instance of a character with current state and stats.
-  14:     /// This is what gets used in battles and gameplay.
-  15:     /// </summary>
-  16:     public class CharacterInstance : MonoBehaviour
-  17:     {
-  18:         [Header("Character Data")]
-  19:         [SerializeField] private CharacterDefinition definition;
-  20:         [SerializeField] private CharacterStats stats;
-  21:         
-  22:         [Header("Battle State")]
-  23:         [SerializeField] private float currentHealth;
-  24:         [SerializeField] private bool isAlive = true;
-  25:         [SerializeField] private Vector2Int position = Vector2Int.zero;
-  26:         [SerializeField] private bool hasMovedThisTurn = false;
-  27:         [SerializeField] private bool hasAttackedThisTurn = false;
-  28:         [SerializeField] private int specialAbilityCooldown = 0;
-  29:         
-  30:         [Header("Stealth State")]
+  04: using System.Collections;
+  05: using System.Collections.Generic;
+  06: 
+  07: namespace Shogun.Features.Characters
+  08: {
+  09:     // CharacterInstance.cs
+  10:     // Represents a runtime instance of a character in battle, including health, status effects, position, and turn state.
+  11:     // Used by the combat system to track and manipulate character state during gameplay.
+  12:     // Interacts with CharacterDefinition, CharacterStats, and handles status effects, movement, and combat actions.
+  13: 
+  14:     /// <summary>
+  15:     /// Represents a runtime instance of a character with current state and stats.
+  16:     /// This is what gets used in battles and gameplay.
+  17:     /// </summary>
+  18:     public class CharacterInstance : MonoBehaviour
+  19:     {
+  20:         [Header("Character Data")]
+  21:         [SerializeField] private CharacterDefinition definition;
+  22:         [SerializeField] private CharacterStats stats;
+  23:         
+  24:         [Header("Battle State")]
+  25:         [SerializeField] private float currentHealth;
+  26:         [SerializeField] private bool isAlive = true;
+  27:         [SerializeField] private Vector2Int position = Vector2Int.zero;
+  28:         [SerializeField] private bool hasMovedThisTurn = false;
+  29:         [SerializeField] private bool hasAttackedThisTurn = false;
+  30:         [SerializeField] private int specialAbilityCooldown = 0;
   ... (truncated)
 
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\CharacterStats.cs ===
@@ -542,10 +1036,10 @@ First 30 lines:
   ... (truncated)
 
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\BattleDragHandler.cs ===
-Total Lines: 188
-  Code Lines: 150
-  Comment Lines: 4
-  Empty Lines: 34
+Total Lines: 222
+  Code Lines: 188
+  Comment Lines: 9
+  Empty Lines: 25
 First 30 lines:
   01: using UnityEngine;
   02: using UnityEngine.EventSystems;
@@ -572,11 +1066,11 @@ First 30 lines:
   23:         private Camera mainCamera;
   24:         private Image panelImage;
   25:         private bool isInitialized = false;
-  26: 
-  27:         void Awake()
-  28:         {
-  29:             Initialize();
-  30:         }
+  26:         private float dragFollowLerpSpeed = 20f; // Increased from 10f to 20f for faster following
+  27:         private Vector3? dragTargetWorldPos = null;
+  28: 
+  29:         void Awake()
+  30:         {
   ... (truncated)
 
 === Script: G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\BattlefieldManager.cs ===
@@ -1009,8 +1503,8 @@ First 30 lines:
   ... (truncated)
 
 === SCRIPT SUMMARY ===
-Total Scripts: 28
-Total Classes: 28
+Total Scripts: 41
+Total Classes: 41
 Total Interfaces: 1
 Total Enums: 0
 
@@ -1024,12 +1518,25 @@ Classes:
   - UIEventChannel (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\ScriptableObjects\Events\GameEvents.cs)
   - GachaEventChannel (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\ScriptableObjects\Events\GameEvents.cs)
   - InputEventChannel (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\ScriptableObjects\Events\GameEvents.cs)
+  - ArchiveOriginalAssetPackEditor (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Editor\ArchiveOriginalAssetPackEditor.cs)
+  - AutoMoveAllSpriteSheets (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Editor\AutoMoveAllSpriteSheets.cs)
+  - BatchMoveAndRenameSpriteSheets (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Editor\BatchMoveAndRenameSpriteSheets.cs)
+  - BatchRenameAllCharacterSprites (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Editor\BatchRenameAllCharacterSprites.cs)
+  - BatchRenameCharacterFolders (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Editor\BatchRenameCharacterFolders.cs)
+  - BatchRenameCharacterSprites (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Editor\BatchRenameCharacterSprites.cs)
+  - CharacterAssetBatchOrganizer (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Editor\CharacterAssetBatchOrganizer.cs)
+  - OrganizeCharacterAssetsEditor (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Editor\OrganizeCharacterAssetsEditor.cs)
   - GestureRecognizer (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Architecture\GestureRecognizer.cs)
   - InputManager (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Architecture\InputManager.cs)
   - ProjectExportTool (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Editor\ProjectExportTool.cs)
   - AppFrameRate (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Utilities\AppFrameRate.cs)
   - SafeAreaHandler (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Core\Utilities\SafeAreaHandler.cs)
+  - AnimationClipDiagnosticTool (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\AnimationClipDiagnosticTool.cs)
+  - AnimatorAutoSetupEditor (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\AnimatorAutoSetupEditor.cs)
+  - CharacterAnimatorAutoLinker (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\CharacterAnimatorAutoLinker.cs)
   - CharacterDefinition (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\CharacterDefinition.cs)
+  - CharacterDefinitionBatchProcessor (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\CharacterDefinitionBatchProcessor.cs)
+  - CharacterDefinitionEditor (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\CharacterDefinitionEditor.cs)
   - CharacterInstance (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\CharacterInstance.cs)
   - CharacterStats (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Characters\CharacterStats.cs)
   - BattleDragHandler (G:/Workspace/Unity/Projects/Shogun/Assets\_Project\Scripts\Features\Combat\BattleDragHandler.cs)

@@ -67,7 +67,18 @@ Assets/
 - All reference/inspiration art in `References/` is ignored by git and not tracked in version control.
 - All owned/usable art assets, source files, and licenses are tracked for backup and collaboration.
 
+## Input & Battle Drag System (2025-07-06 Update)
+- The battle system now features a robust, Blazing-style drag/tap input system for both mouse and touch.
+- **DragInputPanel**: A single, invisible UI panel under the main Canvas captures all pointer events for character movement.
+- **BattleDragHandler**: Handles both tap-to-move and drag-to-move, with grid snapping and debug logging.
+- **Input System UI Integration**: The Input System UI Input Module must have the following bindings in the UI action map:
+  - `Point`: `<Pointer>/position` and `<Touchscreen>/position`
+  - `Click`: `<Pointer>/press` and `<Touchscreen>/press`
+- **No test/debug scripts**: All test and debug scripts (PointerLogger, DragInputTester, Fix/Nuke/CleanupDragInputPanelEditor) have been removed for a clean production setup.
+- **Troubleshooting**: If drag does not work, check the Input System UI Input Module bindings and ensure only one DragInputPanel exists under the main Canvas.
+
 ## Getting Started
+- Ensure your Input System UI Input Module is configured as above for pointer events.
 - See `docs/` for detailed guides (coming soon).
 - Use the Unity Test Runner for automated tests in `Assets/Tests/`.
 
@@ -128,9 +139,35 @@ For more details, see the architectural blueprint and research sources in the pr
 - Use these as the source of truth for all design, architecture, and implementation decisions.
 - **Do not repeat this process once you have reviewed the files for the current session.**
 
-## Battle System (2024-07-05 Update)
+## Battle System (2025-07-05 Update)
 - The battle system now uses a single, generic CharacterPrefab for all characters. All character-specific visuals, stats, and abilities are set at runtime from CharacterDefinition ScriptableObjects.
 - Team size is fully flexible: you can start a battle with any number of characters (minimum 1).
 - Characters spawn at the position of the CharacterPrefab in the scene, making it easy to control spawn locations visually.
 - Character scale is set at runtime from the CharacterDefinition asset, so you can have different-sized characters without changing the prefab.
 - The system is robust to missing or incomplete teams and will not throw errors if fewer than 6 characters are assigned.
+- **Drag/tap input is fully functional for both mouse and touch, with all required Input System bindings documented above.**
+
+## Character & Asset Folder Structure
+
+- Each character has a unique folder under its category (e.g., `Art/Sprites/Samurai/Ryoma/`).
+- All assets (sprites, anims, controllers) are named `[CharacterName]_[Action].ext` (e.g., `Ryoma_Run.png`, `Ryoma_Attack.anim`).
+- Asset packs and ambiguous folders are archived or moved out of main asset paths.
+- Sprite sheets from asset packs are moved and renamed to the correct character folders.
+- Surnames are only used in file/folder names if disambiguation is needed, but both surname and givenName are stored in `CharacterDefinition` for in-game display.
+
+## Project Hygiene & Automation
+
+- Use the `Tools/Shogun/Project Cleanup Tools` Editor window to:
+  - Delete empty folders
+  - Find and report orphaned `.meta` files
+  - Find and report duplicate files by name
+- The tool provides a summary report in the Console. Orphaned `.meta` files can be deleted with a toggle.
+- - **Important:** If you want to reserve an empty folder for future content, add a `.keep` or `README.txt` file inside it. The cleanup tool will NOT delete folders containing these files.
+- All batch renaming, moving, and archiving of assets should be done using provided scripts/tools for consistency.
+
+## Best Practices
+
+- Always use the new Unity Input System for all input handling.
+- All character differences are stored in `CharacterDefinition` ScriptableObjects.
+- Animator Controllers and AnimationClips are auto-generated and assigned via Editor scripts.
+- Maintain consistent naming and folder structure for all assets to ensure scalability and automation.

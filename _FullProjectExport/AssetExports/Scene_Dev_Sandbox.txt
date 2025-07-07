@@ -102,13 +102,13 @@ GUID: 8c9cfa26abfee488c85f1582747f6a02
     - GameObject: Canvas (Tag: Untagged, Layer: UI, Active: True)
         * RectTransform
             - Local Rotation: (0.00, 0.00, 0.00)
-            - Local Position: (-155.05, -1154.97, 0.00)
-            - Local Scale: (0.26, 0.26, 0.26)
+            - Local Position: (61.95, -7.47, 0.00)
+            - Local Scale: (1.46, 1.46, 1.46)
             - Constrain Proportions Scale: False
             - Anchor Min: (0.00, 0.00)
             - Anchor Max: (0.00, 0.00)
-            - Anchored Position: (-155.05, -1154.97)
-            - Size Delta: (3280.48, 1920.00)
+            - Anchored Position: (61.95, -7.47)
+            - Size Delta: (885.84, 1920.00)
             - Pivot: (0.50, 0.50)
         * Canvas
             - Render Mode: Screen Space - Overlay
@@ -234,7 +234,7 @@ GUID: 8c9cfa26abfee488c85f1582747f6a02
                 - Pixels Per Unit Multiplier: 1
             * BattleDragHandler
                 - Turn Manager: TurnManager
-                - Drag Threshold: 1
+                - Drag Threshold: 10
                 - Enable Debug Logs: True
                 - Snap To Grid: True
                 - Grid Size: 1
