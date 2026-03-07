@@ -572,9 +572,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   turnManager: {fileID: 1189142526}
   dragThreshold: 10
-  enableDebugLogs: 1
-  snapToGrid: 1
+  dragSmoothTime: 0.08
   gridSize: 1
+  snapToGrid: 1
+  tapMoveSpeed: 50
 --- !u!114 &756242520
 MonoBehaviour:
   m_ObjectHideFlags: 0
