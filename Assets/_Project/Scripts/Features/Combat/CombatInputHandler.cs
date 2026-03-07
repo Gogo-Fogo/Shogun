@@ -20,8 +20,8 @@ namespace Shogun.Features.Combat
 
         void Awake()
         {
-            gestureRecognizer = GetComponent<GestureRecognizer>();
-            inputManager = GetComponent<InputManager>();
+            gestureRecognizer = ResolveDependency<GestureRecognizer>();
+            inputManager = ResolveDependency<InputManager>();
         }
 
         void OnEnable()
@@ -73,6 +73,23 @@ namespace Shogun.Features.Combat
             {
                 UnityEngine.Debug.Log("It's not your turn!");
             }
+        }
+
+        private T ResolveDependency<T>() where T : Component
+        {
+            T component = GetComponent<T>();
+            if (component != null)
+            {
+                return component;
+            }
+
+            component = GetComponentInChildren<T>(true);
+            if (component != null)
+            {
+                return component;
+            }
+
+            return GetComponentInParent<T>();
         }
     }
 } 

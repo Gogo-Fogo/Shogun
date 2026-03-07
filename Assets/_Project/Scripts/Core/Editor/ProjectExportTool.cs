@@ -1,202 +1,519 @@
 #if UNITY_EDITOR
-using UnityEditor;
-using UnityEngine;
-using UnityEditor.SceneManagement;
-using System.IO;
-using System.Text;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
+using Object = UnityEngine.Object;
+using UnityEditor;
 using UnityEditor.PackageManager;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Shogun.Core
 {
     public class ProjectExportTool
     {
-        private static Application.LogCallback _logCallback;
+        private const string MenuRoot = "Tools/Shogun/Export/";
+        private const string ExportRootFolderName = "_Generated";
+        private const string ExportFolderName = "ProjectExport";
 
-        [MenuItem("Tools/Export Full Project Structure and Asset Details")]
-        public static void ExportFullProject()
+        [MenuItem(MenuRoot + "Export Current Scene Snapshot")]
+        public static void ExportCurrentSceneSnapshot()
         {
-            // --- Save original open scenes and active scene ---
-            var originalOpenScenes = new List<SceneSetup>(EditorSceneManager.GetSceneManagerSetup());
-            var originalActiveScene = EditorSceneManager.GetActiveScene();
-            bool hadOpenScenes = originalOpenScenes.Count > 0;
-            string activeScenePath = hadOpenScenes && originalActiveScene.IsValid() ? originalActiveScene.path : null;
-
-            // Attach log callback to suppress known warnings/errors during export
-            _logCallback = (condition, stackTrace, type) =>
+            RunWithSceneStateRestore(() =>
             {
-                if (type == LogType.Warning && condition.Contains("Unloading the last loaded scene")) return;
-                if (type == LogType.Error && condition.Contains("More than one global light on layer Default")) return;
-                Debug.unityLogger.logHandler.LogFormat(type, null, "{0}\n{1}", condition, stackTrace);
-            };
-            Application.logMessageReceived += _logCallback;
+                Scene activeScene = EditorSceneManager.GetActiveScene();
+                if (!activeScene.IsValid())
+                {
+                    Debug.LogWarning("[ProjectExportTool] No active scene is open to export.");
+                    return;
+                }
 
-            string rootPath = Application.dataPath;
-            string projectRoot = rootPath + "/..";
-            string exportFolder = Path.Combine(projectRoot, "_FullProjectExport");
+                string exportFolder = CreateExportFolder("CurrentScene");
+                string assetsExportFolder = CreateAssetExportFolder(exportFolder);
+                List<string> summaryLines = new List<string>();
 
-            try
+                ExportLoadedSceneSnapshot(activeScene, assetsExportFolder, summaryLines, "Current Scene Snapshot");
+                WriteSummary(exportFolder, "Current Scene Snapshot", summaryLines);
+
+                Debug.Log($"[ProjectExportTool] Current scene snapshot exported to {exportFolder}");
+            });
+        }
+
+        [MenuItem(MenuRoot + "Export Selected Asset Snapshot")]
+        public static void ExportSelectedSnapshot()
+        {
+            RunWithSceneStateRestore(() =>
             {
-                if (Directory.Exists(exportFolder))
-                    Directory.Delete(exportFolder, true);
-                Directory.CreateDirectory(exportFolder);
+                Object selectedObject = Selection.activeObject;
+                GameObject selectedGameObject = Selection.activeGameObject;
 
-                // Export folder/file tree
+                if (selectedObject == null && selectedGameObject == null)
+                {
+                    Debug.LogWarning("[ProjectExportTool] No asset or scene object is selected.");
+                    return;
+                }
+
+                string exportFolder = CreateExportFolder("SelectedSnapshot");
+                string assetsExportFolder = CreateAssetExportFolder(exportFolder);
+                List<string> summaryLines = new List<string>();
+
+                if (selectedGameObject != null && !EditorUtility.IsPersistent(selectedGameObject))
+                {
+                    ExportSceneGameObjectSnapshot(selectedGameObject, assetsExportFolder, summaryLines);
+                }
+                else
+                {
+                    ExportSelectedObjectSnapshot(selectedObject ?? selectedGameObject, assetsExportFolder, summaryLines);
+                }
+
+                WriteSummary(exportFolder, "Selected Snapshot", summaryLines);
+                Debug.Log($"[ProjectExportTool] Selected snapshot exported to {exportFolder}");
+            });
+        }
+
+        [MenuItem(MenuRoot + "Export Selected Asset Snapshot", true)]
+        private static bool ValidateExportSelectedSnapshot()
+        {
+            return Selection.activeObject != null || Selection.activeGameObject != null;
+        }
+
+        [MenuItem(MenuRoot + "Export Full Project Snapshot (Fallback)")]
+        public static void ExportFullProjectSnapshot()
+        {
+            RunWithSceneStateRestore(() =>
+            {
+                string rootPath = Application.dataPath;
+                string projectRoot = GetProjectRoot();
+                string exportFolder = CreateExportFolder("FullProjectFallback");
+
                 string folderTreePath = Path.Combine(exportFolder, "_FolderTree.txt");
                 using (StreamWriter folderWriter = new StreamWriter(folderTreePath, false))
                 {
                     WriteDirectory(rootPath, folderWriter, "");
                 }
 
-                // Export project overview
                 ExportProjectOverview(exportFolder, projectRoot);
-
-                // Export package dependencies
                 ExportPackageDependencies(exportFolder);
-
-                // Export assembly definitions
                 ExportAssemblyDefinitions(exportFolder, rootPath);
 
-                // Prepare for asset exports
-                string[] prefabGUIDs = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets" });
-                string[] sceneGUIDs = AssetDatabase.FindAssets("t:Scene", new[] { "Assets" });
-                string[] scriptableObjectGUIDs = AssetDatabase.FindAssets("t:ScriptableObject", new[] { "Assets" });
+                string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets" });
+                string[] sceneGuids = AssetDatabase.FindAssets("t:Scene", new[] { "Assets" });
+                string[] scriptableObjectGuids = AssetDatabase.FindAssets("t:ScriptableObject", new[] { "Assets" });
 
-                List<string> summaryLines = new List<string>();
-                string assetsExportFolder = Path.Combine(exportFolder, "AssetExports");
-                Directory.CreateDirectory(assetsExportFolder);
+                List<string> summaryLines = new List<string>
+                {
+                    $"Folder Tree => {folderTreePath}"
+                };
+                string assetsExportFolder = CreateAssetExportFolder(exportFolder);
 
-                int totalCount = prefabGUIDs.Length + sceneGUIDs.Length + scriptableObjectGUIDs.Length;
+                int totalCount = Mathf.Max(1, prefabGuids.Length + sceneGuids.Length + scriptableObjectGuids.Length);
                 int currentIndex = 0;
 
-                // Export Prefabs
-                foreach (var guid in prefabGUIDs)
+                foreach (string guid in prefabGuids)
                 {
                     string path = AssetDatabase.GUIDToAssetPath(guid);
                     string assetName = Path.GetFileNameWithoutExtension(path);
-                    string outputPath = Path.Combine(assetsExportFolder, $"Prefab_{assetName}.txt");
-
                     EditorUtility.DisplayProgressBar("Exporting Assets", $"Prefab: {assetName}", (float)currentIndex / totalCount);
 
                     try
                     {
-                        StringBuilder writer = new StringBuilder();
-                        writer.AppendLine("=== Prefab Export ===");
-                        writer.AppendLine($"Prefab Path: {path}");
-                        writer.AppendLine($"GUID: {guid}");
-                        writer.AppendLine();
-
                         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
                         if (prefab != null)
                         {
-                            DumpGameObjectDetailed(prefab.transform, writer, 0);
-                            File.WriteAllText(outputPath, writer.ToString());
-                            summaryLines.Add($"Prefab: {path} => {outputPath}");
+                            ExportPrefabSnapshot(prefab, assetsExportFolder, summaryLines);
                         }
                     }
-                    catch (System.Exception ex)
+                    catch (Exception ex)
                     {
-                        Debug.LogError($"Failed to export prefab {path}: {ex.Message}");
+                        Debug.LogError($"[ProjectExportTool] Failed to export prefab {path}: {ex.Message}");
                     }
 
                     currentIndex++;
                 }
 
-                // Export Scenes - open one at a time non-additively to avoid additive issues
-                foreach (var guid in sceneGUIDs)
+                foreach (string guid in sceneGuids)
                 {
                     string path = AssetDatabase.GUIDToAssetPath(guid);
                     string assetName = Path.GetFileNameWithoutExtension(path);
-                    string outputPath = Path.Combine(assetsExportFolder, $"Scene_{assetName}.txt");
-
                     EditorUtility.DisplayProgressBar("Exporting Assets", $"Scene: {assetName}", (float)currentIndex / totalCount);
 
                     try
                     {
-                        StringBuilder writer = new StringBuilder();
-                        writer.AppendLine("=== Scene Export ===");
-                        writer.AppendLine($"Scene Path: {path}");
-                        writer.AppendLine($"GUID: {guid}");
-                        writer.AppendLine();
-
-                        // Open scene non-additively (single scene mode)
-                        var scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
-                        foreach (GameObject root in scene.GetRootGameObjects())
-                            DumpGameObjectDetailed(root.transform, writer, 0);
-
-                        File.WriteAllText(outputPath, writer.ToString());
-                        summaryLines.Add($"Scene: {path} => {outputPath}");
+                        ExportSceneAssetSnapshot(path, assetsExportFolder, summaryLines);
                     }
-                    catch (System.Exception ex)
+                    catch (Exception ex)
                     {
-                        Debug.LogError($"Failed to export scene {path}: {ex.Message}");
+                        Debug.LogError($"[ProjectExportTool] Failed to export scene {path}: {ex.Message}");
                     }
 
                     currentIndex++;
                 }
 
-                // Export ScriptableObjects
-                foreach (var guid in scriptableObjectGUIDs)
+                foreach (string guid in scriptableObjectGuids)
                 {
                     string path = AssetDatabase.GUIDToAssetPath(guid);
                     string assetName = Path.GetFileNameWithoutExtension(path);
-                    string outputPath = Path.Combine(assetsExportFolder, $"ScriptableObject_{assetName}.txt");
-
                     EditorUtility.DisplayProgressBar("Exporting Assets", $"ScriptableObject: {assetName}", (float)currentIndex / totalCount);
 
                     try
                     {
-                        StringBuilder writer = new StringBuilder();
-                        writer.AppendLine("=== ScriptableObject Export ===");
-                        writer.AppendLine($"Asset Path: {path}");
-                        writer.AppendLine($"GUID: {guid}");
-                        writer.AppendLine();
-
-                        ScriptableObject so = AssetDatabase.LoadAssetAtPath<ScriptableObject>(path);
-                        if (so != null)
+                        ScriptableObject scriptableObject = AssetDatabase.LoadAssetAtPath<ScriptableObject>(path);
+                        if (scriptableObject != null)
                         {
-                            DumpScriptableObjectDetailed(so, writer);
-                            File.WriteAllText(outputPath, writer.ToString());
-                            summaryLines.Add($"ScriptableObject: {path} => {outputPath}");
+                            ExportScriptableObjectSnapshot(scriptableObject, assetsExportFolder, summaryLines);
                         }
                     }
-                    catch (System.Exception ex)
+                    catch (Exception ex)
                     {
-                        Debug.LogError($"Failed to export ScriptableObject {path}: {ex.Message}");
+                        Debug.LogError($"[ProjectExportTool] Failed to export ScriptableObject {path}: {ex.Message}");
                     }
 
                     currentIndex++;
                 }
 
-                // Export enhanced script analysis
                 ExportScriptAnalysis(exportFolder, rootPath, projectRoot);
+                summaryLines.Add($"Script Analysis => {Path.Combine(exportFolder, "ScriptAnalysis.txt")}");
+                WriteSummary(exportFolder, "Full Project Snapshot (Fallback)", summaryLines);
 
-                // Write summary
-                string summaryPath = Path.Combine(exportFolder, "_ExportSummary.txt");
-                File.WriteAllLines(summaryPath, summaryLines);
+                Debug.Log($"[ProjectExportTool] Full project snapshot exported to {exportFolder}");
+            });
+        }
 
-                Debug.Log($"Enhanced project export complete to {exportFolder}");
+        private static void RunWithSceneStateRestore(Action exportAction)
+        {
+            List<SceneSetup> originalOpenScenes = new List<SceneSetup>(EditorSceneManager.GetSceneManagerSetup());
+            Scene originalActiveScene = EditorSceneManager.GetActiveScene();
+            string activeScenePath = originalActiveScene.IsValid() ? originalActiveScene.path : null;
+
+            try
+            {
+                exportAction?.Invoke();
             }
             finally
             {
                 EditorUtility.ClearProgressBar();
-                Application.logMessageReceived -= _logCallback;
 
-                // Restore previous open scenes and active scene
-                if (originalOpenScenes != null && originalOpenScenes.Count > 0)
+                if (originalOpenScenes.Count > 0)
                 {
                     EditorSceneManager.RestoreSceneManagerSetup(originalOpenScenes.ToArray());
+                }
 
-                    // Re-activate original active scene (if valid)
-                    if (!string.IsNullOrEmpty(activeScenePath))
+                if (!string.IsNullOrEmpty(activeScenePath))
+                {
+                    Scene restoredScene = EditorSceneManager.GetSceneByPath(activeScenePath);
+                    if (restoredScene.IsValid())
                     {
-                        var reloadedScene = EditorSceneManager.GetSceneByPath(activeScenePath);
-                        if (reloadedScene.IsValid())
-                            EditorSceneManager.SetActiveScene(reloadedScene);
+                        EditorSceneManager.SetActiveScene(restoredScene);
                     }
                 }
             }
+        }
+
+        private static string GetProjectRoot()
+        {
+            return Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+        }
+
+        private static string CreateExportFolder(string label)
+        {
+            string exportFolder = Path.Combine(
+                GetProjectRoot(),
+                ExportRootFolderName,
+                ExportFolderName,
+                $"{DateTime.Now:yyyyMMdd-HHmmssfff}_{SanitizeFileName(label)}");
+
+            Directory.CreateDirectory(exportFolder);
+            return exportFolder;
+        }
+
+        private static string CreateAssetExportFolder(string exportFolder)
+        {
+            string assetsExportFolder = Path.Combine(exportFolder, "AssetExports");
+            Directory.CreateDirectory(assetsExportFolder);
+            return assetsExportFolder;
+        }
+
+        private static void WriteSummary(string exportFolder, string exportKind, IEnumerable<string> summaryLines)
+        {
+            string summaryPath = Path.Combine(exportFolder, "_ExportSummary.txt");
+            using (StreamWriter writer = new StreamWriter(summaryPath, false))
+            {
+                writer.WriteLine($"=== {exportKind} ===");
+                writer.WriteLine($"Generated: {DateTime.Now:O}");
+                writer.WriteLine($"Unity Version: {Application.unityVersion}");
+                writer.WriteLine($"Project: {Application.productName}");
+                writer.WriteLine($"Export Folder: {exportFolder}");
+                writer.WriteLine();
+
+                foreach (string line in summaryLines.Where(line => !string.IsNullOrWhiteSpace(line)).Distinct())
+                {
+                    writer.WriteLine(line);
+                }
+            }
+        }
+
+        private static void ExportSelectedObjectSnapshot(Object selectedObject, string assetsExportFolder, List<string> summaryLines)
+        {
+            if (selectedObject == null)
+            {
+                Debug.LogWarning("[ProjectExportTool] No selected object was available to export.");
+                return;
+            }
+
+            string assetPath = AssetDatabase.GetAssetPath(selectedObject);
+            if (!string.IsNullOrEmpty(assetPath) && AssetDatabase.IsValidFolder(assetPath))
+            {
+                ExportFolderSnapshot(assetPath, assetsExportFolder, summaryLines);
+                return;
+            }
+
+            if (selectedObject is SceneAsset)
+            {
+                ExportSceneAssetSnapshot(assetPath, assetsExportFolder, summaryLines);
+                return;
+            }
+
+            if (selectedObject is GameObject prefabAsset && PrefabUtility.GetPrefabAssetType(prefabAsset) != PrefabAssetType.NotAPrefab)
+            {
+                ExportPrefabSnapshot(prefabAsset, assetsExportFolder, summaryLines);
+                return;
+            }
+
+            if (selectedObject is ScriptableObject scriptableObject)
+            {
+                ExportScriptableObjectSnapshot(scriptableObject, assetsExportFolder, summaryLines);
+                return;
+            }
+
+            ExportGenericAssetSnapshot(selectedObject, assetsExportFolder, summaryLines);
+        }
+
+        private static void ExportLoadedSceneSnapshot(Scene scene, string assetsExportFolder, List<string> summaryLines, string exportTitle)
+        {
+            string sceneName = string.IsNullOrWhiteSpace(scene.name) ? "UntitledScene" : scene.name;
+            string outputPath = Path.Combine(assetsExportFolder, $"Scene_{SanitizeFileName(sceneName)}.txt");
+            StringBuilder writer = new StringBuilder();
+
+            writer.AppendLine($"=== {exportTitle} ===");
+            writer.AppendLine($"Scene Name: {sceneName}");
+            writer.AppendLine($"Scene Path: {(string.IsNullOrEmpty(scene.path) ? "(unsaved scene)" : scene.path)}");
+            writer.AppendLine($"Is Loaded: {scene.isLoaded}");
+            writer.AppendLine($"Is Dirty: {scene.isDirty}");
+
+            if (!string.IsNullOrEmpty(scene.path))
+            {
+                string guid = AssetDatabase.AssetPathToGUID(scene.path);
+                if (!string.IsNullOrEmpty(guid))
+                {
+                    writer.AppendLine($"GUID: {guid}");
+                }
+            }
+
+            writer.AppendLine();
+
+            foreach (GameObject rootObject in scene.GetRootGameObjects())
+            {
+                DumpGameObjectDetailed(rootObject.transform, writer, 0);
+            }
+
+            File.WriteAllText(outputPath, writer.ToString());
+            summaryLines.Add($"Scene: {(string.IsNullOrEmpty(scene.path) ? sceneName : scene.path)} => {outputPath}");
+        }
+
+        private static void ExportSceneAssetSnapshot(string scenePath, string assetsExportFolder, List<string> summaryLines)
+        {
+            if (string.IsNullOrWhiteSpace(scenePath))
+            {
+                Debug.LogWarning("[ProjectExportTool] Cannot export a scene asset snapshot without a valid scene path.");
+                return;
+            }
+
+            Scene scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+            ExportLoadedSceneSnapshot(scene, assetsExportFolder, summaryLines, "Scene Asset Snapshot");
+        }
+
+        private static void ExportSceneGameObjectSnapshot(GameObject gameObject, string assetsExportFolder, List<string> summaryLines)
+        {
+            string hierarchyPath = GetHierarchyPath(gameObject.transform);
+            string outputPath = Path.Combine(assetsExportFolder, $"SceneObject_{SanitizeFileName(hierarchyPath)}.txt");
+            StringBuilder writer = new StringBuilder();
+
+            writer.AppendLine("=== Scene Object Snapshot ===");
+            writer.AppendLine($"Object Name: {gameObject.name}");
+            writer.AppendLine($"Hierarchy Path: {hierarchyPath}");
+            writer.AppendLine($"Scene: {(string.IsNullOrEmpty(gameObject.scene.path) ? gameObject.scene.name : gameObject.scene.path)}");
+            writer.AppendLine($"Instance ID: {gameObject.GetInstanceID()}");
+            writer.AppendLine();
+            DumpGameObjectDetailed(gameObject.transform, writer, 0);
+
+            File.WriteAllText(outputPath, writer.ToString());
+            summaryLines.Add($"Scene Object: {hierarchyPath} => {outputPath}");
+        }
+
+        private static void ExportPrefabSnapshot(GameObject prefabAsset, string assetsExportFolder, List<string> summaryLines)
+        {
+            string prefabPath = AssetDatabase.GetAssetPath(prefabAsset);
+            string outputPath = Path.Combine(
+                assetsExportFolder,
+                $"Prefab_{SanitizeFileName(Path.GetFileNameWithoutExtension(prefabPath))}.txt");
+            StringBuilder writer = new StringBuilder();
+
+            writer.AppendLine("=== Prefab Snapshot ===");
+            writer.AppendLine($"Prefab Path: {prefabPath}");
+            writer.AppendLine($"GUID: {AssetDatabase.AssetPathToGUID(prefabPath)}");
+            writer.AppendLine();
+            DumpGameObjectDetailed(prefabAsset.transform, writer, 0);
+
+            File.WriteAllText(outputPath, writer.ToString());
+            summaryLines.Add($"Prefab: {prefabPath} => {outputPath}");
+        }
+
+        private static void ExportScriptableObjectSnapshot(ScriptableObject scriptableObject, string assetsExportFolder, List<string> summaryLines)
+        {
+            string assetPath = AssetDatabase.GetAssetPath(scriptableObject);
+            string outputPath = Path.Combine(
+                assetsExportFolder,
+                $"ScriptableObject_{SanitizeFileName(Path.GetFileNameWithoutExtension(assetPath))}.txt");
+            StringBuilder writer = new StringBuilder();
+
+            writer.AppendLine("=== ScriptableObject Snapshot ===");
+            writer.AppendLine($"Asset Path: {assetPath}");
+            writer.AppendLine($"GUID: {AssetDatabase.AssetPathToGUID(assetPath)}");
+            writer.AppendLine();
+            DumpScriptableObjectDetailed(scriptableObject, writer);
+
+            File.WriteAllText(outputPath, writer.ToString());
+            summaryLines.Add($"ScriptableObject: {assetPath} => {outputPath}");
+        }
+
+        private static void ExportFolderSnapshot(string folderPath, string assetsExportFolder, List<string> summaryLines)
+        {
+            string outputPath = Path.Combine(
+                assetsExportFolder,
+                $"Folder_{SanitizeFileName(Path.GetFileName(folderPath))}.txt");
+            string absoluteFolderPath = Path.GetFullPath(Path.Combine(GetProjectRoot(), folderPath));
+
+            using (StreamWriter writer = new StreamWriter(outputPath, false))
+            {
+                writer.WriteLine("=== Folder Snapshot ===");
+                writer.WriteLine($"Folder Path: {folderPath}");
+                writer.WriteLine();
+                WriteDirectory(absoluteFolderPath, writer, "");
+            }
+
+            summaryLines.Add($"Folder: {folderPath} => {outputPath}");
+        }
+
+        private static void ExportGenericAssetSnapshot(Object asset, string assetsExportFolder, List<string> summaryLines)
+        {
+            string assetPath = AssetDatabase.GetAssetPath(asset);
+            string assetName = !string.IsNullOrEmpty(assetPath) ? Path.GetFileNameWithoutExtension(assetPath) : asset.name;
+            string outputPath = Path.Combine(
+                assetsExportFolder,
+                $"{SanitizeFileName(asset.GetType().Name)}_{SanitizeFileName(assetName)}.txt");
+            StringBuilder writer = new StringBuilder();
+
+            writer.AppendLine("=== Asset Snapshot ===");
+            writer.AppendLine($"Object Name: {asset.name}");
+            writer.AppendLine($"Object Type: {asset.GetType().FullName}");
+
+            if (!string.IsNullOrEmpty(assetPath))
+            {
+                writer.AppendLine($"Asset Path: {assetPath}");
+                writer.AppendLine($"GUID: {AssetDatabase.AssetPathToGUID(assetPath)}");
+            }
+
+            writer.AppendLine();
+
+            if (asset is TextAsset textAsset)
+            {
+                writer.AppendLine("Text Content:");
+                writer.AppendLine(textAsset.text);
+                writer.AppendLine();
+            }
+
+            DumpSerializedObjectDetailed(asset, writer);
+            File.WriteAllText(outputPath, writer.ToString());
+
+            summaryLines.Add($"{asset.GetType().Name}: {(string.IsNullOrEmpty(assetPath) ? asset.name : assetPath)} => {outputPath}");
+        }
+
+        private static void DumpSerializedObjectDetailed(Object target, StringBuilder writer)
+        {
+            try
+            {
+                SerializedObject serializedObject = new SerializedObject(target);
+                SerializedProperty property = serializedObject.GetIterator();
+                bool first = true;
+                bool wroteProperty = false;
+
+                writer.AppendLine("Serialized Properties:");
+                while (property.NextVisible(first))
+                {
+                    first = false;
+                    if (property.name == "m_Script")
+                    {
+                        continue;
+                    }
+
+                    writer.AppendLine($"    - {property.displayName}: {GetPropertyValue(property)}");
+                    wroteProperty = true;
+                }
+
+                if (!wroteProperty)
+                {
+                    writer.AppendLine("    (No serialized properties found)");
+                }
+            }
+            catch (Exception ex)
+            {
+                writer.AppendLine($"SerializedObject inspection failed: {ex.Message}");
+            }
+        }
+
+        private static string GetHierarchyPath(Transform transform)
+        {
+            Stack<string> parts = new Stack<string>();
+            Transform current = transform;
+
+            while (current != null)
+            {
+                parts.Push(current.name);
+                current = current.parent;
+            }
+
+            return string.Join("/", parts);
+        }
+
+        private static string SanitizeFileName(string fileName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+            {
+                return "Unnamed";
+            }
+
+            StringBuilder builder = new StringBuilder(fileName.Length);
+            char[] invalidCharacters = Path.GetInvalidFileNameChars();
+            foreach (char character in fileName)
+            {
+                if (character == '/' || character == '\\' || invalidCharacters.Contains(character))
+                {
+                    builder.Append('_');
+                }
+                else if (char.IsWhiteSpace(character))
+                {
+                    builder.Append('_');
+                }
+                else
+                {
+                    builder.Append(character);
+                }
+            }
+
+            return builder.ToString();
         }
 
         private static void ExportProjectOverview(string exportFolder, string projectRoot)

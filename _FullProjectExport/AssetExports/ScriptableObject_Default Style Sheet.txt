@@ -1,6 +1,0 @@
-=== ScriptableObject Export ===
-Asset Path: Assets/TextMesh Pro/Resources/Style Sheets/Default Style Sheet.asset
-GUID: f952c082cb03451daed3ee968ac6c63e
-
-ScriptableObject: Default Style Sheet (Type: TMP_StyleSheet)
-    - Style List: (complex value)
