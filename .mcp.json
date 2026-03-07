@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "unity": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "./tools/mcp-unity/launch-mcp-unity.cjs"
+      ]
+    }
+  }
+}
