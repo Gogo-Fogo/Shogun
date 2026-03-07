@@ -56,9 +56,18 @@
   - Only attack range is a circle (short, mid, long)
   - Counterattacks occur when ending turn in enemy attack range
 - **Files Updated**:
-  - `docs/Conceptual Synthesis for Naruto Shippuden_ Ultimate Ninja Blazing.txt`
-  - `docs/Game Design Document (GDD) for _Shogun_ Flowers Fall in Blood_.txt`
+  - `docs/ai/doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.md`
+  - `docs/ai/doc-gdd-001-shogun-flowers-fall-in-blood-game-design-document.md`
 - **Status**: ✅ COMPLETE
+
+## ✅ Documentation Consolidation (2026-03-07)
+
+- Promoted the useful Unity runtime architecture guidance from the legacy docs into a canonical engineering note:
+  - `docs/ai/doc-eng-002-unity-project-runtime-architecture-patterns.md`
+- Flattened the canonical docs structure so `docs/` is the source-of-truth root.
+- Updated `docs/PROJECT_CONTEXT_INDEX.md` and `docs/README.md` to reflect the canonical structure.
+- Updated repo-level documentation links to point at `docs/`.
+- Removed the obsolete `docs/old` legacy document set after preserving the useful architecture guidance.
 
 ## ✅ Bugfixes & Documentation Updates
 
@@ -112,7 +121,7 @@ Assets/Tests/Characters/
 └── CharacterSystemTests.cs    ✅ Complete (Updated)
 
 docs/
-└── Combat_Mechanics_System.md ✅ Complete (New)
+└── new/ai/doc-eng-002-unity-project-runtime-architecture-patterns.md ✅ Complete (New canonical engineering note)
 
 IMPLEMENTATION_PROGRESS.md     ✅ Complete
 

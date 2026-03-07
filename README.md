@@ -81,7 +81,7 @@ Assets/
 
 ## Getting Started
 - Ensure your Input System UI Input Module is configured as above for pointer events.
-- See `docs/` for detailed guides (coming soon).
+- See `docs/PROJECT_CONTEXT_INDEX.md` for the canonical document router.
 - Use the Unity Test Runner for automated tests in `Assets/Tests/`.
 
 ## Progress & Next Steps
@@ -120,24 +120,43 @@ The character system implements core mechanics inspired by Naruto Blazing:
 
 ## Design Documents
 
-- **[Game Design Document (GDD) for Shogun: Flowers Fall in Blood](docs/Game%20Design%20Document%20(GDD)%20for%20_Shogun_%20Flowers%20Fall%20in%20Blood_.txt)**  
-  The master design document for the project, covering all systems, mechanics, and vision.
+- **[Project Context Index](docs/PROJECT_CONTEXT_INDEX.md)**  
+  Start here. This routes the canonical docs and defines document authority.
 
-- **[Conceptual Synthesis for Naruto Shippuden: Ultimate Ninja Blazing](docs/Conceptual%20Synthesis%20for%20Naruto%20Shippuden_%20Ultimate%20Ninja%20Blazing.txt)**  
-  A reference document analyzing the design and systems of Naruto Blazing for inspiration and comparison.
+- **[Canonical GDD](docs/ai/doc-gdd-001-shogun-flowers-fall-in-blood-game-design-document.md)**  
+  The current master design document for gameplay, systems, and product scope.
+
+- **[Engineering Research](docs/ai/doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.md)**  
+  The primary engineering document for platform, backend, content delivery, and production planning.
+
+- **[Runtime Architecture Patterns](docs/ai/doc-eng-002-unity-project-runtime-architecture-patterns.md)**  
+  The canonical Unity-side implementation note for module boundaries, combat state flow, and gesture/input architecture.
+
+- **[Unity MCP Workflow](docs/ai/doc-ops-002-unity-mcp-bridge-setup-and-usage.md)**  
+  The canonical note for Codex/Claude Unity-editor access, local MCP setup, safe usage boundaries, and exporter-vs-MCP workflow.
+
+- **[AI Safety & Backup Plan](docs/ai/doc-ops-003-ai-workspace-safety-and-backup-plan.md)**  
+  The canonical note for repo scope rules, Codex/Claude safety posture, backup layers, and recovery steps after accidental local deletion.
+
+- **[PixelLab Evaluation & Sprite Workflow](docs/ai/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)**  
+  The canonical note for whether PixelLab fits `Shogun`, when to use subscription vs API, how it fits Codex/Claude/Unity MCP, and the recommended first sprite-production workflow.
+
+- **[Naruto Blazing Reference](docs/ai/doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.md)**  
+  A reference document analyzing Naruto Blazing for inspiration and comparison only.
 
 ---
-For more details, see the architectural blueprint and research sources in the project documentation.
+For more details, see the canonical docs under `docs/`. Generated exports are auxiliary artifacts, not source-of-truth documentation.
 
 ## For AI Assistants or New Contributors
 
 **Onboarding Instructions (do this only at the start of a new session):**
 - Before making any suggestions or changes, thoroughly review the entire project as a whole, with special attention to:
-  - All files in the `/docs` folder (especially the GDD and architecture docs).
+  - `docs/PROJECT_CONTEXT_INDEX.md` first, then only the relevant files it routes you to.
   - The `README.md` for project structure, conventions, and architectural patterns.
   - The latest `IMPLEMENTATION_PROGRESS.md` for current project status and next steps.
-  - The `/_FullProjectExport` folder for a snapshot of the current implementation and exported state.
-- These are the most important sources of truth, but you may review any other part of the project as needed to fully understand the context.
+- Generated exports, when present, live under timestamped subfolders in `/_Generated/ProjectExport/` and are optional fallback snapshots rather than canonical documentation.
+- If live Unity editor state matters and MCP is available, prefer the documented local Unity MCP workflow in `docs/ai/doc-ops-002-unity-mcp-bridge-setup-and-usage.md` instead of relying on large blind exports.
+- These are the most important sources of truth. You may review any other part of the project as needed to fully understand the context.
 - Use these as the source of truth for all design, architecture, and implementation decisions.
 - **Do not repeat this process once you have reviewed the files for the current session.**
 

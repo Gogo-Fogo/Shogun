@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash(del *)",
+      "Bash(erase *)",
+      "Bash(rd *)",
+      "Bash(rmdir *)",
+      "Bash(remove-item *)",
+      "Bash(git clean *)",
+      "Bash(git reset --hard *)",
+      "Read(../**)",
+      "Edit(../**)"
+    ]
+  }
+}

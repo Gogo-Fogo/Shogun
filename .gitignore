@@ -27,6 +27,7 @@
 
 # Visual Studio cache directory
 .vs/
+/.vscode/
 
 # Gradle cache directory
 .gradle/
@@ -76,3 +77,7 @@ crashlytics-build.properties
 
 # Ignore all reference/inspiration assets
 Assets/_Project/Art/References/
+
+# Generated project inspection exports
+/_Generated/
+/_FullProjectExport/
