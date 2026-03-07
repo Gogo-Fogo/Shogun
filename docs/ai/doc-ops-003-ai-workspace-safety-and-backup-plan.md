@@ -24,16 +24,26 @@ Already in place:
 - [`CLAUDE.md`](../../CLAUDE.md)
   - points Claude back to the repo rules
 
-Still pending on this machine:
+Now in place on this machine:
 
-- Codex local config in `C:\Users\georg\.codex\config.toml` is still using:
+- Codex local config in `C:\Users\georg\.codex\config.toml` now uses:
 
 ```toml
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
 [windows]
-sandbox = "elevated"
+sandbox = "unelevated"
 ```
 
-That is too permissive for normal day-to-day project work.
+- Repo-local backup helper:
+  - [`tools/backup/Backup-Shogun.ps1`](../../tools/backup/Backup-Shogun.ps1)
+  - creates timestamped snapshots of the authored project data only
+  - skips rebuildable Unity output by copying an allowlist instead of the whole repo root
+- Point-in-time Git safety snapshot:
+  - branch: `backup/local-safety-snapshot-2026-03-07`
+  - purpose: preserve the specific dirty Unity/editor state that existed when the cleanup work was pushed
+  - this is not a rolling backup branch and does not automatically capture later local changes
 
 ## Core rules
 
@@ -66,11 +76,13 @@ That is too permissive for normal day-to-day project work.
 Recommended default:
 
 - sandbox: bounded workspace write
-- approval policy: conservative/on-request or equivalent guarded mode
+- approval policy: on-request
+- Windows sandbox: unelevated
 
 Recommended special case:
 
 - use read-only for repo review, research, and documentation sessions
+- easiest manual switch: `codex -s read-only`
 
 Avoid as a default:
 
@@ -92,12 +104,18 @@ Backup 1: GitHub
 
 - push at meaningful milestones
 - prefer small, recoverable commits over large uncommitted diffs
+- if there is important messy local state you do not want on `main`, preserve it on a clearly named safety branch before cleanup
 
 Backup 2: local versioned backup on external drive
 
 - use an external SSD or HDD
 - run a nightly versioned backup of the repo and any other important local-only project material
 - disconnect the external drive when the backup is not actively running
+- repo helper command example:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tools\backup\Backup-Shogun.ps1 -DestinationRoot "E:\Backups\Shogun"
+```
 
 Backup 3: off-site versioned copy
 
@@ -151,11 +169,12 @@ Done:
 - repo-scoped safety rules in [`AGENTS.md`](../../AGENTS.md)
 - Claude repo-scoped deny rules in [`.claude/settings.json`](../../.claude/settings.json)
 - documented MCP and exporter workflow so blind bulk exports are no longer the default
+- Codex local config settled on `workspace-write` + `on-request` + Windows `unelevated`
+- repo backup script added
+- one point-in-time Git safety snapshot branch created for the March 7 local Unity/editor state
 
 Pending:
 
-- harden Codex local config away from elevated mode
-- add a simple repo backup script
 - choose and test a nightly external-drive backup target
 - choose an off-site versioned backup
 - run one real restore drill

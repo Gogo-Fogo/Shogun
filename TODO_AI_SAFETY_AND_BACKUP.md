@@ -12,11 +12,16 @@ Working checklist for reducing AI-assisted file-loss risk on `Shogun`.
 
 ## Pending
 
-- [ ] Harden Codex local config in `C:\Users\georg\.codex\config.toml`
-  - Goal: stop using `[windows] sandbox = "elevated"` as the default.
-  - Target: bounded workspace-write for normal coding, read-only for review/research.
-- [ ] Add a simple backup script for this repo
-  - Goal: copy the important project folders to a chosen backup target without `Library/`, `Temp/`, `Logs/`, or `/_Generated/`.
+- [x] Harden Codex local config in `C:\Users\georg\.codex\config.toml`
+  - Default now uses `approval_policy = "on-request"` and `sandbox_mode = "workspace-write"`.
+  - Windows sandbox is set to `unelevated`.
+  - Use `codex -s read-only` for review/research sessions.
+- [x] Add a simple backup script for this repo
+  - Script: [`tools/backup/Backup-Shogun.ps1`](./tools/backup/Backup-Shogun.ps1)
+  - Behavior: writes timestamped snapshots of the important repo folders without `Library/`, `Temp/`, `Logs/`, `obj/`, or `/_Generated/`.
+- [x] Preserve the pre-cleanup local Unity/editor state in Git
+  - Branch: `backup/local-safety-snapshot-2026-03-07`
+  - Scope: point-in-time safety snapshot only, not an ongoing catch-all backup.
 - [ ] Choose a nightly external-drive backup target
   - Goal: versioned backup on an SSD/HDD that is disconnected when not actively backing up.
 - [ ] Choose an off-site versioned backup
