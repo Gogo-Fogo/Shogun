@@ -268,6 +268,217 @@ That is enough to answer:
 - do temporary powers create fun
 - does the mode actually reduce repetition
 
+## Delivery ladder: from prototype to real mode
+
+This mode should be built in layers, not as a giant content explosion.
+
+### Slice 0: Internal paper-to-playable prototype
+
+**Goal**
+
+Prove that a short run is more interesting than replaying ordinary authored maps.
+
+**What exists**
+
+- one run path
+- one biome theme
+- 3–5 map templates
+- 3 node types at most
+- temporary relic or blessing picks
+- persistent HP between fights
+
+**Best first node set**
+
+- `Battle`
+- `Shrine`
+- `Boss`
+
+This is enough to validate:
+
+- attrition
+- route pacing
+- run-level power
+- replay value
+
+### Slice 1: True v1 run
+
+**Goal**
+
+Ship a version players can understand and replay without the mode feeling like a placeholder.
+
+**What exists**
+
+- short branching node map
+- 5 node types
+- 1 mini-boss
+- 1 boss
+- 5–8 relics/blessings
+- 3–5 events
+- one clear reward loop
+
+Recommended node set for v1:
+
+- `Battle`
+- `Elite`
+- `Shrine`
+- `Event`
+- `Boss`
+
+### Slice 2: Seasonalized run mode
+
+**Goal**
+
+Make the mode part of ongoing retention instead of a one-time novelty.
+
+**What exists**
+
+- rotating relic pools
+- biome variants
+- seasonal mutators
+- featured bosses
+- score or depth milestones
+
+This is where LiveOps can start treating the mode as a recurring pillar.
+
+## Recommended first run structure
+
+For the first real player-facing version, keep the run short and readable.
+
+Recommended map:
+
+1. opening battle
+2. branching choice: shrine or battle
+3. event node
+4. elite fight
+5. branching choice: shrine or risk node
+6. boss
+
+That gives you:
+
+- one meaningful route choice early
+- one pressure spike in the middle
+- one recovery decision
+- one strong finale
+
+It is enough to feel like a run without demanding twenty-minute setup comprehension.
+
+## Reward model
+
+The reward structure matters as much as the map structure.
+
+### What the mode should reward
+
+- account materials
+- limited premium currency in controlled amounts
+- relic-unlock progress
+- cosmetics or titles
+- lore fragments
+- seasonal milestone rewards
+
+### What the mode should not become
+
+- mandatory grind for all core progression
+- the only meaningful source of top-end materials
+- a giant time tax required to stay competitive in every other mode
+
+### Good reward philosophy
+
+- first clear rewards should feel strong
+- repeat rewards should be worthwhile but not mandatory
+- high-skill or deep-run rewards should feel prestigious
+- cosmetics and flex rewards fit this mode especially well
+
+## Run economy
+
+Runs should have their own temporary economy.
+
+Recommended currencies/resources inside a run:
+
+- `Resolve`
+  - general run health / morale / recovery resource
+- `Relic Fragments`
+  - spend at shrines or smiths for temporary power
+- `Corruption`
+  - high-risk resource that unlocks strong power at a cost
+
+This keeps decisions inside the run meaningful without bloating the permanent economy.
+
+## First relic/blessing categories
+
+Do not create dozens first.
+
+Start with 5 narrow categories:
+
+1. **Elemental boons**
+   - stronger burn, freeze, shock, cleanse, etc.
+2. **Weapon arts**
+   - sword crit line, spear control line, bow range line
+3. **Stance relics**
+   - formation, guard, initiative, tempo
+4. **Recovery / survival**
+   - healing, shields, revive edge, attrition management
+5. **Corruption bargains**
+   - high upside, clear downside
+
+That is enough to create recognizable builds without turning the mode into a spreadsheet.
+
+## Event-node philosophy
+
+Event nodes are where the mode gets personality.
+
+They should do more than hand out loot.
+
+Good event outcomes:
+
+- choose healing now vs stronger boss reward later
+- accept corruption for a rare relic
+- rescue an NPC for a support bonus
+- swear loyalty to a world pillar for themed bonuses and penalties
+- choose between two rival blessings
+
+This is one of the strongest ways to make the run feel like `Shogun`, not a generic roguelite overlay.
+
+## Success criteria for the mode
+
+The mode is working if:
+
+- players make meaningful route decisions
+- players talk about builds, not just one solved team
+- old and new units can both shine through different relic packages
+- repeated runs still produce noticeably different tension and outcomes
+- the mode creates excitement without requiring huge permanent stat inflation
+
+## Failure states
+
+The mode is drifting in the wrong direction if:
+
+- it becomes just another HP gauntlet
+- rewards force players to grind it constantly
+- route choices feel fake
+- one relic combination dominates every run
+- permanent account power matters more than run decisions
+- it feels disconnected from the setting and faction fantasy
+
+## Explicitly defer for later
+
+Do not build these in the first versions:
+
+- giant node maps
+- dozens of relic categories
+- full procedural map generation
+- permanent roguelite talent trees with big stat inflation
+- endless mode with no pacing discipline
+- online co-op inside the roguelite mode
+- PvP-tied roguelite rewards
+
+The first job is to prove:
+
+- this mode is fun
+- this mode reduces repetition
+- this mode helps long-term balance
+
+Not to make the biggest possible system immediately.
+
 ## Relationship to campaign and LiveOps
 
 This mode should support LiveOps, but it should not replace campaign.
