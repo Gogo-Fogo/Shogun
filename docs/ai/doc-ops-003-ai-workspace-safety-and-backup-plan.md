@@ -111,6 +111,7 @@ Backup 2: local versioned backup on external drive
 - use an external SSD or HDD
 - run a nightly versioned backup of the repo and any other important local-only project material
 - disconnect the external drive when the backup is not actively running
+- selected local backup target on this machine: `E:\Backups\Shogun` on `TheBigOne` (`G-TECH ArmorATD`)
 - repo helper command example:
 
 ```powershell
@@ -121,6 +122,53 @@ Backup 3: off-site versioned copy
 
 - use a cloud or second-machine backup with version history
 - do not rely on plain sync alone; versioned restore matters
+
+## Recommended cadence
+
+Do not treat backups as a weekly ritual only. Use both `GitHub` and `Backups` on different rhythms for different failure modes.
+
+### GitHub cadence
+
+- push when a meaningful unit of work is complete
+- push at the end of the workday if there are intentional changes worth keeping
+- do not let important work sit only locally for days just because the week is not over yet
+- if you have several local commits that represent real progress, push them instead of waiting for a round number
+
+Practical rule:
+
+- for active development, expect at least one GitHub push on any day that produces meaningful repo changes
+
+### Local backup cadence
+
+- run the repo backup at least once per week even during a quiet period
+- during active development, run it after major sessions or at least every 2 to 3 days
+- run it immediately after risky or hard-to-recreate work, even if a recent backup already exists
+
+Mandatory local backup triggers:
+
+- before large refactors or repo reorganizations
+- before Unity version, package, or render-pipeline changes
+- after important scene, prefab, ScriptableObject, importer, or project-settings work
+- after art/content sessions that produced local files not yet safely replicated elsewhere
+- before deleting, archiving, or replacing large folders
+
+Practical rule:
+
+- if the answer to "would losing today's local state be painful?" is yes, run the backup now
+
+### Off-site cadence
+
+- let the off-site layer run automatically if possible
+- if it is manual, refresh it at least weekly
+- refresh it immediately after major milestones if the local backup is the only other copy
+
+### Minimum operating rhythm for Shogun
+
+Use this as the default:
+
+- `GitHub`: at each meaningful milestone, and at the end of any productive day
+- `E:\Backups\Shogun`: after risky sessions or every 2 to 3 active workdays, whichever comes first
+- off-site versioned backup: automatic if available, otherwise weekly
 
 ## What should actually be backed up
 
@@ -175,7 +223,6 @@ Done:
 
 Pending:
 
-- choose and test a nightly external-drive backup target
 - choose an off-site versioned backup
 - run one real restore drill
 

@@ -22,7 +22,8 @@ Working checklist for reducing AI-assisted file-loss risk on `Shogun`.
 - [x] Preserve the pre-cleanup local Unity/editor state in Git
   - Branch: `backup/local-safety-snapshot-2026-03-07`
   - Scope: point-in-time safety snapshot only, not an ongoing catch-all backup.
-- [ ] Choose a nightly external-drive backup target
+- [x] Choose a nightly external-drive backup target
+  - Selected target: `E:\Backups\Shogun` on `TheBigOne` (`G-TECH ArmorATD`)
   - Goal: versioned backup on an SSD/HDD that is disconnected when not actively backing up.
 - [ ] Choose an off-site versioned backup
   - Goal: restore-capable cloud or second-machine copy, not plain sync only.
@@ -34,3 +35,16 @@ Working checklist for reducing AI-assisted file-loss risk on `Shogun`.
 - [x] Keep `.gitignore` focused on version control hygiene only
   - `.gitignore` does not prevent local deletion and should not be treated as a safety control.
 - [x] Keep GitHub as one backup layer, not the only one
+
+## Routine cadence
+
+- [x] Use GitHub for milestone protection, not weekly batching only
+  - Push at each meaningful milestone and at the end of any productive day with intentional changes.
+- [x] Use the local external-drive backup for disaster recovery, not every tiny commit
+  - Run `E:\Backups\Shogun` backups at least weekly during quiet periods.
+  - During active work, run them after risky sessions or every 2 to 3 active workdays.
+- [x] Treat these as mandatory backup triggers
+  - Before large refactors or cleanup.
+  - Before Unity/package/render-pipeline changes.
+  - After important scene, prefab, ScriptableObject, importer, or project-settings work.
+  - Before deleting or replacing large folders.
