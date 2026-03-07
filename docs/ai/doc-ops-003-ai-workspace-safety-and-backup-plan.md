@@ -123,22 +123,31 @@ Backup 3: off-site versioned copy
 - use a cloud or second-machine backup with version history
 - do not rely on plain sync alone; versioned restore matters
 
-Recommended default for this machine:
+Chosen off-site layer for now:
 
-- use `Backblaze Personal Backup` as the off-site layer
-- enable at least `One Year Extended Version History`
-- if the repo or other important data lives on an external drive, keep that drive connected often enough for the backup agent to see it
+- use `Google Drive` as the practical off-site copy for backup snapshots
+- do not sync the live Unity repo itself
+- mirror selected snapshots from `E:\Backups\Shogun` into a Google Drive-synced folder instead
+
+Recommended Google Drive target shape:
+
+- `C:\Users\georg\Google Drive\Backups\Shogun`
+
+Repo helper for this:
+
+- [`tools/backup/Mirror-ShogunBackupToGoogleDrive.ps1`](../../tools/backup/Mirror-ShogunBackupToGoogleDrive.ps1)
+- default behavior: mirror the newest snapshot from `E:\Backups\Shogun`
 
 Why this is the current recommendation:
 
-- it is purpose-built backup, not just sync
-- it supports connected external drives on the protected computer
-- it keeps deleted or changed file history, with one-year retention available
+- there is substantially more free Google Drive space available on this machine than OneDrive
+- it avoids putting the active Unity repo inside a consumer sync folder
+- it is more likely to be used consistently than OneDrive in this setup
 
-Acceptable secondary option:
+Important limitation:
 
-- `OneDrive` can be a useful supplementary versioned copy if you already pay for `Microsoft 365`
-- do not treat OneDrive sync alone as the only off-site backup for this repo
+- Google Drive is a practical off-site copy here, not the strongest possible backup product
+- if the project grows or backup risk tolerance tightens, the future upgrade path is a true backup service with stronger retention/version semantics
 
 ## Recommended cadence
 
@@ -175,8 +184,8 @@ Practical rule:
 
 ### Off-site cadence
 
-- let the off-site layer run automatically if possible
-- if it is manual, refresh it at least weekly
+- let the off-site sync client handle upload after the mirror copy lands in the Google Drive-synced folder
+- refresh the mirrored cloud copy at least weekly
 - refresh it immediately after major milestones if the local backup is the only other copy
 
 ### Minimum operating rhythm for Shogun
@@ -185,7 +194,7 @@ Use this as the default:
 
 - `GitHub`: at each meaningful milestone, and at the end of any productive day
 - `E:\Backups\Shogun`: after risky sessions or every 2 to 3 active workdays, whichever comes first
-- off-site versioned backup: automatic if available, otherwise weekly
+- Google Drive mirror: weekly plus major milestones
 
 ## What should actually be backed up
 
@@ -240,7 +249,7 @@ Done:
 
 Pending:
 
-- choose and configure an off-site versioned backup
+- configure the Google Drive mirror destination and use it consistently
 
 Done after first live backup:
 

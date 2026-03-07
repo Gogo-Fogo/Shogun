@@ -25,9 +25,12 @@ Working checklist for reducing AI-assisted file-loss risk on `Shogun`.
 - [x] Choose a nightly external-drive backup target
   - Selected target: `E:\Backups\Shogun` on `TheBigOne` (`G-TECH ArmorATD`)
   - Goal: versioned backup on an SSD/HDD that is disconnected when not actively backing up.
-- [ ] Choose and configure an off-site versioned backup
-  - Recommended default: `Backblaze Personal Backup` with at least `One Year Extended Version History`.
-  - Alternative if already paying for it: `OneDrive` as a supplementary versioned copy, not the only off-site layer.
+- [x] Choose an off-site backup approach
+  - Chosen approach: mirror selected snapshots into a Google Drive-synced folder instead of syncing the live repo.
+  - Repo helper: [`tools/backup/Mirror-ShogunBackupToGoogleDrive.ps1`](./tools/backup/Mirror-ShogunBackupToGoogleDrive.ps1)
+- [ ] Configure and use the Google Drive mirror destination
+  - Recommended target shape: `C:\Users\georg\Google Drive\Backups\Shogun`
+  - Goal: keep `E:\Backups\Shogun` as the primary local backup and Google Drive as the off-site copy.
 - [x] Run one restore drill
   - Completed on `2026-03-07`.
   - Restored `README.md` from `E:\Backups\Shogun\20260307-135329_Shogun\README.md` to `G:\Workspace\Unity\Projects\Shogun\_Generated\RestoreDrill\20260307\README.md`.
