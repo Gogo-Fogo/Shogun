@@ -268,6 +268,234 @@ Recommended operating rhythm:
 - **Monthly:** broader balance summary and targeted adjustments
 - **Quarterly:** structured rework pass for older units or stale mechanics
 
+## Delivery ladder: how to operationalize this policy
+
+This policy should not stay philosophical.
+It should shape how content is reviewed before it ships.
+
+### Layer 1: Banner review
+
+Every new banner unit should pass a structured review before release.
+
+That review should ask:
+
+- what is this unit selling besides raw power
+- which specific mode or role is this unit meant to improve
+- what older units or archetypes does this risk invalidating
+- is the kit readable in one pass
+- does this unit become best-in-slot in too many categories at once
+
+If the review cannot answer those clearly, the design is probably too loose.
+
+### Layer 2: Ongoing telemetry review
+
+Post-release, each banner should be watched for:
+
+- runaway usage spikes in too many modes
+- immediate collapse of old-unit usage in the same role
+- clear signs that a mode now revolves around one new mechanic
+- community perception that the unit is mandatory
+
+### Layer 3: Scheduled old-unit health passes
+
+Do not wait until the roster feels dead.
+
+Treat refresh work as a standing part of the content pipeline.
+
+### Layer 4: Ranked safeguard review
+
+Before a new mechanic fully enters ranked environments, decide:
+
+- whether it should have a grace period
+- whether ranked needs normalization or restrictions
+- whether the mechanic is too polarizing for competitive play in its current form
+
+## Banner review checklist
+
+Use this as the default pre-release review for important new units.
+
+### A. Identity check
+
+- Does the unit have a strong world/fantasy/role identity?
+- Is the value proposition something more interesting than “bigger number”?
+- Does the unit create a new team-building decision?
+
+### B. Power check
+
+- Is the unit top-tier in more than two major axes?
+- Does the unit combine too many premium advantages in one kit?
+- Does the unit solve too many matchups without meaningful weakness?
+
+### C. Readability check
+
+- Can the unit be explained briefly?
+- Are the conditions and payoffs legible?
+- Does the kit avoid “wall of text” syndrome?
+
+### D. Ecosystem check
+
+- Which existing units become weaker if this ships unchanged?
+- Does this unit erase a whole older archetype?
+- Does this unit create healthier diversity, or just force replacement?
+
+### E. Mode check
+
+- Is the unit acceptable in story/PvE?
+- Is the unit acceptable in co-op and raids?
+- Is the unit acceptable in ranked PvP without immediate guardrails?
+- Does roguelite mode gain interesting build diversity from this unit?
+
+## Red-flag mechanics
+
+These are the kinds of additions that should trigger extra scrutiny immediately.
+
+### Red-flag category 1: Too many premium defenses at once
+
+Examples:
+
+- broad immunity stacks
+- multiple safety nets
+- high damage plus high mobility plus high survival
+
+These kits tend to erase interaction.
+
+### Red-flag category 2: Hard invalidation of older systems
+
+Examples:
+
+- mechanics that bypass whole classes of counterplay
+- effects that make older defensive or status strategies irrelevant
+- “must-have” anti-meta tools tied only to the newest banner
+
+### Red-flag category 3: Ranked-only arms-race mechanics
+
+Examples:
+
+- mechanics that exist mainly to beat the last broken ranked unit
+- effects that force narrower and narrower PvP teams
+
+This is how PvP becomes exhausting instead of aspirational.
+
+### Red-flag category 4: Complexity inflation
+
+Examples:
+
+- too many conditional exceptions
+- stacked passive clauses that only exist to cover edge cases
+- kits that need guide content just to be parsed
+
+### Red-flag category 5: Reward-gated exclusivity pressure
+
+Examples:
+
+- new mechanics that are required to earn top seasonal rewards
+- a banner unit being obviously necessary for current raid or arena success
+
+This creates the fastest pay-to-win resentment.
+
+## Old-unit refresh framework
+
+Refreshes should not all look the same.
+
+Recommended refresh levers:
+
+- stat modernization
+- one outdated passive replacement
+- role clarity improvement
+- better synergy with newer systems
+- PvE-only utility boost where ranked stability matters
+- awakening or mastery extensions
+
+The goal is not to make every old unit top meta again.
+The goal is to keep old units meaningful and loved.
+
+## Old-unit refresh template
+
+When refreshing a unit or archetype, answer these:
+
+1. What was this unit originally supposed to do?
+2. What new content or systems made that role weaker?
+3. Is the unit underpowered, unreadable, or simply irrelevant?
+4. Can the unit be revived through a cleaner niche instead of raw stat inflation?
+5. Does the refresh improve diversity or just add another generic strong pick?
+
+## Response ladder for unhealthy creep
+
+If telemetry or community signals show a problem, use a proportional response.
+
+### Level 1: Watch
+
+- outlier detected
+- no immediate meta collapse
+- monitor closely next cycle
+
+### Level 2: Soft correction
+
+- mode-specific restriction
+- small tuning pass
+- ranked grace-period control
+- encounter adjustment
+
+### Level 3: Direct intervention
+
+- broader tuning
+- rapid old-unit compensation pass
+- ranked rule change
+- major mode-specific normalization
+
+### Level 4: Structural correction
+
+- cadence change
+- banner design philosophy adjustment
+- major rework of stale mechanics
+- monetization mix adjustment away from pure power selling
+
+## Mode-specific operating rules
+
+### Story and casual PvE
+
+- tolerate more experimentation
+- prefer spectacle over tight ladder fairness
+- still avoid invalidating whole rosters
+
+### World bosses and raids
+
+- reward mechanics and contribution variety
+- prevent “newest DPS only” design
+- preserve useful roles for support, control, interrupt, and survival
+
+### Ranked PvP
+
+- maintain the tightest power review
+- apply legality delays or restrictions when needed
+- keep rewards meaningful but not oppressive
+
+### Roguelite modes
+
+- let run power dominate
+- keep permanent account inflation low
+- use the mode to create excitement without permanent damage to the game ecosystem
+
+## Success criteria for the overall balance philosophy
+
+The policy is working if:
+
+- new banners feel exciting without deleting old favorites
+- mode health stays broader than one solved meta
+- players summon for fantasy and role value, not only necessity
+- ranked frustration stays contained
+- older units periodically return to relevance through real refreshes
+
+## Failure states
+
+The policy is failing if:
+
+- banner discussions are mostly about raw stats and immunity lists
+- old-unit rosters disappear in large chunks
+- players feel they must pull to keep rewards
+- ranked becomes a narrow answer-check instead of tactical play
+- skill text keeps growing because every new unit must beat the last one in exceptions
+
 ## Telemetry to watch
 
 Balance decisions should be made from both gameplay feel and instrumented evidence.
