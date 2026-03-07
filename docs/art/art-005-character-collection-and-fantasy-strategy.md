@@ -10,6 +10,7 @@ Use this note when deciding:
 - how to split battle readability from collection appeal
 - what makes a unit feel collectible instead of interchangeable
 - how popularity, costumes, and variants should fit the roadmap
+- how Gemini and PixelLab should split concept versus playable-asset work
 
 ## Core conclusion
 
@@ -95,6 +96,40 @@ Suggested asset types:
 
 If Lane 1 makes the unit playable, Lane 2 makes the unit collectible.
 
+## What "character fantasy" means
+
+When this document says "pick one character fantasy," it does **not** mean "pick a class."
+
+It means: decide the exact kind of desire, mood, and identity the character is supposed to trigger before generating anything.
+
+Weak version:
+
+- female samurai
+- male ninja
+- demon boss
+
+Usable version:
+
+- tragic noble samurai widow in moonlit ceremonial armor
+- scarred ronin executioner with restrained cruelty
+- elegant fox-yokai courtier with hidden threat
+- cursed onmyoji prodigy whose body shows ritual corruption
+
+A production-ready character fantasy should define:
+
+1. **Role**
+   - samurai, ronin, onmyoji, yokai, demon, etc.
+2. **Tone**
+   - tragic, seductive, noble, cruel, serene, feral, devotional
+3. **Visual hook**
+   - crescent helm, fox mask, prayer beads, blood-red scarf, antlers, white hair
+4. **Emotional hook**
+   - grief, hunger, arrogance, tenderness, obsession, duty, corruption
+5. **Rarity fantasy**
+   - why this feels premium or banner-worthy rather than generic roster filler
+
+If the character fantasy is vague, the generated art will also be vague.
+
 ## Character design rule
 
 Every important `Shogun` character should be built as a **collection package**, not just a sprite.
@@ -172,26 +207,39 @@ For each high-value character, define:
 
 The point is not to commit to all of them immediately. The point is to avoid designing dead-end characters that cannot carry future banner value.
 
-## PixelLab evaluation implication
+## Gemini and PixelLab workflow implication
 
-Because `Shogun` needs both playability and collectibility, PixelLab should be judged on both lanes.
+Because `Shogun` needs both playability and collectibility, the current recommended split is:
 
-The first month should not only answer:
+- `Gemini web chat / Nano Banana Pro`: concept and presentation lane
+- `PixelLab`: playable pixel-production lane
 
-- can PixelLab help make battle sprites?
+Use Gemini for:
 
-It should also answer:
+- portraits
+- busts
+- full-body concept art
+- costume exploration
+- mood, expression, and collectible appeal
 
-- can PixelLab help create attractive character presentation assets?
+Use PixelLab for:
+
+- converting approved concept art into playable pixel characters
+- generating directional sprite views
+- keeping sprite style and animation work consistent
+
+This means the first month should answer two different questions:
+
+- can Gemini produce a collectible-facing concept for this character?
+- can PixelLab turn that same identity into a strong playable sprite?
 
 Recommended evaluation order:
 
-1. prove one `64x64` battle-sprite workflow
-2. on the same character, generate one larger presentation-facing portrait or bust
-3. compare cleanup burden for both lanes
-4. decide whether PixelLab is useful only for battle sprites, only for presentation art, or for both
-
-If PixelLab only helps on one lane, that is still strategically useful.
+1. generate one portrait, bust, or full-body concept in Gemini
+2. freeze the approved character identity
+3. prove one `64x64` playable-sprite workflow in PixelLab for that same character
+4. compare cleanup burden and identity retention across the two lanes
+5. decide whether the combined workflow is strong enough to scale
 
 ## Practical first-month plan
 
@@ -207,7 +255,7 @@ Start with one archetype that is both readable and desirable:
 ### Phase 2: create the same character in two forms
 
 - battle sprite: `64x64`, `4 directions`, `idle + walk`
-- presentation art: bust or portrait, larger canvas, same identity and palette
+- presentation art: Gemini-generated bust, portrait, or full-body concept with the same identity and palette
 
 ### Phase 3: score the result
 
@@ -225,18 +273,36 @@ Evaluate both outputs on:
 ### Continue the workflow if:
 
 - the battle sprite reads clearly in Unity
-- the portrait or bust has real collectible appeal
+- the Gemini concept art has real collectible appeal
 - cleanup feels like refinement rather than re-illustration
 
 ### Reassess the workflow if:
 
-- battle assets are readable but the collection-facing art feels generic
-- the collection-facing art is attractive but the battle form collapses
+- battle assets are readable but the Gemini concept feels generic
+- the Gemini concept is attractive but the battle form collapses
 - identity does not survive translation between the two lanes
 
 ## Legal and provenance rule
 
 Collection-facing assets matter more for marketing, identity, and possible future monetization. Because of that, they deserve stricter provenance and stronger manual editing than throwaway internal tests.
+
+Keep Gemini dev-side only:
+
+- use it during development
+- do not build the shipped game around live Gemini API calls
+- do not route player prompts or runtime asset generation through Gemini in the released product
+
+Reason:
+
+- live AI generation expands privacy, moderation, support, and platform-policy scope
+- development-side concept generation is far easier to control and document
+
+Operational rule:
+
+- use Gemini to create candidates
+- select and refine manually
+- use PixelLab and Aseprite to productionize the approved identity
+- track provenance for anything shipped
 
 Follow:
 
@@ -256,6 +322,11 @@ Follow:
   - https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2020.577703/full
 - Character attachment patterns in games including `Genshin Impact`:
   - https://www.essays.se/essay/78c14223a6/
+- Gemini image generation and privacy guidance:
+  - https://blog.google/innovation-and-ai/products/nano-banana-pro/
+  - https://ai.google.dev/gemini-api/docs/image-generation
+  - https://support.google.com/gemini/answer/14286560?hl=en
+  - https://support.google.com/gemini/answer/13594961
 - Official examples of popularity being turned into future character/outfit content:
   - https://vote10.campaigns.fire-emblem-heroes.com/en-US/cyl/about
   - https://nikke-en.com/events/rapiredhoodpoll/

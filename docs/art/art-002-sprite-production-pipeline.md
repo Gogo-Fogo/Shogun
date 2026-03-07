@@ -13,7 +13,8 @@ Use this note when deciding:
 
 ## Current recommended stack
 
-- `PixelLab`: generation
+- `Gemini web chat / Nano Banana Pro`: concept art, portraits, and presentation-facing exploration
+- `PixelLab`: playable pixel-character generation and concept-to-sprite conversion
 - `Aseprite`: primary cleanup and animation editing
 - `Unity`: gameplay-scale validation
 - `Codex` / `Claude`: planning, scripting, documentation, and optional later MCP-driven assistance
@@ -49,20 +50,31 @@ Do not start with:
 Before generation, define:
 
 - role or class
+- collectible fantasy
 - weapon type
 - silhouette priorities
 - palette direction
 - emotional tone
 
-### Phase 2: generate base candidate
+### Phase 2: generate concept candidate
+
+Use Gemini to generate:
+
+- one approved portrait, bust, or full-body concept
+- a clear collectible-facing identity
+- a version that is strong enough to freeze as the reference target for sprite work
+
+Do not skip this step and go straight to sprite generation unless the concept is already fully locked elsewhere.
+
+### Phase 3: convert concept into playable sprite
 
 Use PixelLab to generate:
 
-- one character concept that fits the style rules in `ART-001`
+- one playable character candidate based on the approved concept reference
 - consistent directional presentation
-- no attempt yet to cover the whole roster
+- no attempt yet to cover the whole roster or variant set
 
-### Phase 3: generate bounded animations
+### Phase 4: generate bounded animations
 
 Generate only:
 
@@ -75,7 +87,7 @@ The goal is to prove:
 - pose readability
 - cleanup burden
 
-### Phase 4: cleanup in Aseprite
+### Phase 5: cleanup in Aseprite
 
 Fix:
 
@@ -85,7 +97,7 @@ Fix:
 - palette noise
 - frame timing and action clarity
 
-### Phase 5: Unity validation
+### Phase 6: Unity validation
 
 Import the asset into Unity and evaluate:
 
@@ -120,6 +132,7 @@ Do not scale to the full roster before the import and cleanup workflow feels rep
 Recommended now:
 
 - subscription first
+- Gemini concept workflow first
 - browser/editor workflow first
 - manual review first
 
@@ -127,6 +140,21 @@ Recommended later:
 
 - PixelLab MCP only after art quality is proven
 - API only after manual production becomes the real bottleneck
+
+## Gemini usage boundary
+
+Use Gemini as a developer-side concept tool only.
+
+Do:
+
+- generate portraits, busts, and concept art during development
+- use it to lock collectible fantasy and presentation direction
+
+Do not:
+
+- build the shipped game around live Gemini API calls
+- upload sensitive internal material or anything you would not want reviewed
+- treat raw Gemini output as production-final hero content without manual refinement
 
 ## File organization rule
 

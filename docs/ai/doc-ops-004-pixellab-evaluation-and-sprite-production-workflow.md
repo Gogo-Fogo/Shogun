@@ -4,11 +4,12 @@
 
 ## Executive recommendation
 
-For `Shogun`, PixelLab is worth trying, but only in a controlled, developer-side workflow.
+For `Shogun`, PixelLab is worth trying, but only in a controlled, developer-side workflow and not as the only art tool.
 
 Recommended decision:
 
-- use PixelLab for developer-side asset generation and iteration
+- use `Gemini web chat / Nano Banana Pro` for concept and presentation art
+- use PixelLab for developer-side playable-sprite generation and iteration
 - start with a one-month `Tier 1` subscription, not the API
 - use Character Creator, Aseprite extension, or Pixelorama first
 - optionally add PixelLab MCP later if the visual output is good enough
@@ -18,7 +19,7 @@ This is the highest-leverage path for the current project scale:
 
 - expected character throughput is low
 - you already use Codex, Claude, and Unity MCP locally
-- the main open question is art quality and cleanup burden, not automation depth
+- the main open question is identity retention and cleanup burden, not automation depth
 
 ## Why PixelLab is a good fit
 
@@ -91,15 +92,18 @@ Recommended fit:
 
 - keep Codex and Claude as the coding/planning layer
 - keep Unity MCP as the live Unity-inspection layer
-- use PixelLab primarily as the sprite-generation layer
+- use Gemini primarily as the concept and portrait layer
+- use PixelLab primarily as the playable sprite-generation layer
 
 Recommended order of adoption:
 
-1. PixelLab subscription
-2. Character Creator or Aseprite extension or Pixelorama
-3. one end-to-end character test
-4. only then decide whether PixelLab MCP is worth adding
-5. only later consider API automation
+1. lock one character fantasy
+2. generate concept art in Gemini
+3. PixelLab subscription
+4. Character Creator or Aseprite extension or Pixelorama
+5. one end-to-end character test
+6. only then decide whether PixelLab MCP is worth adding
+7. only later consider API automation
 
 This avoids solving the wrong problem too early.
 
@@ -125,7 +129,7 @@ For `Shogun`, PixelLab MCP is an optional acceleration layer, not the core decis
 
 Do not plan around live in-game generation.
 
-Use PixelLab as a developer-side content tool only.
+Use Gemini and PixelLab as developer-side content tools only.
 
 Reasons:
 
@@ -137,6 +141,12 @@ So the correct boundary is:
 
 - yes to developer-side generation
 - no to player-facing runtime generation
+
+For current `Shogun` planning, that means:
+
+- Gemini is acceptable through the web app for concept/presentation work
+- PixelLab is acceptable for dev-side concept-to-sprite conversion
+- neither should be treated as a live player-facing service inside the shipped game
 
 ## Technical recommendation for sprite size and animation
 
@@ -214,10 +224,15 @@ Use one single character as the proving ground.
 
 Recommended test:
 
-- one humanoid character
+- one humanoid character with a clear collectible fantasy
 - `64x64`
 - `4 directions`
 - idle + walk
+
+Recommended lane split:
+
+- Gemini: portrait, bust, or full-body concept
+- PixelLab: playable character conversion
 
 Then evaluate:
 
@@ -346,6 +361,13 @@ Official PixelLab sources:
 - Animate with skeleton: `https://www.pixellab.ai/docs/tools/animate-with-skeleton`
 - Init image options: `https://www.pixellab.ai/docs/options/init-image`
 - Camera options: `https://www.pixellab.ai/docs/options/camera`
+
+Official Google Gemini sources:
+
+- Image generation docs: `https://ai.google.dev/gemini-api/docs/image-generation`
+- Gemini image generation help: `https://support.google.com/gemini/answer/14286560?hl=en`
+- Gemini Apps privacy hub: `https://support.google.com/gemini/answer/13594961`
+- Nano Banana Pro announcement: `https://blog.google/innovation-and-ai/products/nano-banana-pro/`
 
 Notes:
 
