@@ -88,6 +88,13 @@ The GDD’s “four pillars” can be operationalized into implementation requir
 
 The official project page validates the “combat-first” focus: current systems emphasized are movement radius, attack range circles, tactical grid readability, and initiative timeline work-in-progress. citeturn2view0
 
+**Living companion note:** the original GDD remains the primary product-scope document, but newer cross-disciplinary character-planning decisions are maintained in the art-production set:
+
+- `docs/art/art-005-character-collection-and-fantasy-strategy.md`
+- `docs/art/art-007-world-pillars-and-combat-identity-framework.md`
+
+Use those notes as the current operating detail for roster identity, world/faction buckets, collectible fantasy, elemental affinity, weapon families, and martial-school layering.
+
 ### Prototype vs intended full product
 
 **Prototype confirmed by public page (implemented / in-progress):**
@@ -355,6 +362,13 @@ GDD accessibility includes:
 
 **Art direction**
 - “Haunting elegance”: serene traditional aesthetics + demonic dread; brushstroke-inspired layered 2D animation with mobile performance constraints. (Source: GDD PDF, “Art Direction Philosophy.”)
+
+**Living companion note:** for the current production-facing interpretation of this art direction, use the paired internal notes rather than trying to overload this GDD with every evolving decision:
+
+- `docs/art/art-001-style-bible-and-visual-targets.md`
+- `docs/art/art-005-character-collection-and-fantasy-strategy.md`
+- `docs/art/art-006-sex-appeal-and-damage-art-policy.md`
+- `docs/art/art-007-world-pillars-and-combat-identity-framework.md`
 
 **Official visual references (from the creator’s site)**
 - Banner artwork and prototype screenshots are hosted on the official site. citeturn13view0turn13view1turn13view2  
