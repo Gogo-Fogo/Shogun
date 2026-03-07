@@ -20,7 +20,9 @@
    - the actual production workflow from generation through cleanup and review
 4. [`art-003-unity-2d-import-and-animation-standards.md`](./art-003-unity-2d-import-and-animation-standards.md)
    - Unity import, `.aseprite` handling, tags, clip expectations, and gameplay-facing standards
-5. [`art-004-asset-provenance-and-source-tracking.md`](./art-004-asset-provenance-and-source-tracking.md)
+5. [`art-006-sex-appeal-and-damage-art-policy.md`](./art-006-sex-appeal-and-damage-art-policy.md)
+   - boundaries for sex appeal, FEH-style damage art, and what battle animation fanservice is too risky
+6. [`art-004-asset-provenance-and-source-tracking.md`](./art-004-asset-provenance-and-source-tracking.md)
    - provenance rules, metadata, and legal-traceability handling
 
 ## Companion docs outside this folder
@@ -37,10 +39,11 @@
 1. `ART-001`
 2. `ART-005`
 3. `ART-002`
-4. `ART-003`
-5. `ART-004`
-6. `DOC-OPS-004`
-7. `DOC-LEGAL-001`
+4. `ART-006`
+5. `ART-003`
+6. `ART-004`
+7. `DOC-OPS-004`
+8. `DOC-LEGAL-001`
 
 ## Rule for future updates
 

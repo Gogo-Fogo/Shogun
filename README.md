@@ -150,6 +150,9 @@ The character system implements core mechanics inspired by Naruto Blazing:
 - **[Character Collection & Fantasy Strategy](docs/art/art-005-character-collection-and-fantasy-strategy.md)**
   The strategy note for collectible fantasy, roster pillars, battle-vs-presentation art lanes, and how popularity/variants should shape the cast.
 
+- **[Sex Appeal & Damage-Art Policy](docs/art/art-006-sex-appeal-and-damage-art-policy.md)**
+  The art-policy note for how far `Shogun` should push fanservice, how damage art should work, and why explicit jiggle-heavy battle animation is the wrong line.
+
 - **[Sprite Production Pipeline](docs/art/art-002-sprite-production-pipeline.md)**
   The production workflow for turning PixelLab output into cleaned, reviewable game assets.
 

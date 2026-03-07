@@ -33,6 +33,7 @@ docs/
     art-003-unity-2d-import-and-animation-standards.md
     art-004-asset-provenance-and-source-tracking.md
     art-005-character-collection-and-fantasy-strategy.md
+    art-006-sex-appeal-and-damage-art-policy.md
   recruiter/
     doc-data-001-unity-mobile-gacha-rpg-data-collection-and-compliance.pdf
     doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.pdf
@@ -72,6 +73,7 @@ For most tasks:
 | `ART-001` | Style bible and visual targets | `art/art-001-style-bible-and-visual-targets.md` | No recruiter PDF in this folder | Primary art-direction note | Use first for silhouette rules, palette direction, detail limits, and gameplay readability targets. |
 | `ART-005` | Character collection and fantasy strategy | `art/art-005-character-collection-and-fantasy-strategy.md` | No recruiter PDF in this folder | Primary collection-strategy note | Use for collectible fantasy, roster pillars, battle-vs-presentation art lanes, and variant planning. |
 | `ART-002` | Sprite production pipeline | `art/art-002-sprite-production-pipeline.md` | No recruiter PDF in this folder | Primary art workflow note | Use for the bounded PixelLab-to-Aseprite-to-Unity production flow and trial/pass-fail rules. |
+| `ART-006` | Sex appeal and damage-art policy | `art/art-006-sex-appeal-and-damage-art-policy.md` | No recruiter PDF in this folder | Primary fanservice boundary note | Use for sex-appeal limits, FEH-style damage-art interpretation, and what battle animation fanservice is too risky. |
 | `ART-003` | Unity 2D import and animation standards | `art/art-003-unity-2d-import-and-animation-standards.md` | No recruiter PDF in this folder | Primary import standard | Use for `.aseprite` import, animation tags, frame-budget targets, and gameplay-facing sprite standards. |
 | `ART-004` | Asset provenance and source tracking | `art/art-004-asset-provenance-and-source-tracking.md` | No recruiter PDF in this folder | Primary provenance note | Use for generated-art traceability, manual-edit tracking, and shipped-asset metadata requirements. |
 | `DOC-LEGAL-001` | Legal and platform-policy risk overview | `ai/doc-legal-001-ai-generated-assets-legal-considerations.md` | `recruiter/doc-legal-001-ai-generated-assets-legal-considerations.pdf` | Primary legal risk briefing | Use for AI asset usage, privacy, loot box compliance, store-policy risk, and IP questions. |
@@ -121,21 +123,23 @@ For most tasks:
 1. `ART-001`
 2. `ART-005`
 3. `ART-002`
-4. `ART-003`
-5. `ART-004`
-6. `DOC-OPS-004`
-7. `DOC-LEGAL-001`
-8. `DOC-LEGAL-002`
-9. `DOC-OPS-002` if MCP integration matters
+4. `ART-006`
+5. `ART-003`
+6. `ART-004`
+7. `DOC-OPS-004`
+8. `DOC-LEGAL-001`
+9. `DOC-LEGAL-002`
+10. `DOC-OPS-002` if MCP integration matters
 
 ### Art direction, sprite import, and provenance
 1. `ART-001`
 2. `ART-005`
-3. `ART-002`
-4. `ART-003`
-5. `ART-004`
-6. `DOC-OPS-004`
-7. `DOC-LEGAL-001`
+3. `ART-006`
+4. `ART-002`
+5. `ART-003`
+6. `ART-004`
+7. `DOC-OPS-004`
+8. `DOC-LEGAL-001`
 
 ### Legal, compliance, and AI-asset risk
 1. `DOC-LEGAL-001`
@@ -196,13 +200,14 @@ Open:
 Open:
 1. `ART-001`
 2. `ART-005`
-3. `ART-002`
-4. `ART-003`
-5. `ART-004`
-6. `DOC-OPS-004`
-7. `DOC-LEGAL-001`
-8. `DOC-LEGAL-002`
-9. `DOC-OPS-002` if MCP integration or coding-assistant setup matters
+3. `ART-006`
+4. `ART-002`
+5. `ART-003`
+6. `ART-004`
+7. `DOC-OPS-004`
+8. `DOC-LEGAL-001`
+9. `DOC-LEGAL-002`
+10. `DOC-OPS-002` if MCP integration or coding-assistant setup matters
 
 ### Telemetry, event schemas, consent, and retention
 Open:
