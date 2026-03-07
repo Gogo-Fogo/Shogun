@@ -27,6 +27,8 @@
   - use for silhouette, palette, and readability standards
 - [`../art/art-006-sex-appeal-and-damage-art-policy.md`](../art/art-006-sex-appeal-and-damage-art-policy.md)
   - use for fanservice boundaries, FEH-style damage art, and store-safe limits
+- [`../art/art-007-violence-and-injury-policy.md`](../art/art-007-violence-and-injury-policy.md)
+  - use for blood, bruising, dark-fantasy brutality, and what violent spectacle is too risky
 - [`../research/doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.md`](../research/doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.md)
   - use for combat and roster reference patterns only
 - [`../ops/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md`](../ops/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)
@@ -38,8 +40,9 @@
 2. `DESIGN-002`
 3. `ART-001`
 4. `ART-006`
-5. `DOC-REF-001`
-6. `DOC-OPS-004`
+5. `ART-007`
+6. `DOC-REF-001`
+7. `DOC-OPS-004`
 
 ## Rule for future updates
 

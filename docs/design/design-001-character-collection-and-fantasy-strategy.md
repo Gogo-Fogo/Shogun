@@ -173,6 +173,37 @@ These pillars are useful because they support both:
 - clean battle silhouettes
 - strong collection-facing fantasies
 
+## Archetype handling rule
+
+Use high-intensity attraction archetypes sparingly and deliberately.
+
+Examples:
+
+- yandere-coded obsession
+- corrupted devotion
+- dangerous seduction
+- grief-driven fixation
+- ritualized possessiveness
+
+These can be very effective in a gacha, but they should stay:
+
+- adult
+- character-led
+- emotionally legible
+- integrated into a larger fantasy archetype
+
+They should not become:
+
+- meme insanity
+- abuse fetish bait
+- the default voice of the whole roster
+
+Recommended rule:
+
+- allow `1 to 2` strongly yandere-coded or obsession-coded high-value characters or variants
+- fold them under broader pillars such as `Dangerous Seduction`, `Corrupted Power`, or `Mystic Ritual`
+- do not make "yandere" its own main pillar
+
 ## Roster structure recommendation
 
 Do not build the cast as a flat spread of unrelated cool designs.
@@ -309,12 +340,15 @@ Follow:
 - `ART-004` for provenance and source tracking
 - `DOC-LEGAL-001` for AI-asset risk and human-authorship constraints
 - `DOC-OPS-004` for PixelLab operating boundaries
+- `ART-006` for sex-appeal and damage-art limits
+- `ART-007` for violence, blood, bruising, and dismemberment boundaries
 
 ## Related documents
 
 - `DESIGN-002` for world pillars, elements, weapon families, and martial schools
 - `ART-001` for the visual target, silhouette rules, and palette discipline
 - `ART-006` for sex appeal, damage-art, and fanservice boundaries
+- `ART-007` for violence, blood, bruising, and dark-fantasy brutality limits
 - `DOC-GDD-001` for overall product-scope truth
 - `DOC-REF-001` for roster/combat inspiration only
 

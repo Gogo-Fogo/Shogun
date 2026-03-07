@@ -20,7 +20,9 @@
    - Unity import, `.aseprite` handling, tags, clip expectations, and gameplay-facing standards
 4. [`art-006-sex-appeal-and-damage-art-policy.md`](./art-006-sex-appeal-and-damage-art-policy.md)
    - boundaries for sex appeal, FEH-style damage art, and what battle animation fanservice is too risky
-5. [`art-004-asset-provenance-and-source-tracking.md`](./art-004-asset-provenance-and-source-tracking.md)
+5. [`art-007-violence-and-injury-policy.md`](./art-007-violence-and-injury-policy.md)
+   - boundaries for blood, bruises, dark-fantasy brutality, and what gore or dismemberment is too risky
+6. [`art-004-asset-provenance-and-source-tracking.md`](./art-004-asset-provenance-and-source-tracking.md)
    - provenance rules, metadata, and legal-traceability handling
 
 ## Companion docs outside this folder
@@ -45,10 +47,11 @@
 3. `DESIGN-002`
 4. `ART-002`
 5. `ART-006`
-6. `ART-003`
-7. `ART-004`
-8. `DOC-OPS-004`
-9. `DOC-LEGAL-001`
+6. `ART-007`
+7. `ART-003`
+8. `ART-004`
+9. `DOC-OPS-004`
+10. `DOC-LEGAL-001`
 
 ## Rule for future updates
 
