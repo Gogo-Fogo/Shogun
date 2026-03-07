@@ -13,6 +13,9 @@ docs/
     doc-gdd-001-shogun-flowers-fall-in-blood-game-design-document.md
     design-001-character-collection-and-fantasy-strategy.md
     design-002-world-pillars-and-combat-identity-framework.md
+    design-003-long-term-balance-and-power-creep-policy.md
+    design-004-roguelite-replayability-and-run-mode-framework.md
+    design-005-co-op-pvp-and-social-systems-roadmap.md
   art/
     ART_INDEX.md
     art-001-style-bible-and-visual-targets.md
@@ -81,6 +84,9 @@ For most tasks:
 | `DOC-OPS-005` | March 2026 repo modernization retrospective | `ops/doc-ops-005-march-2026-repo-modernization-retrospective.md` | No recruiter PDF in this folder | Operational change log | Use when the question is what changed in the March 7, 2026 cleanup/tooling batch and why those pushed commits were structured that way. |
 | `DESIGN-001` | Character collection and fantasy strategy | `design/design-001-character-collection-and-fantasy-strategy.md` | No recruiter PDF in this folder | Primary collection-strategy note | Use for collectible fantasy, roster pillars, battle-vs-presentation art lanes, and variant planning. |
 | `DESIGN-002` | World pillars and combat identity framework | `design/design-002-world-pillars-and-combat-identity-framework.md` | No recruiter PDF in this folder | Primary roster-identity note | Use for world pillars, elemental affinity, weapon families, martial schools, and how those layers stack into a character identity. |
+| `DESIGN-003` | Long-term balance and power-creep policy | `design/design-003-long-term-balance-and-power-creep-policy.md` | No recruiter PDF in this folder | Primary live-balance note | Use for banner-value policy, power-creep controls, old-unit refresh cadence, and ranked/PvE balance boundaries. |
+| `DESIGN-004` | Roguelite replayability and run-mode framework | `design/design-004-roguelite-replayability-and-run-mode-framework.md` | No recruiter PDF in this folder | Primary replayability note | Use for how procedural structure should fit story mode, how a roguelite mode should work, and how to reduce repetition without proceduralizing the whole campaign. |
+| `DESIGN-005` | Co-op, PvP, and social systems roadmap | `design/design-005-co-op-pvp-and-social-systems-roadmap.md` | No recruiter PDF in this folder | Primary multiplayer roadmap note | Use for co-op priority, world bosses, PvP rollout, clan timing, and social-system phasing. |
 | `ART-001` | Style bible and visual targets | `art/art-001-style-bible-and-visual-targets.md` | No recruiter PDF in this folder | Primary art-direction note | Use first for silhouette rules, palette direction, detail limits, and gameplay readability targets. |
 | `ART-002` | Sprite production pipeline | `art/art-002-sprite-production-pipeline.md` | No recruiter PDF in this folder | Primary art workflow note | Use for the bounded PixelLab-to-Aseprite-to-Unity production flow and trial/pass-fail rules. |
 | `ART-006` | Sex appeal and damage-art policy | `art/art-006-sex-appeal-and-damage-art-policy.md` | No recruiter PDF in this folder | Primary fanservice boundary note | Use for sex-appeal limits, FEH-style damage-art interpretation, and what battle animation fanservice is too risky. |
@@ -99,7 +105,7 @@ For most tasks:
 
 ### Product and feature intent
 1. `DOC-GDD-001`
-2. `DESIGN-001` and `DESIGN-002` for living collection, world, and combat-identity structure
+2. `DESIGN-001` to `DESIGN-005` for living collection, world, combat-identity, balance, replayability, and multiplayer structure
 3. `DOC-ENG-001`, `DOC-ENG-002`, and `DOC-DATA-001` for implementation detail
 4. `DOC-REF-001` to `DOC-REF-004` for inspiration and caution only
 
@@ -185,8 +191,11 @@ For most tasks:
 ### Combat, movement, encounter, and progression design
 Open:
 1. `DOC-GDD-001`
-2. `DOC-REF-001`
-3. optionally `DOC-REF-002`
+2. `DESIGN-003`
+3. `DESIGN-004`
+4. `DESIGN-005`
+5. `DOC-REF-001`
+6. optionally `DOC-REF-002`
 
 ### Unity structure, backend, live-service architecture
 Open:
@@ -230,9 +239,36 @@ Open:
 Open:
 1. `DESIGN-001`
 2. `DESIGN-002`
-3. `ART-001`
-4. `DOC-GDD-001`
+3. `DESIGN-003`
+4. `ART-001`
+5. `DOC-GDD-001`
+6. `DOC-REF-001`
+
+### Long-term balance, power creep, and banner health
+Open:
+1. `DOC-GDD-001`
+2. `DESIGN-003`
+3. `DESIGN-005`
+4. `DOC-REF-002`
+5. `DOC-REF-004`
+
+### Roguelite structure, replayability, and anti-repetition design
+Open:
+1. `DOC-GDD-001`
+2. `DESIGN-004`
+3. `DESIGN-003`
+4. `DOC-REF-001`
+5. `DOC-REF-003`
+
+### Co-op, PvP, raids, and clans
+Open:
+1. `DOC-GDD-001`
+2. `DESIGN-005`
+3. `DESIGN-003`
+4. `DOC-ENG-001`
 5. `DOC-REF-001`
+6. `DOC-REF-002`
+7. `DOC-REF-003`
 
 ### Telemetry, event schemas, consent, and retention
 Open:
@@ -256,7 +292,7 @@ Open:
 ## AI behavior rules
 
 - Prefer the smallest relevant Markdown companion in `design/`, `art/`, `legal/`, `ops/`, or `research/` instead of scanning multiple sections by default.
-- Prefer `design/` documents when the task is roster identity, world pillars, combat identity, or collection planning.
+- Prefer `design/` documents when the task is roster identity, world pillars, combat identity, collection planning, long-term balance, replayability structure, or multiplayer/social-roadmap planning.
 - Prefer `art/` documents when the task is specifically production-facing art direction, sprite workflow, import rules, or provenance.
 - Prefer `ops/` documents when the task is tooling, MCP, repo safety, backups, or retrospective workflow history.
 - Prefer `legal/` documents when the task is compliance, policy, privacy, or user-facing legal text.

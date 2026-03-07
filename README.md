@@ -165,6 +165,15 @@ The character system implements core mechanics inspired by Naruto Blazing:
 - **[World Pillars & Combat Identity Framework](docs/design/design-002-world-pillars-and-combat-identity-framework.md)**
   The structural note for faction pillars, elemental affinity, weapon families, martial schools, and how those layers combine into a coherent character identity.
 
+- **[Long-Term Balance & Power-Creep Policy](docs/design/design-003-long-term-balance-and-power-creep-policy.md)**
+  The living balance-governance note for banner value, old-unit refresh cadence, power-creep control, and how PvE, PvP, and roguelite modes should react to long-term unit inflation.
+
+- **[Roguelite Replayability & Run-Mode Framework](docs/design/design-004-roguelite-replayability-and-run-mode-framework.md)**
+  The replayability note for how a Slay the Spire-like structure should fit `Shogun`, what should stay authored, and how temporary run power should fight repetition.
+
+- **[Co-op, PvP & Social Systems Roadmap](docs/design/design-005-co-op-pvp-and-social-systems-roadmap.md)**
+  The multiplayer roadmap for co-op priority, world bosses, async PvP, clan timing, and how to make the game fun with friends without overcommitting to risky online scope too early.
+
 - **[Sex Appeal & Damage-Art Policy](docs/art/art-006-sex-appeal-and-damage-art-policy.md)**
   The art-policy note for how far `Shogun` should push fanservice, how damage art should work, and why explicit jiggle-heavy battle animation is the wrong line.
 

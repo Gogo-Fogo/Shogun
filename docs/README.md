@@ -4,7 +4,7 @@ This is the canonical documentation root for the repository.
 
 This folder is organized into six documentation areas:
 
-- `design/` contains the master GDD plus cross-disciplinary roster, world, combat-identity, and collection-planning notes.
+- `design/` contains the master GDD plus cross-disciplinary roster, world, combat-identity, collection-planning, long-term balance, replayability, and multiplayer-roadmap notes.
 - `art/` contains production-facing art workflow notes, style standards, import rules, and provenance rules.
 - `legal/` contains legal, compliance, privacy, telemetry-compliance, and user-facing policy documents.
 - `ops/` contains repo workflow, AI tooling, Unity MCP, backup, and operational retrospective notes.
@@ -25,7 +25,7 @@ All files use stable document IDs in the filename:
 - `doc-ops-*` for repo workflow, tooling, MCP, and operational notes
 - `doc-legal-*` for legal and compliance
 - `doc-ref-*` for comparative/reference documents
-- `design-*` for cross-disciplinary roster, world, and combat-identity planning
+- `design-*` for cross-disciplinary roster, world, combat-identity, balance, replayability, and multiplayer/social planning
 - `art-*` for internal art-production standards and workflow notes
 
 Markdown and PDF companions share the same base filename whenever both versions exist.
@@ -38,6 +38,7 @@ Markdown and PDF companions share the same base filename whenever both versions 
 - Internal operational notes like Unity MCP workflow guidance may exist only in `ops/` when no recruiter PDF is needed.
 - Internal legal/compliance or telemetry-compliance notes may exist only in `legal/` when no recruiter PDF is needed.
 - Cross-disciplinary character-identity and worldbuilding notes may exist only in `design/` when they are not purely art or purely gameplay docs.
+- Cross-disciplinary live-balance, roguelite, multiplayer, and social-roadmap notes may also live only in `design/` when they cut across art, systems, lore, and live-service planning.
 - Art workflow, style, import, and provenance notes may exist only in `art/` when they are internal production standards rather than recruiter-facing documents.
 
 ## Suggested usage

@@ -256,6 +256,12 @@ These objectives are consistent with tactical SRPG norms and do not conflict wit
 
 ## Meta systems: progression, economy, LiveOps, monetization
 
+**Living companion notes:** this GDD remains the stable product-scope source, but the more opinionated long-term structure for balancing, replayability, and multiplayer phasing now lives in the paired internal design notes:
+
+- `docs/design/design-003-long-term-balance-and-power-creep-policy.md`
+- `docs/design/design-004-roguelite-replayability-and-run-mode-framework.md`
+- `docs/design/design-005-co-op-pvp-and-social-systems-roadmap.md`
+
 ### Progression systems
 
 **Account progression**

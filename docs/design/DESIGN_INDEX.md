@@ -18,6 +18,12 @@
    - collectible fantasy, battle-vs-presentation lanes, popularity planning, and variant value
 3. [`design-002-world-pillars-and-combat-identity-framework.md`](./design-002-world-pillars-and-combat-identity-framework.md)
    - world pillars, elemental affinity, weapon families, martial schools, and how those layers combine into character identity
+4. [`design-003-long-term-balance-and-power-creep-policy.md`](./design-003-long-term-balance-and-power-creep-policy.md)
+   - long-term balance governance, power-creep limits, refresh cadence, and banner-value policy
+5. [`design-004-roguelite-replayability-and-run-mode-framework.md`](./design-004-roguelite-replayability-and-run-mode-framework.md)
+   - replayability structure, roguelite mode positioning, run systems, and anti-repetition framework
+6. [`design-005-co-op-pvp-and-social-systems-roadmap.md`](./design-005-co-op-pvp-and-social-systems-roadmap.md)
+   - co-op, world bosses, PvP rollout, clans, and social-system phasing
 
 ## Companion docs outside this folder
 
@@ -31,6 +37,12 @@
   - use for blood, bruising, dark-fantasy brutality, and what violent spectacle is too risky
 - [`../research/doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.md`](../research/doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.md)
   - use for combat and roster reference patterns only
+- [`../research/doc-ref-002-naruto-ninja-blazing-success-failure-and-shutdown-analysis.md`](../research/doc-ref-002-naruto-ninja-blazing-success-failure-and-shutdown-analysis.md)
+  - use for live-service caution, power-creep failure signals, and competitive-mode governance lessons
+- [`../research/doc-ref-003-one-piece-treasure-cruise-analysis.md`](../research/doc-ref-003-one-piece-treasure-cruise-analysis.md)
+  - use for raid/event burden, alliance-style co-op lessons, and long-run content-sustainability warnings
+- [`../research/doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.md`](../research/doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.md)
+  - use when deciding how ambitious online systems should be and what order they should be built in
 - [`../ops/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md`](../ops/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)
   - use when the question is PixelLab fit and production-tool boundaries rather than world structure
 
@@ -43,6 +55,34 @@
 5. `ART-007`
 6. `DOC-REF-001`
 7. `DOC-OPS-004`
+
+## Default order for long-term systems questions
+
+### Balance, power creep, and live-service health
+
+1. `DOC-GDD-001`
+2. `DESIGN-003`
+3. `DOC-REF-002`
+4. `DOC-REF-004`
+5. `DESIGN-005`
+
+### Roguelite replayability and repetition control
+
+1. `DOC-GDD-001`
+2. `DESIGN-004`
+3. `DESIGN-003`
+4. `DOC-REF-001`
+5. `DOC-REF-003`
+
+### Co-op, PvP, raids, and clans
+
+1. `DOC-GDD-001`
+2. `DESIGN-005`
+3. `DESIGN-003`
+4. `DOC-ENG-001`
+5. `DOC-REF-001`
+6. `DOC-REF-002`
+7. `DOC-REF-003`
 
 ## Rule for future updates
 
