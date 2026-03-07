@@ -134,6 +134,251 @@ Only consider this when:
 
 This is the most optional phase, not the core promise.
 
+## Delivery ladder: what each phase actually means
+
+The rollout order above should be treated as a gated delivery plan, not just a theme list.
+
+Each phase should answer:
+
+- what ships
+- what it depends on
+- how to know it is working
+- what is explicitly deferred
+
+### Phase 0 delivery: Friend support and assist systems
+
+**What ships**
+
+- friend IDs or friend codes
+- friend list and lightweight profile cards
+- support-unit borrowing
+- simple friend-based daily or weekly bonus
+
+**Why it matters**
+
+- gives social identity early
+- creates a reason to add other players before real co-op exists
+- helps retention without heavy infrastructure
+
+**Dependencies**
+
+- account identity
+- basic backend profile storage
+- support-unit save/load
+
+**Success criteria**
+
+- players can reliably add and remove friends
+- support borrowing is used in meaningful PvE content
+- the system creates visible repeat use without friction
+
+**Explicitly deferred**
+
+- live lobbies
+- live chat
+- guilds/clans
+- matchmaking
+
+### Phase 1 delivery: World bosses and raid-style co-op
+
+**What ships**
+
+- one giant event boss format
+- personal contribution tracking
+- personal rewards plus shared milestone rewards
+- event UI showing boss state, rewards, and reset timing
+
+**Why it matters**
+
+- this is the first real “play together” fantasy
+- it creates event spectacle without needing full real-time co-op
+- it fits the tailed-beast / giant-oni fantasy very naturally
+
+**Dependencies**
+
+- stable boss combat
+- event backend or remote-config support
+- reward ledger integrity
+- anti-abuse contribution tracking
+
+**Success criteria**
+
+- the event is legible and exciting without requiring Discord-level coordination
+- contribution systems reward mechanics, not just whale damage
+- the mode feels social even if some participation is asynchronous
+
+**Explicitly deferred**
+
+- real-time shared movement
+- complex guild tooling
+- ranked competition tied to raid spend
+
+### Phase 2 delivery: Lightweight synchronous co-op
+
+**What ships**
+
+- one live co-op mission type
+- 2–3 player room or matchmaking flow
+- quick emotes / preset callouts
+- server-authoritative turn flow for one contained encounter structure
+
+**Why it matters**
+
+- validates whether the tactical combat loop is actually fun with friends in real time
+- provides a stronger social loop than pure async events
+
+**Dependencies**
+
+- stable turn simulation
+- server arbitration or authoritative co-op state
+- reconnect / timeout handling
+- narrow anti-cheat validation for commands and rewards
+
+**Success criteria**
+
+- a co-op mission can be completed reliably without desync or oppressive latency
+- players understand what their teammates are doing
+- the mode is tactically richer than solo, not just slower
+
+**Explicitly deferred**
+
+- many mission types
+- long-form co-op campaigns
+- complex live communication
+- real-time PvP
+
+### Phase 3 delivery: Asynchronous PvP arena
+
+**What ships**
+
+- defense team setup
+- attack flow against saved defenders
+- seasonal ladder
+- reward brackets
+- separate casual and ranked tracks if possible
+
+**Why it matters**
+
+- gives competitive players an outlet
+- creates meta conversation without the full cost of live PvP
+- fits the current GDD’s defender-behavior concept
+
+**Dependencies**
+
+- defense AI serialization rules
+- anti-stall guardrails
+- ladder reset logic
+- replay, battle-log, or review tooling
+
+**Success criteria**
+
+- players feel that losses are understandable
+- one or two new units do not immediately invalidate the whole ladder
+- the mode stays readable and does not require a guide for basic participation
+
+**Explicitly deferred**
+
+- live head-to-head duels
+- complex ban/pick drafting
+- clan wars
+
+### Phase 4 delivery: Clans / guilds
+
+**What ships**
+
+- clan creation and membership
+- shared mission board or raid milestones
+- identity layer such as badges, banners, or titles
+- simple async communication or noticeboard
+
+**Why it matters**
+
+- gives the social ecosystem structure
+- increases stickiness for raids and event participation
+- creates prestige without needing PvP to carry everything
+
+**Dependencies**
+
+- functioning co-op or raid content
+- profile and progression persistence
+- moderation/admin controls
+
+**Success criteria**
+
+- clans have meaningful reasons to exist without becoming mandatory
+- players can benefit from belonging to a clan without feeling punished for missing chores
+- social identity improves retention instead of creating burnout
+
+**Explicitly deferred**
+
+- massive permanent clan buffs
+- mandatory donation economies
+- high-maintenance live chat
+- guild-vs-guild warfare
+
+### Phase 5 delivery: Optional real-time competitive systems
+
+**What ships**
+
+- only if justified later
+- likely a limited real-time competitive mode with narrow map and ruleset scope
+
+**Why it matters**
+
+- this is the highest-risk online feature and should only exist if earlier phases prove the game can support it
+
+**Dependencies**
+
+- stable operations
+- strong anti-cheat
+- clear balance governance
+- proven audience demand
+
+**Success criteria**
+
+- the mode adds prestige and excitement without destabilizing the rest of the game
+
+**Explicitly deferred unless proven necessary**
+
+- esports ambition
+- deeply monetization-linked ranked ecosystems
+- high-frequency live tournament operations
+
+## Phase gates: how to decide whether to move forward
+
+Do not advance because a feature sounds cool.
+Advance because the previous layer is healthy.
+
+### Gate to leave Phase 0
+
+- support units are used regularly
+- social identity does not feel fake or vestigial
+- backend profile basics are stable
+
+### Gate to leave Phase 1
+
+- boss events are fun and understandable
+- contribution scoring feels fair
+- reward integrity and event ops are stable
+
+### Gate to leave Phase 2
+
+- live co-op works consistently on real devices
+- team play feels better than solo, not merely more complicated
+- server cost and operational burden are acceptable
+
+### Gate to leave Phase 3
+
+- async PvP is understandable and not obviously pay-to-win on day one
+- defense AI is reliable
+- balance patching cadence is established
+
+### Gate to leave Phase 4
+
+- clans have meaningful use without becoming mandatory labor
+- moderation and social tooling are sufficient
+- raid and social participation benefit from clan identity
+
 ## World bosses: recommended structure
 
 This is where `Shogun` can deliver giant, memorable spectacle safely.
