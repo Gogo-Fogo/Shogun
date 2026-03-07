@@ -32,6 +32,7 @@ docs/
     art-002-sprite-production-pipeline.md
     art-003-unity-2d-import-and-animation-standards.md
     art-004-asset-provenance-and-source-tracking.md
+    art-005-character-collection-and-fantasy-strategy.md
   recruiter/
     doc-data-001-unity-mobile-gacha-rpg-data-collection-and-compliance.pdf
     doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.pdf
@@ -69,6 +70,7 @@ For most tasks:
 | `DOC-OPS-004` | PixelLab evaluation and sprite production workflow | `ai/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md` | No recruiter PDF in this folder | Operational art-tooling note | Use for PixelLab fit, subscription vs API choice, sprite workflow, animation-size guidance, and AI-assisted art production boundaries. |
 | `DOC-OPS-005` | March 2026 repo modernization retrospective | `ai/doc-ops-005-march-2026-repo-modernization-retrospective.md` | No recruiter PDF in this folder | Operational change log | Use when the question is what changed in the March 7, 2026 cleanup/tooling batch and why those pushed commits were structured that way. |
 | `ART-001` | Style bible and visual targets | `art/art-001-style-bible-and-visual-targets.md` | No recruiter PDF in this folder | Primary art-direction note | Use first for silhouette rules, palette direction, detail limits, and gameplay readability targets. |
+| `ART-005` | Character collection and fantasy strategy | `art/art-005-character-collection-and-fantasy-strategy.md` | No recruiter PDF in this folder | Primary collection-strategy note | Use for collectible fantasy, roster pillars, battle-vs-presentation art lanes, and variant planning. |
 | `ART-002` | Sprite production pipeline | `art/art-002-sprite-production-pipeline.md` | No recruiter PDF in this folder | Primary art workflow note | Use for the bounded PixelLab-to-Aseprite-to-Unity production flow and trial/pass-fail rules. |
 | `ART-003` | Unity 2D import and animation standards | `art/art-003-unity-2d-import-and-animation-standards.md` | No recruiter PDF in this folder | Primary import standard | Use for `.aseprite` import, animation tags, frame-budget targets, and gameplay-facing sprite standards. |
 | `ART-004` | Asset provenance and source tracking | `art/art-004-asset-provenance-and-source-tracking.md` | No recruiter PDF in this folder | Primary provenance note | Use for generated-art traceability, manual-edit tracking, and shipped-asset metadata requirements. |
@@ -117,21 +119,23 @@ For most tasks:
 
 ### AI-assisted sprite production and PixelLab workflow
 1. `ART-001`
-2. `ART-002`
-3. `ART-003`
-4. `ART-004`
-5. `DOC-OPS-004`
-6. `DOC-LEGAL-001`
-7. `DOC-LEGAL-002`
-8. `DOC-OPS-002` if MCP integration matters
+2. `ART-005`
+3. `ART-002`
+4. `ART-003`
+5. `ART-004`
+6. `DOC-OPS-004`
+7. `DOC-LEGAL-001`
+8. `DOC-LEGAL-002`
+9. `DOC-OPS-002` if MCP integration matters
 
 ### Art direction, sprite import, and provenance
 1. `ART-001`
-2. `ART-002`
-3. `ART-003`
-4. `ART-004`
-5. `DOC-OPS-004`
-6. `DOC-LEGAL-001`
+2. `ART-005`
+3. `ART-002`
+4. `ART-003`
+5. `ART-004`
+6. `DOC-OPS-004`
+7. `DOC-LEGAL-001`
 
 ### Legal, compliance, and AI-asset risk
 1. `DOC-LEGAL-001`
@@ -191,13 +195,14 @@ Open:
 ### Pixel art workflow, PixelLab, and AI-generated sprite production
 Open:
 1. `ART-001`
-2. `ART-002`
-3. `ART-003`
-4. `ART-004`
-5. `DOC-OPS-004`
-6. `DOC-LEGAL-001`
-7. `DOC-LEGAL-002`
-8. `DOC-OPS-002` if MCP integration or coding-assistant setup matters
+2. `ART-005`
+3. `ART-002`
+4. `ART-003`
+5. `ART-004`
+6. `DOC-OPS-004`
+7. `DOC-LEGAL-001`
+8. `DOC-LEGAL-002`
+9. `DOC-OPS-002` if MCP integration or coding-assistant setup matters
 
 ### Telemetry, event schemas, consent, and retention
 Open:

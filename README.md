@@ -147,6 +147,9 @@ The character system implements core mechanics inspired by Naruto Blazing:
 - **[Style Bible & Visual Targets](docs/art/art-001-style-bible-and-visual-targets.md)**
   The current art-direction note for silhouette rules, palette discipline, detail limits, and gameplay readability.
 
+- **[Character Collection & Fantasy Strategy](docs/art/art-005-character-collection-and-fantasy-strategy.md)**
+  The strategy note for collectible fantasy, roster pillars, battle-vs-presentation art lanes, and how popularity/variants should shape the cast.
+
 - **[Sprite Production Pipeline](docs/art/art-002-sprite-production-pipeline.md)**
   The production workflow for turning PixelLab output into cleaned, reviewable game assets.
 

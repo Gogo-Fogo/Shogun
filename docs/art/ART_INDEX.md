@@ -14,11 +14,13 @@
 
 1. [`art-001-style-bible-and-visual-targets.md`](./art-001-style-bible-and-visual-targets.md)
    - visual targets, silhouette rules, palette direction, and camera/readability goals
-2. [`art-002-sprite-production-pipeline.md`](./art-002-sprite-production-pipeline.md)
+2. [`art-005-character-collection-and-fantasy-strategy.md`](./art-005-character-collection-and-fantasy-strategy.md)
+   - research-backed note on collectible fantasy, roster pillars, battle-vs-presentation art lanes, and variant planning
+3. [`art-002-sprite-production-pipeline.md`](./art-002-sprite-production-pipeline.md)
    - the actual production workflow from generation through cleanup and review
-3. [`art-003-unity-2d-import-and-animation-standards.md`](./art-003-unity-2d-import-and-animation-standards.md)
+4. [`art-003-unity-2d-import-and-animation-standards.md`](./art-003-unity-2d-import-and-animation-standards.md)
    - Unity import, `.aseprite` handling, tags, clip expectations, and gameplay-facing standards
-4. [`art-004-asset-provenance-and-source-tracking.md`](./art-004-asset-provenance-and-source-tracking.md)
+5. [`art-004-asset-provenance-and-source-tracking.md`](./art-004-asset-provenance-and-source-tracking.md)
    - provenance rules, metadata, and legal-traceability handling
 
 ## Companion docs outside this folder
@@ -33,11 +35,12 @@
 ## Default order for art-production questions
 
 1. `ART-001`
-2. `ART-002`
-3. `ART-003`
-4. `ART-004`
-5. `DOC-OPS-004`
-6. `DOC-LEGAL-001`
+2. `ART-005`
+3. `ART-002`
+4. `ART-003`
+5. `ART-004`
+6. `DOC-OPS-004`
+7. `DOC-LEGAL-001`
 
 ## Rule for future updates
 
