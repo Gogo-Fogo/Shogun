@@ -25,10 +25,13 @@ Working checklist for reducing AI-assisted file-loss risk on `Shogun`.
 - [x] Choose a nightly external-drive backup target
   - Selected target: `E:\Backups\Shogun` on `TheBigOne` (`G-TECH ArmorATD`)
   - Goal: versioned backup on an SSD/HDD that is disconnected when not actively backing up.
-- [ ] Choose an off-site versioned backup
-  - Goal: restore-capable cloud or second-machine copy, not plain sync only.
-- [ ] Run one restore drill
-  - Goal: prove that at least one deleted file or folder can be recovered cleanly.
+- [ ] Choose and configure an off-site versioned backup
+  - Recommended default: `Backblaze Personal Backup` with at least `One Year Extended Version History`.
+  - Alternative if already paying for it: `OneDrive` as a supplementary versioned copy, not the only off-site layer.
+- [x] Run one restore drill
+  - Completed on `2026-03-07`.
+  - Restored `README.md` from `E:\Backups\Shogun\20260307-135329_Shogun\README.md` to `G:\Workspace\Unity\Projects\Shogun\_Generated\RestoreDrill\20260307\README.md`.
+  - Verification: source and restored `SHA-256` matched.
 
 ## Not action items
 

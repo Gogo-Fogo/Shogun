@@ -123,6 +123,23 @@ Backup 3: off-site versioned copy
 - use a cloud or second-machine backup with version history
 - do not rely on plain sync alone; versioned restore matters
 
+Recommended default for this machine:
+
+- use `Backblaze Personal Backup` as the off-site layer
+- enable at least `One Year Extended Version History`
+- if the repo or other important data lives on an external drive, keep that drive connected often enough for the backup agent to see it
+
+Why this is the current recommendation:
+
+- it is purpose-built backup, not just sync
+- it supports connected external drives on the protected computer
+- it keeps deleted or changed file history, with one-year retention available
+
+Acceptable secondary option:
+
+- `OneDrive` can be a useful supplementary versioned copy if you already pay for `Microsoft 365`
+- do not treat OneDrive sync alone as the only off-site backup for this repo
+
 ## Recommended cadence
 
 Do not treat backups as a weekly ritual only. Use both `GitHub` and `Backups` on different rhythms for different failure modes.
@@ -223,8 +240,14 @@ Done:
 
 Pending:
 
-- choose an off-site versioned backup
-- run one real restore drill
+- choose and configure an off-site versioned backup
+
+Done after first live backup:
+
+- one real restore drill completed on `2026-03-07`
+- restored `README.md` from `E:\Backups\Shogun\20260307-135329_Shogun\README.md`
+- restore target: `G:\Workspace\Unity\Projects\Shogun\_Generated\RestoreDrill\20260307\README.md`
+- verification: restored file `SHA-256` matched the backup source
 
 ## Decision for now
 
