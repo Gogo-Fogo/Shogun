@@ -144,13 +144,16 @@ The character system implements core mechanics inspired by Naruto Blazing:
 - **[Art Documentation Index](docs/art/ART_INDEX.md)**
   Routing file for production-facing art standards, including style rules, sprite workflow, Unity import expectations, and provenance tracking.
 
+- **[Design Documentation Index](docs/design/DESIGN_INDEX.md)**
+  Routing file for cross-disciplinary roster identity, world-pillar, combat-identity, and collection-planning notes.
+
 - **[Style Bible & Visual Targets](docs/art/art-001-style-bible-and-visual-targets.md)**
   The current art-direction note for silhouette rules, palette discipline, detail limits, and gameplay readability.
 
-- **[Character Collection & Fantasy Strategy](docs/art/art-005-character-collection-and-fantasy-strategy.md)**
+- **[Character Collection & Fantasy Strategy](docs/design/design-001-character-collection-and-fantasy-strategy.md)**
   The strategy note for collectible fantasy, roster pillars, battle-vs-presentation art lanes, and how popularity/variants should shape the cast.
 
-- **[World Pillars & Combat Identity Framework](docs/art/art-007-world-pillars-and-combat-identity-framework.md)**
+- **[World Pillars & Combat Identity Framework](docs/design/design-002-world-pillars-and-combat-identity-framework.md)**
   The structural note for faction pillars, elemental affinity, weapon families, martial schools, and how those layers combine into a coherent character identity.
 
 - **[Sex Appeal & Damage-Art Policy](docs/art/art-006-sex-appeal-and-damage-art-policy.md)**

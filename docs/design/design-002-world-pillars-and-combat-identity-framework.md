@@ -1,6 +1,6 @@
-# ART-007: World Pillars and Combat Identity Framework
+# DESIGN-002: World Pillars and Combat Identity Framework
 
-**Summary:** Working structure for how `Shogun` should organize factions, elemental affinity, weapon families, martial schools, and collectible identity without flattening the roster into generic classes.
+**Summary:** Working cross-disciplinary structure for how `Shogun` should organize factions, elemental affinity, weapon families, martial schools, and collectible identity without flattening the roster into generic classes.
 
 ## Purpose
 
@@ -474,3 +474,11 @@ When planning a new important unit, define the following before generating art o
 5. collectible fantasy
 
 If one of those fields is vague, the character is still under-designed.
+
+## Related documents
+
+- `DESIGN-001` for collectible fantasy, variant value, and battle-vs-presentation character lanes
+- `ART-001` for silhouette, palette, and readability constraints
+- `ART-006` for sex appeal, damage-art, and safe fanservice boundaries
+- `DOC-GDD-001` for product-scope truth
+- `DOC-REF-001` for reference patterns only

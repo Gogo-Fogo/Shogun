@@ -154,7 +154,7 @@ This follow-up commit translated the PixelLab, gacha-art, and collection-value d
 
 Main outcomes:
 
-- added [`art-005-character-collection-and-fantasy-strategy.md`](../art/art-005-character-collection-and-fantasy-strategy.md)
+- added what is now [`design-001-character-collection-and-fantasy-strategy.md`](../design/design-001-character-collection-and-fantasy-strategy.md)
 - formalized the split between gameplay-facing battle art and collection-facing presentation art
 - documented roster-pillar planning, collectible fantasy, and variant potential as explicit design rules
 - updated the art router in [`ART_INDEX.md`](../art/ART_INDEX.md)
@@ -185,7 +185,7 @@ After this batch, the intended workflow is:
 - [`doc-ops-003-ai-workspace-safety-and-backup-plan.md`](./doc-ops-003-ai-workspace-safety-and-backup-plan.md)
 - [`doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md`](./doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)
 - [`ART_INDEX.md`](../art/ART_INDEX.md)
-- [`art-005-character-collection-and-fantasy-strategy.md`](../art/art-005-character-collection-and-fantasy-strategy.md)
+- [`design-001-character-collection-and-fantasy-strategy.md`](../design/design-001-character-collection-and-fantasy-strategy.md)
 - [`PROJECT_CONTEXT_INDEX.md`](../PROJECT_CONTEXT_INDEX.md)
 - [`README.md`](../../README.md)
 

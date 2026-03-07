@@ -1,6 +1,6 @@
-# ART-005: Character Collection and Fantasy Strategy
+# DESIGN-001: Character Collection and Fantasy Strategy
 
-**Summary:** Research-backed strategy note for making `Shogun` characters desirable to collect, not just readable to play.
+**Summary:** Research-backed cross-disciplinary note for making `Shogun` characters desirable to collect, not just readable to play.
 
 ## Purpose
 
@@ -309,6 +309,14 @@ Follow:
 - `ART-004` for provenance and source tracking
 - `DOC-LEGAL-001` for AI-asset risk and human-authorship constraints
 - `DOC-OPS-004` for PixelLab operating boundaries
+
+## Related documents
+
+- `DESIGN-002` for world pillars, elements, weapon families, and martial schools
+- `ART-001` for the visual target, silhouette rules, and palette discipline
+- `ART-006` for sex appeal, damage-art, and fanservice boundaries
+- `DOC-GDD-001` for overall product-scope truth
+- `DOC-REF-001` for roster/combat inspiration only
 
 ## Sources
 

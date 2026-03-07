@@ -5,7 +5,6 @@
 ## Use this folder when the question is:
 
 - what visual direction `Shogun` should follow
-- how world pillars, elements, weapons, and martial schools should shape the roster
 - how PixelLab output should be cleaned and productionized
 - what sprite sizes, frame budgets, and animation tags should be used
 - how `.aseprite` files should move into Unity
@@ -15,21 +14,23 @@
 
 1. [`art-001-style-bible-and-visual-targets.md`](./art-001-style-bible-and-visual-targets.md)
    - visual targets, silhouette rules, palette direction, and camera/readability goals
-2. [`art-005-character-collection-and-fantasy-strategy.md`](./art-005-character-collection-and-fantasy-strategy.md)
-   - research-backed note on collectible fantasy, roster pillars, battle-vs-presentation art lanes, and variant planning
-3. [`art-007-world-pillars-and-combat-identity-framework.md`](./art-007-world-pillars-and-combat-identity-framework.md)
-   - world pillars, elemental affinity, weapon families, martial schools, and how those layers stack into roster identity
-4. [`art-002-sprite-production-pipeline.md`](./art-002-sprite-production-pipeline.md)
+2. [`art-002-sprite-production-pipeline.md`](./art-002-sprite-production-pipeline.md)
    - the actual production workflow from generation through cleanup and review
-5. [`art-003-unity-2d-import-and-animation-standards.md`](./art-003-unity-2d-import-and-animation-standards.md)
+3. [`art-003-unity-2d-import-and-animation-standards.md`](./art-003-unity-2d-import-and-animation-standards.md)
    - Unity import, `.aseprite` handling, tags, clip expectations, and gameplay-facing standards
-6. [`art-006-sex-appeal-and-damage-art-policy.md`](./art-006-sex-appeal-and-damage-art-policy.md)
+4. [`art-006-sex-appeal-and-damage-art-policy.md`](./art-006-sex-appeal-and-damage-art-policy.md)
    - boundaries for sex appeal, FEH-style damage art, and what battle animation fanservice is too risky
-7. [`art-004-asset-provenance-and-source-tracking.md`](./art-004-asset-provenance-and-source-tracking.md)
+5. [`art-004-asset-provenance-and-source-tracking.md`](./art-004-asset-provenance-and-source-tracking.md)
    - provenance rules, metadata, and legal-traceability handling
 
 ## Companion docs outside this folder
 
+- [`../design/DESIGN_INDEX.md`](../design/DESIGN_INDEX.md)
+  - use first when the question is roster identity, world pillars, elements, martial schools, or collectible fantasy
+- [`../design/design-001-character-collection-and-fantasy-strategy.md`](../design/design-001-character-collection-and-fantasy-strategy.md)
+  - use for collectible fantasy, battle-vs-presentation lanes, and variant planning
+- [`../design/design-002-world-pillars-and-combat-identity-framework.md`](../design/design-002-world-pillars-and-combat-identity-framework.md)
+  - use for world pillars, elemental affinity, weapon families, martial schools, and roster identity stacking
 - [`../ai/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md`](../ai/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)
   - use first when the question is whether PixelLab is worth using at all
 - [`../ai/doc-legal-001-ai-generated-assets-legal-considerations.md`](../ai/doc-legal-001-ai-generated-assets-legal-considerations.md)
@@ -40,8 +41,8 @@
 ## Default order for art-production questions
 
 1. `ART-001`
-2. `ART-005`
-3. `ART-007`
+2. `DESIGN-001`
+3. `DESIGN-002`
 4. `ART-002`
 5. `ART-006`
 6. `ART-003`
