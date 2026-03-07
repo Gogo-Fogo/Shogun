@@ -131,7 +131,7 @@ Chosen off-site layer for now:
 
 Recommended Google Drive target shape:
 
-- `C:\Users\georg\Google Drive\Backups\Shogun`
+- `C:\Users\georg\Google Drive Backup Mirror\Shogun`
 
 Repo helper for this:
 
@@ -249,7 +249,7 @@ Done:
 
 Pending:
 
-- configure the Google Drive mirror destination and use it consistently
+- keep using the Google Drive mirror on the documented cadence
 
 Done after first live backup:
 
@@ -257,6 +257,8 @@ Done after first live backup:
 - restored `README.md` from `E:\Backups\Shogun\20260307-135329_Shogun\README.md`
 - restore target: `G:\Workspace\Unity\Projects\Shogun\_Generated\RestoreDrill\20260307\README.md`
 - verification: restored file `SHA-256` matched the backup source
+- Google Drive mirror destination configured at `C:\Users\georg\Google Drive Backup Mirror\Shogun`
+- first live off-site mirror completed on `2026-03-07` for snapshot `20260307-135329_Shogun`
 
 ## Decision for now
 

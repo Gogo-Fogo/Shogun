@@ -28,8 +28,9 @@ Working checklist for reducing AI-assisted file-loss risk on `Shogun`.
 - [x] Choose an off-site backup approach
   - Chosen approach: mirror selected snapshots into a Google Drive-synced folder instead of syncing the live repo.
   - Repo helper: [`tools/backup/Mirror-ShogunBackupToGoogleDrive.ps1`](./tools/backup/Mirror-ShogunBackupToGoogleDrive.ps1)
-- [ ] Configure and use the Google Drive mirror destination
-  - Recommended target shape: `C:\Users\georg\Google Drive\Backups\Shogun`
+- [x] Configure and use the Google Drive mirror destination
+  - Actual target: `C:\Users\georg\Google Drive Backup Mirror\Shogun`
+  - First live mirror completed on `2026-03-07` for snapshot `20260307-135329_Shogun`.
   - Goal: keep `E:\Backups\Shogun` as the primary local backup and Google Drive as the off-site copy.
 - [x] Run one restore drill
   - Completed on `2026-03-07`.
