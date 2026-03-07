@@ -20,6 +20,7 @@ docs/
     doc-ops-002-unity-mcp-bridge-setup-and-usage.md
     doc-ops-003-ai-workspace-safety-and-backup-plan.md
     doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md
+    doc-ops-005-march-2026-repo-modernization-retrospective.md
     doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.md
     doc-ref-002-naruto-ninja-blazing-success-failure-and-shutdown-analysis.md
     doc-ref-003-one-piece-treasure-cruise-analysis.md
@@ -60,6 +61,7 @@ For most tasks:
 | `DOC-OPS-002` | Unity MCP bridge setup and operating rules | `ai/doc-ops-002-unity-mcp-bridge-setup-and-usage.md` | No recruiter PDF in this folder | Operational workflow note | Use for Codex/Claude live Unity-editor access, local MCP setup, safe usage boundaries, and exporter vs. MCP guidance. |
 | `DOC-OPS-003` | AI workspace safety and backup plan | `ai/doc-ops-003-ai-workspace-safety-and-backup-plan.md` | No recruiter PDF in this folder | Operational safety note | Use for repo scope rules, Codex/Claude safety posture, backup layers, and recovery workflow after accidental deletion. |
 | `DOC-OPS-004` | PixelLab evaluation and sprite production workflow | `ai/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md` | No recruiter PDF in this folder | Operational art-tooling note | Use for PixelLab fit, subscription vs API choice, sprite workflow, animation-size guidance, and AI-assisted art production boundaries. |
+| `DOC-OPS-005` | March 2026 repo modernization retrospective | `ai/doc-ops-005-march-2026-repo-modernization-retrospective.md` | No recruiter PDF in this folder | Operational change log | Use when the question is what changed in the March 7, 2026 cleanup/tooling batch and why those pushed commits were structured that way. |
 | `DOC-LEGAL-001` | Legal and platform-policy risk overview | `ai/doc-legal-001-ai-generated-assets-legal-considerations.md` | `recruiter/doc-legal-001-ai-generated-assets-legal-considerations.pdf` | Primary legal risk briefing | Use for AI asset usage, privacy, loot box compliance, store-policy risk, and IP questions. |
 | `DOC-LEGAL-002` | Legal backlog and next-step roadmap | `ai/doc-legal-002-ai-assets-legal-and-compliance-roadmap.md` | `recruiter/doc-legal-002-ai-assets-legal-and-compliance-roadmap.pdf` | Legal roadmap | Use when prioritizing follow-up research, counsel review, and unresolved compliance work. |
 | `DOC-LEGAL-003` | ToS, EULA, and user-facing legal drafting | `ai/doc-legal-003-tos-eula-and-user-facing-legal-documents.md` | `recruiter/doc-legal-003-tos-eula-and-user-facing-legal-documents.pdf` | Primary legal drafting guide | Use first when drafting or revising terms, EULA structure, clickwrap, and acceptance logging. |
@@ -91,15 +93,17 @@ For most tasks:
 ### AI tooling, Unity editor introspection, and MCP workflow
 1. `DOC-OPS-002`
 2. `DOC-OPS-003`
-3. `DOC-OPS-004`
-4. `DOC-ENG-002`
-5. `DOC-LEGAL-001`
-6. `DOC-LEGAL-002`
+3. `DOC-OPS-005`
+4. `DOC-OPS-004`
+5. `DOC-ENG-002`
+6. `DOC-LEGAL-001`
+7. `DOC-LEGAL-002`
 
 ### AI workspace safety, repo scope, and backup recovery
 1. `DOC-OPS-003`
-2. `DOC-OPS-002`
-3. `DOC-LEGAL-001`
+2. `DOC-OPS-005`
+3. `DOC-OPS-002`
+4. `DOC-LEGAL-001`
 
 ### AI-assisted sprite production and PixelLab workflow
 1. `DOC-OPS-004`
@@ -150,15 +154,17 @@ Open:
 Open:
 1. `DOC-OPS-002`
 2. `DOC-OPS-003`
-3. `DOC-OPS-004`
-4. `DOC-ENG-002`
-5. `DOC-LEGAL-001`
+3. `DOC-OPS-005`
+4. `DOC-OPS-004`
+5. `DOC-ENG-002`
+6. `DOC-LEGAL-001`
 
 ### AI safety, repo boundaries, and backup recovery
 Open:
 1. `DOC-OPS-003`
-2. `DOC-OPS-002`
-3. `DOC-LEGAL-001`
+2. `DOC-OPS-005`
+3. `DOC-OPS-002`
+4. `DOC-LEGAL-001`
 
 ### Pixel art workflow, PixelLab, and AI-generated sprite production
 Open:

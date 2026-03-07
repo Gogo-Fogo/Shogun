@@ -141,6 +141,9 @@ The character system implements core mechanics inspired by Naruto Blazing:
 - **[PixelLab Evaluation & Sprite Workflow](docs/ai/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)**  
   The canonical note for whether PixelLab fits `Shogun`, when to use subscription vs API, how it fits Codex/Claude/Unity MCP, and the recommended first sprite-production workflow.
 
+- **[March 2026 Repo Modernization Retrospective](docs/ai/doc-ops-005-march-2026-repo-modernization-retrospective.md)**  
+  Retroactive explanation for the March 7, 2026 cleanup/tooling batch, including the earlier pushed commits that landed without descriptive bodies.
+
 - **[Naruto Blazing Reference](docs/ai/doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.md)**  
   A reference document analyzing Naruto Blazing for inspiration and comparison only.
 
