@@ -141,6 +141,21 @@ The character system implements core mechanics inspired by Naruto Blazing:
 - **[PixelLab Evaluation & Sprite Workflow](docs/ai/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)**  
   The canonical note for whether PixelLab fits `Shogun`, when to use subscription vs API, how it fits Codex/Claude/Unity MCP, and the recommended first sprite-production workflow.
 
+- **[Art Documentation Index](docs/art/ART_INDEX.md)**
+  Routing file for production-facing art standards, including style rules, sprite workflow, Unity import expectations, and provenance tracking.
+
+- **[Style Bible & Visual Targets](docs/art/art-001-style-bible-and-visual-targets.md)**
+  The current art-direction note for silhouette rules, palette discipline, detail limits, and gameplay readability.
+
+- **[Sprite Production Pipeline](docs/art/art-002-sprite-production-pipeline.md)**
+  The production workflow for turning PixelLab output into cleaned, reviewable game assets.
+
+- **[Unity 2D Import & Animation Standards](docs/art/art-003-unity-2d-import-and-animation-standards.md)**
+  Standards for `.aseprite` import, tag naming, frame-budget targets, and gameplay-facing animation expectations.
+
+- **[Asset Provenance & Source Tracking](docs/art/art-004-asset-provenance-and-source-tracking.md)**
+  The provenance note for tracking generated sources, manual edits, and shipped runtime assets.
+
 - **[March 2026 Repo Modernization Retrospective](docs/ai/doc-ops-005-march-2026-repo-modernization-retrospective.md)**  
   Retroactive explanation for the March 7, 2026 cleanup/tooling batch, including the earlier pushed commits that landed without descriptive bodies.
 

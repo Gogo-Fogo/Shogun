@@ -26,6 +26,12 @@ docs/
     doc-ref-003-one-piece-treasure-cruise-analysis.md
     doc-ref-004-fire-emblem-heroes-success-and-drawbacks.md
     doc-ref-004-fire-emblem-heroes-success-and-drawbacks.docx
+  art/
+    ART_INDEX.md
+    art-001-style-bible-and-visual-targets.md
+    art-002-sprite-production-pipeline.md
+    art-003-unity-2d-import-and-animation-standards.md
+    art-004-asset-provenance-and-source-tracking.md
   recruiter/
     doc-data-001-unity-mobile-gacha-rpg-data-collection-and-compliance.pdf
     doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.pdf
@@ -46,7 +52,7 @@ Do not scan the whole folder by default.
 For most tasks:
 
 1. Start with this index.
-2. Prefer `ai/` documents first.
+2. Prefer `ai/` documents first unless the task is specifically art direction, sprite production, Unity import standards, or asset provenance.
 3. Open the matching PDF in `recruiter/` only if formatting, page fidelity, or missing detail matters.
 
 ## Canonical document catalog
@@ -62,6 +68,10 @@ For most tasks:
 | `DOC-OPS-003` | AI workspace safety and backup plan | `ai/doc-ops-003-ai-workspace-safety-and-backup-plan.md` | No recruiter PDF in this folder | Operational safety note | Use for repo scope rules, Codex/Claude safety posture, backup layers, and recovery workflow after accidental deletion. |
 | `DOC-OPS-004` | PixelLab evaluation and sprite production workflow | `ai/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md` | No recruiter PDF in this folder | Operational art-tooling note | Use for PixelLab fit, subscription vs API choice, sprite workflow, animation-size guidance, and AI-assisted art production boundaries. |
 | `DOC-OPS-005` | March 2026 repo modernization retrospective | `ai/doc-ops-005-march-2026-repo-modernization-retrospective.md` | No recruiter PDF in this folder | Operational change log | Use when the question is what changed in the March 7, 2026 cleanup/tooling batch and why those pushed commits were structured that way. |
+| `ART-001` | Style bible and visual targets | `art/art-001-style-bible-and-visual-targets.md` | No recruiter PDF in this folder | Primary art-direction note | Use first for silhouette rules, palette direction, detail limits, and gameplay readability targets. |
+| `ART-002` | Sprite production pipeline | `art/art-002-sprite-production-pipeline.md` | No recruiter PDF in this folder | Primary art workflow note | Use for the bounded PixelLab-to-Aseprite-to-Unity production flow and trial/pass-fail rules. |
+| `ART-003` | Unity 2D import and animation standards | `art/art-003-unity-2d-import-and-animation-standards.md` | No recruiter PDF in this folder | Primary import standard | Use for `.aseprite` import, animation tags, frame-budget targets, and gameplay-facing sprite standards. |
+| `ART-004` | Asset provenance and source tracking | `art/art-004-asset-provenance-and-source-tracking.md` | No recruiter PDF in this folder | Primary provenance note | Use for generated-art traceability, manual-edit tracking, and shipped-asset metadata requirements. |
 | `DOC-LEGAL-001` | Legal and platform-policy risk overview | `ai/doc-legal-001-ai-generated-assets-legal-considerations.md` | `recruiter/doc-legal-001-ai-generated-assets-legal-considerations.pdf` | Primary legal risk briefing | Use for AI asset usage, privacy, loot box compliance, store-policy risk, and IP questions. |
 | `DOC-LEGAL-002` | Legal backlog and next-step roadmap | `ai/doc-legal-002-ai-assets-legal-and-compliance-roadmap.md` | `recruiter/doc-legal-002-ai-assets-legal-and-compliance-roadmap.pdf` | Legal roadmap | Use when prioritizing follow-up research, counsel review, and unresolved compliance work. |
 | `DOC-LEGAL-003` | ToS, EULA, and user-facing legal drafting | `ai/doc-legal-003-tos-eula-and-user-facing-legal-documents.md` | `recruiter/doc-legal-003-tos-eula-and-user-facing-legal-documents.pdf` | Primary legal drafting guide | Use first when drafting or revising terms, EULA structure, clickwrap, and acceptance logging. |
@@ -106,10 +116,22 @@ For most tasks:
 4. `DOC-LEGAL-001`
 
 ### AI-assisted sprite production and PixelLab workflow
-1. `DOC-OPS-004`
-2. `DOC-LEGAL-001`
-3. `DOC-LEGAL-002`
-4. `DOC-OPS-002` if MCP integration matters
+1. `ART-001`
+2. `ART-002`
+3. `ART-003`
+4. `ART-004`
+5. `DOC-OPS-004`
+6. `DOC-LEGAL-001`
+7. `DOC-LEGAL-002`
+8. `DOC-OPS-002` if MCP integration matters
+
+### Art direction, sprite import, and provenance
+1. `ART-001`
+2. `ART-002`
+3. `ART-003`
+4. `ART-004`
+5. `DOC-OPS-004`
+6. `DOC-LEGAL-001`
 
 ### Legal, compliance, and AI-asset risk
 1. `DOC-LEGAL-001`
@@ -168,10 +190,14 @@ Open:
 
 ### Pixel art workflow, PixelLab, and AI-generated sprite production
 Open:
-1. `DOC-OPS-004`
-2. `DOC-LEGAL-001`
-3. `DOC-LEGAL-002`
-4. `DOC-OPS-002` if MCP integration or coding-assistant setup matters
+1. `ART-001`
+2. `ART-002`
+3. `ART-003`
+4. `ART-004`
+5. `DOC-OPS-004`
+6. `DOC-LEGAL-001`
+7. `DOC-LEGAL-002`
+8. `DOC-OPS-002` if MCP integration or coding-assistant setup matters
 
 ### Telemetry, event schemas, consent, and retention
 Open:
@@ -195,6 +221,7 @@ Open:
 ## AI behavior rules
 
 - Prefer `ai/` documents for retrieval speed.
+- Prefer `art/` documents when the task is specifically production-facing art direction, sprite workflow, import rules, or provenance.
 - Use PDFs in `recruiter/` when layout fidelity or exact document presentation matters.
 - Treat Shogun’s own docs as authoritative; treat comparative docs as inspiration and warnings only.
 - Do not copy franchise names, characters, or protected expression from reference docs.
@@ -218,5 +245,6 @@ Do not scan the entire folder by default.
 Prefer ai/ Markdown companions first, then open recruiter/ PDFs only when needed.
 Use DOC-GDD-001 as primary design truth, DOC-ENG-001 and DOC-ENG-002 plus DOC-DATA-001 as implementation truth, DOC-LEGAL-* docs as compliance constraints, and DOC-REF-* docs as inspiration/caution only.
 If live Unity editor state or AI tooling workflow matters, open DOC-OPS-002.
+If the task is art direction or sprite production, open ART_INDEX.md and the ART-* docs first, then DOC-OPS-004.
 If documents conflict, follow the hierarchy in PROJECT_CONTEXT_INDEX.md and report the conflict explicitly.
 ```
