@@ -9,8 +9,8 @@
 
 **User-supplied authoritative documents used (not tool-citable in this environment; referenced by filename + internal section names):**
 - `recruiter/doc-gdd-001-shogun-flowers-fall-in-blood-game-design-document.pdf` (59 pages; includes detailed sections on systems, monetization, UI flows, production milestones, LiveOps, formulas).  
-- `ai/doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.md` (personal synthesis; explicitly “not official”; used as inspiration analysis and design lessons).  
-- `ai/doc-ref-004-fire-emblem-heroes-success-and-drawbacks.md` and `ai/doc-ref-003-one-piece-treasure-cruise-analysis.md` (secondary market/system essays; used for design risk guardrails and LiveOps caution).
+- `research/doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.md` (personal synthesis; explicitly “not official”; used as inspiration analysis and design lessons).  
+- `research/doc-ref-004-fire-emblem-heroes-success-and-drawbacks.md` and `research/doc-ref-003-one-piece-treasure-cruise-analysis.md` (secondary market/system essays; used for design risk guardrails and LiveOps caution).
 
 **Note on Google Docs:** The project page links to Google Docs for the GDD and systems audit; in this environment, Google Docs often require JavaScript/sign-in and may be partially inaccessible. The **uploaded PDFs are treated as authoritative** for content, while the project page is authoritative for what is publicly claimed and currently implemented. citeturn2view0
 

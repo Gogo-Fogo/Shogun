@@ -123,29 +123,38 @@ The character system implements core mechanics inspired by Naruto Blazing:
 - **[Project Context Index](docs/PROJECT_CONTEXT_INDEX.md)**  
   Start here. This routes the canonical docs and defines document authority.
 
-- **[Canonical GDD](docs/ai/doc-gdd-001-shogun-flowers-fall-in-blood-game-design-document.md)**  
-  The current master design document for gameplay, systems, and product scope.
-
-- **[Engineering Research](docs/ai/doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.md)**  
-  The primary engineering document for platform, backend, content delivery, and production planning.
-
-- **[Runtime Architecture Patterns](docs/ai/doc-eng-002-unity-project-runtime-architecture-patterns.md)**  
-  The canonical Unity-side implementation note for module boundaries, combat state flow, and gesture/input architecture.
-
-- **[Unity MCP Workflow](docs/ai/doc-ops-002-unity-mcp-bridge-setup-and-usage.md)**  
-  The canonical note for Codex/Claude Unity-editor access, local MCP setup, safe usage boundaries, and exporter-vs-MCP workflow.
-
-- **[AI Safety & Backup Plan](docs/ai/doc-ops-003-ai-workspace-safety-and-backup-plan.md)**  
-  The canonical note for repo scope rules, Codex/Claude safety posture, backup layers, and recovery steps after accidental local deletion.
-
-- **[PixelLab Evaluation & Sprite Workflow](docs/ai/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)**  
-  The canonical note for whether PixelLab fits `Shogun`, when to use subscription vs API, how it fits Codex/Claude/Unity MCP, and the recommended first sprite-production workflow.
+- **[Design Documentation Index](docs/design/DESIGN_INDEX.md)**
+  Routing file for master game design, cross-disciplinary roster identity, world-pillar, combat-identity, and collection-planning notes.
 
 - **[Art Documentation Index](docs/art/ART_INDEX.md)**
   Routing file for production-facing art standards, including style rules, sprite workflow, Unity import expectations, and provenance tracking.
 
-- **[Design Documentation Index](docs/design/DESIGN_INDEX.md)**
-  Routing file for cross-disciplinary roster identity, world-pillar, combat-identity, and collection-planning notes.
+- **[Operations Documentation Index](docs/ops/OPS_INDEX.md)**
+  Routing file for MCP, backups, repo workflow, PixelLab tooling decisions, and retrospective operational notes.
+
+- **[Legal Documentation Index](docs/legal/LEGAL_INDEX.md)**
+  Routing file for legal, privacy, compliance, telemetry-compliance, and user-facing policy notes.
+
+- **[Research Documentation Index](docs/research/RESEARCH_INDEX.md)**
+  Routing file for engineering studies and comparative/reference analysis.
+
+- **[Canonical GDD](docs/design/doc-gdd-001-shogun-flowers-fall-in-blood-game-design-document.md)**  
+  The current master design document for gameplay, systems, and product scope.
+
+- **[Engineering Research](docs/research/doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.md)**  
+  The primary engineering document for platform, backend, content delivery, and production planning.
+
+- **[Runtime Architecture Patterns](docs/research/doc-eng-002-unity-project-runtime-architecture-patterns.md)**  
+  The canonical Unity-side implementation note for module boundaries, combat state flow, and gesture/input architecture.
+
+- **[Unity MCP Workflow](docs/ops/doc-ops-002-unity-mcp-bridge-setup-and-usage.md)**  
+  The canonical note for Codex/Claude Unity-editor access, local MCP setup, safe usage boundaries, and exporter-vs-MCP workflow.
+
+- **[AI Safety & Backup Plan](docs/ops/doc-ops-003-ai-workspace-safety-and-backup-plan.md)**  
+  The canonical note for repo scope rules, Codex/Claude safety posture, backup layers, and recovery steps after accidental local deletion.
+
+- **[PixelLab Evaluation & Sprite Workflow](docs/ops/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)**  
+  The canonical note for whether PixelLab fits `Shogun`, when to use subscription vs API, how it fits Codex/Claude/Unity MCP, and the recommended first sprite-production workflow.
 
 - **[Style Bible & Visual Targets](docs/art/art-001-style-bible-and-visual-targets.md)**
   The current art-direction note for silhouette rules, palette discipline, detail limits, and gameplay readability.
@@ -168,10 +177,10 @@ The character system implements core mechanics inspired by Naruto Blazing:
 - **[Asset Provenance & Source Tracking](docs/art/art-004-asset-provenance-and-source-tracking.md)**
   The provenance note for tracking generated sources, manual edits, and shipped runtime assets.
 
-- **[March 2026 Repo Modernization Retrospective](docs/ai/doc-ops-005-march-2026-repo-modernization-retrospective.md)**  
+- **[March 2026 Repo Modernization Retrospective](docs/ops/doc-ops-005-march-2026-repo-modernization-retrospective.md)**  
   Retroactive explanation for the March 7, 2026 cleanup/tooling batch, including the earlier pushed commits that landed without descriptive bodies.
 
-- **[Naruto Blazing Reference](docs/ai/doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.md)**  
+- **[Naruto Blazing Reference](docs/research/doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.md)**  
   A reference document analyzing Naruto Blazing for inspiration and comparison only.
 
 ---
@@ -185,7 +194,7 @@ For more details, see the canonical docs under `docs/`. Generated exports are au
   - The `README.md` for project structure, conventions, and architectural patterns.
   - The latest `IMPLEMENTATION_PROGRESS.md` for current project status and next steps.
 - Generated exports, when present, live under timestamped subfolders in `/_Generated/ProjectExport/` and are optional fallback snapshots rather than canonical documentation.
-- If live Unity editor state matters and MCP is available, prefer the documented local Unity MCP workflow in `docs/ai/doc-ops-002-unity-mcp-bridge-setup-and-usage.md` instead of relying on large blind exports.
+- If live Unity editor state matters and MCP is available, prefer the documented local Unity MCP workflow in `docs/ops/doc-ops-002-unity-mcp-bridge-setup-and-usage.md` instead of relying on large blind exports.
 - These are the most important sources of truth. You may review any other part of the project as needed to fully understand the context.
 - Use these as the source of truth for all design, architecture, and implementation decisions.
 - **Do not repeat this process once you have reviewed the files for the current session.**

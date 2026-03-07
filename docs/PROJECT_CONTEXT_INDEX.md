@@ -8,26 +8,9 @@
 docs/
   PROJECT_CONTEXT_INDEX.md
   README.md
-  ai/
-    doc-data-001-unity-mobile-gacha-rpg-data-collection-and-compliance.md
-    doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.md
-    doc-eng-002-unity-project-runtime-architecture-patterns.md
-    doc-gdd-001-shogun-flowers-fall-in-blood-game-design-document.md
-    doc-legal-001-ai-generated-assets-legal-considerations.md
-    doc-legal-002-ai-assets-legal-and-compliance-roadmap.md
-    doc-legal-003-tos-eula-and-user-facing-legal-documents.md
-    doc-ops-001-project-document-and-telemetry-index.md
-    doc-ops-002-unity-mcp-bridge-setup-and-usage.md
-    doc-ops-003-ai-workspace-safety-and-backup-plan.md
-    doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md
-    doc-ops-005-march-2026-repo-modernization-retrospective.md
-    doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.md
-    doc-ref-002-naruto-ninja-blazing-success-failure-and-shutdown-analysis.md
-    doc-ref-003-one-piece-treasure-cruise-analysis.md
-    doc-ref-004-fire-emblem-heroes-success-and-drawbacks.md
-    doc-ref-004-fire-emblem-heroes-success-and-drawbacks.docx
   design/
     DESIGN_INDEX.md
+    doc-gdd-001-shogun-flowers-fall-in-blood-game-design-document.md
     design-001-character-collection-and-fantasy-strategy.md
     design-002-world-pillars-and-combat-identity-framework.md
   art/
@@ -37,6 +20,27 @@ docs/
     art-003-unity-2d-import-and-animation-standards.md
     art-004-asset-provenance-and-source-tracking.md
     art-006-sex-appeal-and-damage-art-policy.md
+  legal/
+    LEGAL_INDEX.md
+    doc-data-001-unity-mobile-gacha-rpg-data-collection-and-compliance.md
+    doc-legal-001-ai-generated-assets-legal-considerations.md
+    doc-legal-002-ai-assets-legal-and-compliance-roadmap.md
+    doc-legal-003-tos-eula-and-user-facing-legal-documents.md
+  ops/
+    OPS_INDEX.md
+    doc-ops-001-project-document-and-telemetry-index.md
+    doc-ops-002-unity-mcp-bridge-setup-and-usage.md
+    doc-ops-003-ai-workspace-safety-and-backup-plan.md
+    doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md
+    doc-ops-005-march-2026-repo-modernization-retrospective.md
+  research/
+    RESEARCH_INDEX.md
+    doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.md
+    doc-eng-002-unity-project-runtime-architecture-patterns.md
+    doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.md
+    doc-ref-002-naruto-ninja-blazing-success-failure-and-shutdown-analysis.md
+    doc-ref-003-one-piece-treasure-cruise-analysis.md
+    doc-ref-004-fire-emblem-heroes-success-and-drawbacks.md
   recruiter/
     doc-data-001-unity-mobile-gacha-rpg-data-collection-and-compliance.pdf
     doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.pdf
@@ -48,6 +52,7 @@ docs/
     doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.pdf
     doc-ref-002-naruto-ninja-blazing-success-failure-and-shutdown-analysis.pdf
     doc-ref-003-one-piece-treasure-cruise-analysis.pdf
+    doc-ref-004-fire-emblem-heroes-success-and-drawbacks.docx
 ```
 
 ## Default operating rule
@@ -57,22 +62,22 @@ Do not scan the whole folder by default.
 For most tasks:
 
 1. Start with this index.
-2. Prefer `ai/` documents first unless the task is specifically roster/world design, art direction, sprite production, Unity import standards, or asset provenance.
+2. Prefer `design/` for product design, roster/world design, and character identity; `art/` for production-facing art rules; `ops/` for tooling and workflow; `legal/` for compliance and policy; and `research/` for engineering and comparative studies.
 3. Open the matching PDF in `recruiter/` only if formatting, page fidelity, or missing detail matters.
 
 ## Canonical document catalog
 
 | ID | Topic | Primary AI path | Recruiter PDF path | Authority | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `DOC-GDD-001` | Shogun product design | `ai/doc-gdd-001-shogun-flowers-fall-in-blood-game-design-document.md` | `recruiter/doc-gdd-001-shogun-flowers-fall-in-blood-game-design-document.pdf` | Primary design truth | Use first for gameplay, UX, progression, monetization, and product scope. |
-| `DOC-ENG-001` | Unity engineering and production architecture | `ai/doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.md` | `recruiter/doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.pdf` | Primary engineering truth | Use first for backend, Unity structure, build pipeline, delivery, and scale-path decisions. |
-| `DOC-ENG-002` | Unity runtime architecture patterns | `ai/doc-eng-002-unity-project-runtime-architecture-patterns.md` | No recruiter PDF in this folder | Supporting engineering authority | Use for client-side code boundaries, state flow, event channels, gesture input flow, and logic/view separation. |
-| `DOC-DATA-001` | Telemetry, analytics, and compliance-aware data collection | `ai/doc-data-001-unity-mobile-gacha-rpg-data-collection-and-compliance.md` | `recruiter/doc-data-001-unity-mobile-gacha-rpg-data-collection-and-compliance.pdf` | Primary telemetry truth | Use first for events, schemas, batching, retention, consent, audit logging. |
-| `DOC-OPS-001` | Implementation artifact inventory | `ai/doc-ops-001-project-document-and-telemetry-index.md` | `recruiter/doc-ops-001-project-document-and-telemetry-index.pdf` | Operational manifest | Use for file outputs, naming, CI artifacts, telemetry deliverables, and legal-document inventory. |
-| `DOC-OPS-002` | Unity MCP bridge setup and operating rules | `ai/doc-ops-002-unity-mcp-bridge-setup-and-usage.md` | No recruiter PDF in this folder | Operational workflow note | Use for Codex/Claude live Unity-editor access, local MCP setup, safe usage boundaries, and exporter vs. MCP guidance. |
-| `DOC-OPS-003` | AI workspace safety and backup plan | `ai/doc-ops-003-ai-workspace-safety-and-backup-plan.md` | No recruiter PDF in this folder | Operational safety note | Use for repo scope rules, Codex/Claude safety posture, backup layers, and recovery workflow after accidental deletion. |
-| `DOC-OPS-004` | PixelLab evaluation and sprite production workflow | `ai/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md` | No recruiter PDF in this folder | Operational art-tooling note | Use for PixelLab fit, subscription vs API choice, sprite workflow, animation-size guidance, and AI-assisted art production boundaries. |
-| `DOC-OPS-005` | March 2026 repo modernization retrospective | `ai/doc-ops-005-march-2026-repo-modernization-retrospective.md` | No recruiter PDF in this folder | Operational change log | Use when the question is what changed in the March 7, 2026 cleanup/tooling batch and why those pushed commits were structured that way. |
+| `DOC-GDD-001` | Shogun product design | `design/doc-gdd-001-shogun-flowers-fall-in-blood-game-design-document.md` | `recruiter/doc-gdd-001-shogun-flowers-fall-in-blood-game-design-document.pdf` | Primary design truth | Use first for gameplay, UX, progression, monetization, and product scope. |
+| `DOC-ENG-001` | Unity engineering and production architecture | `research/doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.md` | `recruiter/doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.pdf` | Primary engineering truth | Use first for backend, Unity structure, build pipeline, delivery, and scale-path decisions. |
+| `DOC-ENG-002` | Unity runtime architecture patterns | `research/doc-eng-002-unity-project-runtime-architecture-patterns.md` | No recruiter PDF in this folder | Supporting engineering authority | Use for client-side code boundaries, state flow, event channels, gesture input flow, and logic/view separation. |
+| `DOC-DATA-001` | Telemetry, analytics, and compliance-aware data collection | `legal/doc-data-001-unity-mobile-gacha-rpg-data-collection-and-compliance.md` | `recruiter/doc-data-001-unity-mobile-gacha-rpg-data-collection-and-compliance.pdf` | Primary telemetry truth | Use first for events, schemas, batching, retention, consent, audit logging. |
+| `DOC-OPS-001` | Implementation artifact inventory | `ops/doc-ops-001-project-document-and-telemetry-index.md` | `recruiter/doc-ops-001-project-document-and-telemetry-index.pdf` | Operational manifest | Use for file outputs, naming, CI artifacts, telemetry deliverables, and legal-document inventory. |
+| `DOC-OPS-002` | Unity MCP bridge setup and operating rules | `ops/doc-ops-002-unity-mcp-bridge-setup-and-usage.md` | No recruiter PDF in this folder | Operational workflow note | Use for Codex/Claude live Unity-editor access, local MCP setup, safe usage boundaries, and exporter vs. MCP guidance. |
+| `DOC-OPS-003` | AI workspace safety and backup plan | `ops/doc-ops-003-ai-workspace-safety-and-backup-plan.md` | No recruiter PDF in this folder | Operational safety note | Use for repo scope rules, Codex/Claude safety posture, backup layers, and recovery workflow after accidental deletion. |
+| `DOC-OPS-004` | PixelLab evaluation and sprite production workflow | `ops/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md` | No recruiter PDF in this folder | Operational art-tooling note | Use for PixelLab fit, subscription vs API choice, sprite workflow, animation-size guidance, and AI-assisted art production boundaries. |
+| `DOC-OPS-005` | March 2026 repo modernization retrospective | `ops/doc-ops-005-march-2026-repo-modernization-retrospective.md` | No recruiter PDF in this folder | Operational change log | Use when the question is what changed in the March 7, 2026 cleanup/tooling batch and why those pushed commits were structured that way. |
 | `DESIGN-001` | Character collection and fantasy strategy | `design/design-001-character-collection-and-fantasy-strategy.md` | No recruiter PDF in this folder | Primary collection-strategy note | Use for collectible fantasy, roster pillars, battle-vs-presentation art lanes, and variant planning. |
 | `DESIGN-002` | World pillars and combat identity framework | `design/design-002-world-pillars-and-combat-identity-framework.md` | No recruiter PDF in this folder | Primary roster-identity note | Use for world pillars, elemental affinity, weapon families, martial schools, and how those layers stack into a character identity. |
 | `ART-001` | Style bible and visual targets | `art/art-001-style-bible-and-visual-targets.md` | No recruiter PDF in this folder | Primary art-direction note | Use first for silhouette rules, palette direction, detail limits, and gameplay readability targets. |
@@ -80,20 +85,21 @@ For most tasks:
 | `ART-006` | Sex appeal and damage-art policy | `art/art-006-sex-appeal-and-damage-art-policy.md` | No recruiter PDF in this folder | Primary fanservice boundary note | Use for sex-appeal limits, FEH-style damage-art interpretation, and what battle animation fanservice is too risky. |
 | `ART-003` | Unity 2D import and animation standards | `art/art-003-unity-2d-import-and-animation-standards.md` | No recruiter PDF in this folder | Primary import standard | Use for `.aseprite` import, animation tags, frame-budget targets, and gameplay-facing sprite standards. |
 | `ART-004` | Asset provenance and source tracking | `art/art-004-asset-provenance-and-source-tracking.md` | No recruiter PDF in this folder | Primary provenance note | Use for generated-art traceability, manual-edit tracking, and shipped-asset metadata requirements. |
-| `DOC-LEGAL-001` | Legal and platform-policy risk overview | `ai/doc-legal-001-ai-generated-assets-legal-considerations.md` | `recruiter/doc-legal-001-ai-generated-assets-legal-considerations.pdf` | Primary legal risk briefing | Use for AI asset usage, privacy, loot box compliance, store-policy risk, and IP questions. |
-| `DOC-LEGAL-002` | Legal backlog and next-step roadmap | `ai/doc-legal-002-ai-assets-legal-and-compliance-roadmap.md` | `recruiter/doc-legal-002-ai-assets-legal-and-compliance-roadmap.pdf` | Legal roadmap | Use when prioritizing follow-up research, counsel review, and unresolved compliance work. |
-| `DOC-LEGAL-003` | ToS, EULA, and user-facing legal drafting | `ai/doc-legal-003-tos-eula-and-user-facing-legal-documents.md` | `recruiter/doc-legal-003-tos-eula-and-user-facing-legal-documents.pdf` | Primary legal drafting guide | Use first when drafting or revising terms, EULA structure, clickwrap, and acceptance logging. |
-| `DOC-REF-001` | Naruto Blazing mechanics inspiration study | `ai/doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.md` | `recruiter/doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.pdf` | Inspiration only | Use for combat and pacing patterns. Do not copy expressive IP. |
-| `DOC-REF-002` | Naruto Blazing success, failure, and shutdown analysis | `ai/doc-ref-002-naruto-ninja-blazing-success-failure-and-shutdown-analysis.md` | `recruiter/doc-ref-002-naruto-ninja-blazing-success-failure-and-shutdown-analysis.pdf` | Strategic caution reference | Use for live-ops, retention, monetization, and shutdown-risk lessons. |
-| `DOC-REF-003` | One Piece Treasure Cruise longevity analysis | `ai/doc-ref-003-one-piece-treasure-cruise-analysis.md` | `recruiter/doc-ref-003-one-piece-treasure-cruise-analysis.pdf` | Strategic caution reference | Use for long-term sustainability, onboarding, technical debt, and content burden. |
-| `DOC-REF-004` | Fire Emblem Heroes comparison source | `ai/doc-ref-004-fire-emblem-heroes-success-and-drawbacks.md` | No recruiter PDF in this folder | Secondary source | Open the retained `.docx` only if the original Word source is needed. |
+| `DOC-LEGAL-001` | Legal and platform-policy risk overview | `legal/doc-legal-001-ai-generated-assets-legal-considerations.md` | `recruiter/doc-legal-001-ai-generated-assets-legal-considerations.pdf` | Primary legal risk briefing | Use for AI asset usage, privacy, loot box compliance, store-policy risk, and IP questions. |
+| `DOC-LEGAL-002` | Legal backlog and next-step roadmap | `legal/doc-legal-002-ai-assets-legal-and-compliance-roadmap.md` | `recruiter/doc-legal-002-ai-assets-legal-and-compliance-roadmap.pdf` | Legal roadmap | Use when prioritizing follow-up research, counsel review, and unresolved compliance work. |
+| `DOC-LEGAL-003` | ToS, EULA, and user-facing legal drafting | `legal/doc-legal-003-tos-eula-and-user-facing-legal-documents.md` | `recruiter/doc-legal-003-tos-eula-and-user-facing-legal-documents.pdf` | Primary legal drafting guide | Use first when drafting or revising terms, EULA structure, clickwrap, and acceptance logging. |
+| `DOC-REF-001` | Naruto Blazing mechanics inspiration study | `research/doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.md` | `recruiter/doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.pdf` | Inspiration only | Use for combat and pacing patterns. Do not copy expressive IP. |
+| `DOC-REF-002` | Naruto Blazing success, failure, and shutdown analysis | `research/doc-ref-002-naruto-ninja-blazing-success-failure-and-shutdown-analysis.md` | `recruiter/doc-ref-002-naruto-ninja-blazing-success-failure-and-shutdown-analysis.pdf` | Strategic caution reference | Use for live-ops, retention, monetization, and shutdown-risk lessons. |
+| `DOC-REF-003` | One Piece Treasure Cruise longevity analysis | `research/doc-ref-003-one-piece-treasure-cruise-analysis.md` | `recruiter/doc-ref-003-one-piece-treasure-cruise-analysis.pdf` | Strategic caution reference | Use for long-term sustainability, onboarding, technical debt, and content burden. |
+| `DOC-REF-004` | Fire Emblem Heroes comparison source | `research/doc-ref-004-fire-emblem-heroes-success-and-drawbacks.md` | `recruiter/doc-ref-004-fire-emblem-heroes-success-and-drawbacks.docx` | Secondary source | Open the retained `.docx` only if the original Word source is needed. |
 
 ## Source-of-truth hierarchy
 
 ### Product and feature intent
 1. `DOC-GDD-001`
-2. `DOC-ENG-001`, `DOC-ENG-002`, and `DOC-DATA-001` for implementation detail
-3. `DOC-REF-001` to `DOC-REF-004` for inspiration and caution only
+2. `DESIGN-001` and `DESIGN-002` for living collection, world, and combat-identity structure
+3. `DOC-ENG-001`, `DOC-ENG-002`, and `DOC-DATA-001` for implementation detail
+4. `DOC-REF-001` to `DOC-REF-004` for inspiration and caution only
 
 ### Unity engineering, backend, build pipeline
 1. `DOC-ENG-001`
@@ -245,9 +251,12 @@ Open:
 
 ## AI behavior rules
 
-- Prefer `ai/` documents for retrieval speed.
+- Prefer the smallest relevant Markdown companion in `design/`, `art/`, `legal/`, `ops/`, or `research/` instead of scanning multiple sections by default.
 - Prefer `design/` documents when the task is roster identity, world pillars, combat identity, or collection planning.
 - Prefer `art/` documents when the task is specifically production-facing art direction, sprite workflow, import rules, or provenance.
+- Prefer `ops/` documents when the task is tooling, MCP, repo safety, backups, or retrospective workflow history.
+- Prefer `legal/` documents when the task is compliance, policy, privacy, or user-facing legal text.
+- Prefer `research/` documents when the task is engineering studies, architecture research, or comparative game analysis.
 - Use PDFs in `recruiter/` when layout fidelity or exact document presentation matters.
 - Treat Shogun’s own docs as authoritative; treat comparative docs as inspiration and warnings only.
 - Do not copy franchise names, characters, or protected expression from reference docs.
@@ -268,9 +277,9 @@ Update this file whenever:
 ```text
 Read PROJECT_CONTEXT_INDEX.md first.
 Do not scan the entire folder by default.
-Prefer ai/ Markdown companions first, then open recruiter/ PDFs only when needed.
-Use DOC-GDD-001 as primary design truth, DOC-ENG-001 and DOC-ENG-002 plus DOC-DATA-001 as implementation truth, DOC-LEGAL-* docs as compliance constraints, and DOC-REF-* docs as inspiration/caution only.
-If live Unity editor state or AI tooling workflow matters, open DOC-OPS-002.
+Prefer the smallest relevant Markdown companion in design/, art/, legal/, ops/, or research/ first, then open recruiter/ PDFs only when needed.
+Use DOC-GDD-001 as primary design truth, DESIGN-* docs as living roster/world identity guidance, DOC-ENG-001 and DOC-ENG-002 plus DOC-DATA-001 as implementation truth, DOC-LEGAL-* docs as compliance constraints, DOC-OPS-* docs as workflow/tooling truth, and DOC-REF-* docs as inspiration/caution only.
+If live Unity editor state or AI tooling workflow matters, open OPS_INDEX.md first, then DOC-OPS-002.
 If the task is roster identity or world design, open DESIGN_INDEX.md first.
 If the task is art direction or sprite production, open ART_INDEX.md first, then the linked DESIGN-* docs if needed, then DOC-OPS-004.
 If documents conflict, follow the hierarchy in PROJECT_CONTEXT_INDEX.md and report the conflict explicitly.

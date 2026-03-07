@@ -1,6 +1,6 @@
 # The Architecture of Success and Structural Decay: A Comprehensive Analysis of Fire Emblem Heroes (2017–2026)
 
-Source: `ai/doc-ref-004-fire-emblem-heroes-success-and-drawbacks.docx`
+Source: `recruiter/doc-ref-004-fire-emblem-heroes-success-and-drawbacks.docx`
 
 Converted from the original DOCX for AI retrieval.
 

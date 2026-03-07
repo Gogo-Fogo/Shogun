@@ -12,9 +12,11 @@
 
 ## Document order
 
-1. [`design-001-character-collection-and-fantasy-strategy.md`](./design-001-character-collection-and-fantasy-strategy.md)
+1. [`doc-gdd-001-shogun-flowers-fall-in-blood-game-design-document.md`](./doc-gdd-001-shogun-flowers-fall-in-blood-game-design-document.md)
+   - master product design, systems scope, monetization frame, and overall design truth
+2. [`design-001-character-collection-and-fantasy-strategy.md`](./design-001-character-collection-and-fantasy-strategy.md)
    - collectible fantasy, battle-vs-presentation lanes, popularity planning, and variant value
-2. [`design-002-world-pillars-and-combat-identity-framework.md`](./design-002-world-pillars-and-combat-identity-framework.md)
+3. [`design-002-world-pillars-and-combat-identity-framework.md`](./design-002-world-pillars-and-combat-identity-framework.md)
    - world pillars, elemental affinity, weapon families, martial schools, and how those layers combine into character identity
 
 ## Companion docs outside this folder
@@ -25,11 +27,9 @@
   - use for silhouette, palette, and readability standards
 - [`../art/art-006-sex-appeal-and-damage-art-policy.md`](../art/art-006-sex-appeal-and-damage-art-policy.md)
   - use for fanservice boundaries, FEH-style damage art, and store-safe limits
-- [`../ai/doc-gdd-001-shogun-flowers-fall-in-blood-game-design-document.md`](../ai/doc-gdd-001-shogun-flowers-fall-in-blood-game-design-document.md)
-  - use for overall product scope and original master design framing
-- [`../ai/doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.md`](../ai/doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.md)
+- [`../research/doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.md`](../research/doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.md)
   - use for combat and roster reference patterns only
-- [`../ai/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md`](../ai/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)
+- [`../ops/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md`](../ops/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)
   - use when the question is PixelLab fit and production-tool boundaries rather than world structure
 
 ## Default order for roster-design questions
@@ -38,9 +38,8 @@
 2. `DESIGN-002`
 3. `ART-001`
 4. `ART-006`
-5. `DOC-GDD-001`
-6. `DOC-REF-001`
-7. `DOC-OPS-004`
+5. `DOC-REF-001`
+6. `DOC-OPS-004`
 
 ## Rule for future updates
 

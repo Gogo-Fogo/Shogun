@@ -31,11 +31,11 @@
   - use for collectible fantasy, battle-vs-presentation lanes, and variant planning
 - [`../design/design-002-world-pillars-and-combat-identity-framework.md`](../design/design-002-world-pillars-and-combat-identity-framework.md)
   - use for world pillars, elemental affinity, weapon families, martial schools, and roster identity stacking
-- [`../ai/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md`](../ai/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)
+- [`../ops/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md`](../ops/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)
   - use first when the question is whether PixelLab is worth using at all
-- [`../ai/doc-legal-001-ai-generated-assets-legal-considerations.md`](../ai/doc-legal-001-ai-generated-assets-legal-considerations.md)
+- [`../legal/doc-legal-001-ai-generated-assets-legal-considerations.md`](../legal/doc-legal-001-ai-generated-assets-legal-considerations.md)
   - use when AI-art usage or IP risk is part of the question
-- [`../ai/doc-legal-002-ai-assets-legal-and-compliance-roadmap.md`](../ai/doc-legal-002-ai-assets-legal-and-compliance-roadmap.md)
+- [`../legal/doc-legal-002-ai-assets-legal-and-compliance-roadmap.md`](../legal/doc-legal-002-ai-assets-legal-and-compliance-roadmap.md)
   - use when deciding what legal follow-up remains unresolved
 
 ## Default order for art-production questions
