@@ -1,12 +1,13 @@
 # March 2026 Repo Modernization Retrospective
 
-**Summary:** This note retroactively documents the intent behind the March 7, 2026 repository modernization and safety/tooling rollout. It exists because several pushed commits landed with short subjects only and no explanatory body.
+**Summary:** This note retroactively documents the intent behind the March 7, 2026 repository modernization, safety/tooling rollout, and immediate art-strategy follow-up. It exists because several pushed commits landed with short subjects only and no explanatory body.
 
 ## Purpose
 
 Use this document when the question is:
 
 - what changed during the March 7, 2026 cleanup and tooling pass
+- what changed in the immediate March 7 art-strategy follow-up
 - why those commits were separated the way they were
 - which changes were infrastructure/safety work versus Unity project alignment
 - where to look for the resulting canonical workflows
@@ -19,10 +20,11 @@ The following commits were pushed to `main` with short one-line subjects and wit
 - `64a7957` `feat: add unity mcp integration and diagnostics`
 - `e293790` `refactor: modernize project export workflow`
 - `712cab6` `fix: repair urp default renderer configuration`
+- `a23a7b4` `docs: add character collection and fantasy strategy`
 
 Rather than rewriting already-pushed `main` history, this retrospective records the missing rationale in one canonical place.
 
-Later follow-up commits in the same batch *do* contain bodies:
+Later follow-up commits in the same period *do* contain bodies:
 
 - `11b6b75` `docs: finalize AI safety workflow and backup tooling`
 - `a9843c3` `fix: align project settings with Unity 6000.0 baseline`
@@ -37,6 +39,10 @@ The March 7 work had six distinct goals:
 4. repair the broken URP default-renderer state in the repo
 5. harden AI workspace safety and add repo-local backup tooling
 6. align committed Unity metadata with the actual supported Unity `6000.0.69f1` baseline
+
+The immediate follow-up work added a seventh goal:
+
+7. turn the PixelLab and gacha-art discussion into a production-facing character-collection strategy instead of leaving it as chat-only advice
 
 ## Commit-by-commit rationale
 
@@ -142,6 +148,25 @@ Main outcomes:
 - kept URP project settings aligned with that baseline
 - committed the matching importer metadata cleanup so the working tree stayed clean after opening the project in the supported editor version
 
+## `a23a7b4` `docs: add character collection and fantasy strategy`
+
+This follow-up commit translated the PixelLab, gacha-art, and collection-value discussion into a stable production note under `docs/art/` rather than leaving the reasoning trapped in chat history.
+
+Main outcomes:
+
+- added [`art-005-character-collection-and-fantasy-strategy.md`](../art/art-005-character-collection-and-fantasy-strategy.md)
+- formalized the split between gameplay-facing battle art and collection-facing presentation art
+- documented roster-pillar planning, collectible fantasy, and variant potential as explicit design rules
+- updated the art router in [`ART_INDEX.md`](../art/ART_INDEX.md)
+- updated the global router in [`PROJECT_CONTEXT_INDEX.md`](../PROJECT_CONTEXT_INDEX.md)
+- updated the repo-level [`README.md`](../../README.md) so the new strategy note is discoverable
+
+Why it was separate:
+
+- this was not a minor addition to the existing PixelLab note
+- it changed how roster planning should be structured at the art/design level
+- keeping it separate made the distinction clear between tool evaluation and long-term character strategy
+
 ## Resulting operating model
 
 After this batch, the intended workflow is:
@@ -152,12 +177,15 @@ After this batch, the intended workflow is:
 - repo-scoped AI safety rules committed in the repo
 - local backup helper plus GitHub plus off-site/external backup strategy
 - Unity baseline treated as `6000.0.69f1` unless deliberately upgraded
+- character production planned through two lanes: battle readability and collection-facing presentation
 
 ## Related documents
 
 - [`doc-ops-002-unity-mcp-bridge-setup-and-usage.md`](./doc-ops-002-unity-mcp-bridge-setup-and-usage.md)
 - [`doc-ops-003-ai-workspace-safety-and-backup-plan.md`](./doc-ops-003-ai-workspace-safety-and-backup-plan.md)
 - [`doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md`](./doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)
+- [`ART_INDEX.md`](../art/ART_INDEX.md)
+- [`art-005-character-collection-and-fantasy-strategy.md`](../art/art-005-character-collection-and-fantasy-strategy.md)
 - [`PROJECT_CONTEXT_INDEX.md`](../PROJECT_CONTEXT_INDEX.md)
 - [`README.md`](../../README.md)
 
