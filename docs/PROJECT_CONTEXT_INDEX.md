@@ -34,6 +34,7 @@ docs/
     art-004-asset-provenance-and-source-tracking.md
     art-005-character-collection-and-fantasy-strategy.md
     art-006-sex-appeal-and-damage-art-policy.md
+    art-007-world-pillars-and-combat-identity-framework.md
   recruiter/
     doc-data-001-unity-mobile-gacha-rpg-data-collection-and-compliance.pdf
     doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.pdf
@@ -72,6 +73,7 @@ For most tasks:
 | `DOC-OPS-005` | March 2026 repo modernization retrospective | `ai/doc-ops-005-march-2026-repo-modernization-retrospective.md` | No recruiter PDF in this folder | Operational change log | Use when the question is what changed in the March 7, 2026 cleanup/tooling batch and why those pushed commits were structured that way. |
 | `ART-001` | Style bible and visual targets | `art/art-001-style-bible-and-visual-targets.md` | No recruiter PDF in this folder | Primary art-direction note | Use first for silhouette rules, palette direction, detail limits, and gameplay readability targets. |
 | `ART-005` | Character collection and fantasy strategy | `art/art-005-character-collection-and-fantasy-strategy.md` | No recruiter PDF in this folder | Primary collection-strategy note | Use for collectible fantasy, roster pillars, battle-vs-presentation art lanes, and variant planning. |
+| `ART-007` | World pillars and combat identity framework | `art/art-007-world-pillars-and-combat-identity-framework.md` | No recruiter PDF in this folder | Primary roster-identity note | Use for world pillars, elemental affinity, weapon families, martial schools, and how those layers stack into a character identity. |
 | `ART-002` | Sprite production pipeline | `art/art-002-sprite-production-pipeline.md` | No recruiter PDF in this folder | Primary art workflow note | Use for the bounded PixelLab-to-Aseprite-to-Unity production flow and trial/pass-fail rules. |
 | `ART-006` | Sex appeal and damage-art policy | `art/art-006-sex-appeal-and-damage-art-policy.md` | No recruiter PDF in this folder | Primary fanservice boundary note | Use for sex-appeal limits, FEH-style damage-art interpretation, and what battle animation fanservice is too risky. |
 | `ART-003` | Unity 2D import and animation standards | `art/art-003-unity-2d-import-and-animation-standards.md` | No recruiter PDF in this folder | Primary import standard | Use for `.aseprite` import, animation tags, frame-budget targets, and gameplay-facing sprite standards. |
@@ -122,24 +124,26 @@ For most tasks:
 ### AI-assisted sprite production and PixelLab workflow
 1. `ART-001`
 2. `ART-005`
-3. `ART-002`
-4. `ART-006`
-5. `ART-003`
-6. `ART-004`
-7. `DOC-OPS-004`
-8. `DOC-LEGAL-001`
-9. `DOC-LEGAL-002`
-10. `DOC-OPS-002` if MCP integration matters
+3. `ART-007`
+4. `ART-002`
+5. `ART-006`
+6. `ART-003`
+7. `ART-004`
+8. `DOC-OPS-004`
+9. `DOC-LEGAL-001`
+10. `DOC-LEGAL-002`
+11. `DOC-OPS-002` if MCP integration matters
 
 ### Art direction, sprite import, and provenance
 1. `ART-001`
 2. `ART-005`
-3. `ART-006`
-4. `ART-002`
-5. `ART-003`
-6. `ART-004`
-7. `DOC-OPS-004`
-8. `DOC-LEGAL-001`
+3. `ART-007`
+4. `ART-006`
+5. `ART-002`
+6. `ART-003`
+7. `ART-004`
+8. `DOC-OPS-004`
+9. `DOC-LEGAL-001`
 
 ### Legal, compliance, and AI-asset risk
 1. `DOC-LEGAL-001`
@@ -200,14 +204,23 @@ Open:
 Open:
 1. `ART-001`
 2. `ART-005`
-3. `ART-006`
-4. `ART-002`
-5. `ART-003`
-6. `ART-004`
-7. `DOC-OPS-004`
-8. `DOC-LEGAL-001`
-9. `DOC-LEGAL-002`
-10. `DOC-OPS-002` if MCP integration or coding-assistant setup matters
+3. `ART-007`
+4. `ART-006`
+5. `ART-002`
+6. `ART-003`
+7. `ART-004`
+8. `DOC-OPS-004`
+9. `DOC-LEGAL-001`
+10. `DOC-LEGAL-002`
+11. `DOC-OPS-002` if MCP integration or coding-assistant setup matters
+
+### World pillars, elements, martial schools, and roster identity
+Open:
+1. `ART-005`
+2. `ART-007`
+3. `ART-001`
+4. `DOC-GDD-001`
+5. `DOC-REF-001`
 
 ### Telemetry, event schemas, consent, and retention
 Open:
@@ -255,6 +268,6 @@ Do not scan the entire folder by default.
 Prefer ai/ Markdown companions first, then open recruiter/ PDFs only when needed.
 Use DOC-GDD-001 as primary design truth, DOC-ENG-001 and DOC-ENG-002 plus DOC-DATA-001 as implementation truth, DOC-LEGAL-* docs as compliance constraints, and DOC-REF-* docs as inspiration/caution only.
 If live Unity editor state or AI tooling workflow matters, open DOC-OPS-002.
-If the task is art direction or sprite production, open ART_INDEX.md and the ART-* docs first, then DOC-OPS-004.
+If the task is art direction, roster identity, or sprite production, open ART_INDEX.md and the ART-* docs first, then DOC-OPS-004.
 If documents conflict, follow the hierarchy in PROJECT_CONTEXT_INDEX.md and report the conflict explicitly.
 ```

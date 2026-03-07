@@ -5,6 +5,7 @@
 ## Use this folder when the question is:
 
 - what visual direction `Shogun` should follow
+- how world pillars, elements, weapons, and martial schools should shape the roster
 - how PixelLab output should be cleaned and productionized
 - what sprite sizes, frame budgets, and animation tags should be used
 - how `.aseprite` files should move into Unity
@@ -16,13 +17,15 @@
    - visual targets, silhouette rules, palette direction, and camera/readability goals
 2. [`art-005-character-collection-and-fantasy-strategy.md`](./art-005-character-collection-and-fantasy-strategy.md)
    - research-backed note on collectible fantasy, roster pillars, battle-vs-presentation art lanes, and variant planning
-3. [`art-002-sprite-production-pipeline.md`](./art-002-sprite-production-pipeline.md)
+3. [`art-007-world-pillars-and-combat-identity-framework.md`](./art-007-world-pillars-and-combat-identity-framework.md)
+   - world pillars, elemental affinity, weapon families, martial schools, and how those layers stack into roster identity
+4. [`art-002-sprite-production-pipeline.md`](./art-002-sprite-production-pipeline.md)
    - the actual production workflow from generation through cleanup and review
-4. [`art-003-unity-2d-import-and-animation-standards.md`](./art-003-unity-2d-import-and-animation-standards.md)
+5. [`art-003-unity-2d-import-and-animation-standards.md`](./art-003-unity-2d-import-and-animation-standards.md)
    - Unity import, `.aseprite` handling, tags, clip expectations, and gameplay-facing standards
-5. [`art-006-sex-appeal-and-damage-art-policy.md`](./art-006-sex-appeal-and-damage-art-policy.md)
+6. [`art-006-sex-appeal-and-damage-art-policy.md`](./art-006-sex-appeal-and-damage-art-policy.md)
    - boundaries for sex appeal, FEH-style damage art, and what battle animation fanservice is too risky
-6. [`art-004-asset-provenance-and-source-tracking.md`](./art-004-asset-provenance-and-source-tracking.md)
+7. [`art-004-asset-provenance-and-source-tracking.md`](./art-004-asset-provenance-and-source-tracking.md)
    - provenance rules, metadata, and legal-traceability handling
 
 ## Companion docs outside this folder
@@ -38,12 +41,13 @@
 
 1. `ART-001`
 2. `ART-005`
-3. `ART-002`
-4. `ART-006`
-5. `ART-003`
-6. `ART-004`
-7. `DOC-OPS-004`
-8. `DOC-LEGAL-001`
+3. `ART-007`
+4. `ART-002`
+5. `ART-006`
+6. `ART-003`
+7. `ART-004`
+8. `DOC-OPS-004`
+9. `DOC-LEGAL-001`
 
 ## Rule for future updates
 
