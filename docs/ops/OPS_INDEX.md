@@ -6,6 +6,7 @@
 
 - how Codex, Claude, or Unity MCP should be configured and used
 - how repo safety, backup cadence, or recovery workflow should work
+- how Unity editor baseline and upgrade policy should be handled for this repo
 - whether PixelLab belongs in the production toolchain
 - what implementation artifacts or generated deliverables should exist
 - what changed in a tooling or repo-modernization batch and why
@@ -16,11 +17,13 @@
    - Unity MCP bridge setup, live-editor access, and safe usage rules
 2. [`doc-ops-003-ai-workspace-safety-and-backup-plan.md`](./doc-ops-003-ai-workspace-safety-and-backup-plan.md)
    - repo-scope rules, backup cadence, restore drill, and off-site backup workflow
-3. [`doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md`](./doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)
+3. [`doc-ops-006-unity-editor-version-policy-and-upgrade-checklist.md`](./doc-ops-006-unity-editor-version-policy-and-upgrade-checklist.md)
+   - project-specific Unity editor baseline, stable upgrade target, and safe upgrade checklist
+4. [`doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md`](./doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)
    - PixelLab fit, subscription vs API, and AI-assisted sprite workflow boundaries
-4. [`doc-ops-001-project-document-and-telemetry-index.md`](./doc-ops-001-project-document-and-telemetry-index.md)
+5. [`doc-ops-001-project-document-and-telemetry-index.md`](./doc-ops-001-project-document-and-telemetry-index.md)
    - implementation artifact inventory and output manifest
-5. [`doc-ops-005-march-2026-repo-modernization-retrospective.md`](./doc-ops-005-march-2026-repo-modernization-retrospective.md)
+6. [`doc-ops-005-march-2026-repo-modernization-retrospective.md`](./doc-ops-005-march-2026-repo-modernization-retrospective.md)
    - retrospective explanation for the March 2026 repo/tooling cleanup batch
 
 ## Companion docs outside this folder
@@ -31,6 +34,8 @@
   - use when tooling questions become legal, privacy, or policy questions
 - [`../research/RESEARCH_INDEX.md`](../research/RESEARCH_INDEX.md)
   - use when the question shifts from operations to engineering or comparative research
+- [`../research/doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.md`](../research/doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.md)
+  - use when the question is a broad production recommendation for new Unity versions rather than the repo-specific upgrade rule
 - [`../art/ART_INDEX.md`](../art/ART_INDEX.md)
   - use when the question becomes art-production specific rather than tool/process specific
 
@@ -38,10 +43,11 @@
 
 1. `DOC-OPS-002`
 2. `DOC-OPS-003`
-3. `DOC-OPS-004`
-4. `DOC-OPS-001`
-5. `DOC-OPS-005`
-6. `DOC-LEGAL-001`
+3. `DOC-OPS-006`
+4. `DOC-OPS-004`
+5. `DOC-OPS-001`
+6. `DOC-OPS-005`
+7. `DOC-LEGAL-001`
 
 ## Rule for future updates
 
@@ -49,4 +55,5 @@ Add new ops docs here when:
 
 - a tooling workflow becomes stable enough to enforce
 - a repo-safety or backup procedure materially changes
+- the Unity editor baseline or upgrade policy materially changes
 - a new operational retrospective or inventory note is needed

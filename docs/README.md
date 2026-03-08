@@ -36,6 +36,7 @@ Markdown and PDF companions share the same base filename whenever both versions 
 - `DOC-REF-004` keeps the retained original `.docx` in `recruiter/` and the AI-friendly `.md` companion in `research/`.
 - Some canonical engineering and reference notes may exist only in `research/` when no recruiter PDF is needed.
 - Internal operational notes like Unity MCP workflow guidance may exist only in `ops/` when no recruiter PDF is needed.
+- Internal Unity editor baseline and upgrade-governance notes may also live in `ops/` when they are workflow policy rather than recruiter-facing engineering research.
 - Internal legal/compliance or telemetry-compliance notes may exist only in `legal/` when no recruiter PDF is needed.
 - Cross-disciplinary character-identity and worldbuilding notes may exist only in `design/` when they are not purely art or purely gameplay docs.
 - Cross-disciplinary live-balance, roguelite, multiplayer, and social-roadmap notes may also live only in `design/` when they cut across art, systems, lore, and live-service planning.

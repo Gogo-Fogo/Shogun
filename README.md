@@ -153,6 +153,9 @@ The character system implements core mechanics inspired by Naruto Blazing:
 - **[AI Safety & Backup Plan](docs/ops/doc-ops-003-ai-workspace-safety-and-backup-plan.md)**  
   The canonical note for repo scope rules, Codex/Claude safety posture, backup layers, and recovery steps after accidental local deletion.
 
+- **[Unity Editor Version Policy & Upgrade Checklist](docs/ops/doc-ops-006-unity-editor-version-policy-and-upgrade-checklist.md)**  
+  The project-specific rule for the current Unity baseline, the preferred stable LTS upgrade target, and the exact checklist to use before moving the repo to a new editor line.
+
 - **[PixelLab Evaluation & Sprite Workflow](docs/ops/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)**  
   The canonical note for whether PixelLab fits `Shogun`, when to use subscription vs API, how it fits Codex/Claude/Unity MCP, and the recommended first sprite-production workflow.
 

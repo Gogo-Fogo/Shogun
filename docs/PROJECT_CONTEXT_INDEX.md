@@ -39,6 +39,7 @@ docs/
     doc-ops-003-ai-workspace-safety-and-backup-plan.md
     doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md
     doc-ops-005-march-2026-repo-modernization-retrospective.md
+    doc-ops-006-unity-editor-version-policy-and-upgrade-checklist.md
   research/
     RESEARCH_INDEX.md
     doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.md
@@ -84,6 +85,7 @@ For most tasks:
 | `DOC-OPS-003` | AI workspace safety and backup plan | `ops/doc-ops-003-ai-workspace-safety-and-backup-plan.md` | No recruiter PDF in this folder | Operational safety note | Use for repo scope rules, Codex/Claude safety posture, backup layers, and recovery workflow after accidental deletion. |
 | `DOC-OPS-004` | PixelLab evaluation and sprite production workflow | `ops/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md` | No recruiter PDF in this folder | Operational art-tooling note | Use for PixelLab fit, subscription vs API choice, sprite workflow, animation-size guidance, and AI-assisted art production boundaries. |
 | `DOC-OPS-005` | March 2026 repo modernization retrospective | `ops/doc-ops-005-march-2026-repo-modernization-retrospective.md` | No recruiter PDF in this folder | Operational change log | Use when the question is what changed in the March 7, 2026 cleanup/tooling batch and why those pushed commits were structured that way. |
+| `DOC-OPS-006` | Unity editor version policy and upgrade checklist | `ops/doc-ops-006-unity-editor-version-policy-and-upgrade-checklist.md` | No recruiter PDF in this folder | Operational upgrade policy | Use for the project-specific Unity baseline, stable upgrade target, alpha/beta exclusion rule, and safe LTS-upgrade checklist. |
 | `DESIGN-001` | Character collection and fantasy strategy | `design/design-001-character-collection-and-fantasy-strategy.md` | No recruiter PDF in this folder | Primary collection-strategy note | Use for collectible fantasy, roster pillars, battle-vs-presentation art lanes, and variant planning. |
 | `DESIGN-002` | World pillars and combat identity framework | `design/design-002-world-pillars-and-combat-identity-framework.md` | No recruiter PDF in this folder | Primary roster-identity note | Use for world pillars, elemental affinity, weapon families, martial schools, and how those layers stack into a character identity. |
 | `DESIGN-003` | Long-term balance and power-creep policy | `design/design-003-long-term-balance-and-power-creep-policy.md` | No recruiter PDF in this folder | Primary live-balance note | Use for banner-value policy, power-creep controls, old-unit refresh cadence, and ranked/PvE balance boundaries. |
@@ -129,17 +131,19 @@ For most tasks:
 ### AI tooling, Unity editor introspection, and MCP workflow
 1. `DOC-OPS-002`
 2. `DOC-OPS-003`
-3. `DOC-OPS-005`
-4. `DOC-OPS-004`
-5. `DOC-ENG-002`
-6. `DOC-LEGAL-001`
-7. `DOC-LEGAL-002`
+3. `DOC-OPS-006`
+4. `DOC-OPS-005`
+5. `DOC-OPS-004`
+6. `DOC-ENG-002`
+7. `DOC-LEGAL-001`
+8. `DOC-LEGAL-002`
 
 ### AI workspace safety, repo scope, and backup recovery
 1. `DOC-OPS-003`
 2. `DOC-OPS-005`
-3. `DOC-OPS-002`
-4. `DOC-LEGAL-001`
+3. `DOC-OPS-006`
+4. `DOC-OPS-002`
+5. `DOC-LEGAL-001`
 
 ### AI-assisted sprite production and PixelLab workflow
 1. `ART-001`
@@ -221,17 +225,27 @@ Open:
 Open:
 1. `DOC-OPS-002`
 2. `DOC-OPS-003`
-3. `DOC-OPS-005`
-4. `DOC-OPS-004`
-5. `DOC-ENG-002`
-6. `DOC-LEGAL-001`
+3. `DOC-OPS-006`
+4. `DOC-OPS-005`
+5. `DOC-OPS-004`
+6. `DOC-ENG-002`
+7. `DOC-LEGAL-001`
 
 ### AI safety, repo boundaries, and backup recovery
 Open:
 1. `DOC-OPS-003`
 2. `DOC-OPS-005`
+3. `DOC-OPS-006`
+4. `DOC-OPS-002`
+5. `DOC-LEGAL-001`
+
+### Unity editor baseline, LTS upgrades, and version-move safety
+Open:
+1. `DOC-OPS-006`
+2. `DOC-ENG-001`
 3. `DOC-OPS-002`
-4. `DOC-LEGAL-001`
+4. `DESIGN-006`
+5. `DOC-OPS-005`
 
 ### Pixel art workflow, PixelLab, and AI-generated sprite production
 Open:
