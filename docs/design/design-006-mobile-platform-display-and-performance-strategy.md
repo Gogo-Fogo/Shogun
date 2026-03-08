@@ -163,6 +163,33 @@ That should be the baseline quality bar for gameplay feel.
 
 This is the best balance between ambition and device reality.
 
+### Recommended shipped preset behavior
+
+These frame-rate modes should also lightly shape visual intensity.
+
+Recommended behavior:
+
+- `Battery Saver`
+  - target `30 fps`
+  - reduced VFX density
+  - reduced screen distortion
+  - reduced ambient animation intensity
+  - lower battery and thermal pressure
+- `Balanced`
+  - target `60 fps`
+  - this is the primary intended look of the game
+  - full standard presentation
+- `High Refresh`
+  - target `120 fps` when supported
+  - prioritize smooth frametimes and input feel
+  - keep visuals at standard quality by default, and selectively reduce only the heaviest effects if needed to protect stability
+
+Important rule:
+
+- `High Refresh` should not automatically mean “maximum graphics”
+
+On mobile, high refresh and maximum post-processing can work against each other.
+
 ### Why 120 fps still makes sense
 
 `120 fps` is absolutely worth supporting as an option because it improves:
@@ -206,6 +233,22 @@ That is the wrong goal for this product.
 - preserve clarity on modern high-density screens
 - use scaling and adaptation instead of chasing `4K`
 - favor stable frametimes over brute-force native rendering
+
+### Pixel art clarification
+
+For pixel art, the real quality goals are:
+
+- clean sprite import settings
+- crisp scaling behavior
+- stable camera and UI presentation
+- no accidental blur
+- readable VFX layering
+- strong presentation on dense screens
+
+That is different from treating `4K` itself as the target.
+
+A pixel-art game can look excellent on a `4K` display.
+That does **not** mean the mobile game should be built around `4K` rendering budgets.
 
 ### Where 4K can matter later
 
