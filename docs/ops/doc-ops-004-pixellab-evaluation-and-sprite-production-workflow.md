@@ -46,6 +46,22 @@ The real unknowns are:
 
 So the correct first move is a bounded trial, not an engineering integration project.
 
+## Style experimentation rule
+
+Before locking the production art direction, PixelLab should be used to compare a few controlled style lanes against the same character fantasy.
+
+See:
+
+- [`../art/art-009-ukiyo-e-inspired-style-experimentation-plan.md`](../art/art-009-ukiyo-e-inspired-style-experimentation-plan.md)
+
+Current working recommendation:
+
+- keep gameplay and collectible presentation color-forward enough for gacha readability and desirability
+- use `ukiyo-e` and ink influence as composition, silhouette, and texture guidance
+- reserve heavy monochrome treatment for special-purpose scenes, not the whole shipped roster
+
+So the PixelLab trial should not ask only “is this tool good?” It should also ask “which visual lane actually feels most like `Shogun`?”
+
 ## Subscription vs API
 
 ### Recommended now: subscription
@@ -319,13 +335,14 @@ Use this checklist before spending more time or money:
 
 1. Decide whether to trial Aseprite or stay with Pixelorama first.
 2. Buy only the smallest PixelLab tier that unlocks the needed workflow.
-3. Generate one `64x64`, `4-direction` base character.
-4. Generate `idle` and `walk`.
-5. Measure cleanup time honestly.
-6. Import into Unity and inspect readability at gameplay scale.
-7. Decide whether the visual quality is good enough for production use.
-8. Only then decide whether PixelLab MCP should be added.
-9. Defer API work unless repeatable batch automation becomes a real bottleneck.
+3. Run the style-lane comparison in `ART-009` before locking the default look.
+4. Generate one `64x64`, `4-direction` base character.
+5. Generate `idle` and `walk`.
+6. Measure cleanup time honestly.
+7. Import into Unity and inspect readability at gameplay scale.
+8. Decide whether the visual quality is good enough for production use.
+9. Only then decide whether PixelLab MCP should be added.
+10. Defer API work unless repeatable batch automation becomes a real bottleneck.
 
 ## Bottom line
 

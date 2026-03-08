@@ -22,6 +22,12 @@ Use this note when deciding:
 
 The goal is not maximal detail. The goal is strong readability on a mobile screen.
 
+See also:
+
+- [`art-009-ukiyo-e-inspired-style-experimentation-plan.md`](./art-009-ukiyo-e-inspired-style-experimentation-plan.md)
+
+Use `ART-009` when evaluating whether `ukiyo-e` / ink / monochrome influence should become part of the default shipped look or stay a special-purpose treatment.
+
 ## Core style rules
 
 ### Silhouette first

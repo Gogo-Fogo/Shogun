@@ -26,6 +26,7 @@ docs/
     art-006-sex-appeal-and-damage-art-policy.md
     art-007-violence-and-injury-policy.md
     art-008-roguelite-event-vignette-art.md
+    art-009-ukiyo-e-inspired-style-experimentation-plan.md
   legal/
     LEGAL_INDEX.md
     doc-data-001-unity-mobile-gacha-rpg-data-collection-and-compliance.md
@@ -97,6 +98,7 @@ For most tasks:
 | `ART-006` | Sex appeal and damage-art policy | `art/art-006-sex-appeal-and-damage-art-policy.md` | No recruiter PDF in this folder | Primary fanservice boundary note | Use for sex-appeal limits, FEH-style damage-art interpretation, and what battle animation fanservice is too risky. |
 | `ART-007` | Violence and injury policy | `art/art-007-violence-and-injury-policy.md` | No recruiter PDF in this folder | Primary violence boundary note | Use for blood, bruises, violent finishers, demon-vs-human dismemberment limits, and dark-fantasy brutality boundaries. |
 | `ART-008` | Roguelite event vignette art | `art/art-008-roguelite-event-vignette-art.md` | No recruiter PDF in this folder | Primary event-scene art note | Use for STS-style event-scene presentation, vignette reuse rules, and how roguelite choice nodes should use atmospheric art without exploding scope. |
+| `ART-009` | Ukiyo-e-inspired style experimentation plan | `art/art-009-ukiyo-e-inspired-style-experimentation-plan.md` | No recruiter PDF in this folder | Primary style-test note | Use when evaluating how much ukiyo-e / ink / monochrome influence belongs in the default shipped look versus special-purpose scenes. |
 | `ART-003` | Unity 2D import and animation standards | `art/art-003-unity-2d-import-and-animation-standards.md` | No recruiter PDF in this folder | Primary import standard | Use for `.aseprite` import, animation tags, frame-budget targets, and gameplay-facing sprite standards. |
 | `ART-004` | Asset provenance and source tracking | `art/art-004-asset-provenance-and-source-tracking.md` | No recruiter PDF in this folder | Primary provenance note | Use for generated-art traceability, manual-edit tracking, and shipped-asset metadata requirements. |
 | `DOC-LEGAL-001` | Legal and platform-policy risk overview | `legal/doc-legal-001-ai-generated-assets-legal-considerations.md` | `recruiter/doc-legal-001-ai-generated-assets-legal-considerations.pdf` | Primary legal risk briefing | Use for AI asset usage, privacy, loot box compliance, store-policy risk, and IP questions. |
@@ -151,24 +153,26 @@ For most tasks:
 3. `DESIGN-002`
 4. `ART-002`
 5. `ART-006`
-6. `ART-003`
-7. `ART-004`
-8. `DOC-OPS-004`
-9. `DOC-LEGAL-001`
-10. `DOC-LEGAL-002`
-11. `DOC-OPS-002` if MCP integration matters
+6. `ART-009`
+7. `ART-003`
+8. `ART-004`
+9. `DOC-OPS-004`
+10. `DOC-LEGAL-001`
+11. `DOC-LEGAL-002`
+12. `DOC-OPS-002` if MCP integration matters
 
 ### Art direction, sprite import, and provenance
 1. `ART-001`
 2. `DESIGN-001`
 3. `DESIGN-002`
-4. `ART-006`
-5. `ART-007`
-6. `ART-002`
-7. `ART-003`
-8. `ART-004`
-9. `DOC-OPS-004`
-10. `DOC-LEGAL-001`
+4. `ART-009`
+5. `ART-006`
+6. `ART-007`
+7. `ART-002`
+8. `ART-003`
+9. `ART-004`
+10. `DOC-OPS-004`
+11. `DOC-LEGAL-001`
 
 ### Legal, compliance, and AI-asset risk
 1. `DOC-LEGAL-001`
@@ -252,15 +256,16 @@ Open:
 1. `ART-001`
 2. `DESIGN-001`
 3. `DESIGN-002`
-4. `ART-006`
-5. `ART-007`
-6. `ART-002`
-7. `ART-003`
-8. `ART-004`
-9. `DOC-OPS-004`
-10. `DOC-LEGAL-001`
-11. `DOC-LEGAL-002`
-12. `DOC-OPS-002` if MCP integration or coding-assistant setup matters
+4. `ART-009`
+5. `ART-006`
+6. `ART-007`
+7. `ART-002`
+8. `ART-003`
+9. `ART-004`
+10. `DOC-OPS-004`
+11. `DOC-LEGAL-001`
+12. `DOC-LEGAL-002`
+13. `DOC-OPS-002` if MCP integration or coding-assistant setup matters
 
 ### World pillars, elements, martial schools, and roster identity
 Open:

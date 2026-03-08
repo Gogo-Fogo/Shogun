@@ -43,6 +43,7 @@ Markdown and PDF companions share the same base filename whenever both versions 
 - Mobile platform, foldable/tablet, frame-rate, and rendering-strategy notes may also live in `design/` when they cut across UX, performance, content scope, and platform planning.
 - Art workflow, style, import, and provenance notes may exist only in `art/` when they are internal production standards rather than recruiter-facing documents.
 - Roguelite event-vignette presentation notes may also live in `art/` when they define reusable atmospheric event-scene production rather than character sprite standards.
+- Visual style-experiment notes may also live in `art/` when they evaluate alternative shipped looks, such as ukiyo-e / ink influence, before the production style is fully locked.
 
 ## Suggested usage
 

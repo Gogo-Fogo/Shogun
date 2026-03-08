@@ -25,7 +25,9 @@
    - boundaries for blood, bruises, dark-fantasy brutality, and what gore or dismemberment is too risky
 6. [`art-008-roguelite-event-vignette-art.md`](./art-008-roguelite-event-vignette-art.md)
    - STS-style event scene art for roguelite choices, shrines, bargains, and atmospheric decision points
-7. [`art-004-asset-provenance-and-source-tracking.md`](./art-004-asset-provenance-and-source-tracking.md)
+7. [`art-009-ukiyo-e-inspired-style-experimentation-plan.md`](./art-009-ukiyo-e-inspired-style-experimentation-plan.md)
+   - controlled test plan for mixing ukiyo-e / ink influence with readable, colorful gacha-facing pixel art
+8. [`art-004-asset-provenance-and-source-tracking.md`](./art-004-asset-provenance-and-source-tracking.md)
    - provenance rules, metadata, and legal-traceability handling
 
 ## Companion docs outside this folder
@@ -54,10 +56,11 @@
 5. `ART-006`
 6. `ART-007`
 7. `ART-008`
-8. `ART-003`
-9. `ART-004`
-10. `DOC-OPS-004`
-11. `DOC-LEGAL-001`
+8. `ART-009`
+9. `ART-003`
+10. `ART-004`
+11. `DOC-OPS-004`
+12. `DOC-LEGAL-001`
 
 ## Rule for future updates
 

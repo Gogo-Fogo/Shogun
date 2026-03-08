@@ -162,6 +162,9 @@ The character system implements core mechanics inspired by Naruto Blazing:
 - **[Style Bible & Visual Targets](docs/art/art-001-style-bible-and-visual-targets.md)**
   The current art-direction note for silhouette rules, palette discipline, detail limits, and gameplay readability.
 
+- **[Ukiyo-e-Inspired Style Experimentation Plan](docs/art/art-009-ukiyo-e-inspired-style-experimentation-plan.md)**
+  The controlled style-test note for deciding how much ukiyo-e / ink / monochrome influence belongs in the default shipped look versus special-purpose scenes when Gemini and PixelLab experimentation begins.
+
 - **[Character Collection & Fantasy Strategy](docs/design/design-001-character-collection-and-fantasy-strategy.md)**
   The strategy note for collectible fantasy, roster pillars, battle-vs-presentation art lanes, and how popularity/variants should shape the cast.
 
