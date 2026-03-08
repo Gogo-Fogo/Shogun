@@ -146,6 +146,81 @@ Recommended node types for the first version:
 - **Merchant/Smith:** trade resources for temporary power
 - **Ambush/Corruption:** risk-heavy branch with rare rewards
 
+## Event-vignette presentation lane
+
+`Shogun` should give its roguelite event nodes a dedicated presentation lane instead of showing them as plain text-only popups.
+
+Reference target:
+
+- `Slay the Spire`-style event scenes with a strong image, a short narrative setup, and 2-4 meaningful choices
+
+Recommended approach:
+
+- use one strong static vignette image per event family
+- pair it with concise atmospheric text and sharply differentiated choices
+- reuse the same event image across multiple text/choice variations when they belong to the same fantasy family
+
+This gives the mode:
+
+- more atmosphere
+- stronger perceived production value
+- better memory anchors for repeat runs
+- more room for worldbuilding without requiring full new battle maps
+
+### What these event scenes should do
+
+They should support:
+
+- yokai bargains
+- cursed shrines
+- ronin duels
+- haunted crossroads
+- hidden dojos
+- execution grounds
+- temple trials
+- relic discoveries
+
+They should not become:
+
+- giant one-off paintings for every tiny encounter
+- long VN-style cutscenes
+- production bottlenecks that slow down content iteration
+
+### Production rule
+
+Treat event vignette art as a reusable content layer.
+
+Build:
+
+- `5-8` event images for the first prototype
+- each image tied to an event archetype, not one single event
+
+Example:
+
+- one `Yokai Bargain` image can support several different shrine, charm, dream, or seduction events
+- one `Blood Moon Duel` image can support multiple ronin challenge variants
+- one `Temple Trial` image can support cleansing, sacrifice, blessing, or corruption choices
+
+### Art workflow for vignette events
+
+Recommended stack:
+
+- `Gemini web chat / Nano Banana Pro` for concept composition and collectible-facing mood exploration
+- `PixelLab` for style-matched pixel finalization
+- `Unity` for event UI framing and readability validation
+
+Unlike battle sprites, these vignettes do not need directional animation coverage.
+
+That makes them one of the highest-value uses of the AI-assisted art lane:
+
+- high atmosphere
+- moderate production cost
+- low gameplay integration complexity
+
+For the production-facing art workflow, see:
+
+- [`../art/art-008-roguelite-event-vignette-art.md`](../art/art-008-roguelite-event-vignette-art.md)
+
 ## Run-level power systems
 
 This is where `Shogun` can let players get temporarily overpowered.

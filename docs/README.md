@@ -40,6 +40,7 @@ Markdown and PDF companions share the same base filename whenever both versions 
 - Cross-disciplinary character-identity and worldbuilding notes may exist only in `design/` when they are not purely art or purely gameplay docs.
 - Cross-disciplinary live-balance, roguelite, multiplayer, and social-roadmap notes may also live only in `design/` when they cut across art, systems, lore, and live-service planning.
 - Art workflow, style, import, and provenance notes may exist only in `art/` when they are internal production standards rather than recruiter-facing documents.
+- Roguelite event-vignette presentation notes may also live in `art/` when they define reusable atmospheric event-scene production rather than character sprite standards.
 
 ## Suggested usage
 

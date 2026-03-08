@@ -169,7 +169,7 @@ The character system implements core mechanics inspired by Naruto Blazing:
   The living balance-governance note for banner value, old-unit refresh cadence, power-creep control, and how PvE, PvP, and roguelite modes should react to long-term unit inflation.
 
 - **[Roguelite Replayability & Run-Mode Framework](docs/design/design-004-roguelite-replayability-and-run-mode-framework.md)**
-  The replayability note for how a Slay the Spire-like structure should fit `Shogun`, what should stay authored, and how temporary run power should fight repetition.
+  The replayability note for how a Slay the Spire-like structure should fit `Shogun`, what should stay authored, how temporary run power should fight repetition, and how event-scene presentation should support roguelite choices.
 
 - **[Co-op, PvP & Social Systems Roadmap](docs/design/design-005-co-op-pvp-and-social-systems-roadmap.md)**
   The multiplayer roadmap for co-op priority, world bosses, async PvP, clan timing, and how to make the game fun with friends without overcommitting to risky online scope too early.
@@ -185,6 +185,9 @@ The character system implements core mechanics inspired by Naruto Blazing:
 
 - **[Asset Provenance & Source Tracking](docs/art/art-004-asset-provenance-and-source-tracking.md)**
   The provenance note for tracking generated sources, manual edits, and shipped runtime assets.
+
+- **[Roguelite Event Vignette Art](docs/art/art-008-roguelite-event-vignette-art.md)**
+  The event-scene art note for STS-style roguelite choices, reusable atmospheric vignettes, and how to use AI-assisted art to raise run presentation value without exploding content scope.
 
 - **[March 2026 Repo Modernization Retrospective](docs/ops/doc-ops-005-march-2026-repo-modernization-retrospective.md)**  
   Retroactive explanation for the March 7, 2026 cleanup/tooling batch, including the earlier pushed commits that landed without descriptive bodies.

@@ -21,7 +21,7 @@
 4. [`design-003-long-term-balance-and-power-creep-policy.md`](./design-003-long-term-balance-and-power-creep-policy.md)
    - long-term balance governance, power-creep limits, refresh cadence, and banner-value policy
 5. [`design-004-roguelite-replayability-and-run-mode-framework.md`](./design-004-roguelite-replayability-and-run-mode-framework.md)
-   - replayability structure, roguelite mode positioning, run systems, and anti-repetition framework
+   - replayability structure, roguelite mode positioning, run systems, anti-repetition framework, and the role of STS-style event scenes
 6. [`design-005-co-op-pvp-and-social-systems-roadmap.md`](./design-005-co-op-pvp-and-social-systems-roadmap.md)
    - co-op, world bosses, PvP rollout, clans, and social-system phasing
 
@@ -35,6 +35,8 @@
   - use for fanservice boundaries, FEH-style damage art, and store-safe limits
 - [`../art/art-007-violence-and-injury-policy.md`](../art/art-007-violence-and-injury-policy.md)
   - use for blood, bruising, dark-fantasy brutality, and what violent spectacle is too risky
+- [`../art/art-008-roguelite-event-vignette-art.md`](../art/art-008-roguelite-event-vignette-art.md)
+  - use for STS-style event-scene presentation, vignette art scope, and how roguelite choice scenes should be visualized
 - [`../research/doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.md`](../research/doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.md)
   - use for combat and roster reference patterns only
 - [`../research/doc-ref-002-naruto-ninja-blazing-success-failure-and-shutdown-analysis.md`](../research/doc-ref-002-naruto-ninja-blazing-success-failure-and-shutdown-analysis.md)
@@ -70,9 +72,10 @@
 
 1. `DOC-GDD-001`
 2. `DESIGN-004`
-3. `DESIGN-003`
-4. `DOC-REF-001`
-5. `DOC-REF-003`
+3. `ART-008`
+4. `DESIGN-003`
+5. `DOC-REF-001`
+6. `DOC-REF-003`
 
 ### Co-op, PvP, raids, and clans
 

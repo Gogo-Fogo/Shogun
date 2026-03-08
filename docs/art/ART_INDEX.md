@@ -8,6 +8,7 @@
 - how PixelLab output should be cleaned and productionized
 - what sprite sizes, frame budgets, and animation tags should be used
 - how `.aseprite` files should move into Unity
+- how roguelite event scenes should be visualized and produced
 - how generated or edited assets should be tracked for provenance
 
 ## Document order
@@ -22,7 +23,9 @@
    - boundaries for sex appeal, FEH-style damage art, and what battle animation fanservice is too risky
 5. [`art-007-violence-and-injury-policy.md`](./art-007-violence-and-injury-policy.md)
    - boundaries for blood, bruises, dark-fantasy brutality, and what gore or dismemberment is too risky
-6. [`art-004-asset-provenance-and-source-tracking.md`](./art-004-asset-provenance-and-source-tracking.md)
+6. [`art-008-roguelite-event-vignette-art.md`](./art-008-roguelite-event-vignette-art.md)
+   - STS-style event scene art for roguelite choices, shrines, bargains, and atmospheric decision points
+7. [`art-004-asset-provenance-and-source-tracking.md`](./art-004-asset-provenance-and-source-tracking.md)
    - provenance rules, metadata, and legal-traceability handling
 
 ## Companion docs outside this folder
@@ -33,6 +36,8 @@
   - use for collectible fantasy, battle-vs-presentation lanes, and variant planning
 - [`../design/design-002-world-pillars-and-combat-identity-framework.md`](../design/design-002-world-pillars-and-combat-identity-framework.md)
   - use for world pillars, elemental affinity, weapon families, martial schools, and roster identity stacking
+- [`../design/design-004-roguelite-replayability-and-run-mode-framework.md`](../design/design-004-roguelite-replayability-and-run-mode-framework.md)
+  - use for event-node structure, run flow, and how vignette art should function inside the roguelite mode
 - [`../ops/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md`](../ops/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)
   - use first when the question is whether PixelLab is worth using at all
 - [`../legal/doc-legal-001-ai-generated-assets-legal-considerations.md`](../legal/doc-legal-001-ai-generated-assets-legal-considerations.md)
@@ -48,10 +53,11 @@
 4. `ART-002`
 5. `ART-006`
 6. `ART-007`
-7. `ART-003`
-8. `ART-004`
-9. `DOC-OPS-004`
-10. `DOC-LEGAL-001`
+7. `ART-008`
+8. `ART-003`
+9. `ART-004`
+10. `DOC-OPS-004`
+11. `DOC-LEGAL-001`
 
 ## Rule for future updates
 

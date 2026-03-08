@@ -24,6 +24,7 @@ docs/
     art-004-asset-provenance-and-source-tracking.md
     art-006-sex-appeal-and-damage-art-policy.md
     art-007-violence-and-injury-policy.md
+    art-008-roguelite-event-vignette-art.md
   legal/
     LEGAL_INDEX.md
     doc-data-001-unity-mobile-gacha-rpg-data-collection-and-compliance.md
@@ -91,6 +92,7 @@ For most tasks:
 | `ART-002` | Sprite production pipeline | `art/art-002-sprite-production-pipeline.md` | No recruiter PDF in this folder | Primary art workflow note | Use for the bounded PixelLab-to-Aseprite-to-Unity production flow and trial/pass-fail rules. |
 | `ART-006` | Sex appeal and damage-art policy | `art/art-006-sex-appeal-and-damage-art-policy.md` | No recruiter PDF in this folder | Primary fanservice boundary note | Use for sex-appeal limits, FEH-style damage-art interpretation, and what battle animation fanservice is too risky. |
 | `ART-007` | Violence and injury policy | `art/art-007-violence-and-injury-policy.md` | No recruiter PDF in this folder | Primary violence boundary note | Use for blood, bruises, violent finishers, demon-vs-human dismemberment limits, and dark-fantasy brutality boundaries. |
+| `ART-008` | Roguelite event vignette art | `art/art-008-roguelite-event-vignette-art.md` | No recruiter PDF in this folder | Primary event-scene art note | Use for STS-style event-scene presentation, vignette reuse rules, and how roguelite choice nodes should use atmospheric art without exploding scope. |
 | `ART-003` | Unity 2D import and animation standards | `art/art-003-unity-2d-import-and-animation-standards.md` | No recruiter PDF in this folder | Primary import standard | Use for `.aseprite` import, animation tags, frame-budget targets, and gameplay-facing sprite standards. |
 | `ART-004` | Asset provenance and source tracking | `art/art-004-asset-provenance-and-source-tracking.md` | No recruiter PDF in this folder | Primary provenance note | Use for generated-art traceability, manual-edit tracking, and shipped-asset metadata requirements. |
 | `DOC-LEGAL-001` | Legal and platform-policy risk overview | `legal/doc-legal-001-ai-generated-assets-legal-considerations.md` | `recruiter/doc-legal-001-ai-generated-assets-legal-considerations.pdf` | Primary legal risk briefing | Use for AI asset usage, privacy, loot box compliance, store-policy risk, and IP questions. |
@@ -256,9 +258,10 @@ Open:
 Open:
 1. `DOC-GDD-001`
 2. `DESIGN-004`
-3. `DESIGN-003`
-4. `DOC-REF-001`
-5. `DOC-REF-003`
+3. `ART-008`
+4. `DESIGN-003`
+5. `DOC-REF-001`
+6. `DOC-REF-003`
 
 ### Co-op, PvP, raids, and clans
 Open:
