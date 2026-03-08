@@ -399,6 +399,10 @@ The GDD calls for:
 - Built in Unity; mobile iOS/Android; portrait, single-hand operation. citeturn2view0  
 - The creator’s background emphasizes Unity (C#), QA/live-ops grounding, and player-centered delivery. citeturn5view0
 
+**Living companion note:** this GDD remains the stable product-scope source, but the current internal interpretation of platform scope, tablets/foldables, frame-rate policy, graphics settings, and `2D` versus selective `2.5D` presentation now lives in:
+
+- `docs/design/design-006-mobile-platform-display-and-performance-strategy.md`
+
 **Build status (public)**
 - Prototype validates turn order and position-based combat loops; initiative timeline in progress; enemy AI next. citeturn2view0
 

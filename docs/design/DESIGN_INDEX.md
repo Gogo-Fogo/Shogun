@@ -24,6 +24,8 @@
    - replayability structure, roguelite mode positioning, run systems, anti-repetition framework, and the role of STS-style event scenes
 6. [`design-005-co-op-pvp-and-social-systems-roadmap.md`](./design-005-co-op-pvp-and-social-systems-roadmap.md)
    - co-op, world bosses, PvP rollout, clans, and social-system phasing
+7. [`design-006-mobile-platform-display-and-performance-strategy.md`](./design-006-mobile-platform-display-and-performance-strategy.md)
+   - mobile-first platform stance, foldables and tablets, frame-rate policy, graphics settings, and 2D vs 2.5D boundaries
 
 ## Companion docs outside this folder
 
@@ -86,6 +88,15 @@
 5. `DOC-REF-001`
 6. `DOC-REF-002`
 7. `DOC-REF-003`
+
+### Mobile platform, tablets, foldables, and rendering policy
+
+1. `DOC-GDD-001`
+2. `DESIGN-006`
+3. `DOC-ENG-001`
+4. `ART-001`
+5. `ART-008`
+6. `DOC-ENG-002`
 
 ## Rule for future updates
 

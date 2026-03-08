@@ -174,6 +174,9 @@ The character system implements core mechanics inspired by Naruto Blazing:
 - **[Co-op, PvP & Social Systems Roadmap](docs/design/design-005-co-op-pvp-and-social-systems-roadmap.md)**
   The multiplayer roadmap for co-op priority, world bosses, async PvP, clan timing, and how to make the game fun with friends without overcommitting to risky online scope too early.
 
+- **[Mobile Platform, Display & Performance Strategy](docs/design/design-006-mobile-platform-display-and-performance-strategy.md)**
+  The platform-strategy note for mobile-first scope, tablets and foldables, frame-rate policy, graphics settings, 2D versus 2.5D boundaries, and why `PC` should remain a later expansion path.
+
 - **[Sex Appeal & Damage-Art Policy](docs/art/art-006-sex-appeal-and-damage-art-policy.md)**
   The art-policy note for how far `Shogun` should push fanservice, how damage art should work, and why explicit jiggle-heavy battle animation is the wrong line.
 

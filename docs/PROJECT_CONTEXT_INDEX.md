@@ -16,6 +16,7 @@ docs/
     design-003-long-term-balance-and-power-creep-policy.md
     design-004-roguelite-replayability-and-run-mode-framework.md
     design-005-co-op-pvp-and-social-systems-roadmap.md
+    design-006-mobile-platform-display-and-performance-strategy.md
   art/
     ART_INDEX.md
     art-001-style-bible-and-visual-targets.md
@@ -88,6 +89,7 @@ For most tasks:
 | `DESIGN-003` | Long-term balance and power-creep policy | `design/design-003-long-term-balance-and-power-creep-policy.md` | No recruiter PDF in this folder | Primary live-balance note | Use for banner-value policy, power-creep controls, old-unit refresh cadence, and ranked/PvE balance boundaries. |
 | `DESIGN-004` | Roguelite replayability and run-mode framework | `design/design-004-roguelite-replayability-and-run-mode-framework.md` | No recruiter PDF in this folder | Primary replayability note | Use for how procedural structure should fit story mode, how a roguelite mode should work, and how to reduce repetition without proceduralizing the whole campaign. |
 | `DESIGN-005` | Co-op, PvP, and social systems roadmap | `design/design-005-co-op-pvp-and-social-systems-roadmap.md` | No recruiter PDF in this folder | Primary multiplayer roadmap note | Use for co-op priority, world bosses, PvP rollout, clan timing, and social-system phasing. |
+| `DESIGN-006` | Mobile platform, display, and performance strategy | `design/design-006-mobile-platform-display-and-performance-strategy.md` | No recruiter PDF in this folder | Primary platform-strategy note | Use for mobile-first scope, tablets/foldables, frame-rate policy, graphics settings, 2D vs 2.5D boundaries, and PC-later positioning. |
 | `ART-001` | Style bible and visual targets | `art/art-001-style-bible-and-visual-targets.md` | No recruiter PDF in this folder | Primary art-direction note | Use first for silhouette rules, palette direction, detail limits, and gameplay readability targets. |
 | `ART-002` | Sprite production pipeline | `art/art-002-sprite-production-pipeline.md` | No recruiter PDF in this folder | Primary art workflow note | Use for the bounded PixelLab-to-Aseprite-to-Unity production flow and trial/pass-fail rules. |
 | `ART-006` | Sex appeal and damage-art policy | `art/art-006-sex-appeal-and-damage-art-policy.md` | No recruiter PDF in this folder | Primary fanservice boundary note | Use for sex-appeal limits, FEH-style damage-art interpretation, and what battle animation fanservice is too risky. |
@@ -198,6 +200,15 @@ Open:
 4. `DESIGN-005`
 5. `DOC-REF-001`
 6. optionally `DOC-REF-002`
+
+### Mobile-first platform scope, tablets, foldables, and rendering strategy
+Open:
+1. `DOC-GDD-001`
+2. `DESIGN-006`
+3. `DOC-ENG-001`
+4. `ART-001`
+5. `ART-008`
+6. `DOC-ENG-002`
 
 ### Unity structure, backend, live-service architecture
 Open:
