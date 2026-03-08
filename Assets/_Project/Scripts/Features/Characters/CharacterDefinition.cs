@@ -66,7 +66,7 @@ namespace Shogun.Features.Characters
         public string GivenName => givenName;
         public string DisplayNameJP => string.IsNullOrEmpty(surname) ? givenName : $"{surname} {givenName}";
         public string DisplayNameEN => string.IsNullOrEmpty(surname) ? givenName : $"{givenName} {surname}";
-        public string CharacterName => GivenName; // For legacy compatibility
+        public string CharacterName => string.IsNullOrEmpty(givenName) ? characterName : givenName; // Legacy fallback
         public string Description => description;
         public Sprite Portrait => portrait;
         public Sprite BattleSprite => battleSprite;
