@@ -24,6 +24,7 @@ docs/
     art-002-sprite-production-pipeline.md
     art-003-unity-2d-import-and-animation-standards.md
     art-004-asset-provenance-and-source-tracking.md
+    art-005-legacy-and-production-asset-separation-policy.md
     art-006-sex-appeal-and-damage-art-policy.md
     art-007-violence-and-injury-policy.md
     art-008-roguelite-event-vignette-art.md
@@ -42,6 +43,7 @@ docs/
     doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md
     doc-ops-005-march-2026-repo-modernization-retrospective.md
     doc-ops-006-unity-editor-version-policy-and-upgrade-checklist.md
+    doc-ops-007-stage-1-unity-project-reality-audit.md
   research/
     RESEARCH_INDEX.md
     doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.md
@@ -88,6 +90,7 @@ For most tasks:
 | `DOC-OPS-004` | PixelLab evaluation and sprite production workflow | `ops/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md` | No recruiter PDF in this folder | Operational art-tooling note | Use for PixelLab fit, subscription vs API choice, sprite workflow, animation-size guidance, and AI-assisted art production boundaries. |
 | `DOC-OPS-005` | March 2026 repo modernization retrospective | `ops/doc-ops-005-march-2026-repo-modernization-retrospective.md` | No recruiter PDF in this folder | Operational change log | Use when the question is what changed in the March 7, 2026 cleanup/tooling batch and why those pushed commits were structured that way. |
 | `DOC-OPS-006` | Unity editor version policy and upgrade checklist | `ops/doc-ops-006-unity-editor-version-policy-and-upgrade-checklist.md` | No recruiter PDF in this folder | Operational upgrade policy | Use for the project-specific Unity baseline, stable upgrade target, alpha/beta exclusion rule, and safe LTS-upgrade checklist. |
+| `DOC-OPS-007` | Stage 1 Unity project reality audit | `ops/doc-ops-007-stage-1-unity-project-reality-audit.md` | No recruiter PDF in this folder | Operational reality-check note | Use when the question is what the current Unity project actually contains, what is salvageable, what is placeholder, and whether the project should be rebuilt or restarted. |
 | `DESIGN-001` | Character collection and fantasy strategy | `design/design-001-character-collection-and-fantasy-strategy.md` | No recruiter PDF in this folder | Primary collection-strategy note | Use for collectible fantasy, roster pillars, battle-vs-presentation art lanes, and variant planning. |
 | `DESIGN-002` | World pillars and combat identity framework | `design/design-002-world-pillars-and-combat-identity-framework.md` | No recruiter PDF in this folder | Primary roster-identity note | Use for world pillars, elemental affinity, weapon families, martial schools, and how those layers stack into a character identity. |
 | `DESIGN-003` | Long-term balance and power-creep policy | `design/design-003-long-term-balance-and-power-creep-policy.md` | No recruiter PDF in this folder | Primary live-balance note | Use for banner-value policy, power-creep controls, old-unit refresh cadence, and ranked/PvE balance boundaries. |
@@ -97,6 +100,7 @@ For most tasks:
 | `DESIGN-007` | Range circles and threat geometry framework | `design/design-007-range-circles-and-threat-geometry-framework.md` | No recruiter PDF in this folder | Primary combat-readability note | Use for why range circles matter, how short/mid/long attack bands should work, how threat overlap should shape tactics, and how to keep range design readable over time. |
 | `ART-001` | Style bible and visual targets | `art/art-001-style-bible-and-visual-targets.md` | No recruiter PDF in this folder | Primary art-direction note | Use first for silhouette rules, palette direction, detail limits, and gameplay readability targets. |
 | `ART-002` | Sprite production pipeline | `art/art-002-sprite-production-pipeline.md` | No recruiter PDF in this folder | Primary art workflow note | Use for the bounded PixelLab-to-Aseprite-to-Unity production flow and trial/pass-fail rules. |
+| `ART-005` | Legacy and production asset separation policy | `art/art-005-legacy-and-production-asset-separation-policy.md` | No recruiter PDF in this folder | Primary asset-organization note | Use for how old imported packs, Gemini/PixelLab working files, and approved runtime assets should be separated. |
 | `ART-006` | Sex appeal and damage-art policy | `art/art-006-sex-appeal-and-damage-art-policy.md` | No recruiter PDF in this folder | Primary fanservice boundary note | Use for sex-appeal limits, FEH-style damage-art interpretation, and what battle animation fanservice is too risky. |
 | `ART-007` | Violence and injury policy | `art/art-007-violence-and-injury-policy.md` | No recruiter PDF in this folder | Primary violence boundary note | Use for blood, bruises, violent finishers, demon-vs-human dismemberment limits, and dark-fantasy brutality boundaries. |
 | `ART-008` | Roguelite event vignette art | `art/art-008-roguelite-event-vignette-art.md` | No recruiter PDF in this folder | Primary event-scene art note | Use for STS-style event-scene presentation, vignette reuse rules, and how roguelite choice nodes should use atmospheric art without exploding scope. |
@@ -136,11 +140,12 @@ For most tasks:
 1. `DOC-OPS-002`
 2. `DOC-OPS-003`
 3. `DOC-OPS-006`
-4. `DOC-OPS-005`
-5. `DOC-OPS-004`
-6. `DOC-ENG-002`
-7. `DOC-LEGAL-001`
-8. `DOC-LEGAL-002`
+4. `DOC-OPS-007`
+5. `DOC-OPS-005`
+6. `DOC-OPS-004`
+7. `DOC-ENG-002`
+8. `DOC-LEGAL-001`
+9. `DOC-LEGAL-002`
 
 ### AI workspace safety, repo scope, and backup recovery
 1. `DOC-OPS-003`
@@ -151,30 +156,32 @@ For most tasks:
 
 ### AI-assisted sprite production and PixelLab workflow
 1. `ART-001`
-2. `DESIGN-001`
-3. `DESIGN-002`
-4. `ART-002`
-5. `ART-006`
-6. `ART-009`
-7. `ART-003`
-8. `ART-004`
-9. `DOC-OPS-004`
-10. `DOC-LEGAL-001`
-11. `DOC-LEGAL-002`
-12. `DOC-OPS-002` if MCP integration matters
-
-### Art direction, sprite import, and provenance
-1. `ART-001`
-2. `DESIGN-001`
-3. `DESIGN-002`
-4. `ART-009`
-5. `ART-006`
-6. `ART-007`
-7. `ART-002`
+2. `ART-005`
+3. `DESIGN-001`
+4. `DESIGN-002`
+5. `ART-002`
+6. `ART-006`
+7. `ART-009`
 8. `ART-003`
 9. `ART-004`
 10. `DOC-OPS-004`
 11. `DOC-LEGAL-001`
+12. `DOC-LEGAL-002`
+12. `DOC-OPS-002` if MCP integration matters
+
+### Art direction, sprite import, and provenance
+1. `ART-001`
+2. `ART-005`
+3. `DESIGN-001`
+4. `DESIGN-002`
+5. `ART-009`
+6. `ART-006`
+7. `ART-007`
+8. `ART-002`
+9. `ART-003`
+10. `ART-004`
+11. `DOC-OPS-004`
+12. `DOC-LEGAL-001`
 
 ### Legal, compliance, and AI-asset risk
 1. `DOC-LEGAL-001`
@@ -241,10 +248,11 @@ Open:
 ### AI safety, repo boundaries, and backup recovery
 Open:
 1. `DOC-OPS-003`
-2. `DOC-OPS-005`
-3. `DOC-OPS-006`
-4. `DOC-OPS-002`
-5. `DOC-LEGAL-001`
+2. `DOC-OPS-007`
+3. `DOC-OPS-005`
+4. `DOC-OPS-006`
+5. `DOC-OPS-002`
+6. `DOC-LEGAL-001`
 
 ### Unity editor baseline, LTS upgrades, and version-move safety
 Open:
@@ -257,18 +265,27 @@ Open:
 ### Pixel art workflow, PixelLab, and AI-generated sprite production
 Open:
 1. `ART-001`
-2. `DESIGN-001`
-3. `DESIGN-002`
-4. `ART-009`
-5. `ART-006`
-6. `ART-007`
-7. `ART-002`
-8. `ART-003`
-9. `ART-004`
-10. `DOC-OPS-004`
-11. `DOC-LEGAL-001`
-12. `DOC-LEGAL-002`
-13. `DOC-OPS-002` if MCP integration or coding-assistant setup matters
+2. `ART-005`
+3. `DESIGN-001`
+4. `DESIGN-002`
+5. `ART-009`
+6. `ART-006`
+7. `ART-007`
+8. `ART-002`
+9. `ART-003`
+10. `ART-004`
+11. `DOC-OPS-004`
+12. `DOC-LEGAL-001`
+13. `DOC-LEGAL-002`
+14. `DOC-OPS-002` if MCP integration or coding-assistant setup matters
+
+### Project reality, salvage, and restart-vs-rebuild decisions
+Open:
+1. `DOC-OPS-007`
+2. `DOC-GDD-001`
+3. `DOC-ENG-001`
+4. `DOC-ENG-002`
+5. `ART-005`
 
 ### World pillars, elements, martial schools, and roster identity
 Open:

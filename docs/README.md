@@ -37,12 +37,14 @@ Markdown and PDF companions share the same base filename whenever both versions 
 - Some canonical engineering and reference notes may exist only in `research/` when no recruiter PDF is needed.
 - Internal operational notes like Unity MCP workflow guidance may exist only in `ops/` when no recruiter PDF is needed.
 - Internal Unity editor baseline and upgrade-governance notes may also live in `ops/` when they are workflow policy rather than recruiter-facing engineering research.
+- Stage-based reality-audit notes may also live in `ops/` when the goal is to document what the current repo and Unity project actually contain before deciding whether to rebuild or restart.
 - Internal legal/compliance or telemetry-compliance notes may exist only in `legal/` when no recruiter PDF is needed.
 - Cross-disciplinary character-identity and worldbuilding notes may exist only in `design/` when they are not purely art or purely gameplay docs.
 - Cross-disciplinary live-balance, roguelite, multiplayer, and social-roadmap notes may also live only in `design/` when they cut across art, systems, lore, and live-service planning.
 - Cross-disciplinary combat-readability and threat-geometry notes may also live in `design/` when they define how range, overlap, counters, and encounter clarity should function over time.
 - Mobile platform, foldable/tablet, frame-rate, and rendering-strategy notes may also live in `design/` when they cut across UX, performance, content scope, and platform planning.
 - Art workflow, style, import, and provenance notes may exist only in `art/` when they are internal production standards rather than recruiter-facing documents.
+- Asset-separation notes may also live in `art/` when they define how legacy imported packs, generated source material, and approved runtime assets should coexist without becoming ambiguous.
 - Roguelite event-vignette presentation notes may also live in `art/` when they define reusable atmospheric event-scene production rather than character sprite standards.
 - Visual style-experiment notes may also live in `art/` when they evaluate alternative shipped looks, such as ukiyo-e / ink influence, before the production style is fully locked.
 

@@ -4,8 +4,8 @@
 
 ## Current rule
 
-- The committed project baseline remains Unity `6000.0.69f1` until a deliberate upgrade is approved and validated.
-- The current preferred stable upgrade target is Unity `6000.3.10f1`.
+- The current committed project baseline is Unity `6000.3.10f1`.
+- The current mainline recommendation is to stay on `6000.3.10f1` unless a later stable LTS/support release provides a concrete project benefit.
 - Do **not** open the main working copy in Unity alpha or beta editors.
 
 This note exists because the repo already has a non-trivial package/tooling surface, and random editor churn is more expensive than it looks.
@@ -26,21 +26,21 @@ That means alpha excitement is not enough to justify a mainline upgrade.
 For this repo:
 
 - `Unity 6.5 alpha` is acceptable only in a disposable clone or test branch
-- `Unity 6.3 LTS` is the sensible stable line if and when a longer-lived LTS upgrade is desired
+- `Unity 6.3 LTS` is now the active stable line for the repo
 
 ## Current project-specific recommendation
 
-### Stay on `6000.0.69f1` when:
+### Stay on `6000.3.10f1` when:
 
 - the current editor is stable
 - active feature work matters more than editor support runway
-- there is no specific fix or package requirement pushing the project forward
-- the team cannot afford to lose time to package or importer drift
+- there is no specific fix or package requirement pushing the project forward again
+- the team cannot afford more editor churn
 
-### Move to `6000.3.10f1` when:
+### Move beyond `6000.3.10f1` only when:
 
-- you want to settle on the newer Unity `6.3 LTS` line
-- you want the longer support runway of `6.3 LTS`
+- you have a concrete engine/package reason
+- a later stable LTS or supported update line is clearly better for the project
 - you are prepared to spend one controlled pass validating packages, rendering, builds, and tooling
 
 ### Do not move the main project to alpha/beta when:
@@ -50,27 +50,27 @@ For this repo:
 - mobile build stability matters
 - the upgrade is motivated mostly by hype rather than a concrete project need
 
-## Why `6000.3.10f1` is the right stable candidate
+## Why `6000.3.10f1` is the active stable baseline
 
 `6000.3.10f1` is a stable `Unity 6.3 LTS` editor release, not an experimental build.
 
-That makes it the right target if the project wants:
+That made it the right adoption target because the project wanted:
 
 - a more current LTS line
 - a longer support window than `6.0 LTS`
 - a stable editor family rather than preview features
 
-At the same time, `6000.0.69f1` is already a recent `Unity 6.0 LTS` patch and is still a reasonable place to remain if stability this week matters more than migration.
+That migration has now been completed and validated enough for normal project work.
 
 ## Upgrade policy
 
 ### Allowed upgrade path
 
-- `6000.0.69f1` -> `6000.3.10f1`
+- `6000.3.10f1` -> later stable LTS/support release only after the same controlled validation process
 
 ### Disallowed mainline path
 
-- `6000.0.x` -> `6.5 alpha` in the active main working copy
+- `6000.3.x` -> alpha/beta editor in the active main working copy
 
 ### Safe experimentation path
 
@@ -97,7 +97,7 @@ Before opening `Shogun` in a different stable Unity editor:
    - `Packages/packages-lock.json`
    - current known-good URP/mobile settings
 
-## Validation checklist for `6000.3.10f1`
+## Validation checklist for the next stable editor move
 
 After opening the disposable copy in the new editor, validate all of the following before adopting it:
 
@@ -144,9 +144,9 @@ If validation fails or becomes noisy:
 - discard the test copy or branch
 - stay on the current baseline
 
-## What to commit if the upgrade is adopted
+## What to commit if a later upgrade is adopted
 
-If the project deliberately moves to `6000.3.10f1`, commit the editor/version shift as one intentional upgrade batch that includes:
+If the project deliberately moves beyond `6000.3.10f1`, commit the editor/version shift as one intentional upgrade batch that includes:
 
 - `ProjectSettings/ProjectVersion.txt`
 - `Packages/manifest.json` if changed
@@ -171,6 +171,7 @@ These areas deserve extra scrutiny on any Unity version change:
 - Use `DOC-ENG-001` for the broad engineering recommendation that `Unity 6.3 LTS` is the current default for a new mobile production.
 - Use this document for the **project-specific operational rule** for `Shogun`.
 - Use `DOC-OPS-002` when the question is whether Unity MCP or package drift is part of the problem.
+- Use `DOC-OPS-007` when the question is whether the current Unity project reality supports further migration churn at all.
 - Use `DESIGN-006` when the question is platform/display strategy rather than editor-upgrade governance.
 
 ## Official references

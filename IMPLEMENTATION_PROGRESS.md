@@ -1,160 +1,179 @@
 # Implementation Progress
 
-## ✅ Issues Fixed
+> Status date: March 9, 2026  
+> Read this as a reality-tracking note, not as a marketing summary.
 
-### 1. Assembly Definition Dependencies
-- **Fixed**: Added proper namespaces to all assembly definitions
-- **Result**: All features now have correct namespaces (Shogun.Features.Characters, etc.)
-- **Status**: ✅ COMPLETE
+## Current status
 
-### 2. Build Settings
-- **Issue**: Only Dev_Sandbox in build settings
-- **Solution**: Created BUILD_SETTINGS_UPDATE.md guide
-- **Action Required**: Update Unity Build Settings manually
-- **Status**: ⏳ PENDING (requires Unity Editor)
+`Shogun` is **not** starting from zero, but it is also **not** a feature-complete game foundation.
 
-## ✅ Core Systems Implemented
+The current repo is best understood as:
 
-### 1. ScriptableObject Event System
-- **EventChannelSO.cs**: Base event channel system with generic support
-- **EventListener.cs**: GameObject components for listening to events
-- **GameEvents.cs**: Specific event channels for all major systems
-- **Status**: ✅ COMPLETE
+- a large imported content/archive base
+- a useful mobile-ready scene and UI scaffold
+- one real combat sandbox
+- a stronger character-data model than the live gameplay loop currently supports
+- several planned systems that exist structurally but are not yet meaningfully implemented
 
-### 2. Event Data Structures
-- **CombatEventData**: Combat system events (battle start, damage, etc.)
-- **CharacterEventData**: Character system events (level up, summon, etc.)
-- **UIEventData**: UI system events (panel open, button press, etc.)
-- **GachaEventData**: Gacha system events (summon, pity, etc.)
-- **InputEventData**: Input/gesture events (tap, swipe, hold, etc.)
-- **Status**: ✅ COMPLETE
+Use [DOC-OPS-007](docs/ops/doc-ops-007-stage-1-unity-project-reality-audit.md) as the fuller explanation of that reality.
 
-### 3. Character Definition System
-- **CharacterDefinition.cs**: ScriptableObject for character base data with Naruto Blazing-inspired mechanics
-- **CharacterStats.cs**: Stats, level progression, and elemental effectiveness calculations
-- **CharacterInstance.cs**: Runtime character state with battle mechanics and status effects
-- **CharacterFactory.cs**: Character creation, management, and utility methods
-- **CharacterSystemTests.cs**: Comprehensive test suite for character functionality
-- **Status**: ✅ COMPLETE
+## Current implementation truth
 
-### 4. Multi-Layered Combat System (MAJOR UPGRADE)
-- **Updated Elemental System**: Genshin Impact-inspired with 7 elements (Fire, Water, Earth, Wind, Lightning, Ice, Shadow)
-- **Martial Arts System**: 7 weapon types (Unarmed, Sword, Spear, Bow, Staff, Dual Daggers, Heavy Weapons)
-- **Stealth Mechanics**: Bush hiding with diminishing returns based on martial arts type
-- **Counter-Attack System**: Reactive combat with martial arts-specific chances and damage multipliers
-- **Elemental Reactions**: Vaporize, Melt, Electro-charged, Swirl, Freeze, Corrupt
-- **Comprehensive Testing**: Updated test suite covering all new mechanics
-- **Documentation**: Complete combat mechanics documentation created
-- **Status**: ✅ COMPLETE
+### Active Unity/editor baseline
 
-## ✅ Documentation Consistency Fixes
+- Current project version: `6000.3.10f1`
+- Current mainline editor policy lives in:
+  - [DOC-OPS-006](docs/ops/doc-ops-006-unity-editor-version-policy-and-upgrade-checklist.md)
 
-### Movement and Attack Range Mechanics
-- **Issue**: Inconsistencies between Naruto Blazing analysis and GDD regarding movement and attack range mechanics
-- **Fixed**: Updated both documents to accurately reflect that:
-  - Movement is free-form on the battlefield (not limited to a circle/radius)
-  - Only attack range is a circle (short, mid, long)
-  - Counterattacks occur when ending turn in enemy attack range
-- **Files Updated**:
-  - `docs/research/doc-ref-001-naruto-ultimate-ninja-blazing-conceptual-synthesis.md`
-  - `docs/design/doc-gdd-001-shogun-flowers-fall-in-blood-game-design-document.md`
-- **Status**: ✅ COMPLETE
+### Current playable surface
 
-## ✅ Documentation Consolidation (2026-03-07)
+- The only scene with meaningful gameplay wiring is:
+  - `Assets/_Project/Scenes/Dev/Dev_Sandbox.unity`
+- Other scene files currently exist more as shells or scaffolds:
+  - `MainMenu`
+  - `Battle_Prototype`
+  - `UI_Demo`
+- Build settings currently point only to:
+  - `Dev_Sandbox`
 
-- Promoted the useful Unity runtime architecture guidance from the legacy docs into a canonical engineering note:
-  - `docs/research/doc-eng-002-unity-project-runtime-architecture-patterns.md`
-- Flattened the canonical docs structure so `docs/` is the source-of-truth root.
-- Updated `docs/PROJECT_CONTEXT_INDEX.md` and `docs/README.md` to reflect the canonical structure.
-- Updated repo-level documentation links to point at `docs/`.
-- Removed the obsolete `docs/old` legacy document set after preserving the useful architecture guidance.
+### Foundations that are genuinely useful
 
-## ✅ Bugfixes & Documentation Updates
+#### Shared system scaffold
 
-- Fixed StatusEffect duration bug in CharacterInstance.cs by adding ReduceDuration() method and updating ProcessStatusEffects().
-- Updated CharacterSystemTests.cs to use the correct CreateCharacter overload and set character level by adding experience.
-- Removed all grid-based references from documentation and replaced with free-form/battlefield terminology in README.md, IMPLEMENTATION_PROGRESS.md, and docs.
+- `SystemRoot.prefab`
+- `SharedSceneRoot.prefab`
+- safe-area handling
+- mobile-first Canvas/camera setup
+- event system / event channel architecture
 
-## ✅ Drag/Tap Input System Fix & Cleanup (2025-07-06)
-- Fixed: Drag and tap input for both mouse and touch now work reliably in the battle system.
-- Cause: Missing `<Pointer>/position` and `<Pointer>/press` bindings in the UI action map for the Input System UI Input Module.
-- Solution: Added required bindings and verified pointer events fire for both tap and drag.
-- Cleanup: Removed all test/debug scripts (PointerLogger, DragInputTester, Fix/Nuke/CleanupDragInputPanelEditor) and ensured only one DragInputPanel exists under the main Canvas.
-- Production: Drag threshold reset to 10 for best UX; all debug/test artifacts removed.
-- Documentation: Updated README.md and this file to reflect the new, robust input system and required Input System configuration.
+#### Character/data layer
 
-## 🎯 Next Priority Implementation
+These remain strong reusable foundations:
 
-### Phase 2: Combat State Machine
-1. **CombatStateMachine.cs** - Stack-based state management
-2. **CombatState.cs** - Base state class
-3. **TurnManager.cs** - Turn-based combat flow
-4. **BattlefieldManager.cs** - Movement and positioning system
+- `CharacterDefinition.cs`
+- `CharacterStats.cs`
+- `CharacterInstance.cs`
+- `CharacterFactory.cs`
 
-### Phase 3: Input System
-1. **GestureRecognizer.cs** - Tap, swipe, hold detection
-2. **InputManager.cs** - New Input System integration
-3. **CombatInputHandler.cs** - Combat-specific input
+#### Combat sandbox
 
-### Phase 4: Mini-Game System
-1. **MiniGameManager.cs** - Skill-based execution system
-2. **OffensiveMiniGames.cs** - Attack execution mini-games
-3. **DefensiveMiniGames.cs** - Defense execution mini-games
+These are real, but still prototype-grade:
 
-## 📁 Files Created
+- `BattleManager.cs`
+- `TurnManager.cs`
+- `BattlefieldManager.cs`
+- `CombatStateMachine.cs`
+- `TestBattleSetup.cs`
+- `CombatInputHandler.cs`
 
-```
-Assets/_Project/Scripts/Core/Architecture/
-├── EventChannelSO.cs          ✅ Complete
-└── EventListener.cs           ✅ Complete
+## What is implemented vs. what is still prototype
 
-Assets/_Project/Scripts/Features/Characters/
-├── CharacterDefinition.cs     ✅ Complete (Updated)
-├── CharacterStats.cs          ✅ Complete (Updated)
-├── CharacterInstance.cs       ✅ Complete (Updated)
-└── CharacterFactory.cs        ✅ Complete
+### Implemented enough to keep building on
 
-Assets/_Project/ScriptableObjects/Events/
-└── GameEvents.cs              ✅ Complete
+- ScriptableObject event system
+- character definitions and runtime instances
+- multi-element / weapon / status-effect data model
+- scene/system scaffolding for mobile portrait UI
+- Unity MCP bridge and project-specific editor validation tools
 
-Assets/Tests/Characters/
-└── CharacterSystemTests.cs    ✅ Complete (Updated)
+### Exists but is still incomplete
 
-docs/
-└── new/ai/doc-eng-002-unity-project-runtime-architecture-patterns.md ✅ Complete (New canonical engineering note)
+- battle flow and encounter logic
+- drag/tap interaction as a prototype interaction layer
+- mini-game framework
+- animation-driven combat actions
+- scene progression outside the sandbox
 
-IMPLEMENTATION_PROGRESS.md     ✅ Complete
+### Structural but not meaningfully implemented yet
 
-## ✅ Assembly & Namespace Fixes (Post-Core Implementation)
+These directions should be treated as planned architecture, not current feature truth:
 
-- Fixed all assembly definition references between core, character, and combat feature assemblies.
-- Moved IMiniGame interface to its own file for proper accessibility across combat scripts.
-- Added/fixed using statements in Combat scripts for correct type resolution (CharacterInstance, GestureRecognizer, InputManager, etc.).
-- Removed duplicate interface definitions.
-- All core combat, input, and mini-game systems now compile and are ready for scene integration and playtesting.
+- `Features/Gacha`
+- `Features/UI` as a broad system layer
+- `Networking`
+- `Input` as a broader standalone subsystem
 
-## Planned Team System (Blazing-Style)
+## Documentation reality
 
-- **Team Size:** Each player has a team of 6 characters.
-- **Active/Reserve:** Only 3 characters are active on the battlefield at a time; the other 3 are in reserve.
-- **Swapping:** Players can swap any reserve character with an active one at any time (outside of certain restrictions, e.g., during an action).
-- **UI:** All 6 character portraits are visible at the bottom of the screen. Active characters are highlighted. Tapping a reserve character swaps them with the currently selected active character.
-- **Battlefield:** Only active characters can move, attack, or be targeted.
-- **Future Implementation:** Team management, synergy bonuses, and swap cooldowns will be added later.
+The docs tree is now well organized, but some older repo-facing summaries were ahead of implementation.
 
-## ✅ Battle System Improvements (2025-07-05):
-- Character spawning is now fully data-driven: only one generic CharacterPrefab is needed, and all character differences are handled via CharacterDefinition assets.
-- Team size is now flexible: battles can start with any number of characters (minimum 1), not just 6.
-- Characters now spawn at the position of the CharacterPrefab in the scene, making layout intuitive.
-- Character scale is set at runtime from the CharacterDefinition asset, allowing per-character size customization.
-- All major errors and edge cases (e.g., out-of-range team lists) are handled gracefully.
+That is why the current guidance is:
 
-## ✅ BattleDragHandler Complete Rewrite (2025-07-06):
-- **Complete system rewrite** for robust tap-to-move and hold-to-drag functionality
-- **Tap behavior**: Character runs smoothly to tap position with running animation (no teleport)
-- **Hold behavior**: Character instantly teleports under pointer and follows smoothly (no running animation)
-- **Fixed animation conflicts**: Proper state management prevents animation bugs
-- **Transform handling**: Works correctly with both parented and unparented characters
-- **Coroutine management**: Prevents movement conflicts and ensures clean state transitions
-- **Performance**: Optimized movement with configurable speed and smoothing parameters
-- **Status**: ✅ COMPLETE - Production ready drag/tap movement system
+- use the design/art/legal/ops/research docs for **policy and intent**
+- use this file plus `DOC-OPS-007` for **current implementation reality**
+
+## Art/content reality
+
+The repo already contains a large character-art archive.
+
+That archive should not be confused with the new production pipeline.
+
+Current policy:
+
+- older imported art under `Assets/_Project/Features/Characters/Art/` should be treated as legacy/archive by default
+- new Gemini / PixelLab / Aseprite work should use the newer source-vs-production separation rules
+
+See:
+
+- [ART-005](docs/art/art-005-legacy-and-production-asset-separation-policy.md)
+- [ART-002](docs/art/art-002-sprite-production-pipeline.md)
+
+## What was completed and is still valid
+
+### Event system
+
+- ScriptableObject event channels and listeners are in place and worth keeping.
+
+### Character system
+
+- Character definitions, stats, runtime state, elemental affinity, weapon family, and status-effect structure all exist in usable form.
+
+### Combat identity direction
+
+- The repo and docs now align around:
+  - free-form movement
+  - circular attack range bands
+  - multi-layer combat identity
+
+### Unity MCP workflow
+
+- The local Unity MCP bridge is set up and useful for inspecting live editor state.
+
+## What should happen next
+
+### Immediate direction
+
+Do **not** try to push many broad systems forward in parallel.
+
+Instead:
+
+1. treat `Dev_Sandbox` as the current implementation truth
+2. reality-sync the remaining outdated repo summaries
+3. separate legacy art from new production content
+4. build one honest vertical slice
+
+### Recommended vertical-slice target
+
+The next meaningful slice should prove:
+
+- one real battle flow
+- one real team setup path
+- one real encounter result/reward path
+- one real character progression loop
+- one real production-ready asset lane
+
+### Do not assume these are already solved
+
+- gacha implementation
+- networking
+- multiplayer
+- large scene flow
+- polished input architecture
+- production-ready UI system
+
+## Relationship to other docs
+
+- Use [DOC-GDD-001](docs/design/doc-gdd-001-shogun-flowers-fall-in-blood-game-design-document.md) for intended game scope.
+- Use [DOC-OPS-007](docs/ops/doc-ops-007-stage-1-unity-project-reality-audit.md) for the full current-project reality read.
+- Use [DOC-OPS-006](docs/ops/doc-ops-006-unity-editor-version-policy-and-upgrade-checklist.md) for the current Unity editor baseline and upgrade rules.
+- Use [ART-005](docs/art/art-005-legacy-and-production-asset-separation-policy.md) for legacy-vs-production asset handling.

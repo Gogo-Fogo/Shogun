@@ -58,6 +58,11 @@ Examples already confirmed in `Dev_Sandbox`:
 - hierarchy object: `CombatManagers`
 - hierarchy object: `Characters/CharacterPrefab`
 
+Stage-1 audit note:
+
+- `Dev_Sandbox` is currently the only scene with meaningful gameplay wiring.
+- Other checked scenes (`MainMenu`, `Battle_Prototype`, `UI_Demo`) currently behave more like shells around shared system roots.
+
 ## Current limitations observed
 
 - The bridge can inspect GameObjects by:
@@ -216,7 +221,9 @@ Claude can use the repo-level `.mcp.json`:
 
 ### Unity 6000.0 package compatibility for this repo
 
-This project is on Unity `6000.0.69f1`. During setup, newer 2D package lines caused package-level compile failures even though the MCP bridge itself was fine.
+This project is now on Unity `6000.3.10f1`.
+
+During earlier setup on the older `6000.0` line, newer 2D package lines caused package-level compile failures even though the MCP bridge itself was fine.
 
 Known-good pins in this repo:
 
@@ -261,3 +268,5 @@ It should remain a helper layer, not a replacement for:
 - canonical docs
 - code review
 - static exports
+
+For a broader read on what the current Unity project actually contains, use `DOC-OPS-007` alongside this note.

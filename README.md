@@ -62,6 +62,13 @@ Assets/
 - All licenses and documentation for assets are in `Licenses/`.
 - Reference/inspiration art is kept in `References/` and is not tracked by git.
 
+## Current Project Reality
+
+- Treat the current Unity project as a salvageable prototype foundation, not as a feature-complete production build.
+- The most honest current implementation surface is `Assets/_Project/Scenes/Dev/Dev_Sandbox.unity`.
+- Older imported art under `Assets/_Project/Features/Characters/Art/` should be treated as legacy/archive material unless explicitly promoted into the current production path.
+- New Gemini, PixelLab, and Aseprite work should follow the newer source-vs-production separation rules in the canonical docs instead of being mixed into older imported pack folders.
+
 ## .gitignore Policy for Art Assets
 
 - All reference/inspiration art in `References/` is ignored by git and not tracked in version control.
@@ -156,6 +163,9 @@ The character system implements core mechanics inspired by Naruto Blazing:
 - **[Unity Editor Version Policy & Upgrade Checklist](docs/ops/doc-ops-006-unity-editor-version-policy-and-upgrade-checklist.md)**  
   The project-specific rule for the current Unity baseline, the preferred stable LTS upgrade target, and the exact checklist to use before moving the repo to a new editor line.
 
+- **[Stage 1 Unity Project Reality Audit](docs/ops/doc-ops-007-stage-1-unity-project-reality-audit.md)**  
+  The reality-check note for what the current Unity project actually contains, what is salvageable, what is placeholder, and why the next step is rebuild-from-slice rather than blind restart.
+
 - **[PixelLab Evaluation & Sprite Workflow](docs/ops/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)**  
   The canonical note for whether PixelLab fits `Shogun`, when to use subscription vs API, how it fits Codex/Claude/Unity MCP, and the recommended first sprite-production workflow.
 
@@ -191,6 +201,9 @@ The character system implements core mechanics inspired by Naruto Blazing:
 
 - **[Sprite Production Pipeline](docs/art/art-002-sprite-production-pipeline.md)**
   The production workflow for turning PixelLab output into cleaned, reviewable game assets.
+
+- **[Legacy & Production Asset Separation Policy](docs/art/art-005-legacy-and-production-asset-separation-policy.md)**
+  The asset-organization rule for keeping imported legacy packs separate from new Gemini/PixelLab/Aseprite source assets and approved runtime-facing production art.
 
 - **[Unity 2D Import & Animation Standards](docs/art/art-003-unity-2d-import-and-animation-standards.md)**
   Standards for `.aseprite` import, tag naming, frame-budget targets, and gameplay-facing animation expectations.
