@@ -460,14 +460,42 @@ namespace Shogun.Features.Characters
 
         public void Initialize(CharacterDefinition def)
         {
+            definition = def;
+
+            if (stats == null)
+            {
+                stats = new CharacterStats();
+            }
+
+            stats.Initialize(def);
+            currentHealth = stats.Health;
+            isAlive = true;
+            hasMovedThisTurn = false;
+            hasAttackedThisTurn = false;
+            specialAbilityCooldown = 0;
+            isHidden = false;
+            turnsInBush = 0;
+            isInBush = false;
+            canCounterAttack = true;
+            lastDamageTaken = 0f;
+            activeStatusEffects = System.Array.Empty<StatusEffect>();
+
+            gameObject.name = def.CharacterName;
+
             // Set sprite
             var sr = GetComponent<SpriteRenderer>();
-            if (sr != null && def.BattleSprite != null)
+            if (sr != null)
+            {
                 sr.sprite = def.BattleSprite;
+            }
             // Set animator
             var anim = GetComponent<Animator>();
-            if (anim != null && def.AnimatorController != null)
+            if (anim != null)
+            {
                 anim.runtimeAnimatorController = def.AnimatorController;
+                anim.Rebind();
+                anim.Update(0f);
+            }
             // Set collider size/offset if present in def
             var col = GetComponent<CapsuleCollider2D>();
             if (col != null)
@@ -477,6 +505,7 @@ namespace Shogun.Features.Characters
             }
             // Set scale
             transform.localScale = def.CharacterScale;
+            SetupAnimatorOverrides();
             // Set other stats as needed (attack range, etc.)
             // this.attackRange = def.attackRange; // Uncomment if you have this field
         }

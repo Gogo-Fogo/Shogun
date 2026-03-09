@@ -8,6 +8,7 @@ public class TestBattleSetup : MonoBehaviour
     public BattleManager battleManager;
     public TurnManager turnManager;
     public List<CharacterDefinition> testTeam; // Assign 6 in Inspector
+    public List<CharacterDefinition> enemyTeam;
 
     void Start()
     {
@@ -17,9 +18,20 @@ public class TestBattleSetup : MonoBehaviour
             return;
         }
 
-        battleManager.StartBattle(testTeam);
-        turnManager.turnOrder = new List<CharacterInstance>(battleManager.activeCharacters);
+        if (enemyTeam == null || enemyTeam.Count < 1)
+        {
+            Debug.LogError("Assign at least 1 CharacterDefinition asset to enemyTeam!");
+            return;
+        }
+
+        battleManager.StartBattle(testTeam, enemyTeam);
+
+        List<CharacterInstance> allCombatants = battleManager.GetAllActiveCombatants();
+        turnManager.Initialize(allCombatants);
+        turnManager.turnOrder = new List<CharacterInstance>(allCombatants);
         turnManager.CurrentTurnIndex = 0;
-        Debug.Log("Battle started and turn order set!");
+        turnManager.StartBattle();
+
+        Debug.Log($"Battle started with {battleManager.activeCharacters.Count} allied combatants and {battleManager.activeEnemyCharacters.Count} enemy combatants.");
     }
 } 

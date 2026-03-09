@@ -436,6 +436,12 @@ MonoBehaviour:
   turnManager: {fileID: 1189142526}
   testTeam:
   - {fileID: 11400000, guid: e8d5d5e0979532040925a70dd3486f29, type: 2}
+  - {fileID: 11400000, guid: 7dfeef9ef6a84bba9c380579c9174be1, type: 2}
+  - {fileID: 11400000, guid: a37db9f13b994e359d7a9f5bfd449298, type: 2}
+  enemyTeam:
+  - {fileID: 11400000, guid: 23d00db518eb49c7aebbd755f2988e23, type: 2}
+  - {fileID: 11400000, guid: aea9b57bb9a440fc906ca1dbca850bd0, type: 2}
+  - {fileID: 11400000, guid: 8c9834636c9b45518fcc8edbd0d7250e, type: 2}
 --- !u!4 &684904848
 Transform:
   m_ObjectHideFlags: 0

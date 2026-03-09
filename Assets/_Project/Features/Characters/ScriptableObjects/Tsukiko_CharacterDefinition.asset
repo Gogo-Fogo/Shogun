@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cae84c2d5f140e44b6318b2af561392, type: 3}
+  m_Name: Tsukiko_CharacterDefinition
+  m_EditorClassIdentifier: 
+  surname: 
+  givenName: Tsukiko
+  characterName: Tsukiko
+  description: A spectral caster who controls the battlefield with curses, fear, and ranged pressure.
+  portrait: {fileID: 0}
+  battleSprite: {fileID: 4723107735738678597, guid: 2aecff94c07a8344f91057b294367684, type: 3}
+  animatorController: {fileID: 0}
+  colliderSize: {x: 1, y: 2.15}
+  colliderOffset: {x: 0, y: 0.1}
+  characterScale: {x: 2.5, y: 2.5, z: 1}
+  characterType: 5
+  elementalType: 5
+  martialArtsType: 4
+  rarity: 3
+  attackRange: 2
+  baseHealth: 120
+  baseAttack: 68
+  baseDefense: 24
+  baseSpeed: 14
+  specialAbilityName: Moonlit Lament
+  specialAbilityDescription: Summons a chilling wave of spirit energy that damages and slows enemies in a wide area.
+  specialAbilityCooldown: 4
+  specialAbilityDamage: 175
+  baseStealthEffectiveness: 25
+  stealthDecayRate: 20
+  baseCounterChance: 12
+  counterDamageMultiplier: 90
+  synergyTags:
+  - Yokai
+  - Caster
+  - Control
+  animationMappings: []
