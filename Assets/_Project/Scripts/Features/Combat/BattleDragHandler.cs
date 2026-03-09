@@ -29,6 +29,9 @@ namespace Shogun.Features.Combat
         private CharacterInstance draggingCharacter = null;
         private Animator characterAnimator = null;
         private Coroutine tapMoveCoroutine = null;
+        private RangeCircleDisplay dragRangeCircle = null;
+
+        private static readonly Color RangeCircleColor = new Color(0.2f, 0.9f, 1f, 0.85f);
 
         void Awake()
         {
@@ -61,6 +64,7 @@ namespace Shogun.Features.Combat
                 if (characterAnimator != null) characterAnimator.SetBool("isRunning", false);
             }
             
+            if (dragRangeCircle != null) { dragRangeCircle.Hide(); dragRangeCircle = null; }
             isDragging = false;
             draggingCharacter = null;
             characterAnimator = null;
@@ -87,6 +91,15 @@ namespace Shogun.Features.Combat
                 SetCharacterPosition(charTransform, pointerWorldPos);
                 if (characterAnimator != null) characterAnimator.SetBool("isRunning", false);
                 dragVelocity = Vector3.zero;
+
+                // Show range circle for player units only
+                if (turnManager.IsPlayerUnit(draggingCharacter))
+                {
+                    dragRangeCircle = draggingCharacter.GetComponent<RangeCircleDisplay>();
+                    if (dragRangeCircle == null)
+                        dragRangeCircle = draggingCharacter.gameObject.AddComponent<RangeCircleDisplay>();
+                    dragRangeCircle.Show(draggingCharacter.GetAttackRangeRadius(), RangeCircleColor);
+                }
             }
             
             // Update drag target
