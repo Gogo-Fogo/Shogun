@@ -21,7 +21,7 @@ MonoBehaviour:
   animatorController: {fileID: 0}
   colliderSize: {x: 1.1, y: 2.1}
   colliderOffset: {x: 0, y: 0.05}
-  characterScale: {x: 2.5, y: 2.5, z: 1}
+  characterScale: {x: 0.8, y: 0.8, z: 1}
   characterType: 4
   elementalType: 2
   martialArtsType: 1

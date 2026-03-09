@@ -10,6 +10,15 @@ public class BattleManager : MonoBehaviour
     public List<CharacterInstance> activeEnemyCharacters = new List<CharacterInstance>();
     public List<CharacterInstance> reserveEnemyCharacters = new List<CharacterInstance>();
 
+    [Header("Battlefield Layout")]
+    [SerializeField] private Transform battleCenter;
+    [SerializeField] private Vector3 allyFrontlineOrigin = new Vector3(-6.75f, -0.5f, 0f);
+    [SerializeField] private Vector3 enemyFrontlineOrigin = new Vector3(2.25f, -0.5f, 0f);
+    [SerializeField] private Vector3 allyReserveOrigin = new Vector3(-9f, -3f, 0f);
+    [SerializeField] private Vector3 enemyReserveOrigin = new Vector3(4.5f, -3f, 0f);
+    [SerializeField] private float frontlineLaneSpacing = 2.25f;
+    [SerializeField] private float reserveLaneSpacing = 2.25f;
+
     public void StartBattle(List<CharacterDefinition> playerTeam, List<CharacterDefinition> enemyTeam = null)
     {
         activeCharacters.Clear();
@@ -56,7 +65,10 @@ public class BattleManager : MonoBehaviour
 
     private CharacterInstance SpawnCharacter(CharacterDefinition definition, Vector3 spawnPosition, bool faceLeft)
     {
-        GameObject go = Instantiate(characterPrefab, spawnPosition, Quaternion.identity);
+        Transform parent = characterPrefab != null ? characterPrefab.transform.parent : null;
+        GameObject go = parent != null
+            ? Instantiate(characterPrefab, spawnPosition, Quaternion.identity, parent)
+            : Instantiate(characterPrefab, spawnPosition, Quaternion.identity);
         CharacterInstance instance = go.GetComponent<CharacterInstance>();
         instance.Initialize(definition);
         ApplyFacing(instance, faceLeft);
@@ -72,42 +84,37 @@ public class BattleManager : MonoBehaviour
 
     private Vector3 GetSpawnPosition(int index)
     {
-        Vector3 basePosition = characterPrefab.transform.position;
-        float[] laneOffsets = { -2.5f, 0f, 2.5f };
-        float offsetX = index >= 0 && index < laneOffsets.Length ? laneOffsets[index] : index * 2.5f;
-        return basePosition + new Vector3(offsetX, 0f, 0f);
+        return GetLanePosition(GetBattleCenter(), allyFrontlineOrigin, frontlineLaneSpacing, index);
     }
 
     private Vector3 GetReservePosition(int index)
     {
-        return new Vector3(-5 + index * 2.5f, -3, 0);
+        return GetLanePosition(GetBattleCenter(), allyReserveOrigin, reserveLaneSpacing, index);
     }
 
     private Vector3 GetEnemySpawnPosition(int index)
     {
-        Vector3 basePosition = GetEnemyAnchorPosition();
-        float[] laneOffsets = { -2.5f, 0f, 2.5f };
-        float offsetX = index >= 0 && index < laneOffsets.Length ? laneOffsets[index] : index * 2.5f;
-        return basePosition + new Vector3(-offsetX, 0f, 0f);
+        return GetLanePosition(GetBattleCenter(), enemyFrontlineOrigin, frontlineLaneSpacing, index);
     }
 
     private Vector3 GetEnemyReservePosition(int index)
     {
-        Vector3 basePosition = GetEnemyAnchorPosition();
-        return basePosition + new Vector3(5f + index * 2.5f, -3f, 0f);
+        return GetLanePosition(GetBattleCenter(), enemyReserveOrigin, reserveLaneSpacing, index);
     }
 
-    private Vector3 GetEnemyAnchorPosition()
+    private Vector3 GetBattleCenter()
     {
-        if (characterPrefab != null && characterPrefab.transform.parent != null)
+        if (battleCenter != null)
         {
-            Transform parent = characterPrefab.transform.parent;
-            Vector3 mirroredLocalPosition = characterPrefab.transform.localPosition;
-            mirroredLocalPosition.x *= -1f;
-            return parent.TransformPoint(mirroredLocalPosition);
+            return battleCenter.position;
         }
 
-        return characterPrefab.transform.position + new Vector3(26f, 0f, 0f);
+        return transform.position;
+    }
+
+    private static Vector3 GetLanePosition(Vector3 center, Vector3 originOffset, float laneSpacing, int index)
+    {
+        return center + originOffset + new Vector3(index * laneSpacing, 0f, 0f);
     }
 
     public List<CharacterInstance> GetCurrentPlayerCharacters()

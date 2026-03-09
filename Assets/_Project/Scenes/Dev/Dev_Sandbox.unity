@@ -182,7 +182,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 638.8, y: 1386.2, z: 0}
-  m_LocalScale: {x: 0.73, y: 0.73, z: 0.73}
+  m_LocalScale: {x: 0.42, y: 0.42, z: 0.42}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1539877800}
@@ -267,7 +267,7 @@ MonoBehaviour:
   m_CropFrame: 0
   m_GridSnapping: 1
   m_FilterMode: 0
-  m_UpscaleRT: 0
+  m_UpscaleRT: 1
   m_PixelSnapping: 0
   m_CropFrameX: 0
   m_CropFrameY: 0
@@ -578,9 +578,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   turnManager: {fileID: 1189142526}
   dragThreshold: 10
-  enableDebugLogs: 1
-  snapToGrid: 1
+  dragSmoothTime: 0.08
   gridSize: 1
+  snapToGrid: 1
+  tapMoveSpeed: 50
 --- !u!114 &756242520
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -831,6 +832,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1539877801
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -849,6 +851,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -870,9 +874,11 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -763087465
   m_SortingLayer: -1
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: 6360357460075380771, guid: 80f4c8a3dce79974b9eca43a3f8c48e6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -882,7 +888,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1001 &1920639941
 PrefabInstance:
@@ -973,6 +978,15 @@ MonoBehaviour:
   characterPrefab: {fileID: 73527502}
   activeCharacters: []
   reserveCharacters: []
+  activeEnemyCharacters: []
+  reserveEnemyCharacters: []
+  battleCenter: {fileID: 0}
+  allyFrontlineOrigin: {x: -6.75, y: -0.5, z: 0}
+  enemyFrontlineOrigin: {x: 2.25, y: -0.5, z: 0}
+  allyReserveOrigin: {x: -9, y: -3, z: 0}
+  enemyReserveOrigin: {x: 4.5, y: -3, z: 0}
+  frontlineLaneSpacing: 2.25
+  reserveLaneSpacing: 2.25
 --- !u!4 &2070367312
 Transform:
   m_ObjectHideFlags: 0
@@ -1074,7 +1088,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6135238938240939830, guid: 1d90b31d8ae5c674c978cab284021d85, type: 3}
       propertyPath: orthographic size
-      value: 29.125
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 6287161518146947847, guid: 1d90b31d8ae5c674c978cab284021d85, type: 3}
       propertyPath: m_IsActive
