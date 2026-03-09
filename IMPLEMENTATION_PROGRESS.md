@@ -165,6 +165,7 @@ The next meaningful slice should prove:
 Use:
 
 - [DESIGN-008](docs/design/design-008-active-vertical-slice-definition.md)
+- [DESIGN-009](docs/design/design-009-first-vertical-slice-roster-and-encounter-plan.md)
 
 as the explicit statement of that slice.
 

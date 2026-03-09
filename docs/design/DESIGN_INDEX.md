@@ -30,6 +30,8 @@
    - why range circles matter, how short/mid/long threat should work, and how threat geometry should shape unit identity and encounter readability
 9. [`design-008-active-vertical-slice-definition.md`](./design-008-active-vertical-slice-definition.md)
    - the one current implementation target, anchored on `Dev_Sandbox`, with explicit in-scope and out-of-scope rules
+10. [`design-009-first-vertical-slice-roster-and-encounter-plan.md`](./design-009-first-vertical-slice-roster-and-encounter-plan.md)
+   - the concrete first slice roster, enemy archetypes, authored encounter, and minimal result/reward handoff
 
 ## Companion docs outside this folder
 
@@ -78,9 +80,10 @@
 
 1. `DOC-OPS-007`
 2. `DESIGN-008`
-3. `DOC-GDD-001`
-4. `DESIGN-007`
-5. `ART-005`
+3. `DESIGN-009`
+4. `DOC-GDD-001`
+5. `DESIGN-007`
+6. `ART-005`
 
 ### Balance, power creep, and live-service health
 
@@ -126,3 +129,4 @@ Add new design docs here when:
 - a faction/world structure becomes part of the planned content pipeline
 - elements, schools, weapon families, or collection planning materially change
 - the active implementation slice changes materially
+- the concrete roster or authored encounter for the first slice changes materially

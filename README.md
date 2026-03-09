@@ -187,6 +187,9 @@ The character system implements core mechanics inspired by Naruto Blazing:
 - **[Active Vertical Slice Definition](docs/design/design-008-active-vertical-slice-definition.md)**
   The current implementation-target note for what `Dev_Sandbox` must prove next, what is actually in scope for the rebuild, and what should stay explicitly out of scope until later.
 
+- **[First Vertical Slice Roster & Encounter Plan](docs/design/design-009-first-vertical-slice-roster-and-encounter-plan.md)**
+  The concrete slice-content note for which player units, enemy archetypes, and first authored encounter should become the initial trustworthy gameplay loop.
+
 - **[Long-Term Balance & Power-Creep Policy](docs/design/design-003-long-term-balance-and-power-creep-policy.md)**
   The living balance-governance note for banner value, old-unit refresh cadence, power-creep control, and how PvE, PvP, and roguelite modes should react to long-term unit inflation.
 
