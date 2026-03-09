@@ -46,6 +46,9 @@ docs/
     doc-ops-005-march-2026-repo-modernization-retrospective.md
     doc-ops-006-unity-editor-version-policy-and-upgrade-checklist.md
     doc-ops-007-stage-1-unity-project-reality-audit.md
+    doc-ops-008-short-term-implementation-todo.md
+    doc-ops-009-long-term-roadmap-todo.md
+    doc-ops-010-claude-code-read-first-handoff.md
   research/
     RESEARCH_INDEX.md
     doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.md
@@ -75,8 +78,9 @@ Do not scan the whole folder by default.
 For most tasks:
 
 1. Start with this index.
-2. Prefer `design/` for product design, roster/world design, and character identity; `art/` for production-facing art rules; `ops/` for tooling and workflow; `legal/` for compliance and policy; and `research/` for engineering and comparative studies.
-3. Open the matching PDF in `recruiter/` only if formatting, page fidelity, or missing detail matters.
+2. If the task is Claude Code onboarding or next-stage implementation, start with the lean handoff pack in `ops/` before broad scanning.
+3. Prefer `design/` for product design, roster/world design, and character identity; `art/` for production-facing art rules; `ops/` for tooling and workflow; `legal/` for compliance and policy; and `research/` for engineering and comparative studies.
+4. Open the matching PDF in `recruiter/` only if formatting, page fidelity, or missing detail matters.
 
 ## Canonical document catalog
 
@@ -93,6 +97,9 @@ For most tasks:
 | `DOC-OPS-005` | March 2026 repo modernization retrospective | `ops/doc-ops-005-march-2026-repo-modernization-retrospective.md` | No recruiter PDF in this folder | Operational change log | Use when the question is what changed in the March 7, 2026 cleanup/tooling batch and why those pushed commits were structured that way. |
 | `DOC-OPS-006` | Unity editor version policy and upgrade checklist | `ops/doc-ops-006-unity-editor-version-policy-and-upgrade-checklist.md` | No recruiter PDF in this folder | Operational upgrade policy | Use for the project-specific Unity baseline, stable upgrade target, alpha/beta exclusion rule, and safe LTS-upgrade checklist. |
 | `DOC-OPS-007` | Stage 1 Unity project reality audit | `ops/doc-ops-007-stage-1-unity-project-reality-audit.md` | No recruiter PDF in this folder | Operational reality-check note | Use when the question is what the current Unity project actually contains, what is salvageable, what is placeholder, and whether the project should be rebuilt or restarted. |
+| `DOC-OPS-008` | Short-term implementation TODO | `ops/doc-ops-008-short-term-implementation-todo.md` | No recruiter PDF in this folder | Operational execution backlog | Use when the task is active-slice execution and the goal is to keep near-term work tightly scoped to `Dev_Sandbox` and `Courtyard Ambush`. |
+| `DOC-OPS-009` | Long-term roadmap TODO | `ops/doc-ops-009-long-term-roadmap-todo.md` | No recruiter PDF in this folder | Operational deferment note | Use when the task is real but explicitly not part of the current slice backlog. |
+| `DOC-OPS-010` | Claude Code read-first handoff | `ops/doc-ops-010-claude-code-read-first-handoff.md` | No recruiter PDF in this folder | Operational handoff note | Use first when starting a new Claude Code implementation session and token efficiency matters. |
 | `DESIGN-001` | Character collection and fantasy strategy | `design/design-001-character-collection-and-fantasy-strategy.md` | No recruiter PDF in this folder | Primary collection-strategy note | Use for collectible fantasy, roster pillars, battle-vs-presentation art lanes, and variant planning. |
 | `DESIGN-002` | World pillars and combat identity framework | `design/design-002-world-pillars-and-combat-identity-framework.md` | No recruiter PDF in this folder | Primary roster-identity note | Use for world pillars, elemental affinity, weapon families, martial schools, and how those layers stack into a character identity. |
 | `DESIGN-003` | Long-term balance and power-creep policy | `design/design-003-long-term-balance-and-power-creep-policy.md` | No recruiter PDF in this folder | Primary live-balance note | Use for banner-value policy, power-creep controls, old-unit refresh cadence, and ranked/PvE balance boundaries. |
@@ -159,12 +166,14 @@ For most tasks:
 5. `DOC-LEGAL-001`
 
 ### Active implementation slice and first-slice content
-1. `DOC-OPS-007`
-2. `DESIGN-008`
-3. `DESIGN-009`
-4. `DOC-GDD-001`
-5. `DESIGN-007`
-6. `ART-005`
+1. `DOC-OPS-010`
+2. `DOC-OPS-008`
+3. `DOC-OPS-007`
+4. `DESIGN-008`
+5. `DESIGN-009`
+6. `DOC-GDD-001`
+7. `DESIGN-007`
+8. `ART-005`
 
 ### AI-assisted sprite production and PixelLab workflow
 1. `ART-001`
@@ -266,6 +275,15 @@ Open:
 5. `DOC-OPS-002`
 6. `DOC-LEGAL-001`
 
+### Claude handoff / next-stage implementation
+Open:
+1. `DOC-OPS-010`
+2. `DOC-OPS-008`
+3. `DESIGN-008`
+4. `DESIGN-009`
+5. `DOC-OPS-007`
+6. `DOC-GDD-001`
+
 ### Unity editor baseline, LTS upgrades, and version-move safety
 Open:
 1. `DOC-OPS-006`
@@ -363,6 +381,7 @@ Open:
 - Prefer `design/` documents when the task is the current implementation slice, rebuild target, or what the active gameplay scene is supposed to prove next.
 - Prefer `art/` documents when the task is specifically production-facing art direction, sprite workflow, import rules, or provenance.
 - Prefer `ops/` documents when the task is tooling, MCP, repo safety, backups, or retrospective workflow history.
+- Prefer the lean handoff pack in `ops/` when the task is next-stage implementation and broad scanning would waste tokens.
 - Prefer `legal/` documents when the task is compliance, policy, privacy, or user-facing legal text.
 - Prefer `research/` documents when the task is engineering studies, architecture research, or comparative game analysis.
 - Use PDFs in `recruiter/` when layout fidelity or exact document presentation matters.
@@ -385,6 +404,7 @@ Update this file whenever:
 ```text
 Read PROJECT_CONTEXT_INDEX.md first.
 Do not scan the entire folder by default.
+If the task is Claude Code onboarding or next-stage implementation, start with DOC-OPS-010 and DOC-OPS-008 before broad scanning.
 Prefer the smallest relevant Markdown companion in design/, art/, legal/, ops/, or research/ first, then open recruiter/ PDFs only when needed.
 Use DOC-GDD-001 as primary design truth, DESIGN-* docs as living roster/world identity guidance, DOC-ENG-001 and DOC-ENG-002 plus DOC-DATA-001 as implementation truth, DOC-LEGAL-* docs as compliance constraints, DOC-OPS-* docs as workflow/tooling truth, and DOC-REF-* docs as inspiration/caution only.
 If live Unity editor state or AI tooling workflow matters, open OPS_INDEX.md first, then DOC-OPS-002.

@@ -139,6 +139,15 @@ The character system implements core mechanics inspired by Naruto Blazing:
 - **[Operations Documentation Index](docs/ops/OPS_INDEX.md)**
   Routing file for MCP, backups, repo workflow, PixelLab tooling decisions, and retrospective operational notes.
 
+- **[Claude Code Read-First Handoff](docs/ops/doc-ops-010-claude-code-read-first-handoff.md)**
+  The low-token starting point for the next Claude Code implementation stage.
+
+- **[Short-Term Implementation TODO](docs/ops/doc-ops-008-short-term-implementation-todo.md)**
+  The strict near-term backlog for making `Dev_Sandbox` and `Courtyard Ambush` trustworthy.
+
+- **[Long-Term Roadmap TODO](docs/ops/doc-ops-009-long-term-roadmap-todo.md)**
+  The deferred roadmap so long-range ambition stays out of the active slice backlog.
+
 - **[Legal Documentation Index](docs/legal/LEGAL_INDEX.md)**
   Routing file for legal, privacy, compliance, telemetry-compliance, and user-facing policy notes.
 
@@ -234,6 +243,7 @@ For more details, see the canonical docs under `docs/`. Generated exports are au
 **Onboarding Instructions (do this only at the start of a new session):**
 - Before making any suggestions or changes, thoroughly review the entire project as a whole, with special attention to:
   - `docs/PROJECT_CONTEXT_INDEX.md` first, then only the relevant files it routes you to.
+  - For Claude Code or next-stage implementation, prefer `docs/ops/doc-ops-010-claude-code-read-first-handoff.md` and its linked lean pack before broader scanning.
   - The `README.md` for project structure, conventions, and architectural patterns.
   - The latest `IMPLEMENTATION_PROGRESS.md` for current project status and next steps.
 - Generated exports, when present, live under timestamped subfolders in `/_Generated/ProjectExport/` and are optional fallback snapshots rather than canonical documentation.
