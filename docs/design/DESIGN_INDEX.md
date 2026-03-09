@@ -26,6 +26,8 @@
    - co-op, world bosses, PvP rollout, clans, and social-system phasing
 7. [`design-006-mobile-platform-display-and-performance-strategy.md`](./design-006-mobile-platform-display-and-performance-strategy.md)
    - mobile-first platform stance, foldables and tablets, frame-rate policy, graphics settings, and 2D vs 2.5D boundaries
+8. [`design-007-range-circles-and-threat-geometry-framework.md`](./design-007-range-circles-and-threat-geometry-framework.md)
+   - why range circles matter, how short/mid/long threat should work, and how threat geometry should shape unit identity and encounter readability
 
 ## Companion docs outside this folder
 
@@ -61,6 +63,14 @@
 7. `DOC-OPS-004`
 
 ## Default order for long-term systems questions
+
+### Combat readability, threat geometry, and range-circle design
+
+1. `DOC-GDD-001`
+2. `DESIGN-007`
+3. `DOC-REF-001`
+4. `DESIGN-002`
+5. `DESIGN-003`
 
 ### Balance, power creep, and live-service health
 

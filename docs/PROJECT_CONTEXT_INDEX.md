@@ -17,6 +17,7 @@ docs/
     design-004-roguelite-replayability-and-run-mode-framework.md
     design-005-co-op-pvp-and-social-systems-roadmap.md
     design-006-mobile-platform-display-and-performance-strategy.md
+    design-007-range-circles-and-threat-geometry-framework.md
   art/
     ART_INDEX.md
     art-001-style-bible-and-visual-targets.md
@@ -93,6 +94,7 @@ For most tasks:
 | `DESIGN-004` | Roguelite replayability and run-mode framework | `design/design-004-roguelite-replayability-and-run-mode-framework.md` | No recruiter PDF in this folder | Primary replayability note | Use for how procedural structure should fit story mode, how a roguelite mode should work, and how to reduce repetition without proceduralizing the whole campaign. |
 | `DESIGN-005` | Co-op, PvP, and social systems roadmap | `design/design-005-co-op-pvp-and-social-systems-roadmap.md` | No recruiter PDF in this folder | Primary multiplayer roadmap note | Use for co-op priority, world bosses, PvP rollout, clan timing, and social-system phasing. |
 | `DESIGN-006` | Mobile platform, display, and performance strategy | `design/design-006-mobile-platform-display-and-performance-strategy.md` | No recruiter PDF in this folder | Primary platform-strategy note | Use for mobile-first scope, tablets/foldables, frame-rate policy, graphics settings, 2D vs 2.5D boundaries, and PC-later positioning. |
+| `DESIGN-007` | Range circles and threat geometry framework | `design/design-007-range-circles-and-threat-geometry-framework.md` | No recruiter PDF in this folder | Primary combat-readability note | Use for why range circles matter, how short/mid/long attack bands should work, how threat overlap should shape tactics, and how to keep range design readable over time. |
 | `ART-001` | Style bible and visual targets | `art/art-001-style-bible-and-visual-targets.md` | No recruiter PDF in this folder | Primary art-direction note | Use first for silhouette rules, palette direction, detail limits, and gameplay readability targets. |
 | `ART-002` | Sprite production pipeline | `art/art-002-sprite-production-pipeline.md` | No recruiter PDF in this folder | Primary art workflow note | Use for the bounded PixelLab-to-Aseprite-to-Unity production flow and trial/pass-fail rules. |
 | `ART-006` | Sex appeal and damage-art policy | `art/art-006-sex-appeal-and-damage-art-policy.md` | No recruiter PDF in this folder | Primary fanservice boundary note | Use for sex-appeal limits, FEH-style damage-art interpretation, and what battle animation fanservice is too risky. |
@@ -113,7 +115,7 @@ For most tasks:
 
 ### Product and feature intent
 1. `DOC-GDD-001`
-2. `DESIGN-001` to `DESIGN-005` for living collection, world, combat-identity, balance, replayability, and multiplayer structure
+2. `DESIGN-001` to `DESIGN-007` for living collection, world, combat-identity, range-readability, balance, replayability, and multiplayer structure
 3. `DOC-ENG-001`, `DOC-ENG-002`, and `DOC-DATA-001` for implementation detail
 4. `DOC-REF-001` to `DOC-REF-004` for inspiration and caution only
 
@@ -203,11 +205,12 @@ For most tasks:
 ### Combat, movement, encounter, and progression design
 Open:
 1. `DOC-GDD-001`
-2. `DESIGN-003`
-3. `DESIGN-004`
-4. `DESIGN-005`
-5. `DOC-REF-001`
-6. optionally `DOC-REF-002`
+2. `DESIGN-007`
+3. `DESIGN-003`
+4. `DESIGN-004`
+5. `DESIGN-005`
+6. `DOC-REF-001`
+7. optionally `DOC-REF-002`
 
 ### Mobile-first platform scope, tablets, foldables, and rendering strategy
 Open:
@@ -271,10 +274,11 @@ Open:
 Open:
 1. `DESIGN-001`
 2. `DESIGN-002`
-3. `DESIGN-003`
-4. `ART-001`
-5. `DOC-GDD-001`
-6. `DOC-REF-001`
+3. `DESIGN-007`
+4. `DESIGN-003`
+5. `ART-001`
+6. `DOC-GDD-001`
+7. `DOC-REF-001`
 
 ### Long-term balance, power creep, and banner health
 Open:

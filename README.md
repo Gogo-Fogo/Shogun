@@ -171,6 +171,9 @@ The character system implements core mechanics inspired by Naruto Blazing:
 - **[World Pillars & Combat Identity Framework](docs/design/design-002-world-pillars-and-combat-identity-framework.md)**
   The structural note for faction pillars, elemental affinity, weapon families, martial schools, and how those layers combine into a coherent character identity.
 
+- **[Range Circles & Threat Geometry Framework](docs/design/design-007-range-circles-and-threat-geometry-framework.md)**
+  The combat-readability note for why range circles matter, how short/mid/long attack bands should work, and how overlap, counters, and threat projection should become part of `Shogun`'s tactical identity.
+
 - **[Long-Term Balance & Power-Creep Policy](docs/design/design-003-long-term-balance-and-power-creep-policy.md)**
   The living balance-governance note for banner value, old-unit refresh cadence, power-creep control, and how PvE, PvP, and roguelite modes should react to long-term unit inflation.
 
