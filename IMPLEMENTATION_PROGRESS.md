@@ -162,6 +162,12 @@ The next meaningful slice should prove:
 - one real character progression loop
 - one real production-ready asset lane
 
+Use:
+
+- [DESIGN-008](docs/design/design-008-active-vertical-slice-definition.md)
+
+as the explicit statement of that slice.
+
 ### Do not assume these are already solved
 
 - gacha implementation

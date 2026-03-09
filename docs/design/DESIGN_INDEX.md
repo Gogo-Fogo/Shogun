@@ -28,6 +28,8 @@
    - mobile-first platform stance, foldables and tablets, frame-rate policy, graphics settings, and 2D vs 2.5D boundaries
 8. [`design-007-range-circles-and-threat-geometry-framework.md`](./design-007-range-circles-and-threat-geometry-framework.md)
    - why range circles matter, how short/mid/long threat should work, and how threat geometry should shape unit identity and encounter readability
+9. [`design-008-active-vertical-slice-definition.md`](./design-008-active-vertical-slice-definition.md)
+   - the one current implementation target, anchored on `Dev_Sandbox`, with explicit in-scope and out-of-scope rules
 
 ## Companion docs outside this folder
 
@@ -72,6 +74,14 @@
 4. `DESIGN-002`
 5. `DESIGN-003`
 
+### Active implementation slice and rebuild target
+
+1. `DOC-OPS-007`
+2. `DESIGN-008`
+3. `DOC-GDD-001`
+4. `DESIGN-007`
+5. `ART-005`
+
 ### Balance, power creep, and live-service health
 
 1. `DOC-GDD-001`
@@ -115,3 +125,4 @@ Add new design docs here when:
 - a roster-identity rule becomes stable enough to enforce
 - a faction/world structure becomes part of the planned content pipeline
 - elements, schools, weapon families, or collection planning materially change
+- the active implementation slice changes materially

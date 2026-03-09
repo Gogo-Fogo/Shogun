@@ -18,6 +18,7 @@ docs/
     design-005-co-op-pvp-and-social-systems-roadmap.md
     design-006-mobile-platform-display-and-performance-strategy.md
     design-007-range-circles-and-threat-geometry-framework.md
+    design-008-active-vertical-slice-definition.md
   art/
     ART_INDEX.md
     art-001-style-bible-and-visual-targets.md
@@ -98,6 +99,7 @@ For most tasks:
 | `DESIGN-005` | Co-op, PvP, and social systems roadmap | `design/design-005-co-op-pvp-and-social-systems-roadmap.md` | No recruiter PDF in this folder | Primary multiplayer roadmap note | Use for co-op priority, world bosses, PvP rollout, clan timing, and social-system phasing. |
 | `DESIGN-006` | Mobile platform, display, and performance strategy | `design/design-006-mobile-platform-display-and-performance-strategy.md` | No recruiter PDF in this folder | Primary platform-strategy note | Use for mobile-first scope, tablets/foldables, frame-rate policy, graphics settings, 2D vs 2.5D boundaries, and PC-later positioning. |
 | `DESIGN-007` | Range circles and threat geometry framework | `design/design-007-range-circles-and-threat-geometry-framework.md` | No recruiter PDF in this folder | Primary combat-readability note | Use for why range circles matter, how short/mid/long attack bands should work, how threat overlap should shape tactics, and how to keep range design readable over time. |
+| `DESIGN-008` | Active vertical slice definition | `design/design-008-active-vertical-slice-definition.md` | No recruiter PDF in this folder | Primary implementation-target note | Use when deciding what the next real slice is, what `Dev_Sandbox` must prove, and what is explicitly out of scope until later. |
 | `ART-001` | Style bible and visual targets | `art/art-001-style-bible-and-visual-targets.md` | No recruiter PDF in this folder | Primary art-direction note | Use first for silhouette rules, palette direction, detail limits, and gameplay readability targets. |
 | `ART-002` | Sprite production pipeline | `art/art-002-sprite-production-pipeline.md` | No recruiter PDF in this folder | Primary art workflow note | Use for the bounded PixelLab-to-Aseprite-to-Unity production flow and trial/pass-fail rules. |
 | `ART-005` | Legacy and production asset separation policy | `art/art-005-legacy-and-production-asset-separation-policy.md` | No recruiter PDF in this folder | Primary asset-organization note | Use for how old imported packs, Gemini/PixelLab working files, and approved runtime assets should be separated. |
@@ -119,7 +121,7 @@ For most tasks:
 
 ### Product and feature intent
 1. `DOC-GDD-001`
-2. `DESIGN-001` to `DESIGN-007` for living collection, world, combat-identity, range-readability, balance, replayability, and multiplayer structure
+2. `DESIGN-001` to `DESIGN-008` for living collection, world, combat-identity, range-readability, balance, replayability, multiplayer structure, and active-slice definition
 3. `DOC-ENG-001`, `DOC-ENG-002`, and `DOC-DATA-001` for implementation detail
 4. `DOC-REF-001` to `DOC-REF-004` for inspiration and caution only
 
@@ -282,10 +284,11 @@ Open:
 ### Project reality, salvage, and restart-vs-rebuild decisions
 Open:
 1. `DOC-OPS-007`
-2. `DOC-GDD-001`
-3. `DOC-ENG-001`
-4. `DOC-ENG-002`
-5. `ART-005`
+2. `DESIGN-008`
+3. `DOC-GDD-001`
+4. `DOC-ENG-001`
+5. `DOC-ENG-002`
+6. `ART-005`
 
 ### World pillars, elements, martial schools, and roster identity
 Open:
@@ -347,6 +350,7 @@ Open:
 
 - Prefer the smallest relevant Markdown companion in `design/`, `art/`, `legal/`, `ops/`, or `research/` instead of scanning multiple sections by default.
 - Prefer `design/` documents when the task is roster identity, world pillars, combat identity, collection planning, long-term balance, replayability structure, or multiplayer/social-roadmap planning.
+- Prefer `design/` documents when the task is the current implementation slice, rebuild target, or what the active gameplay scene is supposed to prove next.
 - Prefer `art/` documents when the task is specifically production-facing art direction, sprite workflow, import rules, or provenance.
 - Prefer `ops/` documents when the task is tooling, MCP, repo safety, backups, or retrospective workflow history.
 - Prefer `legal/` documents when the task is compliance, policy, privacy, or user-facing legal text.
