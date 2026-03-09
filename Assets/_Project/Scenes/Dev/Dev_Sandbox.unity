@@ -288,6 +288,23 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   m_MaxRayIntersections: 0
+--- !u!1 &418952691 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5311737797544663618, guid: 1d90b31d8ae5c674c978cab284021d85, type: 3}
+  m_PrefabInstance: {fileID: 1910749050078753932}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &418952693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 418952691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1511ccae7919cfc46b603b9b337fdc94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.BaseInput
 --- !u!1001 &615431849
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -709,6 +726,67 @@ MonoBehaviour:
   selectedCharacterIndex: 0
   battleManager: {fileID: 2070367311}
   turnManager: {fileID: 1189142526}
+--- !u!1 &1057385208
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1057385210}
+  - component: {fileID: 1057385209}
+  - component: {fileID: 1057385211}
+  m_Layer: 0
+  m_Name: BattleResultController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1057385209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1057385208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89c5a0eebf9e5b44c930dc42d84db6bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Shogun.Combat::BattleResultController
+  turnManager: {fileID: 0}
+--- !u!4 &1057385210
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1057385208}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1057385211
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1057385208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d7011b608a7d96458d8f292060d5e20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Shogun.Combat::Shogun.Features.Combat.EnemyAI
+  turnManager: {fileID: 0}
+  battleManager: {fileID: 0}
+  attackDelay: 0.8
 --- !u!1 &1189142524
 GameObject:
   m_ObjectHideFlags: 0
@@ -753,7 +831,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccb4a410e2791bb419d16eedaed871ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  turnOrder: []
 --- !u!1 &1372152910
 GameObject:
   m_ObjectHideFlags: 0
@@ -1163,6 +1240,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4868231681711605876, guid: 1d90b31d8ae5c674c978cab284021d85, type: 3}
       insertIndex: -1
       addedObject: {fileID: 396238152}
+    - targetCorrespondingSourceObject: {fileID: 5311737797544663618, guid: 1d90b31d8ae5c674c978cab284021d85, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 418952693}
   m_SourcePrefab: {fileID: 100100000, guid: 1d90b31d8ae5c674c978cab284021d85, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
@@ -1175,3 +1255,4 @@ SceneRoots:
   - {fileID: 37928853}
   - {fileID: 2070367312}
   - {fileID: 684904848}
+  - {fileID: 1057385210}

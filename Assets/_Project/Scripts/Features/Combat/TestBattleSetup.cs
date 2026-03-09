@@ -26,10 +26,7 @@ public class TestBattleSetup : MonoBehaviour
 
         battleManager.StartBattle(testTeam, enemyTeam);
 
-        List<CharacterInstance> allCombatants = battleManager.GetAllActiveCombatants();
-        turnManager.Initialize(allCombatants);
-        turnManager.turnOrder = new List<CharacterInstance>(allCombatants);
-        turnManager.CurrentTurnIndex = 0;
+        turnManager.Initialize(battleManager.activeCharacters, battleManager.activeEnemyCharacters);
         turnManager.StartBattle();
 
         Debug.Log($"Battle started with {battleManager.activeCharacters.Count} allied combatants and {battleManager.activeEnemyCharacters.Count} enemy combatants.");
