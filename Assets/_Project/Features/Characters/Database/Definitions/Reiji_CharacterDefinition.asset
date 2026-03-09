@@ -1,0 +1,116 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cae84c2d5f140e44b6318b2af561392, type: 3}
+  m_Name: Reiji_CharacterDefinition
+  m_EditorClassIdentifier: 
+  characterId: reiji
+  aliases: []
+  surname: 
+  givenName: Reiji
+  characterName: Reiji
+  description: A midnight duelist samurai added as a sandbox enemy for target-facing behavior tests.
+  portrait: {fileID: 0}
+  bannerSprite: {fileID: 0}
+  battleSprite: {fileID: 4723107735738678597, guid: 7b369293c6812b84891ca9d815e330d8, type: 3}
+  eventVignette: {fileID: 0}
+  animatorController: {fileID: 9100000, guid: b487b2e854004ee1ad6078dbb3994663, type: 2}
+  colliderSize: {x: 1.1, y: 2.1}
+  colliderOffset: {x: 0, y: 0.05}
+  characterScale: {x: 1.2, y: 1.2, z: 1}
+  invertFacingX: 0
+  characterType: 0
+  elementalType: 6
+  martialArtsType: 1
+  rarity: 3
+  attackRange: 1
+  baseHealth: 150
+  baseAttack: 54
+  baseDefense: 30
+  baseSpeed: 13
+  specialAbilityName: Midnight Slash
+  specialAbilityDescription: A quick shadow-laced sword combo for testing enemy pressure in front-line range.
+  specialAbilityCooldown: 3
+  specialAbilityDamage: 138
+  baseStealthEffectiveness: 12
+  stealthDecayRate: 20
+  baseCounterChance: 18
+  counterDamageMultiplier: 110
+  synergyTags:
+  - Samurai
+  - Shadow
+  - Duelist
+  animationMappings:
+  - logicalName: IDLE
+    clip: {fileID: 7400000, guid: 54d0b24590c041e194590806899f6428, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: RUN
+    clip: {fileID: 7400000, guid: 6c8dacebb5b1447d9d4e066055a741ab, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: WALK
+    clip: {fileID: 7400000, guid: 6c8dacebb5b1447d9d4e066055a741ab, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: ATTACK 1
+    clip: {fileID: 7400000, guid: db82e54364d94f39a1d371a45acedf80, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: ATTACK 2
+    clip: {fileID: 7400000, guid: de079d2414354b85bd2ee5c7430e3409, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: ATTACK 3
+    clip: {fileID: 7400000, guid: de079d2414354b85bd2ee5c7430e3409, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: HURT
+    clip: {fileID: 7400000, guid: 46be98ba4e2941fabedcf36396edf665, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: HEALING
+    clip: {fileID: 7400000, guid: 54d0b24590c041e194590806899f6428, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DEATH
+    clip: {fileID: 7400000, guid: 4e11ecb4a4564e279918b75fab5f08f5, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: DEFEND
+    clip: {fileID: 7400000, guid: 54d0b24590c041e194590806899f6428, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: SPECIAL ATTACK
+    clip: {fileID: 7400000, guid: de079d2414354b85bd2ee5c7430e3409, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DASH
+    clip: {fileID: 7400000, guid: 6c8dacebb5b1447d9d4e066055a741ab, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP
+    clip: {fileID: 7400000, guid: 1247d6fc62254448a5c9f4cfa4f0c16a, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: JUMP-START
+    clip: {fileID: 7400000, guid: 1247d6fc62254448a5c9f4cfa4f0c16a, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-FALL
+    clip: {fileID: 7400000, guid: 2a2da76fd4da439e9c0cb70da2f163af, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: JUMP-TRANSITION
+    clip: {fileID: 7400000, guid: 1247d6fc62254448a5c9f4cfa4f0c16a, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+

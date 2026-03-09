@@ -17,18 +17,10 @@ public class ArchiveOriginalAssetPackEditor : EditorWindow
 
     private void OnGUI()
     {
-        GUILayout.Label("Archive Original Asset Pack", EditorStyles.boldLabel);
-        sourceFolder = EditorGUILayout.TextField("Source Folder", sourceFolder);
-        archiveFolder = EditorGUILayout.TextField("Archive Folder", archiveFolder);
-        EditorGUILayout.HelpBox("This will move all files and folders from the source to the archive, except any folders you list below (e.g., character folders you already organized).", MessageType.Info);
-        string exclude = string.Join(", ", excludeFolders);
-        exclude = EditorGUILayout.TextField("Exclude Folders (comma-separated)", exclude);
-        excludeFolders = exclude.Split(new char[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries);
-        for (int i = 0; i < excludeFolders.Length; i++) excludeFolders[i] = excludeFolders[i].Trim();
-
-        if (GUILayout.Button("Archive Now"))
+        EditorGUILayout.HelpBox("Deprecated. Use Tools/Shogun/Character Database for catalog-managed asset migration.", MessageType.Warning);
+        if (GUILayout.Button("Open Character Database"))
         {
-            ArchivePack();
+            Shogun.Features.Characters.CharacterDatabaseEditorWindow.ShowWindow();
         }
     }
 
@@ -71,4 +63,4 @@ public class ArchiveOriginalAssetPackEditor : EditorWindow
         Debug.Log($"Archived all original pack files from {sourceFolder} to {archiveFolder} (excluding: {string.Join(", ", excludeFolders)})");
     }
 }
-#endif 
+#endif

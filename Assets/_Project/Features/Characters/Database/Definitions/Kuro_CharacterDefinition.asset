@@ -1,0 +1,115 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cae84c2d5f140e44b6318b2af561392, type: 3}
+  m_Name: Kuro_CharacterDefinition
+  m_EditorClassIdentifier: 
+  characterId: kuro
+  aliases: []
+  surname: 
+  givenName: Kuro
+  characterName: Kuro
+  description: A shadow ninja who prioritizes speed, precision, and flanking pressure.
+  portrait: {fileID: 0}
+  bannerSprite: {fileID: 0}
+  battleSprite: {fileID: 4723107735738678597, guid: 823918f83a634bb419e58a9664851d60, type: 3}
+  eventVignette: {fileID: 0}
+  animatorController: {fileID: 9100000, guid: d03fc6c518744dbc951b878fd19b160e, type: 2}
+  colliderSize: {x: 1, y: 2}
+  colliderOffset: {x: 0, y: 0}
+  characterScale: {x: 0.8, y: 0.8, z: 1}
+  characterType: 1
+  elementalType: 6
+  martialArtsType: 5
+  rarity: 3
+  attackRange: 0
+  baseHealth: 135
+  baseAttack: 72
+  baseDefense: 26
+  baseSpeed: 18
+  specialAbilityName: Shadow Fang
+  specialAbilityDescription: Dashes through the target line, dealing damage and repositioning behind the enemy.
+  specialAbilityCooldown: 3
+  specialAbilityDamage: 160
+  baseStealthEffectiveness: 65
+  stealthDecayRate: 12
+  baseCounterChance: 20
+  counterDamageMultiplier: 110
+  synergyTags:
+  - Ninja
+  - Shadow
+  - Flanker
+  animationMappings:
+  - logicalName: IDLE
+    clip: {fileID: 7400000, guid: a5585c30fff1443ba78df80a9db41126, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: RUN
+    clip: {fileID: 7400000, guid: 5342fd6efc664895adb11ad73b987f07, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: WALK
+    clip: {fileID: 7400000, guid: 5342fd6efc664895adb11ad73b987f07, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: ATTACK 1
+    clip: {fileID: 7400000, guid: cdb3f1bcceef499e9f8512b547b5a114, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: ATTACK 2
+    clip: {fileID: 7400000, guid: d1f7f1a2a2a74ca8994d3a1ffdc6d6ac, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: ATTACK 3
+    clip: {fileID: 7400000, guid: d1f7f1a2a2a74ca8994d3a1ffdc6d6ac, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: HURT
+    clip: {fileID: 7400000, guid: 7cb99e28530f47008d5e703d0563f1b3, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: HEALING
+    clip: {fileID: 7400000, guid: a5585c30fff1443ba78df80a9db41126, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DEATH
+    clip: {fileID: 7400000, guid: a59539da95d247cb9f3c673fd67d7edd, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: DEFEND
+    clip: {fileID: 7400000, guid: a5585c30fff1443ba78df80a9db41126, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: SPECIAL ATTACK
+    clip: {fileID: 7400000, guid: d1f7f1a2a2a74ca8994d3a1ffdc6d6ac, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DASH
+    clip: {fileID: 7400000, guid: 5342fd6efc664895adb11ad73b987f07, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP
+    clip: {fileID: 7400000, guid: 4df1a5720acc496ea3b1b1f3220d47cf, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: JUMP-START
+    clip: {fileID: 7400000, guid: 4df1a5720acc496ea3b1b1f3220d47cf, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-FALL
+    clip: {fileID: 7400000, guid: 70eda664f74241cba044512b536ec7e7, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: JUMP-TRANSITION
+    clip: {fileID: 7400000, guid: 4df1a5720acc496ea3b1b1f3220d47cf, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+

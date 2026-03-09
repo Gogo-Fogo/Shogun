@@ -1,6 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using Shogun.Core.Architecture;
 
 namespace Shogun.Features.Characters
 {
@@ -14,11 +14,11 @@ namespace Shogun.Features.Characters
     /// </summary>
     public static class CharacterFactory
     {
-        private static Dictionary<string, CharacterDefinition> _characterDefinitions = new Dictionary<string, CharacterDefinition>();
+        private static CharacterCatalog _characterCatalog;
         private static bool _isInitialized = false;
         
         /// <summary>
-        /// Initialize the factory by loading all character definitions.
+        /// Initialize the factory by loading the runtime character catalog.
         /// </summary>
         public static void Initialize()
         {
@@ -29,25 +29,23 @@ namespace Shogun.Features.Characters
         }
         
         /// <summary>
-        /// Load all character definitions from Resources.
+        /// Load the character catalog from Resources.
         /// </summary>
         private static void LoadCharacterDefinitions()
         {
-            CharacterDefinition[] definitions = Resources.LoadAll<CharacterDefinition>("Characters");
-            
-            foreach (CharacterDefinition definition in definitions)
+            _characterCatalog = Resources.Load<CharacterCatalog>("CharacterCatalog");
+
+            if (_characterCatalog == null)
             {
-                if (definition != null && !string.IsNullOrEmpty(definition.CharacterName))
-                {
-                    _characterDefinitions[definition.CharacterName] = definition;
-                }
+                Debug.LogError("CharacterFactory: CharacterCatalog could not be loaded from Resources/CharacterCatalog");
+                return;
             }
             
-            Debug.Log($"CharacterFactory: Loaded {_characterDefinitions.Count} character definitions");
+            Debug.Log($"CharacterFactory: Loaded {_characterCatalog.GetAll().Count} character definitions from CharacterCatalog");
         }
         
         /// <summary>
-        /// Create a character instance from a definition name.
+        /// Create a character instance from a definition id or legacy lookup string.
         /// </summary>
         public static CharacterInstance CreateCharacter(string characterName)
         {
@@ -56,7 +54,8 @@ namespace Shogun.Features.Characters
                 Initialize();
             }
             
-            if (_characterDefinitions.TryGetValue(characterName, out CharacterDefinition definition))
+            CharacterDefinition definition = GetCharacterDefinition(characterName);
+            if (definition != null)
             {
                 return new CharacterInstance(definition);
             }
@@ -87,11 +86,23 @@ namespace Shogun.Features.Characters
             CharacterInstance instance = CreateCharacter(characterName);
             if (instance != null)
             {
-                // Add experience to reach the desired level
                 float experienceNeeded = CalculateExperienceForLevel(level);
                 instance.Stats.AddExperience(experienceNeeded);
             }
             return instance;
+        }
+
+        public static CharacterDefinition GetCharacterDefinitionById(string characterId)
+        {
+            if (!_isInitialized)
+            {
+                Initialize();
+            }
+
+            if (_characterCatalog != null && _characterCatalog.TryGetById(characterId, out CharacterDefinition definition))
+                return definition;
+
+            return null;
         }
         
         /// <summary>
@@ -104,9 +115,10 @@ namespace Shogun.Features.Characters
                 Initialize();
             }
             
-            CharacterDefinition[] definitions = new CharacterDefinition[_characterDefinitions.Count];
-            _characterDefinitions.Values.CopyTo(definitions, 0);
-            return definitions;
+            if (_characterCatalog == null)
+                return System.Array.Empty<CharacterDefinition>();
+
+            return _characterCatalog.GetAll().ToArray();
         }
         
         /// <summary>
@@ -114,22 +126,9 @@ namespace Shogun.Features.Characters
         /// </summary>
         public static CharacterDefinition[] GetCharacterDefinitionsByType(CharacterType type)
         {
-            if (!_isInitialized)
-            {
-                Initialize();
-            }
-            
-            List<CharacterDefinition> filtered = new List<CharacterDefinition>();
-            
-            foreach (CharacterDefinition definition in _characterDefinitions.Values)
-            {
-                if (definition.CharacterType == type)
-                {
-                    filtered.Add(definition);
-                }
-            }
-            
-            return filtered.ToArray();
+            return GetAllCharacterDefinitions()
+                .Where(definition => definition.CharacterType == type)
+                .ToArray();
         }
         
         /// <summary>
@@ -137,22 +136,9 @@ namespace Shogun.Features.Characters
         /// </summary>
         public static CharacterDefinition[] GetCharacterDefinitionsByRarity(Rarity rarity)
         {
-            if (!_isInitialized)
-            {
-                Initialize();
-            }
-            
-            List<CharacterDefinition> filtered = new List<CharacterDefinition>();
-            
-            foreach (CharacterDefinition definition in _characterDefinitions.Values)
-            {
-                if (definition.Rarity == rarity)
-                {
-                    filtered.Add(definition);
-                }
-            }
-            
-            return filtered.ToArray();
+            return GetAllCharacterDefinitions()
+                .Where(definition => definition.Rarity == rarity)
+                .ToArray();
         }
         
         /// <summary>
@@ -160,22 +146,9 @@ namespace Shogun.Features.Characters
         /// </summary>
         public static CharacterDefinition[] GetCharacterDefinitionsByElement(ElementalType element)
         {
-            if (!_isInitialized)
-            {
-                Initialize();
-            }
-            
-            List<CharacterDefinition> filtered = new List<CharacterDefinition>();
-            
-            foreach (CharacterDefinition definition in _characterDefinitions.Values)
-            {
-                if (definition.ElementalType == element)
-                {
-                    filtered.Add(definition);
-                }
-            }
-            
-            return filtered.ToArray();
+            return GetAllCharacterDefinitions()
+                .Where(definition => definition.ElementalType == element)
+                .ToArray();
         }
         
         /// <summary>
@@ -183,16 +156,11 @@ namespace Shogun.Features.Characters
         /// </summary>
         public static bool HasCharacterDefinition(string characterName)
         {
-            if (!_isInitialized)
-            {
-                Initialize();
-            }
-            
-            return _characterDefinitions.ContainsKey(characterName);
+            return GetCharacterDefinition(characterName) != null;
         }
         
         /// <summary>
-        /// Get a character definition by name.
+        /// Get a character definition by id, alias, or legacy display name.
         /// </summary>
         public static CharacterDefinition GetCharacterDefinition(string characterName)
         {
@@ -201,7 +169,10 @@ namespace Shogun.Features.Characters
                 Initialize();
             }
             
-            _characterDefinitions.TryGetValue(characterName, out CharacterDefinition definition);
+            if (_characterCatalog == null)
+                return null;
+
+            _characterCatalog.TryResolve(characterName, out CharacterDefinition definition);
             return definition;
         }
         
@@ -242,7 +213,6 @@ namespace Shogun.Features.Characters
                 return team.ToArray();
             }
             
-            // Try to create a balanced team with different types and elements
             HashSet<CharacterType> usedTypes = new HashSet<CharacterType>();
             HashSet<ElementalType> usedElements = new HashSet<ElementalType>();
             
@@ -255,15 +225,12 @@ namespace Shogun.Features.Characters
                 {
                     int score = 0;
                     
-                    // Prefer different character types
                     if (!usedTypes.Contains(definition.CharacterType))
                         score += 10;
                     
-                    // Prefer different elements
                     if (!usedElements.Contains(definition.ElementalType))
                         score += 5;
                     
-                    // Prefer higher rarity
                     score += (int)definition.Rarity;
                     
                     if (score > bestScore)
@@ -307,31 +274,29 @@ namespace Shogun.Features.Characters
             {
                 Initialize();
             }
-            
+
+            CharacterDefinition[] definitions = GetAllCharacterDefinitions();
             Dictionary<CharacterType, int> typeCounts = new Dictionary<CharacterType, int>();
             Dictionary<ElementalType, int> elementCounts = new Dictionary<ElementalType, int>();
             Dictionary<Rarity, int> rarityCounts = new Dictionary<Rarity, int>();
             
-            foreach (CharacterDefinition definition in _characterDefinitions.Values)
+            foreach (CharacterDefinition definition in definitions)
             {
-                // Count by type
                 if (!typeCounts.ContainsKey(definition.CharacterType))
                     typeCounts[definition.CharacterType] = 0;
                 typeCounts[definition.CharacterType]++;
                 
-                // Count by element
                 if (!elementCounts.ContainsKey(definition.ElementalType))
                     elementCounts[definition.ElementalType] = 0;
                 elementCounts[definition.ElementalType]++;
                 
-                // Count by rarity
                 if (!rarityCounts.ContainsKey(definition.Rarity))
                     rarityCounts[definition.Rarity] = 0;
                 rarityCounts[definition.Rarity]++;
             }
             
             string stats = $"Character Statistics:\n";
-            stats += $"Total Characters: {_characterDefinitions.Count}\n\n";
+            stats += $"Total Characters: {definitions.Length}\n\n";
             
             stats += "By Type:\n";
             foreach (var kvp in typeCounts)
@@ -354,4 +319,4 @@ namespace Shogun.Features.Characters
             return stats;
         }
     }
-} 
+}

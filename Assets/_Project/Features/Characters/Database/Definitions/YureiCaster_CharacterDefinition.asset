@@ -1,0 +1,115 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cae84c2d5f140e44b6318b2af561392, type: 3}
+  m_Name: YureiCaster_CharacterDefinition
+  m_EditorClassIdentifier: 
+  characterId: yurei-caster
+  aliases: []
+  surname: 
+  givenName: Yurei Caster
+  characterName: Yurei Caster
+  description: A drifting spirit that pressures the player from long range and threatens cursed follow-up damage.
+  portrait: {fileID: 0}
+  bannerSprite: {fileID: 0}
+  battleSprite: {fileID: 4723107735738678597, guid: b897f873f8866a94b9cd8ec2c583b948, type: 3}
+  eventVignette: {fileID: 0}
+  animatorController: {fileID: 9100000, guid: ff0f8f07eee448da81f88851fdaa3b23, type: 2}
+  colliderSize: {x: 1, y: 2.1}
+  colliderOffset: {x: 0, y: 0.05}
+  characterScale: {x: 0.75, y: 0.75, z: 1}
+  characterType: 5
+  elementalType: 6
+  martialArtsType: 4
+  rarity: 3
+  attackRange: 2
+  baseHealth: 100
+  baseAttack: 52
+  baseDefense: 18
+  baseSpeed: 13
+  specialAbilityName: Hollow Wail
+  specialAbilityDescription: A curse-laced shriek that strikes from afar and softens targets for the front line.
+  specialAbilityCooldown: 4
+  specialAbilityDamage: 135
+  baseStealthEffectiveness: 20
+  stealthDecayRate: 18
+  baseCounterChance: 8
+  counterDamageMultiplier: 90
+  synergyTags:
+  - Yokai
+  - Caster
+  - Shadow
+  animationMappings:
+  - logicalName: IDLE
+    clip: {fileID: 7400000, guid: 4d00c7cf4b914ed193f385a715f92b4f, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: RUN
+    clip: {fileID: 7400000, guid: 555e190c0201419eba52be5c7b8afec0, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: WALK
+    clip: {fileID: 7400000, guid: 555e190c0201419eba52be5c7b8afec0, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: ATTACK 1
+    clip: {fileID: 7400000, guid: 033c788238884bdcb578549961d2ef38, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: ATTACK 2
+    clip: {fileID: 7400000, guid: af7e22e08abb4d0f8716cdb1d3c7fdd0, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: ATTACK 3
+    clip: {fileID: 7400000, guid: af7e22e08abb4d0f8716cdb1d3c7fdd0, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: HURT
+    clip: {fileID: 7400000, guid: 7c16adcca4874341a6bdeb2b66a889a5, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: HEALING
+    clip: {fileID: 7400000, guid: 4d00c7cf4b914ed193f385a715f92b4f, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DEATH
+    clip: {fileID: 7400000, guid: e3e5496b2b6a4201bc79bee308d69efb, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: DEFEND
+    clip: {fileID: 7400000, guid: 4d00c7cf4b914ed193f385a715f92b4f, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: SPECIAL ATTACK
+    clip: {fileID: 7400000, guid: af7e22e08abb4d0f8716cdb1d3c7fdd0, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DASH
+    clip: {fileID: 7400000, guid: 555e190c0201419eba52be5c7b8afec0, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP
+    clip: {fileID: 7400000, guid: d86891aae22f47c99fc011415b5b5277, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: JUMP-START
+    clip: {fileID: 7400000, guid: d86891aae22f47c99fc011415b5b5277, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-FALL
+    clip: {fileID: 7400000, guid: c2a39596f98f4383b0756daf7f7f6b75, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: JUMP-TRANSITION
+    clip: {fileID: 7400000, guid: d86891aae22f47c99fc011415b5b5277, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+

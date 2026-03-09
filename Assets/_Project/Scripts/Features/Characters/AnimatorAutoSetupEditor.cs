@@ -9,9 +9,9 @@ using System.Collections.Generic;
 
 public class AnimatorAutoSetupEditor : EditorWindow
 {
-    private string spritesFolder = "Assets/_Project/Features/Characters/Art/Sprites/Samurai/FULL_Samurai 2D Pixel Art v1.2/FULL_Samurai 2D Pixel Art v1.2/Sprites";
-    private string animClipsFolder = "Assets/_Project/Features/Characters/Art/Animations/Samurai/Clips";
-    private string animatorControllerPath = "Assets/_Project/Features/Characters/Art/Sprites/Samurai/FULL_Samurai 2D Pixel Art v1.2/FULL_Samurai 2D Pixel Art v1.2/Animations/IDLE_0.controller";
+    private string spritesFolder = "Assets/_Project/Features/Characters/Art/Production/PlayableSprites/ryoma";
+    private string animClipsFolder = "Assets/_Project/Features/Characters/Art/Production/Animations/ryoma";
+    private string animatorControllerPath = "Assets/_Project/Features/Characters/Art/Production/Animations/ryoma/Ryoma_Ryoma.controller";
     private string[] animationNames = new string[] { "IDLE", "RUN", "ATTACK 1", "ATTACK 2", "ATTACK 3", "HURT", "HEALING", "DEATH", "DEFEND", "SPECIAL ATTACK", "DASH", "CLIMBING", "JUMP", "JUMP-START", "JUMP-FALL", "JUMP-TRANSITION", "THROW", "WALK", "WALL CONTACT", "WALL JUMP", "WALL SLIDE", "HEALING NO EFFECT", "AIR ATTACK" };
     private struct StateParam
     {
@@ -301,4 +301,4 @@ public class AnimatorAutoSetupEditor : EditorWindow
         }
     }
 }
-#endif 
+#endif

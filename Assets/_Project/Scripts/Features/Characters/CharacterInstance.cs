@@ -163,16 +163,26 @@ namespace Shogun.Features.Characters
         /// </summary>
         public void MoveTo(Vector2 screenPosition)
         {
+            if (!TryNormalizeScreenPosition(screenPosition, out Vector2 normalizedScreenPos))
+                return;
+
             // Stop any existing movement and ensure animation is reset
             StopMovement();
             
-            currentMovementCoroutine = StartCoroutine(MoveToRoutine(screenPosition));
+            currentMovementCoroutine = StartCoroutine(MoveToRoutine(normalizedScreenPos));
         }
 
         private System.Collections.IEnumerator MoveToRoutine(Vector2 screenPosition)
         {
+            Camera cameraRef = Camera.main;
+            if (cameraRef == null)
+            {
+                currentMovementCoroutine = null;
+                yield break;
+            }
+
             Vector3 start = transform.position;
-            Vector3 target = Camera.main.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, Mathf.Abs(Camera.main.transform.position.z)));
+            Vector3 target = cameraRef.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, Mathf.Abs(cameraRef.transform.position.z)));
             target.z = 0;
             float speed = 40f; // Increased for faster tap-to-move
             var anim = GetComponent<Animator>();
@@ -482,30 +492,28 @@ namespace Shogun.Features.Characters
 
             gameObject.name = def.CharacterName;
 
-            // Set sprite
-            var sr = GetComponent<SpriteRenderer>();
+            SpriteRenderer sr = ResolveSpriteRenderer();
             if (sr != null)
             {
                 sr.sprite = def.BattleSprite;
             }
-            // Set animator
-            var anim = GetComponent<Animator>();
+
+            Animator anim = ResolveAnimator();
             if (anim != null)
             {
                 anim.runtimeAnimatorController = def.AnimatorController;
-                anim.Rebind();
-                anim.Update(0f);
+                SetupAnimatorOverrides(anim);
             }
-            // Set collider size/offset if present in def
-            var col = GetComponent<CapsuleCollider2D>();
+
+            CapsuleCollider2D col = ResolveCapsuleCollider();
             if (col != null)
             {
                 col.size = def.ColliderSize;
                 col.offset = def.ColliderOffset;
             }
+
             // Set scale
             transform.localScale = def.CharacterScale;
-            SetupAnimatorOverrides();
             // Set other stats as needed (attack range, etc.)
             // this.attackRange = def.attackRange; // Uncomment if you have this field
         }
@@ -517,29 +525,50 @@ namespace Shogun.Features.Characters
 
         private void SetupAnimatorOverrides()
         {
-            var anim = GetComponent<Animator>();
-            if (anim == null || definition == null || definition.animationMappings == null || definition.animationMappings.Count == 0)
+            SetupAnimatorOverrides(ResolveAnimator());
+        }
+
+        private void SetupAnimatorOverrides(Animator anim)
+        {
+            if (anim == null || definition == null)
                 return;
 
-            var baseController = anim.runtimeAnimatorController;
+            RuntimeAnimatorController baseController = anim.runtimeAnimatorController ?? definition.AnimatorController;
             if (baseController == null)
                 return;
 
+            if (definition.animationMappings == null || definition.animationMappings.Count == 0)
+            {
+                anim.runtimeAnimatorController = baseController;
+                anim.Rebind();
+                anim.Update(0f);
+                return;
+            }
+
             var overrideController = new AnimatorOverrideController(baseController);
             var overrides = new List<KeyValuePair<AnimationClip, AnimationClip>>();
+            var seenBaseClips = new HashSet<AnimationClip>();
 
             // Build a dictionary for quick lookup
             var mappingDict = new Dictionary<string, AnimationClip>(System.StringComparer.OrdinalIgnoreCase);
             foreach (var mapping in definition.animationMappings)
             {
                 if (!string.IsNullOrEmpty(mapping.logicalName) && mapping.clip != null)
-                    mappingDict[mapping.logicalName] = mapping.clip;
+                {
+                    string directKey = NormalizeAnimationKey(mapping.logicalName);
+                    if (!mappingDict.ContainsKey(directKey))
+                        mappingDict[directKey] = mapping.clip;
+                }
             }
 
             // For each clip in the base controller, try to override
             foreach (var clip in overrideController.animationClips)
             {
-                if (mappingDict.TryGetValue(clip.name, out var mappedClip))
+                if (clip == null || !seenBaseClips.Add(clip))
+                    continue;
+
+                string normalizedClipName = NormalizeAnimationKey(clip.name);
+                if (mappingDict.TryGetValue(normalizedClipName, out var mappedClip))
                 {
                     overrides.Add(new KeyValuePair<AnimationClip, AnimationClip>(clip, mappedClip));
                 }
@@ -550,6 +579,72 @@ namespace Shogun.Features.Characters
             }
             overrideController.ApplyOverrides(overrides);
             anim.runtimeAnimatorController = overrideController;
+            anim.Rebind();
+            anim.Update(0f);
+        }
+
+        private Animator ResolveAnimator()
+        {
+            return GetComponent<Animator>() ?? GetComponentInChildren<Animator>(true);
+        }
+
+        private SpriteRenderer ResolveSpriteRenderer()
+        {
+            return GetComponent<SpriteRenderer>() ?? GetComponentInChildren<SpriteRenderer>(true);
+        }
+
+        private CapsuleCollider2D ResolveCapsuleCollider()
+        {
+            return GetComponent<CapsuleCollider2D>() ?? GetComponentInChildren<CapsuleCollider2D>(true);
+        }
+
+        private static string NormalizeAnimationKey(string rawName)
+        {
+            if (string.IsNullOrWhiteSpace(rawName))
+                return string.Empty;
+
+            string candidate = rawName.Trim();
+            int separatorIndex = candidate.IndexOf('_');
+            if (separatorIndex >= 0 && separatorIndex < candidate.Length - 1)
+                candidate = candidate.Substring(separatorIndex + 1);
+
+            return candidate.Trim().ToUpperInvariant();
+        }
+
+        private static bool TryNormalizeScreenPosition(Vector2 rawScreenPos, out Vector2 normalizedScreenPos)
+        {
+            normalizedScreenPos = rawScreenPos;
+
+            if (!IsFinite(rawScreenPos))
+                return false;
+
+            if (rawScreenPos.sqrMagnitude <= 0.0001f)
+            {
+                Vector3 fallbackMouse = Input.mousePosition;
+                rawScreenPos = new Vector2(fallbackMouse.x, fallbackMouse.y);
+                if (!IsFinite(rawScreenPos) || rawScreenPos.sqrMagnitude <= 0.0001f)
+                    return false;
+            }
+
+            float minX = 0f;
+            float minY = 0f;
+            float maxX = Screen.width;
+            float maxY = Screen.height;
+            if (rawScreenPos.x < minX || rawScreenPos.y < minY || rawScreenPos.x > maxX || rawScreenPos.y > maxY)
+                return false;
+
+            normalizedScreenPos = new Vector2(
+                Mathf.Clamp(rawScreenPos.x, minX, maxX),
+                Mathf.Clamp(rawScreenPos.y, minY, maxY));
+            return true;
+        }
+
+        private static bool IsFinite(Vector2 value)
+        {
+            return !float.IsNaN(value.x)
+                   && !float.IsNaN(value.y)
+                   && !float.IsInfinity(value.x)
+                   && !float.IsInfinity(value.y);
         }
     }
     

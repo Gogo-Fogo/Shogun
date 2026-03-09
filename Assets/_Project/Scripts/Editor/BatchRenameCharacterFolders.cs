@@ -25,11 +25,10 @@ public class BatchRenameCharacterFolders : EditorWindow
 
     private void OnGUI()
     {
-        GUILayout.Label("Batch Rename Character Folders", EditorStyles.boldLabel);
-        spritesRoot = EditorGUILayout.TextField("Sprites Root", spritesRoot);
-        if (GUILayout.Button("Rename All Generic Character Folders"))
+        EditorGUILayout.HelpBox("Deprecated. Use Tools/Shogun/Character Database for catalog-managed asset migration.", MessageType.Warning);
+        if (GUILayout.Button("Open Character Database"))
         {
-            RenameAllCharacterFolders();
+            Shogun.Features.Characters.CharacterDatabaseEditorWindow.ShowWindow();
         }
     }
 
@@ -58,4 +57,4 @@ public class BatchRenameCharacterFolders : EditorWindow
         Debug.Log($"Batch folder rename complete. Folders renamed: {renamed}");
     }
 }
-#endif 
+#endif

@@ -15,18 +15,23 @@ namespace Shogun.Features.Characters
     public class CharacterDefinition : ScriptableObject
     {
         [Header("Basic Information")]
+        [SerializeField] private string characterId = "";
+        [SerializeField] private string[] aliases = new string[0];
         [SerializeField] private string surname = "";
         [SerializeField] private string givenName = "Unknown";
         [SerializeField] private string characterName = "Unknown"; // Deprecated, use surname/givenName
         [SerializeField] private string description = "";
         [SerializeField] private Sprite portrait;
+        [SerializeField] private Sprite bannerSprite;
         [SerializeField] private Sprite battleSprite;
+        [SerializeField] private Sprite eventVignette;
         [SerializeField] private RuntimeAnimatorController animatorController;
         
         [Header("Prefab/Collider Settings")]
         [SerializeField] private Vector2 colliderSize = new Vector2(1, 2);
         [SerializeField] private Vector2 colliderOffset = Vector2.zero;
         [SerializeField] private Vector3 characterScale = Vector3.one;
+        [SerializeField] private bool invertFacingX = false;
         
         [Header("Character Type")]
         [SerializeField] private CharacterType characterType = CharacterType.Samurai;
@@ -62,6 +67,11 @@ namespace Shogun.Features.Characters
         public List<AnimationMapping> animationMappings = new List<AnimationMapping>();
         
         // Public properties
+        public string CharacterId => string.IsNullOrWhiteSpace(characterId)
+            ? CharacterKeyUtility.NormalizeCharacterId(GetIdentitySeed())
+            : characterId;
+        public IReadOnlyList<string> Aliases => aliases ?? System.Array.Empty<string>();
+        public bool HasExplicitCharacterId => !string.IsNullOrWhiteSpace(characterId);
         public string Surname => surname;
         public string GivenName => givenName;
         public string DisplayNameJP => string.IsNullOrEmpty(surname) ? givenName : $"{surname} {givenName}";
@@ -69,7 +79,9 @@ namespace Shogun.Features.Characters
         public string CharacterName => string.IsNullOrEmpty(givenName) ? characterName : givenName; // Legacy fallback
         public string Description => description;
         public Sprite Portrait => portrait;
+        public Sprite BannerSprite => bannerSprite;
         public Sprite BattleSprite => battleSprite;
+        public Sprite EventVignette => eventVignette;
         public RuntimeAnimatorController AnimatorController => animatorController;
         public CharacterType CharacterType => characterType;
         public ElementalType ElementalType => elementalType;
@@ -92,6 +104,7 @@ namespace Shogun.Features.Characters
         public Vector2 ColliderSize => colliderSize;
         public Vector2 ColliderOffset => colliderOffset;
         public Vector3 CharacterScale => characterScale;
+        public bool InvertFacingX => invertFacingX;
         
         /// <summary>
         /// Creates a new CharacterInstance based on this definition.
@@ -100,6 +113,56 @@ namespace Shogun.Features.Characters
         {
             return new CharacterInstance(this);
         }
+
+        public IEnumerable<string> GetLookupTerms()
+        {
+            yield return CharacterId;
+
+            if (aliases != null)
+            {
+                foreach (string alias in aliases)
+                {
+                    if (!string.IsNullOrWhiteSpace(alias))
+                        yield return alias;
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(givenName))
+                yield return givenName;
+
+            if (!string.IsNullOrWhiteSpace(characterName))
+                yield return characterName;
+
+            if (!string.IsNullOrWhiteSpace(DisplayNameEN))
+                yield return DisplayNameEN;
+
+            if (!string.IsNullOrWhiteSpace(DisplayNameJP))
+                yield return DisplayNameJP;
+
+            string assetName = name.Replace("_CharacterDefinition", string.Empty);
+            if (!string.IsNullOrWhiteSpace(assetName))
+                yield return assetName;
+        }
+
+        private string GetIdentitySeed()
+        {
+            if (!string.IsNullOrWhiteSpace(givenName) && !givenName.Equals("Unknown"))
+                return givenName;
+
+            if (!string.IsNullOrWhiteSpace(characterName) && !characterName.Equals("Unknown"))
+                return characterName;
+
+            string assetName = name.Replace("_CharacterDefinition", string.Empty);
+            return string.IsNullOrWhiteSpace(assetName) ? "character" : assetName;
+        }
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            characterId = CharacterKeyUtility.NormalizeCharacterId(string.IsNullOrWhiteSpace(characterId) ? GetIdentitySeed() : characterId);
+            aliases = CharacterKeyUtility.NormalizeAliases(aliases);
+        }
+#endif
     }
     
     /// <summary>
@@ -226,8 +289,7 @@ namespace Shogun.Features.Characters
 #if UNITY_EDITOR
             // Search in common animation folders
             string[] searchPaths = {
-                "Assets/_Project/Features/Characters/Art/Animations",
-                "Assets/_Project/Features/Characters/Art/Sprites"
+                "Assets/_Project/Features/Characters/Art/Production/Animations"
             };
             
             foreach (string path in searchPaths)

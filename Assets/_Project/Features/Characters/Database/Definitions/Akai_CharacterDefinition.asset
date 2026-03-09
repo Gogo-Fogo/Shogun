@@ -1,0 +1,115 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cae84c2d5f140e44b6318b2af561392, type: 3}
+  m_Name: Akai_CharacterDefinition
+  m_EditorClassIdentifier: 
+  characterId: akai
+  aliases: []
+  surname: 
+  givenName: Akai
+  characterName: Akai
+  description: A dark red samurai duelist used as a debug enemy target.
+  portrait: {fileID: 0}
+  bannerSprite: {fileID: 0}
+  battleSprite: {fileID: 4723107735738678597, guid: 0a6a77c7ad34b4a44959d24957c475dc, type: 3}
+  eventVignette: {fileID: 0}
+  animatorController: {fileID: 9100000, guid: 114a560197f8487ba6d973786f64fe23, type: 2}
+  colliderSize: {x: 1.1, y: 2.1}
+  colliderOffset: {x: 0, y: 0.05}
+  characterScale: {x: 1.25, y: 1.25, z: 1}
+  invertFacingX: 0
+  characterType: 0
+  elementalType: 0
+  martialArtsType: 1
+  rarity: 3
+  attackRange: 1
+  baseHealth: 155
+  baseAttack: 56
+  baseDefense: 34
+  baseSpeed: 12
+  specialAbilityName: Crimson Counter
+  specialAbilityDescription: A red-lined sword flurry used for sandbox enemy behavior testing.
+  specialAbilityCooldown: 3
+  specialAbilityDamage: 140
+  baseStealthEffectiveness: 10
+  stealthDecayRate: 20
+  baseCounterChance: 20
+  counterDamageMultiplier: 110
+  synergyTags:
+  - Samurai
+  - DarkRed
+  animationMappings:
+  - logicalName: IDLE
+    clip: {fileID: 7400000, guid: 0d73e4c2b54748f582c96702e183fc64, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: RUN
+    clip: {fileID: 7400000, guid: a5deaa7a01ca4870a67c7e1c9c9d54a1, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: WALK
+    clip: {fileID: 7400000, guid: a5deaa7a01ca4870a67c7e1c9c9d54a1, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: ATTACK 1
+    clip: {fileID: 7400000, guid: 19801547cc6c4d0883a55703846f4b79, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: ATTACK 2
+    clip: {fileID: 7400000, guid: b349e136d7c842058b0f5fded9b28bf3, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: ATTACK 3
+    clip: {fileID: 7400000, guid: b349e136d7c842058b0f5fded9b28bf3, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: HURT
+    clip: {fileID: 7400000, guid: 6749b6c2c5ba4007aad2c0cd4ca99bdc, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: HEALING
+    clip: {fileID: 7400000, guid: 0d73e4c2b54748f582c96702e183fc64, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DEATH
+    clip: {fileID: 7400000, guid: fddc13da76be459ba309b42ce38c0bc2, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: DEFEND
+    clip: {fileID: 7400000, guid: 0d73e4c2b54748f582c96702e183fc64, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: SPECIAL ATTACK
+    clip: {fileID: 7400000, guid: b349e136d7c842058b0f5fded9b28bf3, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DASH
+    clip: {fileID: 7400000, guid: a5deaa7a01ca4870a67c7e1c9c9d54a1, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP
+    clip: {fileID: 7400000, guid: a90dbea7ece64e5eb8fa5ecdd17c5738, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: JUMP-START
+    clip: {fileID: 7400000, guid: a90dbea7ece64e5eb8fa5ecdd17c5738, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-FALL
+    clip: {fileID: 7400000, guid: 5cb246849c404af39242d9ac196257c2, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: JUMP-TRANSITION
+    clip: {fileID: 7400000, guid: a90dbea7ece64e5eb8fa5ecdd17c5738, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+

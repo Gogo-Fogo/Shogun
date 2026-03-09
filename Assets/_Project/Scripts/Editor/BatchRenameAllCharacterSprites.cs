@@ -15,11 +15,10 @@ public class BatchRenameAllCharacterSprites : EditorWindow
 
     private void OnGUI()
     {
-        GUILayout.Label("Batch Rename All Character Sprites", EditorStyles.boldLabel);
-        spritesRoot = EditorGUILayout.TextField("Sprites Root", spritesRoot);
-        if (GUILayout.Button("Rename All Sprites & Anims"))
+        EditorGUILayout.HelpBox("Deprecated. Use Tools/Shogun/Character Database for catalog-managed asset migration.", MessageType.Warning);
+        if (GUILayout.Button("Open Character Database"))
         {
-            RenameAllCharacterSprites();
+            Shogun.Features.Characters.CharacterDatabaseEditorWindow.ShowWindow();
         }
     }
 
@@ -69,4 +68,4 @@ public class BatchRenameAllCharacterSprites : EditorWindow
         return renamed;
     }
 }
-#endif 
+#endif

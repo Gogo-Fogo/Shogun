@@ -16,12 +16,10 @@ public class BatchRenameCharacterSprites : EditorWindow
 
     private void OnGUI()
     {
-        GUILayout.Label("Batch Rename Character Sprites", EditorStyles.boldLabel);
-        characterName = EditorGUILayout.TextField("Character Name", characterName);
-        targetFolder = EditorGUILayout.TextField("Target Folder", targetFolder);
-        if (GUILayout.Button("Rename All Sprites & Anims"))
+        EditorGUILayout.HelpBox("Deprecated. Use Tools/Shogun/Character Database for catalog-managed asset migration.", MessageType.Warning);
+        if (GUILayout.Button("Open Character Database"))
         {
-            RenameAllSpritesAndAnims();
+            Shogun.Features.Characters.CharacterDatabaseEditorWindow.ShowWindow();
         }
     }
 
@@ -57,4 +55,4 @@ public class BatchRenameCharacterSprites : EditorWindow
         Debug.Log($"Batch rename complete. Files renamed: {renamed}");
     }
 }
-#endif 
+#endif

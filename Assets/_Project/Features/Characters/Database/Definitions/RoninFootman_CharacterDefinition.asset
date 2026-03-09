@@ -1,0 +1,115 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cae84c2d5f140e44b6318b2af561392, type: 3}
+  m_Name: RoninFootman_CharacterDefinition
+  m_EditorClassIdentifier: 
+  characterId: ronin-footman
+  aliases: []
+  surname: 
+  givenName: Ronin Footman
+  characterName: Ronin Footman
+  description: A disposable frontline swordsman used to pressure the player and establish range overlap.
+  portrait: {fileID: 0}
+  bannerSprite: {fileID: 0}
+  battleSprite: {fileID: 4723107735738678597, guid: 9dacc4093dd1dd74e9e2c30e0cd5bb4e, type: 3}
+  eventVignette: {fileID: 0}
+  animatorController: {fileID: 9100000, guid: e15eacaf8ea24208a267181e201e1b1d, type: 2}
+  colliderSize: {x: 1.1, y: 2.1}
+  colliderOffset: {x: 0, y: 0.05}
+  characterScale: {x: 0.8, y: 0.8, z: 1}
+  characterType: 4
+  elementalType: 2
+  martialArtsType: 1
+  rarity: 2
+  attackRange: 1
+  baseHealth: 115
+  baseAttack: 44
+  baseDefense: 26
+  baseSpeed: 10
+  specialAbilityName: Guard Break
+  specialAbilityDescription: A straightforward strike intended to open space for stronger enemies.
+  specialAbilityCooldown: 3
+  specialAbilityDamage: 95
+  baseStealthEffectiveness: 10
+  stealthDecayRate: 20
+  baseCounterChance: 15
+  counterDamageMultiplier: 100
+  synergyTags:
+  - Ronin
+  - Frontline
+  - Sword
+  animationMappings:
+  - logicalName: IDLE
+    clip: {fileID: 7400000, guid: 493b6c5c828348c0ae5c4febe1070613, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: RUN
+    clip: {fileID: 7400000, guid: 1e63e5ce88e1498cb908e65b220b76ca, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: WALK
+    clip: {fileID: 7400000, guid: 74c5b7396ea24b47a2b001c38071c135, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: ATTACK 1
+    clip: {fileID: 7400000, guid: 6e896a5f9f0145d99f37e88fa230a380, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: ATTACK 2
+    clip: {fileID: 7400000, guid: 50c6f6b49a5f4fdeb8afeb5026916c36, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: ATTACK 3
+    clip: {fileID: 7400000, guid: 2a2098ddc567410eb83e680d6085e71f, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: HURT
+    clip: {fileID: 7400000, guid: 1aa7d4b1e27242328d11d1a350df2846, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: HEALING
+    clip: {fileID: 7400000, guid: 493b6c5c828348c0ae5c4febe1070613, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DEATH
+    clip: {fileID: 7400000, guid: 929d2011c65c4464bf7b6d8462a42b57, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: DEFEND
+    clip: {fileID: 7400000, guid: a191a25e9b3f47afba652c938808157f, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: SPECIAL ATTACK
+    clip: {fileID: 7400000, guid: 2a2098ddc567410eb83e680d6085e71f, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DASH
+    clip: {fileID: 7400000, guid: 1e63e5ce88e1498cb908e65b220b76ca, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP
+    clip: {fileID: 7400000, guid: de2bfed650c040a0bb240da2f2ef9522, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: JUMP-START
+    clip: {fileID: 7400000, guid: de2bfed650c040a0bb240da2f2ef9522, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-FALL
+    clip: {fileID: 7400000, guid: de2bfed650c040a0bb240da2f2ef9522, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-TRANSITION
+    clip: {fileID: 7400000, guid: de2bfed650c040a0bb240da2f2ef9522, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+

@@ -1,0 +1,115 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cae84c2d5f140e44b6318b2af561392, type: 3}
+  m_Name: Ryoma_CharacterDefinition
+  m_EditorClassIdentifier: 
+  characterId: ryoma
+  aliases: []
+  surname: 
+  givenName: Ryoma
+  characterName: Ryoma
+  description: A skilled samurai known for his honor and swordsmanship.
+  portrait: {fileID: 0}
+  bannerSprite: {fileID: 0}
+  battleSprite: {fileID: 815424164945274260, guid: de5ba5e6ae97b8a49a810206133de9a2, type: 3}
+  eventVignette: {fileID: 0}
+  animatorController: {fileID: 9100000, guid: 0b73a9b43c386ba438a68c085f373001, type: 2}
+  colliderSize: {x: 1, y: 2}
+  colliderOffset: {x: 0, y: 0}
+  characterScale: {x: 1.8, y: 1.8, z: 1}
+  invertFacingX: 0
+  characterType: 0
+  elementalType: 2
+  martialArtsType: 1
+  rarity: 3
+  attackRange: 1
+  baseHealth: 180
+  baseAttack: 65
+  baseDefense: 40
+  baseSpeed: 12
+  specialAbilityName: Iaido Strike
+  specialAbilityDescription: Unleash a lightning-fast sword draw, dealing heavy damage
+    and stunning the enemy for 1 turn.
+  specialAbilityCooldown: 3
+  specialAbilityDamage: 180
+  baseStealthEffectiveness: 30
+  stealthDecayRate: 15
+  baseCounterChance: 35
+  counterDamageMultiplier: 120
+  synergyTags:
+  - Samurai
+  - Leader
+  animationMappings:
+  - logicalName: IDLE
+    clip: {fileID: 7400000, guid: 9d45e97cbe73c724c984b57ebe89913b, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: RUN
+    clip: {fileID: 7400000, guid: dd935a4506b64324792b39c1994c6d34, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: WALK
+    clip: {fileID: 7400000, guid: 3186d4340e765c146b5dae093ec6711f, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: ATTACK 1
+    clip: {fileID: 7400000, guid: f80fd1aefdd429543ba0b8642bcbf25d, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: ATTACK 2
+    clip: {fileID: 7400000, guid: 4151a55b0b6939141ac8ee43297d5db2, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: ATTACK 3
+    clip: {fileID: 7400000, guid: 5f85b2805a792694580232001f427a92, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: HURT
+    clip: {fileID: 7400000, guid: 3f46e66fc1accb74394519e16eabb28f, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: HEALING
+    clip: {fileID: 7400000, guid: bbd2400e903d5694a8ea330df5ec3ec8, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: DEATH
+    clip: {fileID: 7400000, guid: bf941b850053af042bd7dfe0b5a878b5, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: DEFEND
+    clip: {fileID: 7400000, guid: f733325251f3b6b4d90f2581e7f2b0b7, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: SPECIAL ATTACK
+    clip: {fileID: 7400000, guid: c3ca67e8d98cfa94b8fb265d7472ed9a, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: DASH
+    clip: {fileID: 7400000, guid: 6bab31fd3b637154493d7516cc7e88d6, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: JUMP
+    clip: {fileID: 7400000, guid: 4307c4e0da53cfa4dae4008b3a1cf89f, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: JUMP-START
+    clip: {fileID: 7400000, guid: 157d37fd227e5944fbd46acad74a6884, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: JUMP-FALL
+    clip: {fileID: 7400000, guid: ff8baf42fe5716947b381b87592565cf, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: JUMP-TRANSITION
+    clip: {fileID: 7400000, guid: 32140caf167ba144ba5654ecc5ef4ee2, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 

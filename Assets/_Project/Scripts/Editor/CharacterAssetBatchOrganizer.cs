@@ -59,12 +59,10 @@ public class CharacterAssetBatchOrganizer : EditorWindow
 
     private void OnGUI()
     {
-        GUILayout.Label("Batch Organize Character Assets", EditorStyles.boldLabel);
-        spritesRoot = EditorGUILayout.TextField("Sprites Root", spritesRoot);
-        archiveRoot = EditorGUILayout.TextField("Archive Root", archiveRoot);
-        if (GUILayout.Button("Run Batch Organization"))
+        EditorGUILayout.HelpBox("Deprecated. Use Tools/Shogun/Character Database for catalog-managed migration and validation.", MessageType.Warning);
+        if (GUILayout.Button("Open Character Database"))
         {
-            OrganizeAll();
+            CharacterDatabaseEditorWindow.ShowWindow();
         }
     }
 
@@ -143,4 +141,4 @@ public class CharacterAssetBatchOrganizer : EditorWindow
         // TODO: Update CharacterDefinition and Animator references if needed
     }
 }
-#endif 
+#endif

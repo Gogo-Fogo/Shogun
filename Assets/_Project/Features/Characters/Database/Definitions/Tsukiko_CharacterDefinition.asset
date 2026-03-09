@@ -1,0 +1,115 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cae84c2d5f140e44b6318b2af561392, type: 3}
+  m_Name: Tsukiko_CharacterDefinition
+  m_EditorClassIdentifier: 
+  characterId: tsukiko
+  aliases: []
+  surname: 
+  givenName: Tsukiko
+  characterName: Tsukiko
+  description: A spectral caster who controls the battlefield with curses, fear, and ranged pressure.
+  portrait: {fileID: 0}
+  bannerSprite: {fileID: 0}
+  battleSprite: {fileID: 4723107735738678597, guid: 2aecff94c07a8344f91057b294367684, type: 3}
+  eventVignette: {fileID: 0}
+  animatorController: {fileID: 9100000, guid: 61f0e8b257f54328a19b8499c6cc4fdd, type: 2}
+  colliderSize: {x: 1, y: 2.15}
+  colliderOffset: {x: 0, y: 0.1}
+  characterScale: {x: 0.75, y: 0.75, z: 1}
+  characterType: 5
+  elementalType: 5
+  martialArtsType: 4
+  rarity: 3
+  attackRange: 2
+  baseHealth: 120
+  baseAttack: 68
+  baseDefense: 24
+  baseSpeed: 14
+  specialAbilityName: Moonlit Lament
+  specialAbilityDescription: Summons a chilling wave of spirit energy that damages and slows enemies in a wide area.
+  specialAbilityCooldown: 4
+  specialAbilityDamage: 175
+  baseStealthEffectiveness: 25
+  stealthDecayRate: 20
+  baseCounterChance: 12
+  counterDamageMultiplier: 90
+  synergyTags:
+  - Yokai
+  - Caster
+  - Control
+  animationMappings:
+  - logicalName: IDLE
+    clip: {fileID: 7400000, guid: 85144f277ec640759ab831c3ab275bcf, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: RUN
+    clip: {fileID: 7400000, guid: 8fab4a3351af406895c4411a793551b5, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: WALK
+    clip: {fileID: 7400000, guid: 8c6a0adf452741d7b30c25db87dc240b, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: ATTACK 1
+    clip: {fileID: 7400000, guid: d95328bad5474f369fa3b4b5c21f6e02, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: ATTACK 2
+    clip: {fileID: 7400000, guid: fe978a4b2c5c4d44877b203efb03b05c, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: ATTACK 3
+    clip: {fileID: 7400000, guid: 8b6a054ccc0c49d3a913a10b717b5525, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: HURT
+    clip: {fileID: 7400000, guid: 913f71f35fb14a5ab826f07a611d103e, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: HEALING
+    clip: {fileID: 7400000, guid: 6f987790422e42bf9c270ac44647359e, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: DEATH
+    clip: {fileID: 7400000, guid: 238641f3ee6649419e11bc2552a52475, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: DEFEND
+    clip: {fileID: 7400000, guid: 1389eddeea964af4939d116f7a6e8d3f, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: SPECIAL ATTACK
+    clip: {fileID: 7400000, guid: 289ab2ce761d4b57a384954bda1e4ce4, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: DASH
+    clip: {fileID: 7400000, guid: 8fab4a3351af406895c4411a793551b5, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP
+    clip: {fileID: 7400000, guid: 8fab4a3351af406895c4411a793551b5, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-START
+    clip: {fileID: 7400000, guid: 8fab4a3351af406895c4411a793551b5, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-FALL
+    clip: {fileID: 7400000, guid: 8fab4a3351af406895c4411a793551b5, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-TRANSITION
+    clip: {fileID: 7400000, guid: 8fab4a3351af406895c4411a793551b5, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+

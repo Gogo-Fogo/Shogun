@@ -22,12 +22,10 @@ public class BatchMoveAndRenameSpriteSheets : EditorWindow
 
     private void OnGUI()
     {
-        GUILayout.Label("Batch Move & Rename Sprite Sheets", EditorStyles.boldLabel);
-        spritesRoot = EditorGUILayout.TextField("Sprites Root", spritesRoot);
-        archiveRoot = EditorGUILayout.TextField("Archive Root", archiveRoot);
-        if (GUILayout.Button("Move & Rename Sprite Sheets"))
+        EditorGUILayout.HelpBox("Deprecated. Use Tools/Shogun/Character Database for catalog-managed asset migration.", MessageType.Warning);
+        if (GUILayout.Button("Open Character Database"))
         {
-            MoveAndRenameSpriteSheets();
+            Shogun.Features.Characters.CharacterDatabaseEditorWindow.ShowWindow();
         }
     }
 
@@ -62,4 +60,4 @@ public class BatchMoveAndRenameSpriteSheets : EditorWindow
         Debug.Log($"Batch move/rename complete. Sprite sheets moved: {moved}, Skipped: {skipped}\n" + string.Join("\n", report));
     }
 }
-#endif 
+#endif

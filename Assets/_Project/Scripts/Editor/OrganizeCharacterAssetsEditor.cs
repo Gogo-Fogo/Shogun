@@ -11,7 +11,7 @@ public class OrganizeCharacterAssetsEditor : EditorWindow
     private string spriteSourceFolder = "Assets/_Project/Features/Characters/Art/Sprites/Samurai/FULL_Samurai 2D Pixel Art v1.2/FULL_Samurai 2D Pixel Art v1.2/Sprites";
     private string animClipSourceFolder = "Assets/_Project/Features/Characters/Art/Animations/Samurai/Clips";
     private string controllerSourceFolder = "Assets/_Project/Features/Characters/Art/Sprites/Samurai/FULL_Samurai 2D Pixel Art v1.2/FULL_Samurai 2D Pixel Art v1.2/Animations";
-    private string charDefPath = "Assets/_Project/Features/Characters/ScriptableObjects/Ryoma_CharacterDefinition.asset";
+    private string charDefPath = "Assets/_Project/Features/Characters/Database/Definitions/Ryoma_CharacterDefinition.asset";
 
     private string targetRoot = "Assets/_Project/Features/Characters/Art/Sprites/Samurai";
 
@@ -23,17 +23,10 @@ public class OrganizeCharacterAssetsEditor : EditorWindow
 
     private void OnGUI()
     {
-        GUILayout.Label("Organize & Rename Character Assets", EditorStyles.boldLabel);
-        characterName = EditorGUILayout.TextField("Character Name", characterName);
-        spriteSourceFolder = EditorGUILayout.TextField("Sprite Source Folder", spriteSourceFolder);
-        animClipSourceFolder = EditorGUILayout.TextField("AnimClip Source Folder", animClipSourceFolder);
-        controllerSourceFolder = EditorGUILayout.TextField("Controller Source Folder", controllerSourceFolder);
-        charDefPath = EditorGUILayout.TextField("CharacterDefinition Asset", charDefPath);
-        targetRoot = EditorGUILayout.TextField("Target Character Root", targetRoot);
-
-        if (GUILayout.Button("Organize & Rename"))
+        EditorGUILayout.HelpBox("Deprecated. Use Tools/Shogun/Character Database for scaffolding, catalog rebuilds, and validation.", MessageType.Warning);
+        if (GUILayout.Button("Open Character Database"))
         {
-            OrganizeAndRename();
+            CharacterDatabaseEditorWindow.ShowWindow();
         }
     }
 
@@ -129,4 +122,4 @@ public class OrganizeCharacterAssetsEditor : EditorWindow
         Debug.Log($"Organized and renamed all assets for {characterName}!");
     }
 }
-#endif 
+#endif

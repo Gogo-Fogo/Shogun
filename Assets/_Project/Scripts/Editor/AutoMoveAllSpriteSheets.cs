@@ -16,12 +16,10 @@ public class AutoMoveAllSpriteSheets : EditorWindow
 
     private void OnGUI()
     {
-        GUILayout.Label("Auto Move All Sprite Sheets", EditorStyles.boldLabel);
-        spritesRoot = EditorGUILayout.TextField("Sprites Root", spritesRoot);
-        archiveRoot = EditorGUILayout.TextField("Archive Root", archiveRoot);
-        if (GUILayout.Button("Move All Sprite Sheets"))
+        EditorGUILayout.HelpBox("Deprecated. Use Tools/Shogun/Character Database for catalog-managed asset migration.", MessageType.Warning);
+        if (GUILayout.Button("Open Character Database"))
         {
-            MoveAllSpriteSheets();
+            Shogun.Features.Characters.CharacterDatabaseEditorWindow.ShowWindow();
         }
     }
 
@@ -64,4 +62,4 @@ public class AutoMoveAllSpriteSheets : EditorWindow
         Debug.Log($"Auto move/rename complete. Sprite sheets moved: {moved}, Skipped: {skipped}");
     }
 }
-#endif 
+#endif

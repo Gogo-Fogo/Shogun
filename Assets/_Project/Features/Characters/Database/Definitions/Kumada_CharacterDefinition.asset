@@ -1,0 +1,117 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cae84c2d5f140e44b6318b2af561392, type: 3}
+  m_Name: Kumada_CharacterDefinition
+  m_EditorClassIdentifier: 
+  characterId: kumada
+  aliases:
+  - kuamada
+  surname: 
+  givenName: Kumada
+  characterName: Kumada
+  description: A heavy panda samurai added as a sandbox enemy to test mixed enemy silhouettes and spacing.
+  portrait: {fileID: 0}
+  bannerSprite: {fileID: 0}
+  battleSprite: {fileID: 815424164945274260, guid: cff9c4d45bd1be040b85a738d05f58d2, type: 3}
+  eventVignette: {fileID: 0}
+  animatorController: {fileID: 9100000, guid: 3265cdfeb6fc4077a04eeb0e0b022fd0, type: 2}
+  colliderSize: {x: 1.25, y: 2.05}
+  colliderOffset: {x: 0, y: 0.03}
+  characterScale: {x: 1.3, y: 1.3, z: 1}
+  invertFacingX: 1
+  characterType: 7
+  elementalType: 2
+  martialArtsType: 6
+  rarity: 2
+  attackRange: 0
+  baseHealth: 172
+  baseAttack: 49
+  baseDefense: 38
+  baseSpeed: 8
+  specialAbilityName: Iron Panda Rush
+  specialAbilityDescription: A grounded rushing strike that helps validate enemy spacing and nearest-target facing.
+  specialAbilityCooldown: 4
+  specialAbilityDamage: 132
+  baseStealthEffectiveness: 4
+  stealthDecayRate: 24
+  baseCounterChance: 12
+  counterDamageMultiplier: 120
+  synergyTags:
+  - Animal
+  - Frontline
+  - Heavy
+  animationMappings:
+  - logicalName: IDLE
+    clip: {fileID: 7400000, guid: 094140d4cf7f4ba99df47a119ff4fab6, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: RUN
+    clip: {fileID: 7400000, guid: 18d2d06051124f0fbcf3bd9de83fb38e, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: WALK
+    clip: {fileID: 7400000, guid: 18d2d06051124f0fbcf3bd9de83fb38e, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: ATTACK 1
+    clip: {fileID: 7400000, guid: 4e9e2bcbca2649c3b0d1f7a16c7bc630, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: ATTACK 2
+    clip: {fileID: 7400000, guid: f9e32618aea6461c82f59a477c76d493, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: ATTACK 3
+    clip: {fileID: 7400000, guid: e9bdc369f10f4d40825f32086eecf8ab, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: HURT
+    clip: {fileID: 7400000, guid: 8404fbd78b0b4386820fe3f2df4d8f81, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: HEALING
+    clip: {fileID: 7400000, guid: 408995b0bbd14810a02763d96cf68200, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DEATH
+    clip: {fileID: 7400000, guid: 956973496ef242409506b23798db49fb, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: DEFEND
+    clip: {fileID: 7400000, guid: 408995b0bbd14810a02763d96cf68200, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: SPECIAL ATTACK
+    clip: {fileID: 7400000, guid: 24747c5eb134499996ec16bc5f590d39, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: DASH
+    clip: {fileID: 7400000, guid: a42af1227c784bc2a4077601e24896ab, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: JUMP
+    clip: {fileID: 7400000, guid: 400bb2cdebaf47c4b078d5469c482e20, type: 2}
+    useAutoAssignment: 1
+    customSearchPattern: 
+  - logicalName: JUMP-START
+    clip: {fileID: 7400000, guid: 400bb2cdebaf47c4b078d5469c482e20, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-FALL
+    clip: {fileID: 7400000, guid: 400bb2cdebaf47c4b078d5469c482e20, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-TRANSITION
+    clip: {fileID: 7400000, guid: 400bb2cdebaf47c4b078d5469c482e20, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+

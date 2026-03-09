@@ -159,6 +159,15 @@ namespace Shogun.Features.Characters
             
             EditorGUILayout.BeginVertical("box");
             
+            if (!characterDef.HasExplicitCharacterId)
+            {
+                EditorGUILayout.HelpBox("Character ID is missing. It will resolve from the name, but should be explicitly stored.", MessageType.Warning);
+            }
+            else
+            {
+                EditorGUILayout.HelpBox($"Character ID: {characterDef.CharacterId}", MessageType.Info);
+            }
+
             // Character name validation
             if (string.IsNullOrEmpty(characterDef.CharacterName))
             {
@@ -189,14 +198,62 @@ namespace Shogun.Features.Characters
             // Animator controller validation
             if (characterDef.AnimatorController == null)
             {
-                EditorGUILayout.HelpBox("No Animator Controller assigned!", MessageType.Error);
+                EditorGUILayout.HelpBox("No Animator Controller assigned!", MessageType.Warning);
             }
             else
             {
                 EditorGUILayout.HelpBox("✓ Animator Controller assigned", MessageType.Info);
             }
+
+            ValidateProductionReference(characterDef.BattleSprite, "Battle Sprite");
+            ValidateProductionReference(characterDef.Portrait, "Portrait");
+            ValidateProductionReference(characterDef.BannerSprite, "Banner");
+            ValidateProductionReference(characterDef.EventVignette, "Event Vignette");
+            ValidateProductionReference(characterDef.AnimatorController, "Animator Controller");
+            ValidateBattleSpriteImportSettings(characterDef.BattleSprite);
+
+            if (GUILayout.Button("Rebuild Character Catalog"))
+            {
+                CharacterCatalogEditorUtility.RebuildCatalog();
+            }
+
+            if (GUILayout.Button("Fix Production Sprite Import Settings"))
+            {
+                CharacterCatalogEditorUtility.NormalizeProductionSpriteImportSettings();
+            }
             
             EditorGUILayout.EndVertical();
+        }
+
+        private static void ValidateProductionReference(Object reference, string label)
+        {
+            if (reference == null)
+                return;
+
+            string assetPath = AssetDatabase.GetAssetPath(reference);
+            if (!string.IsNullOrEmpty(assetPath) && !assetPath.StartsWith(CharacterCatalogEditorUtility.ProductionRoot))
+            {
+                EditorGUILayout.HelpBox($"{label} is outside Art/Production: {assetPath}", MessageType.Warning);
+            }
+        }
+
+        private static void ValidateBattleSpriteImportSettings(Sprite battleSprite)
+        {
+            if (battleSprite == null)
+                return;
+
+            string assetPath = AssetDatabase.GetAssetPath(battleSprite);
+            if (!CharacterSpriteImportPolicy.ShouldEnforce(assetPath))
+                return;
+
+            TextureImporter importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
+            if (importer == null)
+                return;
+
+            if (!CharacterSpriteImportPolicy.IsCompliant(importer, out string issues))
+            {
+                EditorGUILayout.HelpBox($"Battle Sprite import quality issue: {issues}", MessageType.Warning);
+            }
         }
         
         private void AutoPopulateCommonActions()
@@ -212,6 +269,7 @@ namespace Shogun.Features.Characters
             
             EditorUtility.SetDirty(characterDef);
             Debug.Log($"Auto-populated {commonAnimationActions.Length} common animation actions for {characterDef.CharacterName}");
+            CharacterCatalogEditorUtility.RebuildCatalog(false);
         }
         
         private void AutoAssignAllClips()
@@ -228,6 +286,7 @@ namespace Shogun.Features.Characters
             
             EditorUtility.SetDirty(characterDef);
             Debug.Log($"Auto-assigned {assignedCount} animation clips for {characterDef.CharacterName}");
+            CharacterCatalogEditorUtility.RebuildCatalog(false);
         }
         
         private void AutoAssignSingleClip(int index)
@@ -239,6 +298,7 @@ namespace Shogun.Features.Characters
                 {
                     EditorUtility.SetDirty(characterDef);
                     Debug.Log($"Auto-assigned clip for {mapping.logicalName}");
+                    CharacterCatalogEditorUtility.RebuildCatalog(false);
                 }
                 else
                 {
@@ -255,6 +315,7 @@ namespace Shogun.Features.Characters
                 characterDef.animationMappings.Clear();
                 EditorUtility.SetDirty(characterDef);
                 Debug.Log("Cleared all animation mappings");
+                CharacterCatalogEditorUtility.RebuildCatalog(false);
             }
         }
         
@@ -264,8 +325,9 @@ namespace Shogun.Features.Characters
             {
                 characterDef.animationMappings.RemoveAt(index);
                 EditorUtility.SetDirty(characterDef);
+                CharacterCatalogEditorUtility.RebuildCatalog(false);
             }
         }
     }
 }
-#endif 
+#endif
