@@ -82,3 +82,6 @@ Assets/_Project/Art/References/
 # Generated project inspection exports
 /_Generated/
 /_FullProjectExport/
+
+# Claude Code local overrides (machine-specific)
+.claude/settings.local.json
