@@ -453,12 +453,21 @@ MonoBehaviour:
   turnManager: {fileID: 1189142526}
   testTeam:
   - {fileID: 11400000, guid: e8d5d5e0979532040925a70dd3486f29, type: 2}
-  - {fileID: 11400000, guid: 7dfeef9ef6a84bba9c380579c9174be1, type: 2}
-  - {fileID: 11400000, guid: a37db9f13b994e359d7a9f5bfd449298, type: 2}
   enemyTeam:
+  - {fileID: 11400000, guid: 9fd1014c8f6b4ea480c0f078ff8bc0e2, type: 2}
+  - {fileID: 11400000, guid: 9d1caeedbc4146239596fa7efe7561a3, type: 2}
+  - {fileID: 11400000, guid: 65ae2de9a2a542dfb0d9e70f47947591, type: 2}
   - {fileID: 11400000, guid: 23d00db518eb49c7aebbd755f2988e23, type: 2}
   - {fileID: 11400000, guid: aea9b57bb9a440fc906ca1dbca850bd0, type: 2}
   - {fileID: 11400000, guid: 8c9834636c9b45518fcc8edbd0d7250e, type: 2}
+  useDebugEnemyRoster: 1
+  debugEnemyNames:
+  - akai
+  - reiji
+  - kumada
+  useSingleDebugEnemy: 0
+  debugEnemyName: akai
+  extraEnemyDistance: 2.5
 --- !u!4 &684904848
 Transform:
   m_ObjectHideFlags: 0
@@ -689,19 +698,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnTap:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 808458312}
-        m_TargetAssemblyTypeName: Shogun.Features.Combat.CombatInputHandler, Shogun.Combat
-        m_MethodName: DebugTap
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   OnSwipe:
     m_PersistentCalls:
       m_Calls: []
@@ -1074,9 +1071,9 @@ MonoBehaviour:
   reserveEnemyCharacters: []
   battleCenter: {fileID: 0}
   allyFrontlineOrigin: {x: -6.75, y: -0.5, z: 0}
-  enemyFrontlineOrigin: {x: 2.25, y: -0.5, z: 0}
+  enemyFrontlineOrigin: {x: 2.25, y: 0.7, z: 0}
   allyReserveOrigin: {x: -9, y: -3, z: 0}
-  enemyReserveOrigin: {x: 4.5, y: -3, z: 0}
+  enemyReserveOrigin: {x: 4.5, y: -1.8, z: 0}
   frontlineLaneSpacing: 2.25
   reserveLaneSpacing: 2.25
 --- !u!4 &2070367312

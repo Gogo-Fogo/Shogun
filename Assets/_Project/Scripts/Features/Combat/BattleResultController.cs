@@ -18,7 +18,7 @@ public class BattleResultController : MonoBehaviour
     void Start()
     {
         if (turnManager == null)
-            turnManager = FindObjectOfType<TurnManager>();
+            turnManager = FindFirstObjectByType<TurnManager>();
 
         if (turnManager != null)
             turnManager.OnBattleEnded += ShowResult;
@@ -67,7 +67,7 @@ public class BattleResultController : MonoBehaviour
 
     private void BuildPanel()
     {
-        var canvas = FindObjectOfType<Canvas>();
+        var canvas = FindFirstObjectByType<Canvas>();
         if (canvas == null)
         {
             Debug.LogWarning("[BattleResultController] No Canvas found in scene.");

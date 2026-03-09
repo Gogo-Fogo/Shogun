@@ -11,10 +11,10 @@ namespace Shogun.Features.Combat
         private LineRenderer lineRenderer;
         private Color baseColor;
         private const int Segments = 48;
-        private const float BreathHz = 1.4f;   // pulses per second
-        private const float MinAlpha = 0.3f;
-        private const float MinWidth = 0.04f;
-        private const float MaxWidth = 0.13f;
+        private const float BreathHz = 0.55f;   // subtle pulses per second
+        private const float MinAlpha = 0.65f;
+        private const float MinWidth = 0.08f;
+        private const float MaxWidth = 0.11f;
 
         void Awake()
         {

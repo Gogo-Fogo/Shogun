@@ -11,23 +11,32 @@ namespace Shogun.Features.Combat
     {
         [Header("References")]
         public TurnManager turnManager;
+
         [Header("Settings")]
         public float dragThreshold = 10f;
         public float dragSmoothTime = 0.08f;
         public float gridSize = 1f;
         public bool snapToGrid = true;
         public float tapMoveSpeed = 50f;
+        [Range(0.1f, 1f)] public float dragOpacity = 0.6f;
+
         private const float tapTimeThreshold = 0.2f;
         private const float tapMoveThreshold = 20f;
 
         private Camera mainCamera;
         private Vector2 pointerDownPos;
         private float pointerDownTime;
+        private bool hasValidPointerDown = false;
+        private bool hasValidPointerSample = false;
+        private Vector2 lastValidScreenPos = Vector2.zero;
+
         private bool isDragging = false;
         private Vector3 dragTargetWorldPos;
         private Vector3 dragVelocity = Vector3.zero;
         private CharacterInstance draggingCharacter = null;
         private Animator characterAnimator = null;
+        private SpriteRenderer draggingSpriteRenderer = null;
+        private Color draggingOriginalColor = Color.white;
         private Coroutine tapMoveCoroutine = null;
         private RangeCircleDisplay dragRangeCircle = null;
 
@@ -40,96 +49,139 @@ namespace Shogun.Features.Combat
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            pointerDownPos = eventData.position;
+            if (!TryNormalizeScreenPosition(eventData.position, out Vector2 normalizedPos))
+            {
+                hasValidPointerDown = false;
+                return;
+            }
+
+            pointerDownPos = normalizedPos;
             pointerDownTime = Time.unscaledTime;
+            hasValidPointerDown = true;
             isDragging = false;
         }
 
         public void OnPointerUp(PointerEventData eventData)
         {
+            if (!hasValidPointerDown)
+            {
+                ClearDragState();
+                return;
+            }
+
+            Vector2 releasePos = pointerDownPos;
+            if (!TryNormalizeScreenPosition(eventData.position, out releasePos))
+            {
+                releasePos = hasValidPointerSample ? lastValidScreenPos : pointerDownPos;
+            }
+
             float heldTime = Time.unscaledTime - pointerDownTime;
-            float movedDist = Vector2.Distance(eventData.position, pointerDownPos);
-            
-            // CLICK/TAP: Run to position
+            float movedDist = Vector2.Distance(releasePos, pointerDownPos);
+
             if (!isDragging && heldTime < tapTimeThreshold && movedDist < tapMoveThreshold)
             {
-                StartTapMove(eventData.position);
+                StartTapMove(releasePos);
             }
-            // HOLD END: Snap to final position
             else if (isDragging && draggingCharacter != null)
             {
-                Vector3 pointerWorld = GetPointerWorld(eventData.position, draggingCharacter.transform);
-                Vector3 finalTargetPos = snapToGrid ? SnapToGrid(pointerWorld) : pointerWorld;
-                SetCharacterPosition(draggingCharacter.transform, finalTargetPos);
-                if (characterAnimator != null) characterAnimator.SetBool("isRunning", false);
+                if (TryGetPointerWorld(releasePos, draggingCharacter.transform, out Vector3 pointerWorld))
+                {
+                    Vector3 finalTargetPos = snapToGrid ? SnapToGrid(pointerWorld) : pointerWorld;
+                    SetCharacterPosition(draggingCharacter.transform, finalTargetPos);
+                }
+
+                if (characterAnimator != null)
+                    characterAnimator.SetBool("isRunning", false);
+
+                RestoreDragOpacity();
             }
-            
-            if (dragRangeCircle != null) { dragRangeCircle.Hide(); dragRangeCircle = null; }
-            isDragging = false;
-            draggingCharacter = null;
-            characterAnimator = null;
-            dragVelocity = Vector3.zero;
+
+            ClearDragState();
         }
 
         public void OnDrag(PointerEventData eventData)
         {
-            if (turnManager == null) return;
+            if (turnManager == null)
+                return;
+
             var currentCharacter = turnManager.GetCurrentCharacter();
-            if (currentCharacter == null) return;
-            
-            // HOLD: Start dragging and teleport character under finger
+            if (currentCharacter == null)
+                return;
+
+            if (!hasValidPointerDown)
+                return;
+
+            Transform charTransform = currentCharacter.transform;
+            if (!TryGetPointerWorld(eventData.position, charTransform, out Vector3 pointerWorldPos))
+                return;
+
             if (!isDragging)
             {
-                if (tapMoveCoroutine != null) { StopCoroutine(tapMoveCoroutine); tapMoveCoroutine = null; }
+                if (tapMoveCoroutine != null)
+                {
+                    StopCoroutine(tapMoveCoroutine);
+                    tapMoveCoroutine = null;
+                }
+
                 isDragging = true;
                 draggingCharacter = currentCharacter;
                 characterAnimator = currentCharacter.GetComponentInChildren<Animator>();
-                
-                // INSTANT teleport under finger
-                Transform charTransform = currentCharacter.transform;
-                Vector3 pointerWorldPos = GetPointerWorld(eventData.position, charTransform);
+                draggingSpriteRenderer = currentCharacter.GetComponentInChildren<SpriteRenderer>();
+
                 SetCharacterPosition(charTransform, pointerWorldPos);
-                if (characterAnimator != null) characterAnimator.SetBool("isRunning", false);
+                dragTargetWorldPos = pointerWorldPos;
+
+                if (characterAnimator != null)
+                    characterAnimator.SetBool("isRunning", true);
+
+                ApplyDragOpacity();
                 dragVelocity = Vector3.zero;
 
-                // Show range circle for player units only
                 if (turnManager.IsPlayerUnit(draggingCharacter))
                 {
                     dragRangeCircle = draggingCharacter.GetComponent<RangeCircleDisplay>();
                     if (dragRangeCircle == null)
                         dragRangeCircle = draggingCharacter.gameObject.AddComponent<RangeCircleDisplay>();
+
                     dragRangeCircle.Show(draggingCharacter.GetAttackRangeRadius(), RangeCircleColor);
                 }
             }
-            
-            // Update drag target
+
             if (isDragging && draggingCharacter != null)
             {
-                Transform charTransform = currentCharacter.transform;
-                Vector3 pointerWorldPos = GetPointerWorld(eventData.position, charTransform);
                 dragTargetWorldPos = pointerWorldPos;
             }
         }
 
         void Update()
         {
-            if (isDragging && draggingCharacter != null)
-            {
-                Transform charTransform = draggingCharacter.transform;
-                Vector3 before = GetCharacterPosition(charTransform);
-                Vector3 newPos = Vector3.SmoothDamp(before, dragTargetWorldPos, ref dragVelocity, dragSmoothTime);
-                SetCharacterPosition(charTransform, newPos);
-            }
+            if (!isDragging || draggingCharacter == null)
+                return;
+
+            Transform charTransform = draggingCharacter.transform;
+            Vector3 before = GetCharacterPosition(charTransform);
+            Vector3 newPos = Vector3.SmoothDamp(before, dragTargetWorldPos, ref dragVelocity, dragSmoothTime);
+            SetCharacterPosition(charTransform, newPos);
         }
 
         private void StartTapMove(Vector2 screenPosition)
         {
-            if (turnManager == null) return;
+            if (turnManager == null)
+                return;
+
             var currentCharacter = turnManager.GetCurrentCharacter();
-            if (currentCharacter == null) return;
-            if (tapMoveCoroutine != null) StopCoroutine(tapMoveCoroutine);
-            Vector3 worldPos = GetPointerWorld(screenPosition, currentCharacter.transform);
-            if (snapToGrid) worldPos = SnapToGrid(worldPos);
+            if (currentCharacter == null)
+                return;
+
+            if (!TryGetPointerWorld(screenPosition, currentCharacter.transform, out Vector3 worldPos))
+                return;
+
+            if (tapMoveCoroutine != null)
+                StopCoroutine(tapMoveCoroutine);
+
+            if (snapToGrid)
+                worldPos = SnapToGrid(worldPos);
+
             tapMoveCoroutine = StartCoroutine(SmoothMoveToPosition(currentCharacter, worldPos));
         }
 
@@ -138,7 +190,8 @@ namespace Shogun.Features.Combat
             Transform charTransform = character.transform;
             Transform charParent = charTransform.parent;
             Animator anim = character.GetComponentInChildren<Animator>();
-            if (anim != null) anim.SetBool("isRunning", true);
+            if (anim != null)
+                anim.SetBool("isRunning", true);
 
             if (charParent)
             {
@@ -148,6 +201,7 @@ namespace Shogun.Features.Combat
                 float minDuration = 0.1f;
                 float duration = Mathf.Max(minDuration, totalDist / tapMoveSpeed);
                 float elapsed = 0f;
+
                 while (elapsed < duration)
                 {
                     elapsed += Time.deltaTime;
@@ -156,6 +210,7 @@ namespace Shogun.Features.Combat
                     charTransform.localPosition = nextLocal;
                     yield return null;
                 }
+
                 charTransform.localPosition = targetLocal;
             }
             else
@@ -165,6 +220,7 @@ namespace Shogun.Features.Combat
                 float minDuration = 0.1f;
                 float duration = Mathf.Max(minDuration, totalDist / tapMoveSpeed);
                 float elapsed = 0f;
+
                 while (elapsed < duration)
                 {
                     elapsed += Time.deltaTime;
@@ -173,19 +229,101 @@ namespace Shogun.Features.Combat
                     charTransform.position = nextWorld;
                     yield return null;
                 }
+
                 charTransform.position = targetWorldPos;
             }
-            if (anim != null) anim.SetBool("isRunning", false);
+
+            if (anim != null)
+                anim.SetBool("isRunning", false);
+
             tapMoveCoroutine = null;
         }
 
-        private Vector3 GetPointerWorld(Vector2 screenPosition, Transform charTransform)
+        private bool TryGetPointerWorld(Vector2 screenPosition, Transform charTransform, out Vector3 pointerWorld)
         {
+            pointerWorld = charTransform != null ? charTransform.position : Vector3.zero;
+            if (charTransform == null)
+                return false;
+
+            if (!TryNormalizeScreenPosition(screenPosition, out Vector2 normalizedPos))
+                return false;
+
+            if (mainCamera == null)
+                mainCamera = Camera.main;
+            if (mainCamera == null)
+                return false;
+
             Transform charParent = charTransform.parent;
-            float z = charParent ? Mathf.Abs(mainCamera.transform.position.z - charParent.position.z) : Mathf.Abs(mainCamera.transform.position.z - charTransform.position.z);
-            Vector3 pointerWorld = mainCamera.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, z));
+            float referenceZ = charParent ? charParent.position.z : charTransform.position.z;
+            float z = Mathf.Abs(mainCamera.transform.position.z - referenceZ);
+
+            pointerWorld = mainCamera.ScreenToWorldPoint(new Vector3(normalizedPos.x, normalizedPos.y, z));
             pointerWorld.z = charTransform.position.z;
-            return pointerWorld;
+            return true;
+        }
+
+        private bool TryNormalizeScreenPosition(Vector2 rawScreenPos, out Vector2 normalizedScreenPos)
+        {
+            if (TryAcceptScreenPosition(rawScreenPos, out normalizedScreenPos))
+                return true;
+
+            if (TryGetCurrentMouseScreenPosition(out Vector2 fallbackMousePos)
+                && TryAcceptScreenPosition(fallbackMousePos, out normalizedScreenPos))
+            {
+                return true;
+            }
+
+            normalizedScreenPos = rawScreenPos;
+            return false;
+        }
+
+        private static bool IsFinite(Vector2 value)
+        {
+            return !float.IsNaN(value.x)
+                   && !float.IsNaN(value.y)
+                   && !float.IsInfinity(value.x)
+                   && !float.IsInfinity(value.y);
+        }
+
+        private bool TryAcceptScreenPosition(Vector2 candidateScreenPos, out Vector2 normalizedScreenPos)
+        {
+            normalizedScreenPos = candidateScreenPos;
+
+            if (!IsFinite(candidateScreenPos))
+                return false;
+
+            if (candidateScreenPos.sqrMagnitude <= 0.0001f)
+                return false;
+
+            float minX = -2f;
+            float minY = -2f;
+            float maxX = Screen.width + 2f;
+            float maxY = Screen.height + 2f;
+            if (candidateScreenPos.x < minX
+                || candidateScreenPos.y < minY
+                || candidateScreenPos.x > maxX
+                || candidateScreenPos.y > maxY)
+            {
+                return false;
+            }
+
+            float clampedX = Mathf.Clamp(candidateScreenPos.x, 0f, Screen.width);
+            float clampedY = Mathf.Clamp(candidateScreenPos.y, 0f, Screen.height);
+            normalizedScreenPos = new Vector2(clampedX, clampedY);
+
+            hasValidPointerSample = true;
+            lastValidScreenPos = normalizedScreenPos;
+            return true;
+        }
+
+        private static bool TryGetCurrentMouseScreenPosition(out Vector2 mouseScreenPos)
+        {
+            Vector3 rawMousePos = Input.mousePosition;
+            mouseScreenPos = new Vector2(rawMousePos.x, rawMousePos.y);
+            return !float.IsNaN(mouseScreenPos.x)
+                   && !float.IsNaN(mouseScreenPos.y)
+                   && !float.IsInfinity(mouseScreenPos.x)
+                   && !float.IsInfinity(mouseScreenPos.y);
         }
 
         private Vector3 SnapToGrid(Vector3 worldPosition)
@@ -211,8 +349,43 @@ namespace Shogun.Features.Combat
             Transform charParent = charTransform.parent;
             if (charParent)
                 return charParent.TransformPoint(charTransform.localPosition);
-            else
-                return charTransform.position;
+
+            return charTransform.position;
+        }
+
+        private void ApplyDragOpacity()
+        {
+            if (draggingSpriteRenderer == null)
+                return;
+
+            draggingOriginalColor = draggingSpriteRenderer.color;
+            Color fadedColor = draggingOriginalColor;
+            fadedColor.a = draggingOriginalColor.a * dragOpacity;
+            draggingSpriteRenderer.color = fadedColor;
+        }
+
+        private void RestoreDragOpacity()
+        {
+            if (draggingSpriteRenderer == null)
+                return;
+
+            draggingSpriteRenderer.color = draggingOriginalColor;
+        }
+
+        private void ClearDragState()
+        {
+            if (dragRangeCircle != null)
+            {
+                dragRangeCircle.Hide();
+                dragRangeCircle = null;
+            }
+
+            isDragging = false;
+            draggingCharacter = null;
+            characterAnimator = null;
+            draggingSpriteRenderer = null;
+            dragVelocity = Vector3.zero;
+            hasValidPointerDown = false;
         }
     }
-} 
+}

@@ -57,6 +57,7 @@ namespace Shogun.Features.Combat
         {
             if (battleManager == null || turnManager == null) return;
             if (!turnManager.IsBattleActive) return;
+            if (!TryNormalizeScreenPosition(screenPos, out Vector2 normalizedScreenPos)) return;
 
             var current = turnManager.GetCurrentCombatant();
             if (current == null || !current.CanAttack) return;
@@ -64,7 +65,7 @@ namespace Shogun.Features.Combat
 
             // Convert screen position to world position
             Vector2 worldPos = Camera.main.ScreenToWorldPoint(
-                new Vector3(screenPos.x, screenPos.y, 0f));
+                new Vector3(normalizedScreenPos.x, normalizedScreenPos.y, 0f));
 
             // Find a character near the tap (0.5 world-unit radius for mobile tolerance)
             var hit = Physics2D.OverlapCircle(worldPos, 0.5f);
@@ -98,15 +99,50 @@ namespace Shogun.Features.Combat
                 UnityEngine.Debug.LogWarning("BattleManager or TurnManager not assigned!");
                 return;
             }
+
+            if (!TryNormalizeScreenPosition(position, out Vector2 normalizedScreenPos))
+                return;
+
             var currentCharacter = turnManager.GetCurrentCharacter();
             if (battleManager.activeCharacters.Contains(currentCharacter))
             {
-                currentCharacter.MoveTo(position); // Implement this in CharacterInstance
+                currentCharacter.MoveTo(normalizedScreenPos);
             }
             else
             {
                 UnityEngine.Debug.Log("It's not your turn!");
             }
+        }
+
+        private static bool TryNormalizeScreenPosition(Vector2 rawScreenPos, out Vector2 normalizedScreenPos)
+        {
+            normalizedScreenPos = rawScreenPos;
+            if (!IsFinite(rawScreenPos))
+                return false;
+
+            if (rawScreenPos.sqrMagnitude <= 0.0001f)
+            {
+                Vector3 fallbackMouse = Input.mousePosition;
+                rawScreenPos = new Vector2(fallbackMouse.x, fallbackMouse.y);
+                if (!IsFinite(rawScreenPos) || rawScreenPos.sqrMagnitude <= 0.0001f)
+                    return false;
+            }
+
+            if (rawScreenPos.x < 0f || rawScreenPos.y < 0f || rawScreenPos.x > Screen.width || rawScreenPos.y > Screen.height)
+                return false;
+
+            normalizedScreenPos = new Vector2(
+                Mathf.Clamp(rawScreenPos.x, 0f, Screen.width),
+                Mathf.Clamp(rawScreenPos.y, 0f, Screen.height));
+            return true;
+        }
+
+        private static bool IsFinite(Vector2 value)
+        {
+            return !float.IsNaN(value.x)
+                   && !float.IsNaN(value.y)
+                   && !float.IsInfinity(value.x)
+                   && !float.IsInfinity(value.y);
         }
 
         private T ResolveDependency<T>() where T : Component

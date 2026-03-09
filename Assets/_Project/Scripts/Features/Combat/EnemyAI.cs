@@ -1,8 +1,9 @@
 // EnemyAI.cs
 // Prototype enemy AI: when an enemy's turn starts, wait briefly then auto-attack
-// a random alive player character.
+// the closest alive player character.
 
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Shogun.Features.Characters;
 
@@ -17,15 +18,33 @@ namespace Shogun.Features.Combat
         [Header("AI Timing")]
         [SerializeField] private float attackDelay = 0.8f; // seconds before auto-attack fires
 
+        [Header("Facing")]
+        [SerializeField] private bool faceClosestPlayerContinuously = true;
+        [SerializeField] private float facingUpdateInterval = 0.15f;
+
+        private float nextFacingUpdateTime;
+
         void Start()
         {
             if (turnManager == null)
-                turnManager = FindObjectOfType<TurnManager>();
+                turnManager = FindFirstObjectByType<TurnManager>();
             if (battleManager == null)
-                battleManager = FindObjectOfType<BattleManager>();
+                battleManager = FindFirstObjectByType<BattleManager>();
 
             if (turnManager != null)
                 turnManager.OnTurnStarted += OnTurnStarted;
+
+            UpdateEnemyFacing();
+        }
+
+        void Update()
+        {
+            if (!faceClosestPlayerContinuously) return;
+            if (battleManager == null) return;
+            if (Time.time < nextFacingUpdateTime) return;
+
+            nextFacingUpdateTime = Time.time + Mathf.Max(0.02f, facingUpdateInterval);
+            UpdateEnemyFacing();
         }
 
         void OnDestroy()
@@ -39,6 +58,7 @@ namespace Shogun.Features.Combat
             if (turnManager == null || battleManager == null) return;
             if (turnManager.IsPlayerUnit(current)) return; // player turn — do nothing
 
+            UpdateEnemyFacing();
             StartCoroutine(EnemyTurnRoutine(current));
         }
 
@@ -49,20 +69,8 @@ namespace Shogun.Features.Combat
             if (!turnManager.IsBattleActive) yield break;
             if (!attacker.IsAlive) yield break;
 
-            // Pick a random alive player to attack
-            var players = battleManager.activeCharacters;
-            CharacterInstance target = null;
-            int attempts = players.Count;
-            while (attempts-- > 0)
-            {
-                var candidate = players[Random.Range(0, players.Count)];
-                if (candidate.IsAlive)
-                {
-                    target = candidate;
-                    break;
-                }
-            }
-
+            // Pick the closest alive player as target.
+            CharacterInstance target = FindClosestAlivePlayer(attacker, battleManager.activeCharacters);
             if (target == null)
             {
                 // No alive players found — TurnManager win/loss check will handle it
@@ -70,6 +78,7 @@ namespace Shogun.Features.Combat
                 yield break;
             }
 
+            FaceEnemyTowards(attacker, target);
             attacker.PerformBasicAttack();
 
             float damage = attacker.CalculateDamageAgainst(target);
@@ -79,6 +88,62 @@ namespace Shogun.Features.Combat
                       $"{damage:F1} dmg  (HP left: {target.CurrentHealth:F1}/{target.MaxHealth:F1})");
 
             turnManager.EndTurn();
+        }
+
+        private void UpdateEnemyFacing()
+        {
+            if (battleManager == null) return;
+
+            List<CharacterInstance> enemies = battleManager.activeEnemyCharacters;
+            List<CharacterInstance> players = battleManager.activeCharacters;
+            if (enemies == null || players == null) return;
+
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                CharacterInstance enemy = enemies[i];
+                if (enemy == null || !enemy.IsAlive) continue;
+
+                CharacterInstance nearest = FindClosestAlivePlayer(enemy, players);
+                if (nearest == null) continue;
+
+                FaceEnemyTowards(enemy, nearest);
+            }
+        }
+
+        private static CharacterInstance FindClosestAlivePlayer(CharacterInstance source, List<CharacterInstance> players)
+        {
+            if (source == null || players == null) return null;
+
+            CharacterInstance closest = null;
+            float bestSq = float.MaxValue;
+
+            for (int i = 0; i < players.Count; i++)
+            {
+                CharacterInstance candidate = players[i];
+                if (candidate == null || !candidate.IsAlive) continue;
+
+                float sq = (candidate.transform.position - source.transform.position).sqrMagnitude;
+                if (sq < bestSq)
+                {
+                    bestSq = sq;
+                    closest = candidate;
+                }
+            }
+
+            return closest;
+        }
+
+        private static void FaceEnemyTowards(CharacterInstance enemy, CharacterInstance target)
+        {
+            if (enemy == null || target == null) return;
+
+            float direction = target.transform.position.x < enemy.transform.position.x ? -1f : 1f;
+            if (enemy.Definition != null && enemy.Definition.InvertFacingX)
+                direction *= -1f;
+
+            Vector3 scale = enemy.transform.localScale;
+            scale.x = Mathf.Abs(scale.x) * direction;
+            enemy.transform.localScale = scale;
         }
     }
 }
