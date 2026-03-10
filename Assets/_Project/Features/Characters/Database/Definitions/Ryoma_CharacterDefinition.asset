@@ -27,6 +27,7 @@ MonoBehaviour:
   colliderOffset: {x: 0, y: 0}
   characterScale: {x: 1.8, y: 1.8, z: 1}
   invertFacingX: 0
+  paletteAccentColor: {r: 0.4, g: 0.55, b: 0.8, a: 1}
   characterType: 0
   elementalType: 2
   martialArtsType: 1
@@ -48,6 +49,14 @@ MonoBehaviour:
   synergyTags:
   - Samurai
   - Leader
+  worldPillar: 0
+  martialSchool: 0
+  collectibleFantasy: 0
+  collectibleTone: noble
+  visualHook: steel-blue hakama, unadorned blade, steady stance
+  emotionalHook: duty
+  loreBlurb: A blade without a master. He carries his lord's name forward even after his lord's name is gone.
+  variantPotential: corrupted samurai form, ceremonial court attire, festival warrior
   animationMappings:
   - logicalName: IDLE
     clip: {fileID: 7400000, guid: 9d45e97cbe73c724c984b57ebe89913b, type: 2}

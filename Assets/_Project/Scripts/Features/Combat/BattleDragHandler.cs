@@ -3,6 +3,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Shogun.Features.Characters;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Shogun.Features.Combat
 {
@@ -40,7 +41,12 @@ namespace Shogun.Features.Combat
         private Coroutine tapMoveCoroutine = null;
         private RangeCircleDisplay dragRangeCircle = null;
 
-        private static readonly Color RangeCircleColor = new Color(0.2f, 0.9f, 1f, 0.85f);
+        private static readonly Color EnemyRangeColor  = new Color(1f, 0.25f, 0.25f, 0.70f);
+
+        // Tracks which enemies currently have their red threat circle visible during a drag
+        private readonly HashSet<CharacterInstance> enemiesShowingRange          = new HashSet<CharacterInstance>();
+        // Tracks which enemies currently have an attack-ready / combo indicator visible
+        private readonly HashSet<CharacterInstance> enemiesShowingAttackIndicator = new HashSet<CharacterInstance>();
 
         void Awake()
         {
@@ -143,7 +149,7 @@ namespace Shogun.Features.Combat
                     if (dragRangeCircle == null)
                         dragRangeCircle = draggingCharacter.gameObject.AddComponent<RangeCircleDisplay>();
 
-                    dragRangeCircle.Show(draggingCharacter.GetAttackRangeRadius(), RangeCircleColor);
+                    dragRangeCircle.Show(draggingCharacter.GetAttackRangeRadius(), GetPlayerRangeColor(draggingCharacter));
                 }
             }
 
@@ -162,6 +168,150 @@ namespace Shogun.Features.Combat
             Vector3 before = GetCharacterPosition(charTransform);
             Vector3 newPos = Vector3.SmoothDamp(before, dragTargetWorldPos, ref dragVelocity, dragSmoothTime);
             SetCharacterPosition(charTransform, newPos);
+
+            UpdateEnemyRangeCircles();
+        }
+
+        private void UpdateEnemyRangeCircles()
+        {
+            if (turnManager == null) return;
+            var enemies = turnManager.GetEnemyCombatants();
+
+            // Use collider centres throughout so detection aligns with visible bodies.
+            Vector3 playerCenter      = GetColliderWorldCenter(draggingCharacter);
+            float   playerBodyRadius  = GetColliderHalfWidth(draggingCharacter);
+            float   playerAttackRange = draggingCharacter.GetAttackRangeRadius();
+
+            foreach (var enemy in enemies)
+            {
+                if (!enemy.IsAlive) continue;
+
+                Vector3 enemyCenter     = GetColliderWorldCenter(enemy);
+                float   distSqr         = (playerCenter - enemyCenter).sqrMagnitude;
+
+                // ── Red threat circle ──────────────────────────────────────────
+                // Visible when the player's body edge enters the enemy's danger zone.
+                float   threatThreshold  = enemy.GetAttackRangeRadius() + playerBodyRadius;
+                bool    inThreatRange    = distSqr <= threatThreshold * threatThreshold;
+                bool    wasShowingThreat = enemiesShowingRange.Contains(enemy);
+
+                if (inThreatRange && !wasShowingThreat)
+                {
+                    var display = enemy.GetComponent<RangeCircleDisplay>()
+                                  ?? enemy.gameObject.AddComponent<RangeCircleDisplay>();
+                    display.Show(enemy.GetAttackRangeRadius(), EnemyRangeColor);
+                    enemiesShowingRange.Add(enemy);
+                }
+                else if (!inThreatRange && wasShowingThreat)
+                {
+                    var display = enemy.GetComponent<RangeCircleDisplay>();
+                    if (display != null) display.Hide();
+                    enemiesShowingRange.Remove(enemy);
+                }
+
+                // ── Attack-ready / combo indicator ────────────────────────────
+                // Visible when the dragged character can reach this enemy from
+                // their current drag position.  Upgrades to "combo" when another
+                // alive player unit also has this enemy in their attack range.
+                float   enemyBodyRadius   = GetColliderHalfWidth(enemy);
+                float   attackThreshold   = playerAttackRange + enemyBodyRadius;
+                bool    canAttack         = distSqr <= attackThreshold * attackThreshold;
+                bool    wasShowingIndicator = enemiesShowingAttackIndicator.Contains(enemy);
+
+                if (canAttack)
+                {
+                    var indicator = enemy.GetComponent<AttackTargetIndicator>()
+                                    ?? enemy.gameObject.AddComponent<AttackTargetIndicator>();
+
+                    int comboPartners = CountComboPartners(enemy, enemyCenter);
+                    if (comboPartners > 0)
+                        indicator.ShowComboReady(comboPartners + 1); // +1 for the dragging character
+                    else
+                        indicator.ShowAttackReady();
+
+                    if (!wasShowingIndicator)
+                        enemiesShowingAttackIndicator.Add(enemy);
+                }
+                else if (!canAttack && wasShowingIndicator)
+                {
+                    var indicator = enemy.GetComponent<AttackTargetIndicator>();
+                    if (indicator != null) indicator.Hide();
+                    enemiesShowingAttackIndicator.Remove(enemy);
+                }
+            }
+        }
+
+        // Returns how many OTHER alive player units (not the one being dragged)
+        // can also reach this enemy from their current position.
+        // 0 = no combo; 1 = ×2 combo; 2 = ×3 combo, etc.
+        private int CountComboPartners(CharacterInstance enemy, Vector3 enemyCenter)
+        {
+            int count = 0;
+            var players = turnManager.GetPlayerCombatants();
+            foreach (var ally in players)
+            {
+                if (ally == draggingCharacter) continue;
+                if (!ally.IsAlive) continue;
+                float allyRange   = ally.GetAttackRangeRadius() + GetColliderHalfWidth(enemy);
+                float allyDistSqr = (GetColliderWorldCenter(ally) - enemyCenter).sqrMagnitude;
+                if (allyDistSqr <= allyRange * allyRange)
+                    count++;
+            }
+            return count;
+        }
+
+        // Returns the range-circle colour for a player unit: reads the character's
+        // paletteAccentColor at 0.85 opacity so every fighter has a distinct glow.
+        // Falls back to teal when the definition is unavailable.
+        private static Color GetPlayerRangeColor(CharacterInstance character)
+        {
+            if (character != null && character.Definition != null)
+            {
+                Color c = character.Definition.PaletteAccentColor;
+                c.a = 0.85f;
+                return c;
+            }
+            return new Color(0.2f, 0.9f, 1f, 0.85f); // fallback teal
+        }
+
+        // Returns the world-space centre of a character's CapsuleCollider2D.
+        // Falls back to transform.position when no collider is present.
+        private static Vector3 GetColliderWorldCenter(CharacterInstance character)
+        {
+            var col = character.GetComponent<CapsuleCollider2D>();
+            if (col != null)
+                return character.transform.TransformPoint(col.offset);
+            return character.transform.position;
+        }
+
+        // Returns the world-space half-width of a character's CapsuleCollider2D
+        // (X axis, scaled).  Used to expand the detection radius so the circle
+        // activates when the player's body edge crosses the boundary.
+        private static float GetColliderHalfWidth(CharacterInstance character)
+        {
+            var col = character.GetComponent<CapsuleCollider2D>();
+            if (col != null)
+                return col.size.x * 0.5f * Mathf.Abs(character.transform.lossyScale.x);
+            return 0.5f; // sensible fallback — ~half a world-unit
+        }
+
+        private void HideAllEnemyRangeCircles()
+        {
+            foreach (var enemy in enemiesShowingRange)
+            {
+                if (enemy == null) continue;
+                var display = enemy.GetComponent<RangeCircleDisplay>();
+                if (display != null) display.Hide();
+            }
+            enemiesShowingRange.Clear();
+
+            foreach (var enemy in enemiesShowingAttackIndicator)
+            {
+                if (enemy == null) continue;
+                var indicator = enemy.GetComponent<AttackTargetIndicator>();
+                if (indicator != null) indicator.Hide();
+            }
+            enemiesShowingAttackIndicator.Clear();
         }
 
         private void StartTapMove(Vector2 screenPosition)
@@ -318,12 +468,19 @@ namespace Shogun.Features.Combat
 
         private static bool TryGetCurrentMouseScreenPosition(out Vector2 mouseScreenPos)
         {
-            Vector3 rawMousePos = Input.mousePosition;
-            mouseScreenPos = new Vector2(rawMousePos.x, rawMousePos.y);
-            return !float.IsNaN(mouseScreenPos.x)
-                   && !float.IsNaN(mouseScreenPos.y)
-                   && !float.IsInfinity(mouseScreenPos.x)
-                   && !float.IsInfinity(mouseScreenPos.y);
+            // Legacy Input.mousePosition throws when the Input System package is active.
+            // Use Mouse.current from the new Input System instead.
+            var mouse = UnityEngine.InputSystem.Mouse.current;
+            if (mouse != null)
+            {
+                mouseScreenPos = mouse.position.ReadValue();
+                return !float.IsNaN(mouseScreenPos.x)
+                       && !float.IsNaN(mouseScreenPos.y)
+                       && !float.IsInfinity(mouseScreenPos.x)
+                       && !float.IsInfinity(mouseScreenPos.y);
+            }
+            mouseScreenPos = Vector2.zero;
+            return false;
         }
 
         private Vector3 SnapToGrid(Vector3 worldPosition)
@@ -379,6 +536,8 @@ namespace Shogun.Features.Combat
                 dragRangeCircle.Hide();
                 dragRangeCircle = null;
             }
+
+            HideAllEnemyRangeCircles();
 
             isDragging = false;
             draggingCharacter = null;

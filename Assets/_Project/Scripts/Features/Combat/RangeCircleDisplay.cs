@@ -9,6 +9,7 @@ namespace Shogun.Features.Combat
     public class RangeCircleDisplay : MonoBehaviour
     {
         private LineRenderer lineRenderer;
+        private Transform lineGOTransform;   // cached so Show() can reposition the circle
         private Color baseColor;
         private const int Segments = 48;
         private const float BreathHz = 0.55f;   // subtle pulses per second
@@ -19,9 +20,10 @@ namespace Shogun.Features.Combat
         void Awake()
         {
             var lineGO = new GameObject("RangeCircle");
-            lineGO.transform.SetParent(transform, false);
-            lineGO.transform.localPosition = Vector3.zero;
-            lineGO.transform.localScale = Vector3.one;
+            lineGOTransform = lineGO.transform;
+            lineGOTransform.SetParent(transform, false);
+            lineGOTransform.localPosition = Vector3.zero;
+            lineGOTransform.localScale = Vector3.one;
 
             lineRenderer = lineGO.AddComponent<LineRenderer>();
             lineRenderer.useWorldSpace = false;
@@ -70,6 +72,18 @@ namespace Shogun.Features.Combat
         public void Show(float worldRadius, Color color)
         {
             if (lineRenderer == null) return;
+
+            // Centre the ring on the collider body (not the pivot/feet).
+            // CapsuleCollider2D.offset is in the character's local space — placing
+            // lineGO there keeps the ring visually centred on the character's torso.
+            if (lineGOTransform != null)
+            {
+                var col = GetComponent<CapsuleCollider2D>();
+                lineGOTransform.localPosition = col != null
+                    ? new Vector3(col.offset.x, col.offset.y, 0f)
+                    : Vector3.zero;
+            }
+
             baseColor = color;
             lineRenderer.startColor = color;
             lineRenderer.endColor = color;

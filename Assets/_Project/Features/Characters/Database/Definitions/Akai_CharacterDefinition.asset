@@ -27,11 +27,12 @@ MonoBehaviour:
   colliderOffset: {x: 0, y: 0.05}
   characterScale: {x: 1.25, y: 1.25, z: 1}
   invertFacingX: 0
+  paletteAccentColor: {r: 0.75, g: 0.1, b: 0.15, a: 1}
   characterType: 0
   elementalType: 0
   martialArtsType: 1
   rarity: 3
-  attackRange: 1
+  attackRange: 2
   baseHealth: 155
   baseAttack: 56
   baseDefense: 34
@@ -47,6 +48,14 @@ MonoBehaviour:
   synergyTags:
   - Samurai
   - DarkRed
+  worldPillar: 0
+  martialSchool: 0
+  collectibleFantasy: 3
+  collectibleTone: cruel
+  visualHook: deep crimson armor, blood-red blade, counter stance
+  emotionalHook: arrogance
+  loreBlurb: He never loses. He stopped counting what he spends to keep it that way.
+  variantPotential: full corruption form, ceremonial tournament champion
   animationMappings:
   - logicalName: IDLE
     clip: {fileID: 7400000, guid: 0d73e4c2b54748f582c96702e183fc64, type: 2}

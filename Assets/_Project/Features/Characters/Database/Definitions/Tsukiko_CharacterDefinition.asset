@@ -26,6 +26,7 @@ MonoBehaviour:
   colliderSize: {x: 1, y: 2.15}
   colliderOffset: {x: 0, y: 0.1}
   characterScale: {x: 0.75, y: 0.75, z: 1}
+  paletteAccentColor: {r: 0.7, g: 0.85, b: 1, a: 1}
   characterType: 5
   elementalType: 5
   martialArtsType: 4
@@ -47,6 +48,14 @@ MonoBehaviour:
   - Yokai
   - Caster
   - Control
+  worldPillar: 3
+  martialSchool: 6
+  collectibleFantasy: 2
+  collectibleTone: serene
+  visualHook: moonlit hair, spirit-flame staff, layered ceremonial robes
+  emotionalHook: mystery
+  loreBlurb: She walks between the living world and the other. Sometimes she forgets which side she belongs to.
+  variantPotential: winter festival form, full yokai manifestation, shrine maiden attire
   animationMappings:
   - logicalName: IDLE
     clip: {fileID: 7400000, guid: 85144f277ec640759ab831c3ab275bcf, type: 2}

@@ -32,6 +32,10 @@ namespace Shogun.Features.Characters
         [SerializeField] private Vector2 colliderOffset = Vector2.zero;
         [SerializeField] private Vector3 characterScale = Vector3.one;
         [SerializeField] private bool invertFacingX = false;
+
+        [Header("Visual Identity")]
+        [Tooltip("Palette signature used for cursor hover highlight, selection outline, and range circle colour. One controlled accent per character — see DESIGN-001 and DESIGN-002.")]
+        [SerializeField] private Color paletteAccentColor = Color.white;
         
         [Header("Character Type")]
         [SerializeField] private CharacterType characterType = CharacterType.Samurai;
@@ -62,7 +66,25 @@ namespace Shogun.Features.Characters
         
         [Header("Team Synergy")]
         [SerializeField] private string[] synergyTags = new string[0];
-        
+
+        [Header("Identity & Lore")]
+        [Tooltip("One of the five world-level power centres this character belongs to. See DESIGN-002 for full world-pillar descriptions.")]
+        [SerializeField] private WorldPillar worldPillar = WorldPillar.RoninMarches;
+        [Tooltip("Fighting-style school beyond the weapon family. See DESIGN-002. Note: MartialArtsType currently conflates weapon + school — this field carries the deeper school identity until MartialArtsType is split.")]
+        [SerializeField] private MartialSchool martialSchool = MartialSchool.CourtBladeDoctrine;
+        [Tooltip("The collectible-fantasy pillar this unit is built to trigger in players. See DESIGN-001 for pillar descriptions.")]
+        [SerializeField] private CollectibleFantasy collectibleFantasy = CollectibleFantasy.RogueViolence;
+        [Tooltip("One-word emotional tone: tragic, noble, cruel, serene, feral, devotional, seductive, etc.")]
+        [SerializeField] private string collectibleTone = "";
+        [Tooltip("What makes this character identifiable at a glance — costume piece, weapon, aura, or marking. E.g. 'crescent helm', 'fox mask', 'prayer beads'.")]
+        [SerializeField] private string visualHook = "";
+        [Tooltip("The character's emotional anchor. E.g. grief, hunger, arrogance, tenderness, obsession, duty, corruption.")]
+        [SerializeField] private string emotionalHook = "";
+        [Tooltip("Short grim/poetic lore blurb shown player-facing (banner screen, profile). Different from 'description' which is dev notes.")]
+        [SerializeField] [TextArea(2, 4)] private string loreBlurb = "";
+        [Tooltip("Future costume/alt potential notes for content planning. E.g. 'corrupted form, ceremonial attire, festival variant'.")]
+        [SerializeField] private string variantPotential = "";
+
         [Header("Animation Mapping")]
         public List<AnimationMapping> animationMappings = new List<AnimationMapping>();
         
@@ -105,6 +127,15 @@ namespace Shogun.Features.Characters
         public Vector2 ColliderOffset => colliderOffset;
         public Vector3 CharacterScale => characterScale;
         public bool InvertFacingX => invertFacingX;
+        public Color PaletteAccentColor => paletteAccentColor;
+        public WorldPillar WorldPillar => worldPillar;
+        public MartialSchool MartialSchool => martialSchool;
+        public CollectibleFantasy CollectibleFantasy => collectibleFantasy;
+        public string CollectibleTone => collectibleTone;
+        public string VisualHook => visualHook;
+        public string EmotionalHook => emotionalHook;
+        public string LoreBlurb => loreBlurb;
+        public string VariantPotential => variantPotential;
         
         /// <summary>
         /// Creates a new CharacterInstance based on this definition.
@@ -182,7 +213,9 @@ namespace Shogun.Features.Characters
     
     /// <summary>
     /// Elemental types that affect combat effectiveness.
-    /// Inspired by Genshin Impact's elemental system.
+    /// Inspired by the five-element philosophy of feudal Japan (Go-gyō / The Book of Five Rings).
+    /// Common natures (Fire–Lightning) are widely trainable; exceptional natures (Ice, Shadow)
+    /// are rarer, lineage-bound, or corruption-linked. See DESIGN-002.
     /// </summary>
     public enum ElementalType
     {
@@ -191,22 +224,25 @@ namespace Shogun.Features.Characters
         Earth,      // Stability, defense boosts, reduces physical damage
         Wind,       // Speed, evasion boosts, increased movement
         Lightning,  // Fast attacks, chain damage, stun effects
-        Ice,        // Control, freeze effects, slows enemies
-        Shadow      // Corruption, drains HP, causes debuffs
+        Ice,        // Control, freeze effects, slows enemies        — Exceptional nature
+        Shadow      // Corruption, drains HP, causes debuffs          — Exceptional nature
     }
-    
+
     /// <summary>
-    /// Martial arts types that define combat style and abilities.
+    /// Weapon family — governs tactical matchup, range expectation, target profile, and silhouette.
+    /// NOTE: This enum currently carries both weapon identity AND school/style identity.
+    /// Per DESIGN-002 the long-term plan is to split this into WeaponType + MartialSchool.
+    /// The new MartialSchool enum (see below) now carries the deeper school identity.
     /// </summary>
     public enum MartialArtsType
     {
-        Unarmed,        // Monk: High speed, low damage, stun effects
-        Sword,          // Samurai: Balanced, can parry, good vs armored
-        Spear,          // Polearm: Long range, can attack over allies
-        Bow,            // Archer: Very long range, can't be countered at range
-        Staff,          // Onmyoji: Magic focus, elemental boost, healing
-        DualDaggers,    // Ninja: Very high speed, stealth, can attack twice
-        HeavyWeapons    // Demon: Low speed, very high damage, breaks armor
+        Unarmed,        // High speed, low damage, stun/control effects
+        Sword,          // Balanced, can parry, good vs armoured — Short to Mid range
+        Spear,          // Polearm: Long reach, formation pressure — Mid to Long range
+        Bow,            // Very long range, vulnerable when engaged — Long range
+        Staff,          // Magic focus, elemental boost, healing, irregular skill shapes — Mid to Long
+        DualDaggers,    // Very high speed, stealth, flanker/assassin — Short range
+        HeavyWeapons    // Low speed, very high damage, breaks armour — Short range
     }
     
     /// <summary>
@@ -229,6 +265,49 @@ namespace Shogun.Features.Characters
         Short,  // Small circle - Close combat specialists
         Mid,    // Medium circle - Balanced fighters
         Long    // Large circle - Ranged attackers
+    }
+
+    /// <summary>
+    /// The five world-level power centres characters belong to. See DESIGN-002.
+    /// Governs faction, aesthetic lane, and emotional lane — not gameplay stats directly.
+    /// </summary>
+    public enum WorldPillar
+    {
+        ImperialCourt,          // Nobles, ceremonial samurai, court retainers, official onmyoji — elegance/hierarchy/tragedy
+        RoninMarches,           // Exiles, mercenaries, duelists, outlaw bands, wandering killers — survival/brutality/freedom
+        TempleAndVeilOrders,    // Monks, shrine maidens, exorcists, mediums, ritual guardians — discipline/devotion/purity vs corruption
+        YokaiCourts,            // Fox nobles, serpent houses, spirit aristocracy, dream beings — seduction/mystery/elegance/danger
+        CorruptedDominion       // Demon generals, cursed warlords, Yomi-touched champions — domination/terror/forbidden power
+    }
+
+    /// <summary>
+    /// Fighting-style school — carries deeper identity beyond the weapon family.
+    /// Governs stance, motion language, passive bonuses, counter style, and school rivalry. See DESIGN-002.
+    /// </summary>
+    public enum MartialSchool
+    {
+        // Native / Central schools
+        CourtBladeDoctrine,     // Formal sword discipline, precision, posture, restraint — Imperial/samurai identity
+        IronMountainSchool,     // Hard striking, body conditioning, brutal endurance — heavy/frontline pressure
+        BindingHandSchool,      // Grappling, throws, control, counters — bodyguard/arrest energy
+        VeilStepMethod,         // Stealth, infiltration, sudden kill windows — ninja/shadow identity
+        // Peripheral / Outsider / Border schools
+        SouthernSerpentSchool,  // Compact, hard-soft, close-range pressure — outsider/compact fighters
+        PeninsulaKickingSchool, // Leg-dominant, mobility-heavy, outsider-coded — fast skirmishers
+        ContinentalFlowSchool   // Circular movement, deceptive rhythm, animal or scholar-warrior flavour — casters/mystics
+    }
+
+    /// <summary>
+    /// The collectible-fantasy pillar the character is designed to trigger in players. See DESIGN-001.
+    /// Governs banner positioning, emotional hook, and variant/costume potential.
+    /// </summary>
+    public enum CollectibleFantasy
+    {
+        TragicNobility,     // Elegant samurai, doomed heirs, shrine maidens under burden, grief-coded beauty
+        RogueViolence,      // Ronin, assassins, outcasts, executioners, scarred antiheroes
+        YokaiElegance,      // Supernatural appeal mixing beauty with threat — fox nobles, spirit courts
+        CorruptedPower,     // Demonic warlords, cursed commanders, possession motifs, body-horror elites
+        MysticRitual        // Onmyoji, monks, mediums, fox-priests, occult tacticians
     }
 
     [System.Serializable]

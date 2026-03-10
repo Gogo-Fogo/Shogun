@@ -27,6 +27,7 @@ MonoBehaviour:
   colliderOffset: {x: 0, y: 0.05}
   characterScale: {x: 1.2, y: 1.2, z: 1}
   invertFacingX: 0
+  paletteAccentColor: {r: 0.15, g: 0.2, b: 0.5, a: 1}
   characterType: 0
   elementalType: 6
   martialArtsType: 1
@@ -48,6 +49,14 @@ MonoBehaviour:
   - Samurai
   - Shadow
   - Duelist
+  worldPillar: 1
+  martialSchool: 3
+  collectibleFantasy: 0
+  collectibleTone: tragic
+  visualHook: midnight silhouette, shadow-wreathed blade, quiet duelist stance
+  emotionalHook: grief
+  loreBlurb: He duels at night so no one sees what it costs him.
+  variantPotential: corrupted shadow form, ceremonial rematch variant, festival darkness
   animationMappings:
   - logicalName: IDLE
     clip: {fileID: 7400000, guid: 54d0b24590c041e194590806899f6428, type: 2}

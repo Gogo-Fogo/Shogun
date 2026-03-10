@@ -122,10 +122,9 @@ namespace Shogun.Features.Combat
 
             if (rawScreenPos.sqrMagnitude <= 0.0001f)
             {
-                Vector3 fallbackMouse = Input.mousePosition;
-                rawScreenPos = new Vector2(fallbackMouse.x, fallbackMouse.y);
-                if (!IsFinite(rawScreenPos) || rawScreenPos.sqrMagnitude <= 0.0001f)
-                    return false;
+                // Legacy Input.mousePosition is unavailable with the Input System package.
+                // A zero-vector tap position is invalid — reject it cleanly.
+                return false;
             }
 
             if (rawScreenPos.x < 0f || rawScreenPos.y < 0f || rawScreenPos.x > Screen.width || rawScreenPos.y > Screen.height)

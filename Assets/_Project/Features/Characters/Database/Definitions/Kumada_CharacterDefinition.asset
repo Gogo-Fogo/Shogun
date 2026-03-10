@@ -28,6 +28,7 @@ MonoBehaviour:
   colliderOffset: {x: 0, y: 0.03}
   characterScale: {x: 1.3, y: 1.3, z: 1}
   invertFacingX: 1
+  paletteAccentColor: {r: 0.65, g: 0.4, b: 0.12, a: 1}
   characterType: 7
   elementalType: 2
   martialArtsType: 6
@@ -49,6 +50,14 @@ MonoBehaviour:
   - Animal
   - Frontline
   - Heavy
+  worldPillar: 1
+  martialSchool: 1
+  collectibleFantasy: 1
+  collectibleTone: brutal
+  visualHook: bear-pelt mantle, crushing grip, scarred forearms
+  emotionalHook: arrogance
+  loreBlurb: He fights because he can. That is reason enough.
+  variantPotential: decorated warlord form, festival champion variant
   animationMappings:
   - logicalName: IDLE
     clip: {fileID: 7400000, guid: 094140d4cf7f4ba99df47a119ff4fab6, type: 2}

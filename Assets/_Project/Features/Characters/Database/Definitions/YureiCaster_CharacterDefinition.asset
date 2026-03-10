@@ -26,6 +26,7 @@ MonoBehaviour:
   colliderSize: {x: 1, y: 2.1}
   colliderOffset: {x: 0, y: 0.05}
   characterScale: {x: 0.75, y: 0.75, z: 1}
+  paletteAccentColor: {r: 0.55, g: 0.85, b: 0.7, a: 1}
   characterType: 5
   elementalType: 6
   martialArtsType: 4
@@ -47,6 +48,14 @@ MonoBehaviour:
   - Yokai
   - Caster
   - Shadow
+  worldPillar: 3
+  martialSchool: 6
+  collectibleFantasy: 4
+  collectibleTone: devotional
+  visualHook: translucent form, trailing spiritual chains, hollow eyes, paper charms
+  emotionalHook: obsession
+  loreBlurb: She never left. She never understood that she was supposed to.
+  variantPotential: bound spirit form, festival haunting event, boss manifestation
   animationMappings:
   - logicalName: IDLE
     clip: {fileID: 7400000, guid: 4d00c7cf4b914ed193f385a715f92b4f, type: 2}

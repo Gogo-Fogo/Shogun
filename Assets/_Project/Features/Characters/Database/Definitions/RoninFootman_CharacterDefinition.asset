@@ -26,6 +26,7 @@ MonoBehaviour:
   colliderSize: {x: 1.1, y: 2.1}
   colliderOffset: {x: 0, y: 0.05}
   characterScale: {x: 0.8, y: 0.8, z: 1}
+  paletteAccentColor: {r: 0.55, g: 0.4, b: 0.2, a: 1}
   characterType: 4
   elementalType: 2
   martialArtsType: 1
@@ -47,6 +48,14 @@ MonoBehaviour:
   - Ronin
   - Frontline
   - Sword
+  worldPillar: 1
+  martialSchool: 1
+  collectibleFantasy: 1
+  collectibleTone: brutal
+  visualHook: patched armor, scarred face, battered blade
+  emotionalHook: survival
+  loreBlurb: His lord fell. He kept fighting. No one thought to ask him why.
+  variantPotential: promoted officer variant, veteran berserker form
   animationMappings:
   - logicalName: IDLE
     clip: {fileID: 7400000, guid: 493b6c5c828348c0ae5c4febe1070613, type: 2}

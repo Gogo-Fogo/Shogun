@@ -160,5 +160,11 @@ namespace Shogun.Features.Combat
 
         /// <summary>Returns true if the given instance belongs to the player team.</summary>
         public bool IsPlayerUnit(CharacterInstance instance) => playerCombatants.Contains(instance);
+
+        /// <summary>Returns all enemy combatants (including dead — check IsAlive at call site).</summary>
+        public IReadOnlyList<CharacterInstance> GetEnemyCombatants() => enemyCombatants;
+
+        /// <summary>Returns all player combatants (including dead — check IsAlive at call site).</summary>
+        public IReadOnlyList<CharacterInstance> GetPlayerCombatants() => playerCombatants;
     }
 }

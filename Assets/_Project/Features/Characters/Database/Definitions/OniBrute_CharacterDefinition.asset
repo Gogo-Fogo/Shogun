@@ -26,6 +26,7 @@ MonoBehaviour:
   colliderSize: {x: 1.4, y: 2.3}
   colliderOffset: {x: 0, y: 0.05}
   characterScale: {x: 0.95, y: 0.95, z: 1}
+  paletteAccentColor: {r: 0.9, g: 0.25, b: 0.05, a: 1}
   characterType: 6
   elementalType: 0
   martialArtsType: 6
@@ -47,6 +48,14 @@ MonoBehaviour:
   - Demon
   - Brute
   - Frontline
+  worldPillar: 4
+  martialSchool: 1
+  collectibleFantasy: 3
+  collectibleTone: feral
+  visualHook: twin horns, ash-blackened skin, cursed iron club
+  emotionalHook: hunger
+  loreBlurb: Before the corruption, he had a name. What replaced it does not care.
+  variantPotential: Yomi warlord form, ritual demon tier, boss-grade variant
   animationMappings:
   - logicalName: IDLE
     clip: {fileID: 7400000, guid: a79a5029502c43aca316eee1819e70af, type: 2}

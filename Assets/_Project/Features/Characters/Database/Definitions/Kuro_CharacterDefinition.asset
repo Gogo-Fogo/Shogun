@@ -26,6 +26,7 @@ MonoBehaviour:
   colliderSize: {x: 1, y: 2}
   colliderOffset: {x: 0, y: 0}
   characterScale: {x: 0.8, y: 0.8, z: 1}
+  paletteAccentColor: {r: 0.35, g: 0.2, b: 0.55, a: 1}
   characterType: 1
   elementalType: 6
   martialArtsType: 5
@@ -47,6 +48,14 @@ MonoBehaviour:
   - Ninja
   - Shadow
   - Flanker
+  worldPillar: 1
+  martialSchool: 3
+  collectibleFantasy: 1
+  collectibleTone: feral
+  visualHook: dark wrappings, twin blades at hip, shadow-split silhouette
+  emotionalHook: survival
+  loreBlurb: Named for the dark. He disappears before you remember his face.
+  variantPotential: shadow-corrupted form, festival thief variant, bounty hunter costume
   animationMappings:
   - logicalName: IDLE
     clip: {fileID: 7400000, guid: a5585c30fff1443ba78df80a9db41126, type: 2}
