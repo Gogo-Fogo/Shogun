@@ -18,7 +18,14 @@ namespace Shogun.Features.Combat
         [SerializeField] private float attackDelay = 0.8f;
         [SerializeField] private float attackHitPause = 0.18f;
         [SerializeField] private float attackRecoverDelay = 0.22f;
-        [SerializeField] private float attackTravelTime = 0.24f;
+
+        [Header("Movement")]
+        [Tooltip("World units per second the enemy runs toward its target. Keeps the dash visually readable at any distance.")]
+        [SerializeField] private float movementSpeed = 8f;
+        [Tooltip("Minimum travel time so point-blank attacks still animate.")]
+        [SerializeField] private float minTravelTime = 0.08f;
+        [Tooltip("Maximum travel time cap so cross-field charges aren't too slow.")]
+        [SerializeField] private float maxTravelTime = 0.65f;
 
         [Header("Facing")]
         [SerializeField] private bool faceClosestPlayerContinuously = true;
@@ -81,28 +88,51 @@ namespace Shogun.Features.Combat
             Animator attackerAnimator = attacker.GetComponentInChildren<Animator>();
             Vector3 strikeWorldPos = CombatMovementUtility.GetAttackApproachPosition(attacker, target, GetActiveCombatantsExcept(attacker, target));
 
+            // Distance-proportional travel time so the run is always visible,
+            // regardless of how far the enemy starts from its target.
+            float travelDist = Vector3.Distance(CombatMovementUtility.GetWorldPosition(attacker.transform), strikeWorldPos);
+            float dynamicTravelTime = Mathf.Clamp(travelDist / Mathf.Max(0.1f, movementSpeed), minTravelTime, maxTravelTime);
+
             CombatMovementUtility.FaceCharacterTowards(attacker, target);
             if (attackerAnimator != null)
                 attackerAnimator.SetBool("isRunning", true);
 
-            yield return CombatMovementUtility.MoveCharacterToWorldPosition(attacker.transform, strikeWorldPos, attackTravelTime);
+            yield return CombatMovementUtility.MoveCharacterToWorldPosition(attacker.transform, strikeWorldPos, dynamicTravelTime);
 
             if (attackerAnimator != null)
                 attackerAnimator.SetBool("isRunning", false);
 
+            // Range check: only deal damage if the enemy is actually within attack range
+            // of the target after moving (blocker avoidance can push to a far slot).
+            float attackRange = attacker.GetAttackRangeRadius();
+            float distToTarget = Vector3.Distance(
+                CombatMovementUtility.GetColliderWorldCenter(attacker),
+                CombatMovementUtility.GetColliderWorldCenter(target));
+            bool withinRange = distToTarget <= attackRange + CombatMovementUtility.GetColliderHalfWidth(target) + 0.25f;
+
             attacker.PerformBasicAttack();
             yield return new WaitForSeconds(attackHitPause);
 
-            float damage = attacker.CalculateDamageAgainst(target);
-            target.TakeDamage(damage);
-            BattleFloatingText.SpawnDamage(target, damage);
+            float damage = 0f;
+            if (withinRange)
+            {
+                damage = attacker.CalculateDamageAgainst(target);
+                target.TakeDamage(damage);
+                BattleFloatingText.SpawnDamage(target, damage);
+            }
+            else
+            {
+                Debug.LogWarning($"[EnemyAI] {attacker.Definition?.CharacterName} out of range " +
+                                 $"({distToTarget:F2} > {attackRange + CombatMovementUtility.GetColliderHalfWidth(target) + 0.25f:F2}) — attack whiffed.");
+            }
             yield return new WaitForSeconds(attackRecoverDelay);
 
             if (attackerAnimator != null)
                 attackerAnimator.SetBool("isRunning", false);
 
-            Debug.Log($"[EnemyAI] {attacker.Definition?.CharacterName} -> {target.Definition?.CharacterName}: " +
-                      $"{damage:F1} dmg  (HP left: {target.CurrentHealth:F1}/{target.MaxHealth:F1})");
+            if (withinRange)
+                Debug.Log($"[EnemyAI] {attacker.Definition?.CharacterName} -> {target.Definition?.CharacterName}: " +
+                          $"{damage:F1} dmg  (HP left: {target.CurrentHealth:F1}/{target.MaxHealth:F1})");
 
             turnManager.EndTurn();
         }
