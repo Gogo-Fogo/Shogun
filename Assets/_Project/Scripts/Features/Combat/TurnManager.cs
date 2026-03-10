@@ -161,6 +161,30 @@ namespace Shogun.Features.Combat
         /// <summary>Returns true if the given instance belongs to the player team.</summary>
         public bool IsPlayerUnit(CharacterInstance instance) => playerCombatants.Contains(instance);
 
+        /// <summary>Returns true if the given instance belongs to the enemy team.</summary>
+        public bool IsEnemyUnit(CharacterInstance instance) => enemyCombatants.Contains(instance);
+
+        /// <summary>
+        /// Returns how many turn advances remain before the given combatant acts.
+        /// 0 means the combatant is the current active unit.
+        /// Returns -1 if the combatant is not in the active turn order.
+        /// </summary>
+        public int GetTurnsUntilTurn(CharacterInstance instance)
+        {
+            if (!IsBattleActive || instance == null || combatants.Count == 0)
+                return -1;
+
+            int targetIndex = combatants.IndexOf(instance);
+            if (targetIndex < 0)
+                return -1;
+
+            int turnsUntil = targetIndex - currentTurnIndex;
+            if (turnsUntil < 0)
+                turnsUntil += combatants.Count;
+
+            return turnsUntil;
+        }
+
         /// <summary>Returns all enemy combatants (including dead — check IsAlive at call site).</summary>
         public IReadOnlyList<CharacterInstance> GetEnemyCombatants() => enemyCombatants;
 
@@ -168,3 +192,4 @@ namespace Shogun.Features.Combat
         public IReadOnlyList<CharacterInstance> GetPlayerCombatants() => playerCombatants;
     }
 }
+

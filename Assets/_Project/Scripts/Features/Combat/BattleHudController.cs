@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Shogun.Features.Characters;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Shogun.Features.Combat
@@ -22,6 +23,9 @@ namespace Shogun.Features.Combat
         private const float AutoTurnHitPause = 0.14f;
         private const float AutoTurnRecoverDelay = 0.22f;
         private const float AutoTurnReturnTime = 0.26f;
+        private const int DangerSpecialTurnThreshold = 2;
+        private const bool EnableDangerIndicators = false;
+        private const string MainMenuSceneName = "MainMenu";
 
         [Header("Dependencies (auto-resolved if left empty)")]
         [SerializeField] private TurnManager turnManager;
@@ -43,6 +47,7 @@ namespace Shogun.Features.Combat
         private Image objectivePillBackground;
         private RectTransform squadRail;
         private RectTransform playerSlotTemplate;
+        private GameObject pauseMenuPanel;
         private Text speedButtonLabel;
         private Text autoButtonLabel;
         private Text menuButtonLabel;
@@ -51,6 +56,7 @@ namespace Shogun.Features.Combat
         private readonly Dictionary<CharacterInstance, PlayerSlotView> slotLookup = new Dictionary<CharacterInstance, PlayerSlotView>();
         private readonly Dictionary<CharacterInstance, Action<float>> healthCallbacks = new Dictionary<CharacterInstance, Action<float>>();
         private readonly Dictionary<CharacterInstance, Action> deathCallbacks = new Dictionary<CharacterInstance, Action>();
+        private readonly Dictionary<CharacterInstance, TurnCountdownIndicator> turnIndicators = new Dictionary<CharacterInstance, TurnCountdownIndicator>();
         private readonly HashSet<string> normalizedBossIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         private Coroutine pollCoroutine;
@@ -100,6 +106,7 @@ namespace Shogun.Features.Combat
 
             UnbindTurnEvents();
             UnbindCharacterEvents();
+            ClearTurnIndicators();
             Time.timeScale = SpeedNormal;
         }
 
@@ -125,8 +132,13 @@ namespace Shogun.Features.Combat
 
             while (remaining > 0f)
             {
-                if (turnManager != null && turnManager.GetPlayerCombatants().Count > 0)
+                if (turnManager != null
+                    && turnManager.GetPlayerCombatants().Count > 0
+                    && turnManager.IsBattleActive
+                    && turnManager.GetCurrentCombatant() != null)
+                {
                     break;
+                }
 
                 remaining -= Time.unscaledDeltaTime;
                 yield return null;
@@ -181,8 +193,9 @@ namespace Shogun.Features.Combat
             }
 
             autoModeEnabled = false;
-            isPaused = false;
+            SetPauseMenuOpen(false);
             Time.timeScale = SpeedNormal;
+            ClearTurnIndicators();
             RefreshSlots();
             UpdateUtilityLabels();
         }
@@ -196,9 +209,13 @@ namespace Shogun.Features.Combat
                 return;
 
             if (TryBuildHudFromPrefab())
+            {
+                BuildPauseMenu();
                 return;
+            }
 
             BuildRuntimeHud();
+            BuildPauseMenu();
         }
 
         private bool TryBuildHudFromPrefab()
@@ -311,6 +328,74 @@ namespace Shogun.Features.Combat
             playerSlotTemplate = null;
         }
 
+        private void BuildPauseMenu()
+        {
+            if (hudRoot == null || pauseMenuPanel != null)
+                return;
+
+            RectTransform overlay = CreateRect("PauseMenuPanel", hudRoot, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+            pauseMenuPanel = overlay.gameObject;
+
+            Image overlayImage = pauseMenuPanel.AddComponent<Image>();
+            overlayImage.color = new Color(0.01f, 0.02f, 0.03f, 0.74f);
+            overlayImage.raycastTarget = true;
+
+            RectTransform card = CreateRect("PauseMenuCard", overlay, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-220f, -180f), new Vector2(220f, 180f));
+            Image cardImage = card.gameObject.AddComponent<Image>();
+            cardImage.color = new Color(0.12f, 0.11f, 0.08f, 0.96f);
+            cardImage.raycastTarget = true;
+
+            Outline cardOutline = card.gameObject.AddComponent<Outline>();
+            cardOutline.effectDistance = new Vector2(2f, -2f);
+            cardOutline.effectColor = new Color(0f, 0f, 0f, 0.55f);
+
+            VerticalLayoutGroup layout = card.gameObject.AddComponent<VerticalLayoutGroup>();
+            layout.padding = new RectOffset(24, 24, 24, 24);
+            layout.spacing = 12f;
+            layout.childAlignment = TextAnchor.UpperCenter;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+
+            Text title = CreateText("Title", card, TextAnchor.MiddleCenter, 30, FontStyle.Bold);
+            title.text = "BATTLE MENU";
+            title.color = new Color(0.98f, 0.94f, 0.8f, 1f);
+            LayoutElement titleLayout = title.gameObject.AddComponent<LayoutElement>();
+            titleLayout.preferredHeight = 42f;
+
+            Text subtitle = CreateText("Subtitle", card, TextAnchor.MiddleCenter, 16, FontStyle.Normal);
+            subtitle.text = "Pause, restart, or return to the main menu.";
+            subtitle.color = new Color(0.8f, 0.77f, 0.68f, 1f);
+            LayoutElement subtitleLayout = subtitle.gameObject.AddComponent<LayoutElement>();
+            subtitleLayout.preferredHeight = 28f;
+
+            CreatePauseMenuButton(card, "ResumeButton", "RESUME", new Color(0.28f, 0.52f, 0.36f, 0.96f), OnResumeButtonPressed);
+            CreatePauseMenuButton(card, "RestartButton", "RESTART", new Color(0.42f, 0.3f, 0.16f, 0.96f), OnRestartButtonPressed);
+            CreatePauseMenuButton(card, "MainMenuButton", "MAIN MENU", new Color(0.32f, 0.18f, 0.16f, 0.96f), OnMainMenuButtonPressed);
+
+            pauseMenuPanel.SetActive(false);
+        }
+
+        private static Button CreatePauseMenuButton(Transform parent, string name, string label, Color backgroundColor, UnityEngine.Events.UnityAction onClick)
+        {
+            RectTransform buttonRect = CreateRect(name, parent, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+            LayoutElement layout = buttonRect.gameObject.AddComponent<LayoutElement>();
+            layout.preferredHeight = 56f;
+            layout.minHeight = 56f;
+
+            Image buttonImage = buttonRect.gameObject.AddComponent<Image>();
+            buttonImage.color = backgroundColor;
+
+            Button button = buttonRect.gameObject.AddComponent<Button>();
+            button.targetGraphic = buttonImage;
+            button.onClick.AddListener(onClick);
+
+            Text labelText = CreateText("Label", buttonRect, TextAnchor.MiddleCenter, 22, FontStyle.Bold);
+            labelText.text = label;
+            labelText.color = new Color(0.98f, 0.94f, 0.82f, 1f);
+            return button;
+        }
         private Text CreatePillLabel(Transform parent, string name, TextAnchor alignment)
         {
             return CreatePillLabel(parent, name, alignment, out _);
@@ -600,8 +685,109 @@ namespace Shogun.Features.Combat
         {
             RefreshTopBar();
             RefreshSlots();
+            RefreshTurnIndicators();
         }
 
+        private void RefreshTurnIndicators()
+        {
+            if (turnManager == null)
+                return;
+
+            IReadOnlyList<CharacterInstance> combatants = turnManager.turnOrder;
+            HashSet<CharacterInstance> activeCombatants = new HashSet<CharacterInstance>();
+
+            if (combatants != null)
+            {
+                for (int i = 0; i < combatants.Count; i++)
+                {
+                    CharacterInstance combatant = combatants[i];
+                    if (combatant == null || !combatant.IsAlive)
+                        continue;
+
+                    activeCombatants.Add(combatant);
+
+                    TurnCountdownIndicator indicator = EnsureTurnIndicator(combatant);
+                    if (indicator == null)
+                        continue;
+
+                    int turnsUntil = turnManager.GetTurnsUntilTurn(combatant);
+                    bool isCurrentTurn = turnsUntil == 0;
+                    bool showDanger = ShouldShowDangerIndicator(combatant, turnsUntil);
+                    indicator.RefreshState(turnsUntil, showDanger, isCurrentTurn);
+                }
+            }
+
+            if (turnIndicators.Count == 0)
+                return;
+
+            List<CharacterInstance> staleCombatants = null;
+            foreach (KeyValuePair<CharacterInstance, TurnCountdownIndicator> pair in turnIndicators)
+            {
+                if (pair.Key == null || !activeCombatants.Contains(pair.Key))
+                {
+                    staleCombatants ??= new List<CharacterInstance>();
+                    staleCombatants.Add(pair.Key);
+                }
+            }
+
+            if (staleCombatants == null)
+                return;
+
+            for (int i = 0; i < staleCombatants.Count; i++)
+                ClearTurnIndicator(staleCombatants[i]);
+        }
+
+        private TurnCountdownIndicator EnsureTurnIndicator(CharacterInstance combatant)
+        {
+            if (combatant == null)
+                return null;
+
+            if (turnIndicators.TryGetValue(combatant, out TurnCountdownIndicator existing) && existing != null)
+                return existing;
+
+            GameObject indicatorObject = new GameObject($"{ResolveCharacterName(combatant)}_TurnIndicator");
+            indicatorObject.transform.SetParent(transform, false);
+
+            TurnCountdownIndicator indicator = indicatorObject.AddComponent<TurnCountdownIndicator>();
+            indicator.Initialize(combatant, turnManager != null && turnManager.IsEnemyUnit(combatant));
+            turnIndicators[combatant] = indicator;
+            return indicator;
+        }
+
+        private bool ShouldShowDangerIndicator(CharacterInstance combatant, int turnsUntil)
+        {
+            return EnableDangerIndicators
+                   && combatant != null
+                   && turnsUntil > 0
+                   && turnsUntil <= DangerSpecialTurnThreshold
+                   && turnManager != null
+                   && turnManager.IsEnemyUnit(combatant)
+                   && combatant.CanUseSpecialAbility
+                   && combatant.Definition != null
+                   && !string.IsNullOrWhiteSpace(combatant.Definition.SpecialAbilityName);
+        }
+
+        private void ClearTurnIndicator(CharacterInstance combatant)
+        {
+            if (!turnIndicators.TryGetValue(combatant, out TurnCountdownIndicator indicator))
+                return;
+
+            if (indicator != null)
+                Destroy(indicator.gameObject);
+
+            turnIndicators.Remove(combatant);
+        }
+
+        private void ClearTurnIndicators()
+        {
+            foreach (KeyValuePair<CharacterInstance, TurnCountdownIndicator> pair in turnIndicators)
+            {
+                if (pair.Value != null)
+                    Destroy(pair.Value.gameObject);
+            }
+
+            turnIndicators.Clear();
+        }
         private void RefreshTopBar()
         {
             if (turnLabel == null || objectiveLabel == null)
@@ -701,9 +887,44 @@ namespace Shogun.Features.Combat
 
         private void OnMenuButtonPressed()
         {
-            isPaused = !isPaused;
+            SetPauseMenuOpen(!isPaused);
+        }
+
+        private void OnResumeButtonPressed()
+        {
+            SetPauseMenuOpen(false);
+        }
+
+        private void OnRestartButtonPressed()
+        {
+            Time.timeScale = SpeedNormal;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+
+        private void OnMainMenuButtonPressed()
+        {
+            Time.timeScale = SpeedNormal;
+            if (Application.CanStreamedLevelBeLoaded(MainMenuSceneName))
+            {
+                SceneManager.LoadScene(MainMenuSceneName);
+                return;
+            }
+
+            Debug.LogWarning($"[BattleHudController] Scene '{MainMenuSceneName}' is not loadable. Keeping the current battle scene active.");
+            SetPauseMenuOpen(false);
+        }
+
+        private void SetPauseMenuOpen(bool isOpen)
+        {
+            isPaused = isOpen;
+            if (pauseMenuPanel != null)
+                pauseMenuPanel.SetActive(isOpen);
+
             ApplyTimeScale();
             UpdateUtilityLabels();
+
+            if (!isOpen)
+                TryQueueAutoTurn();
         }
 
         private void ApplyTimeScale()
@@ -720,7 +941,7 @@ namespace Shogun.Features.Combat
                 autoButtonLabel.text = autoModeEnabled ? "AUTO ON" : "AUTO OFF";
 
             if (menuButtonLabel != null)
-                menuButtonLabel.text = isPaused ? "RESUME" : "MENU";
+                menuButtonLabel.text = "MENU";
         }
 
         private void TryQueueAutoTurn()
@@ -984,4 +1205,11 @@ namespace Shogun.Features.Combat
     }
 
 }
+
+
+
+
+
+
+
 
