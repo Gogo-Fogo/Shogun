@@ -440,6 +440,17 @@ namespace Shogun.Features.Characters
             // Process status effects
             ProcessStatusEffects();
         }
+
+        /// <summary>
+        /// Makes a swapped-in reserve unit immediately usable for the current player turn
+        /// without double-processing cooldowns or status effects.
+        /// </summary>
+        public void PrepareAsSwapInCurrentTurn()
+        {
+            hasMovedThisTurn = false;
+            hasAttackedThisTurn = false;
+            canCounterAttack = true;
+        }
         
         /// <summary>
         /// Add a status effect to the character.
@@ -797,6 +808,3 @@ namespace Shogun.Features.Characters
         Bleed           // Physical damage over time
     }
 } 
-
-
-

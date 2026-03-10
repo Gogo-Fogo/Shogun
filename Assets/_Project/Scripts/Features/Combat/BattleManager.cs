@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Shogun.Features.Characters;
 using UnityEngine;
@@ -22,19 +23,31 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private float enemyReserveVerticalSpacing = 1.15f;
     [SerializeField] private float enemyVerticalSpacingPadding = 0.8f;
 
+    private readonly Dictionary<CharacterInstance, Action> playerRosterDeathCallbacks = new Dictionary<CharacterInstance, Action>();
+
     private float resolvedEnemyFrontlineSpacing;
     private float resolvedEnemyReserveSpacing;
     private int resolvedEnemyActiveCount;
     private int resolvedEnemyReserveCount;
 
+    public event Action<int, CharacterInstance, CharacterInstance> OnPlayerFormationChanged;
+
+    private void OnDestroy()
+    {
+        UnbindPlayerRosterEvents();
+    }
+
     public void StartBattle(List<CharacterDefinition> playerTeam, List<CharacterDefinition> enemyTeam = null)
     {
+        UnbindPlayerRosterEvents();
+
         activeCharacters.Clear();
         reserveCharacters.Clear();
         activeEnemyCharacters.Clear();
         reserveEnemyCharacters.Clear();
 
         SpawnTeam(playerTeam, activeCharacters, reserveCharacters, GetSpawnPosition, GetReservePosition, faceLeft: false);
+        BindPlayerRosterEvents();
 
         resolvedEnemyFrontlineSpacing = Mathf.Max(0.1f, enemyFrontlineVerticalSpacing);
         resolvedEnemyReserveSpacing = Mathf.Max(0.1f, enemyReserveVerticalSpacing);
@@ -57,8 +70,8 @@ public class BattleManager : MonoBehaviour
         List<CharacterDefinition> team,
         List<CharacterInstance> activeList,
         List<CharacterInstance> reserveList,
-        System.Func<int, Vector3> activePositionResolver,
-        System.Func<int, Vector3> reservePositionResolver,
+        Func<int, Vector3> activePositionResolver,
+        Func<int, Vector3> reservePositionResolver,
         bool faceLeft)
     {
         if (team == null || team.Count == 0)
@@ -103,6 +116,106 @@ public class BattleManager : MonoBehaviour
         Vector3 scale = instance.transform.localScale;
         scale.x = Mathf.Abs(scale.x) * facingSign;
         instance.transform.localScale = scale;
+    }
+
+    private void BindPlayerRosterEvents()
+    {
+        UnbindPlayerRosterEvents();
+        BindRosterEvents(activeCharacters);
+        BindRosterEvents(reserveCharacters);
+    }
+
+    private void BindRosterEvents(List<CharacterInstance> roster)
+    {
+        if (roster == null)
+            return;
+
+        for (int i = 0; i < roster.Count; i++)
+        {
+            CharacterInstance character = roster[i];
+            if (character == null || playerRosterDeathCallbacks.ContainsKey(character))
+                continue;
+
+            Action callback = () => HandlePlayerRosterDeath(character);
+            playerRosterDeathCallbacks[character] = callback;
+            character.OnDeath += callback;
+        }
+    }
+
+    private void UnbindPlayerRosterEvents()
+    {
+        foreach (KeyValuePair<CharacterInstance, Action> pair in playerRosterDeathCallbacks)
+        {
+            if (pair.Key != null)
+                pair.Key.OnDeath -= pair.Value;
+        }
+
+        playerRosterDeathCallbacks.Clear();
+    }
+
+    private void HandlePlayerRosterDeath(CharacterInstance character)
+    {
+        if (character == null)
+            return;
+
+        int activeLaneIndex = activeCharacters.IndexOf(character);
+        if (activeLaneIndex >= 0)
+        {
+            CharacterInstance reserve = GetReservePlayerAtLane(activeLaneIndex);
+            if (reserve != null && reserve.IsAlive)
+            {
+                SwapPlayerLaneInternal(activeLaneIndex, character, reserve);
+                return;
+            }
+
+            PositionCharacterAtLane(character, activeLaneIndex, false, faceLeft: false);
+            OnPlayerFormationChanged?.Invoke(activeLaneIndex, character, null);
+        }
+    }
+
+    public bool TrySwapPlayerLane(int laneIndex, out CharacterInstance outgoingActive, out CharacterInstance incomingReserve)
+    {
+        outgoingActive = GetActivePlayerAtLane(laneIndex);
+        incomingReserve = GetReservePlayerAtLane(laneIndex);
+
+        if (laneIndex < 0 || laneIndex >= activeCharacters.Count)
+            return false;
+
+        if (incomingReserve == null || !incomingReserve.IsAlive)
+            return false;
+
+        SwapPlayerLaneInternal(laneIndex, outgoingActive, incomingReserve);
+        return true;
+    }
+
+    private void SwapPlayerLaneInternal(int laneIndex, CharacterInstance outgoingActive, CharacterInstance incomingReserve)
+    {
+        if (laneIndex < 0 || laneIndex >= activeCharacters.Count || incomingReserve == null)
+            return;
+
+        activeCharacters[laneIndex] = incomingReserve;
+        if (laneIndex < reserveCharacters.Count)
+            reserveCharacters[laneIndex] = outgoingActive;
+
+        PositionCharacterAtLane(incomingReserve, laneIndex, true, faceLeft: false);
+        if (outgoingActive != null)
+            PositionCharacterAtLane(outgoingActive, laneIndex, false, faceLeft: false);
+
+        OnPlayerFormationChanged?.Invoke(laneIndex, outgoingActive, incomingReserve);
+    }
+
+    private void PositionCharacterAtLane(CharacterInstance instance, int laneIndex, bool activeLane, bool faceLeft)
+    {
+        if (instance == null)
+            return;
+
+        Vector3 worldPosition = activeLane ? GetSpawnPosition(laneIndex) : GetReservePosition(laneIndex);
+        instance.transform.position = worldPosition;
+        ApplyFacing(instance, faceLeft);
+
+        Animator animator = instance.GetComponentInChildren<Animator>();
+        if (animator != null)
+            animator.SetBool("isRunning", false);
     }
 
     private Vector3 GetSpawnPosition(int index)
@@ -181,6 +294,38 @@ public class BattleManager : MonoBehaviour
         return center + originOffset + new Vector3(0f, yOffset, 0f);
     }
 
+    public int GetPlayerLaneCount()
+    {
+        return Mathf.Max(activeCharacters.Count, reserveCharacters.Count);
+    }
+
+    public CharacterInstance GetActivePlayerAtLane(int laneIndex)
+    {
+        return GetCharacterAtLane(activeCharacters, laneIndex);
+    }
+
+    public CharacterInstance GetReservePlayerAtLane(int laneIndex)
+    {
+        return GetCharacterAtLane(reserveCharacters, laneIndex);
+    }
+
+    public bool HasReservePlayerAtLane(int laneIndex)
+    {
+        return GetReservePlayerAtLane(laneIndex) != null;
+    }
+
+    public int GetPlayerLaneForCharacter(CharacterInstance character)
+    {
+        if (character == null)
+            return -1;
+
+        int activeLane = activeCharacters.IndexOf(character);
+        if (activeLane >= 0)
+            return activeLane;
+
+        return reserveCharacters.IndexOf(character);
+    }
+
     public List<CharacterInstance> GetCurrentPlayerCharacters()
     {
         return activeCharacters;
@@ -191,11 +336,81 @@ public class BattleManager : MonoBehaviour
         return activeEnemyCharacters;
     }
 
+    public List<CharacterInstance> GetAllPlayerCharacters()
+    {
+        List<CharacterInstance> roster = new List<CharacterInstance>(activeCharacters.Count + reserveCharacters.Count);
+        AddUniqueCharacters(roster, activeCharacters);
+        AddUniqueCharacters(roster, reserveCharacters);
+        return roster;
+    }
+
+    public float GetTotalPlayerHealth()
+    {
+        float total = 0f;
+        List<CharacterInstance> roster = GetAllPlayerCharacters();
+        for (int i = 0; i < roster.Count; i++)
+        {
+            CharacterInstance character = roster[i];
+            if (character != null)
+                total += Mathf.Max(0f, character.CurrentHealth);
+        }
+
+        return total;
+    }
+
+    public float GetTotalPlayerMaxHealth()
+    {
+        float total = 0f;
+        List<CharacterInstance> roster = GetAllPlayerCharacters();
+        for (int i = 0; i < roster.Count; i++)
+        {
+            CharacterInstance character = roster[i];
+            if (character != null)
+                total += Mathf.Max(0f, character.MaxHealth);
+        }
+
+        return total;
+    }
+
     public List<CharacterInstance> GetAllActiveCombatants()
     {
         List<CharacterInstance> combatants = new List<CharacterInstance>(activeCharacters.Count + activeEnemyCharacters.Count);
-        combatants.AddRange(activeCharacters);
-        combatants.AddRange(activeEnemyCharacters);
+        AddAliveCharacters(combatants, activeCharacters);
+        AddAliveCharacters(combatants, activeEnemyCharacters);
         return combatants;
+    }
+
+    private static CharacterInstance GetCharacterAtLane(List<CharacterInstance> characters, int laneIndex)
+    {
+        if (characters == null || laneIndex < 0 || laneIndex >= characters.Count)
+            return null;
+
+        return characters[laneIndex];
+    }
+
+    private static void AddUniqueCharacters(List<CharacterInstance> destination, List<CharacterInstance> source)
+    {
+        if (destination == null || source == null)
+            return;
+
+        for (int i = 0; i < source.Count; i++)
+        {
+            CharacterInstance character = source[i];
+            if (character != null && !destination.Contains(character))
+                destination.Add(character);
+        }
+    }
+
+    private static void AddAliveCharacters(List<CharacterInstance> destination, List<CharacterInstance> source)
+    {
+        if (destination == null || source == null)
+            return;
+
+        for (int i = 0; i < source.Count; i++)
+        {
+            CharacterInstance character = source[i];
+            if (character != null && character.IsAlive)
+                destination.Add(character);
+        }
     }
 }

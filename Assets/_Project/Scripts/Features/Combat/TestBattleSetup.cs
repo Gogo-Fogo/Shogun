@@ -9,8 +9,20 @@ public class TestBattleSetup : MonoBehaviour
 {
     public BattleManager battleManager;
     public TurnManager turnManager;
-    public List<CharacterDefinition> testTeam; // Assign at least one in Inspector
+    public List<CharacterDefinition> testTeam; // Inspector fallback only
     public List<CharacterDefinition> enemyTeam;
+
+    [Header("Debug Player Override")]
+    [SerializeField] private bool useDebugPlayerRoster = true;
+    [SerializeField] private List<string> debugPlayerNames = new List<string>
+    {
+        "ryoma",
+        "daichi",
+        "harada",
+        "katsuro",
+        "takeshi",
+        "okami-jin"
+    };
 
     [Header("Debug Enemy Override")]
     [SerializeField] private bool useDebugEnemyRoster = true;
@@ -21,9 +33,10 @@ public class TestBattleSetup : MonoBehaviour
 
     void Start()
     {
-        if (testTeam == null || testTeam.Count < 1)
+        List<CharacterDefinition> selectedPlayers = BuildPlayerTeam();
+        if (selectedPlayers == null || selectedPlayers.Count < 1)
         {
-            Debug.LogError("Assign at least 1 CharacterDefinition asset to testTeam!");
+            Debug.LogError("No allied definitions resolved. Assign testTeam or provide valid debug player CharacterDefinition ids.");
             return;
         }
 
@@ -34,35 +47,38 @@ public class TestBattleSetup : MonoBehaviour
             return;
         }
 
-        battleManager.StartBattle(testTeam, selectedEnemies);
+        battleManager.StartBattle(selectedPlayers, selectedEnemies);
         PushEnemiesFurtherAway(extraEnemyDistance);
 
-        turnManager.Initialize(battleManager.activeCharacters, battleManager.activeEnemyCharacters);
+        turnManager.AttachBattleManager(battleManager);
+        turnManager.Initialize(
+            battleManager.activeCharacters,
+            battleManager.activeEnemyCharacters,
+            battleManager.GetAllPlayerCharacters());
         turnManager.StartBattle();
 
-        Debug.Log($"Battle started with {battleManager.activeCharacters.Count} allied combatants and {battleManager.activeEnemyCharacters.Count} enemy combatants.");
+        Debug.Log($"Battle started with {battleManager.activeCharacters.Count} allied frontliners, {battleManager.reserveCharacters.Count} allied reserves, and {battleManager.activeEnemyCharacters.Count} enemy combatants.");
+    }
+
+    private List<CharacterDefinition> BuildPlayerTeam()
+    {
+        if (useDebugPlayerRoster && debugPlayerNames != null && debugPlayerNames.Count > 0)
+        {
+            List<CharacterDefinition> resolvedPlayers = ResolveRoster(debugPlayerNames, testTeam, "player");
+            if (resolvedPlayers.Count > 0)
+                return resolvedPlayers;
+
+            Debug.LogWarning("Debug player roster is enabled, but no entries were resolved. Falling back to inspector testTeam.");
+        }
+
+        return testTeam != null ? new List<CharacterDefinition>(testTeam) : new List<CharacterDefinition>();
     }
 
     private List<CharacterDefinition> BuildEnemyTeam()
     {
         if (useDebugEnemyRoster && debugEnemyNames != null && debugEnemyNames.Count > 0)
         {
-            List<CharacterDefinition> resolvedEnemies = new List<CharacterDefinition>();
-            HashSet<CharacterDefinition> resolvedSet = new HashSet<CharacterDefinition>();
-
-            foreach (string candidateName in debugEnemyNames)
-            {
-                CharacterDefinition debugEnemy = ResolveDefinitionByName(candidateName);
-                if (debugEnemy == null)
-                {
-                    Debug.LogWarning($"Debug enemy '{candidateName}' was not found while building roster.");
-                    continue;
-                }
-
-                if (resolvedSet.Add(debugEnemy))
-                    resolvedEnemies.Add(debugEnemy);
-            }
-
+            List<CharacterDefinition> resolvedEnemies = ResolveRoster(debugEnemyNames, enemyTeam, "enemy");
             if (resolvedEnemies.Count > 0)
                 return resolvedEnemies;
 
@@ -71,7 +87,7 @@ public class TestBattleSetup : MonoBehaviour
 
         if (useSingleDebugEnemy)
         {
-            CharacterDefinition debugEnemy = ResolveDefinitionByName(debugEnemyName);
+            CharacterDefinition debugEnemy = ResolveDefinitionByName(debugEnemyName, enemyTeam);
             if (debugEnemy != null)
             {
                 return new List<CharacterDefinition> { debugEnemy };
@@ -83,7 +99,29 @@ public class TestBattleSetup : MonoBehaviour
         return enemyTeam != null ? new List<CharacterDefinition>(enemyTeam) : new List<CharacterDefinition>();
     }
 
-    private CharacterDefinition ResolveDefinitionByName(string characterName)
+    private List<CharacterDefinition> ResolveRoster(List<string> candidateNames, List<CharacterDefinition> inspectorFallback, string rosterLabel)
+    {
+        List<CharacterDefinition> resolvedRoster = new List<CharacterDefinition>();
+        HashSet<CharacterDefinition> resolvedSet = new HashSet<CharacterDefinition>();
+
+        for (int i = 0; i < candidateNames.Count; i++)
+        {
+            string candidateName = candidateNames[i];
+            CharacterDefinition definition = ResolveDefinitionByName(candidateName, inspectorFallback);
+            if (definition == null)
+            {
+                Debug.LogWarning($"Debug {rosterLabel} '{candidateName}' was not found while building roster.");
+                continue;
+            }
+
+            if (resolvedSet.Add(definition))
+                resolvedRoster.Add(definition);
+        }
+
+        return resolvedRoster;
+    }
+
+    private CharacterDefinition ResolveDefinitionByName(string characterName, List<CharacterDefinition> inspectorFallback)
     {
         if (string.IsNullOrWhiteSpace(characterName))
             return null;
@@ -91,9 +129,9 @@ public class TestBattleSetup : MonoBehaviour
         if (characterName.Equals("Kuamada", StringComparison.OrdinalIgnoreCase))
             characterName = "kumada";
 
-        if (enemyTeam != null)
+        if (inspectorFallback != null)
         {
-            foreach (CharacterDefinition def in enemyTeam)
+            foreach (CharacterDefinition def in inspectorFallback)
             {
                 if (IsDefinitionMatch(def, characterName))
                     return def;

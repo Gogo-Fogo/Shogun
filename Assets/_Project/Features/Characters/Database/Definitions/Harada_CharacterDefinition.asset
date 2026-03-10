@@ -1,0 +1,123 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cae84c2d5f140e44b6318b2af561392, type: 3}
+  m_Name: Harada_CharacterDefinition
+  m_EditorClassIdentifier: 
+  characterId: harada
+  aliases: []
+  surname: 
+  givenName: Harada
+  characterName: Harada
+  description: A ranged samurai archer promoted from the Harada legacy lane.
+  portrait: {fileID: 0}
+  bannerSprite: {fileID: 0}
+  battleSprite: {fileID: 4723107735738678597, guid: 20ba977bda114324bd9cd04df230350b, type: 3}
+  eventVignette: {fileID: 0}
+  animatorController: {fileID: 9100000, guid: 164c4a8c48504a1e918de9d1862c5cfe, type: 2}
+  colliderSize: {x: 1, y: 1.95}
+  colliderOffset: {x: 0, y: 0.03}
+  characterScale: {x: 1, y: 1, z: 1}
+  invertFacingX: 0
+  paletteAccentColor: {r: 0.26, g: 0.74, b: 0.54, a: 1}
+  characterType: 0
+  elementalType: 3
+  martialArtsType: 3
+  rarity: 3
+  attackRange: 2
+  baseHealth: 142
+  baseAttack: 58
+  baseDefense: 28
+  baseSpeed: 15
+  specialAbilityName: Storm of Arrows
+  specialAbilityDescription: He draws, steps, and fills the lane with a rapid shot.
+  specialAbilityCooldown: 3
+  specialAbilityDamage: 156
+  baseStealthEffectiveness: 14
+  stealthDecayRate: 20
+  baseCounterChance: 12
+  counterDamageMultiplier: 104
+  synergyTags:
+  - Samurai
+  - Wind
+  worldPillar: 0
+  martialSchool: 6
+  collectibleFantasy: 4
+  collectibleTone: focused
+  visualHook: bow silhouette and crisp archer posture
+  emotionalHook: discipline
+  loreBlurb: Harada is quiet right up until the arrow is already in the air.
+  variantPotential: festival hunter, night watch captain
+  animationMappings:
+  - logicalName: IDLE
+    clip: {fileID: 7400000, guid: 5252f17aeddc4cde8657f61a225dc0b1, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: RUN
+    clip: {fileID: 7400000, guid: ec854c31126848d5a620b63079eee64d, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: WALK
+    clip: {fileID: 7400000, guid: 26f6a86a78d347108aaa54d6fbcfcd38, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: ATTACK 1
+    clip: {fileID: 7400000, guid: 483c3dd8f34e4b27bd24d147d8d47d4b, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: ATTACK 2
+    clip: {fileID: 7400000, guid: 9dbb40907edf484d84a8ca446404826b, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: ATTACK 3
+    clip: {fileID: 7400000, guid: 467f5455ef3d4079bb0fc23729bf04bf, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: HURT
+    clip: {fileID: 7400000, guid: 330ef39b44d64dafb3fb69bcf570a2a3, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DEATH
+    clip: {fileID: 7400000, guid: e53759cb73d94058a0bfec39534aa2ab, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DEFEND
+    clip: {fileID: 7400000, guid: 6035902a6a014d45acc03e01ff8f8e8f, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: SPECIAL ATTACK
+    clip: {fileID: 7400000, guid: 7f1d5dccc9dc4d1086971d1429e82eaa, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DASH
+    clip: {fileID: 7400000, guid: b3d78daa8f0c47eab0542ec87616ba8c, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP
+    clip: {fileID: 7400000, guid: 0c28bd988d884c1d8519611564ec1b96, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-START
+    clip: {fileID: 7400000, guid: 48f7764d57f442229e9f2548161583f7, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-FALL
+    clip: {fileID: 7400000, guid: 5eb38c3db00e4fb4a2af9d500627bef9, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-TRANSITION
+    clip: {fileID: 7400000, guid: afa201711dd1496ebbf733b9a8f594a0, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: THROW
+    clip: {fileID: 7400000, guid: 912fd559382b42978668e8f11ee5b54b, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 

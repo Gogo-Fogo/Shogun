@@ -9,8 +9,8 @@ using UnityEngine.UI;
 namespace Shogun.Features.Combat
 {
     /// <summary>
-    /// Runtime-built portrait battle HUD for the active combat slice.
-    /// Keeps battlefield readable while exposing turn, objective, and squad health state.
+    /// Runtime battle HUD for the active combat slice.
+    /// Keeps battlefield readable while exposing turn, objective, shared squad HP, and pair-swap state.
     /// </summary>
     [DefaultExecutionOrder(25)]
     public sealed class BattleHudController : MonoBehaviour
@@ -22,7 +22,6 @@ namespace Shogun.Features.Combat
         private const float AutoTurnTravelTime = 0.26f;
         private const float AutoTurnHitPause = 0.14f;
         private const float AutoTurnRecoverDelay = 0.22f;
-        private const float AutoTurnReturnTime = 0.26f;
         private const int DangerSpecialTurnThreshold = 2;
         private const bool EnableDangerIndicators = false;
         private const string MainMenuSceneName = "MainMenu";
@@ -35,7 +34,7 @@ namespace Shogun.Features.Combat
 
         [Header("Layout")]
         [SerializeField] private float topBarHeight = 108f;
-        [SerializeField] private float bottomRailHeight = 210f;
+        [SerializeField] private float bottomRailHeight = 248f;
 
         [Header("Boss Detection")]
         [SerializeField] private string[] bossCharacterIds = Array.Empty<string>();
@@ -45,15 +44,15 @@ namespace Shogun.Features.Combat
         private Text turnLabel;
         private Text objectiveLabel;
         private Image objectivePillBackground;
-        private RectTransform squadRail;
-        private RectTransform playerSlotTemplate;
+        private RectTransform pairSlotRow;
+        private Image squadHpFill;
+        private Text squadHpValueLabel;
         private GameObject pauseMenuPanel;
         private Text speedButtonLabel;
         private Text autoButtonLabel;
         private Text menuButtonLabel;
 
         private readonly List<PlayerSlotView> playerSlots = new List<PlayerSlotView>();
-        private readonly Dictionary<CharacterInstance, PlayerSlotView> slotLookup = new Dictionary<CharacterInstance, PlayerSlotView>();
         private readonly Dictionary<CharacterInstance, Action<float>> healthCallbacks = new Dictionary<CharacterInstance, Action<float>>();
         private readonly Dictionary<CharacterInstance, Action> deathCallbacks = new Dictionary<CharacterInstance, Action>();
         private readonly Dictionary<CharacterInstance, TurnCountdownIndicator> turnIndicators = new Dictionary<CharacterInstance, TurnCountdownIndicator>();
@@ -88,7 +87,7 @@ namespace Shogun.Features.Combat
             yield return WaitForBattleSetup();
 
             BuildHud();
-            BindTurnEvents();
+            BindEvents();
             RebuildPlayerSlots();
             RefreshHud();
 
@@ -104,7 +103,7 @@ namespace Shogun.Features.Combat
             if (autoTurnCoroutine != null)
                 StopCoroutine(autoTurnCoroutine);
 
-            UnbindTurnEvents();
+            UnbindEvents();
             UnbindCharacterEvents();
             ClearTurnIndicators();
             Time.timeScale = SpeedNormal;
@@ -147,7 +146,7 @@ namespace Shogun.Features.Combat
 
         private IEnumerator PollHud()
         {
-            var wait = new WaitForSecondsRealtime(PollIntervalSeconds);
+            WaitForSecondsRealtime wait = new WaitForSecondsRealtime(PollIntervalSeconds);
             while (true)
             {
                 RefreshHud();
@@ -155,28 +154,49 @@ namespace Shogun.Features.Combat
             }
         }
 
-        private void BindTurnEvents()
+        private void BindEvents()
         {
-            if (turnManager == null)
-                return;
+            if (turnManager != null)
+            {
+                turnManager.OnTurnStarted += HandleTurnChanged;
+                turnManager.OnTurnEnded += HandleTurnChanged;
+                turnManager.OnBattleEnded += HandleBattleEnded;
+                turnManager.OnTurnOrderChanged += HandleTurnOrderChanged;
+            }
 
-            turnManager.OnTurnStarted += HandleTurnChanged;
-            turnManager.OnTurnEnded += HandleTurnChanged;
-            turnManager.OnBattleEnded += HandleBattleEnded;
+            if (battleManager != null)
+                battleManager.OnPlayerFormationChanged += HandlePlayerFormationChanged;
         }
 
-        private void UnbindTurnEvents()
+        private void UnbindEvents()
         {
-            if (turnManager == null)
-                return;
+            if (turnManager != null)
+            {
+                turnManager.OnTurnStarted -= HandleTurnChanged;
+                turnManager.OnTurnEnded -= HandleTurnChanged;
+                turnManager.OnBattleEnded -= HandleBattleEnded;
+                turnManager.OnTurnOrderChanged -= HandleTurnOrderChanged;
+            }
 
-            turnManager.OnTurnStarted -= HandleTurnChanged;
-            turnManager.OnTurnEnded -= HandleTurnChanged;
-            turnManager.OnBattleEnded -= HandleBattleEnded;
+            if (battleManager != null)
+                battleManager.OnPlayerFormationChanged -= HandlePlayerFormationChanged;
         }
 
         private void HandleTurnChanged(CharacterInstance _)
         {
+            RefreshHud();
+            TryQueueAutoTurn();
+        }
+
+        private void HandleTurnOrderChanged()
+        {
+            RefreshHud();
+            TryQueueAutoTurn();
+        }
+
+        private void HandlePlayerFormationChanged(int _, CharacterInstance __, CharacterInstance ___)
+        {
+            RebuildPlayerSlots();
             RefreshHud();
             TryQueueAutoTurn();
         }
@@ -196,111 +216,37 @@ namespace Shogun.Features.Combat
             SetPauseMenuOpen(false);
             Time.timeScale = SpeedNormal;
             ClearTurnIndicators();
-            RefreshSlots();
+            RefreshHud();
             UpdateUtilityLabels();
         }
 
         private void BuildHud()
         {
-            if (targetCanvas == null)
+            if (targetCanvas == null || hudRoot != null)
                 return;
 
-            if (hudRoot != null)
-                return;
+            hudRoot = hudPrefab != null
+                ? Instantiate(hudPrefab, targetCanvas.transform, false)
+                : CreateRect("BattleHudRoot", targetCanvas.transform, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
 
-            if (TryBuildHudFromPrefab())
-            {
-                BuildPauseMenu();
-                return;
-            }
-
-            BuildRuntimeHud();
+            hudRoot.name = "BattleHudRoot";
+            BuildTopBar();
+            BuildBottomRail();
             BuildPauseMenu();
-        }
-
-        private bool TryBuildHudFromPrefab()
-        {
-            if (hudPrefab == null)
-                return false;
-
-            hudRoot = Instantiate(hudPrefab, targetCanvas.transform, false);
-            hudRoot.name = hudPrefab.name;
-
-            turnLabel = FindChildComponent<Text>(hudRoot, "TopCombatBar/TurnPill/Label");
-            objectiveLabel = FindChildComponent<Text>(hudRoot, "TopCombatBar/ObjectivePill/Label");
-            objectivePillBackground = FindChildComponent<Image>(hudRoot, "TopCombatBar/ObjectivePill");
-            squadRail = FindChildComponent<RectTransform>(hudRoot, "BottomSquadRail");
-            playerSlotTemplate = FindChildComponent<RectTransform>(hudRoot, "BottomSquadRail/PlayerSlotTemplate");
-
-            Button speedButton = FindChildComponent<Button>(hudRoot, "TopCombatBar/UtilityPill/SpeedButton");
-            Button autoButton = FindChildComponent<Button>(hudRoot, "TopCombatBar/UtilityPill/AutoButton");
-            Button menuButton = FindChildComponent<Button>(hudRoot, "TopCombatBar/UtilityPill/MenuButton");
-
-            speedButtonLabel = FindChildComponent<Text>(hudRoot, "TopCombatBar/UtilityPill/SpeedButton/Label");
-            autoButtonLabel = FindChildComponent<Text>(hudRoot, "TopCombatBar/UtilityPill/AutoButton/Label");
-            menuButtonLabel = FindChildComponent<Text>(hudRoot, "TopCombatBar/UtilityPill/MenuButton/Label");
-
-            bool isValid = turnLabel != null
-                           && objectiveLabel != null
-                           && squadRail != null
-                           && speedButton != null
-                           && autoButton != null
-                           && menuButton != null
-                           && speedButtonLabel != null
-                           && autoButtonLabel != null
-                           && menuButtonLabel != null;
-
-            if (!isValid)
-            {
-                Debug.LogWarning("[BattleHudController] HUD prefab is missing required bindings. Falling back to runtime-generated HUD.");
-                Destroy(hudRoot.gameObject);
-                hudRoot = null;
-                turnLabel = null;
-                objectiveLabel = null;
-                objectivePillBackground = null;
-                squadRail = null;
-                playerSlotTemplate = null;
-                speedButtonLabel = null;
-                autoButtonLabel = null;
-                menuButtonLabel = null;
-                return false;
-            }
-
-            if (playerSlotTemplate != null)
-                playerSlotTemplate.gameObject.SetActive(false);
-
-            speedButton.onClick.RemoveListener(OnSpeedButtonPressed);
-            speedButton.onClick.AddListener(OnSpeedButtonPressed);
-
-            autoButton.onClick.RemoveListener(OnAutoButtonPressed);
-            autoButton.onClick.AddListener(OnAutoButtonPressed);
-
-            menuButton.onClick.RemoveListener(OnMenuButtonPressed);
-            menuButton.onClick.AddListener(OnMenuButtonPressed);
-
             UpdateUtilityLabels();
-            return true;
         }
-
-        private static T FindChildComponent<T>(Transform root, string relativePath) where T : Component
+        private void BuildTopBar()
         {
-            if (root == null || string.IsNullOrEmpty(relativePath))
-                return null;
-
-            Transform child = root.Find(relativePath);
-            return child != null ? child.GetComponent<T>() : null;
-        }
-
-        private void BuildRuntimeHud()
-        {
-            hudRoot = CreateRect("BattleHudRoot", targetCanvas.transform, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+            RectTransform existing = hudRoot.Find("TopCombatBar") as RectTransform;
+            if (existing != null)
+                Destroy(existing.gameObject);
 
             RectTransform topBar = CreateRect("TopCombatBar", hudRoot, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(20f, -topBarHeight - 12f), new Vector2(-20f, -12f));
             Image topBarBg = topBar.gameObject.AddComponent<Image>();
             topBarBg.color = new Color(0.05f, 0.07f, 0.1f, 0.62f);
             topBarBg.raycastTarget = false;
 
-            var topLayout = topBar.gameObject.AddComponent<HorizontalLayoutGroup>();
+            HorizontalLayoutGroup topLayout = topBar.gameObject.AddComponent<HorizontalLayoutGroup>();
             topLayout.padding = new RectOffset(14, 14, 10, 10);
             topLayout.spacing = 10f;
             topLayout.childForceExpandWidth = true;
@@ -309,23 +255,96 @@ namespace Shogun.Features.Combat
             turnLabel = CreatePillLabel(topBar, "TurnPill", TextAnchor.MiddleLeft);
             objectiveLabel = CreatePillLabel(topBar, "ObjectivePill", TextAnchor.MiddleCenter, out objectivePillBackground);
             BuildUtilityControls(topBar);
+        }
+
+        private void BuildBottomRail()
+        {
+            RectTransform existing = hudRoot.Find("BottomSquadRail") as RectTransform;
+            if (existing != null)
+                Destroy(existing.gameObject);
 
             RectTransform bottomRail = CreateRect("BottomSquadRail", hudRoot, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(20f, 12f), new Vector2(-20f, bottomRailHeight + 12f));
             Image bottomBg = bottomRail.gameObject.AddComponent<Image>();
             bottomBg.color = new Color(0.08f, 0.06f, 0.04f, 0.72f);
             bottomBg.raycastTarget = false;
 
-            var bottomLayout = bottomRail.gameObject.AddComponent<HorizontalLayoutGroup>();
-            bottomLayout.padding = new RectOffset(20, 20, 18, 18);
-            bottomLayout.spacing = 16f;
-            bottomLayout.childAlignment = TextAnchor.MiddleCenter;
-            bottomLayout.childControlWidth = false;
-            bottomLayout.childControlHeight = false;
-            bottomLayout.childForceExpandWidth = false;
-            bottomLayout.childForceExpandHeight = false;
+            VerticalLayoutGroup layout = bottomRail.gameObject.AddComponent<VerticalLayoutGroup>();
+            layout.padding = new RectOffset(18, 18, 16, 16);
+            layout.spacing = 12f;
+            layout.childAlignment = TextAnchor.LowerCenter;
+            layout.childControlWidth = true;
+            layout.childControlHeight = false;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
 
-            squadRail = bottomRail;
-            playerSlotTemplate = null;
+            BuildSquadHealthPanel(bottomRail);
+            BuildPairSlotRow(bottomRail);
+        }
+
+        private void BuildSquadHealthPanel(RectTransform parent)
+        {
+            RectTransform summary = CreateRect("SquadHealthPanel", parent, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+            LayoutElement summaryLayout = summary.gameObject.AddComponent<LayoutElement>();
+            summaryLayout.preferredHeight = 64f;
+            summaryLayout.minHeight = 64f;
+
+            Image bg = summary.gameObject.AddComponent<Image>();
+            bg.color = new Color(0.14f, 0.12f, 0.09f, 0.92f);
+            bg.raycastTarget = false;
+
+            Outline outline = summary.gameObject.AddComponent<Outline>();
+            outline.effectDistance = new Vector2(2f, -2f);
+            outline.effectColor = new Color(0f, 0f, 0f, 0.45f);
+
+            Text title = CreateText("Title", summary, TextAnchor.MiddleLeft, 18, FontStyle.Bold);
+            RectTransform titleRect = (RectTransform)title.transform;
+            titleRect.anchorMin = new Vector2(0f, 0f);
+            titleRect.anchorMax = new Vector2(0f, 1f);
+            titleRect.pivot = new Vector2(0f, 0.5f);
+            titleRect.offsetMin = new Vector2(12f, 0f);
+            titleRect.offsetMax = new Vector2(120f, 0f);
+            title.text = "SQUAD HP";
+            title.color = new Color(0.98f, 0.94f, 0.82f, 1f);
+
+            RectTransform hpBarBgRect = CreateRect("SquadHpBarBg", summary, new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(120f, -10f), new Vector2(-126f, 10f));
+            Image hpBarBg = hpBarBgRect.gameObject.AddComponent<Image>();
+            hpBarBg.color = new Color(0.08f, 0.08f, 0.08f, 0.94f);
+            hpBarBg.raycastTarget = false;
+
+            RectTransform hpFillRect = CreateRect("SquadHpFill", hpBarBgRect, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(2f, 2f), new Vector2(-2f, -2f));
+            squadHpFill = hpFillRect.gameObject.AddComponent<Image>();
+            squadHpFill.type = Image.Type.Filled;
+            squadHpFill.fillMethod = Image.FillMethod.Horizontal;
+            squadHpFill.fillAmount = 1f;
+            squadHpFill.color = new Color(0.22f, 0.9f, 0.4f, 0.98f);
+            squadHpFill.raycastTarget = false;
+
+            squadHpValueLabel = CreateText("Value", summary, TextAnchor.MiddleRight, 18, FontStyle.Bold);
+            RectTransform valueRect = (RectTransform)squadHpValueLabel.transform;
+            valueRect.anchorMin = new Vector2(1f, 0f);
+            valueRect.anchorMax = new Vector2(1f, 1f);
+            valueRect.pivot = new Vector2(1f, 0.5f);
+            valueRect.offsetMin = new Vector2(-126f, 0f);
+            valueRect.offsetMax = new Vector2(-12f, 0f);
+            squadHpValueLabel.text = "0/0";
+            squadHpValueLabel.color = new Color(0.98f, 0.94f, 0.82f, 1f);
+        }
+
+        private void BuildPairSlotRow(RectTransform parent)
+        {
+            pairSlotRow = CreateRect("PairSlotRow", parent, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+            LayoutElement rowLayout = pairSlotRow.gameObject.AddComponent<LayoutElement>();
+            rowLayout.preferredHeight = bottomRailHeight - 92f;
+            rowLayout.minHeight = bottomRailHeight - 92f;
+
+            HorizontalLayoutGroup layout = pairSlotRow.gameObject.AddComponent<HorizontalLayoutGroup>();
+            layout.spacing = 12f;
+            layout.padding = new RectOffset(0, 0, 0, 0);
+            layout.childAlignment = TextAnchor.MiddleCenter;
+            layout.childControlWidth = false;
+            layout.childControlHeight = false;
+            layout.childForceExpandWidth = false;
+            layout.childForceExpandHeight = false;
         }
 
         private void BuildPauseMenu()
@@ -404,7 +423,7 @@ namespace Shogun.Features.Combat
         private Text CreatePillLabel(Transform parent, string name, TextAnchor alignment, out Image backgroundImage)
         {
             RectTransform pill = CreateRect(name, parent, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
-            var layoutElement = pill.gameObject.AddComponent<LayoutElement>();
+            LayoutElement layoutElement = pill.gameObject.AddComponent<LayoutElement>();
             layoutElement.preferredHeight = 80f;
             layoutElement.minWidth = 220f;
 
@@ -422,7 +441,7 @@ namespace Shogun.Features.Combat
         private void BuildUtilityControls(Transform parent)
         {
             RectTransform utilityRoot = CreateRect("UtilityPill", parent, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
-            var layoutElement = utilityRoot.gameObject.AddComponent<LayoutElement>();
+            LayoutElement layoutElement = utilityRoot.gameObject.AddComponent<LayoutElement>();
             layoutElement.preferredHeight = 80f;
             layoutElement.minWidth = 320f;
 
@@ -442,7 +461,6 @@ namespace Shogun.Features.Combat
             speedButtonLabel = CreateUtilityButton(utilityRoot, "SpeedButton", OnSpeedButtonPressed);
             autoButtonLabel = CreateUtilityButton(utilityRoot, "AutoButton", OnAutoButtonPressed);
             menuButtonLabel = CreateUtilityButton(utilityRoot, "MenuButton", OnMenuButtonPressed);
-            UpdateUtilityLabels();
         }
 
         private static Text CreateUtilityButton(Transform parent, string name, UnityEngine.Events.UnityAction onClick)
@@ -463,41 +481,36 @@ namespace Shogun.Features.Combat
 
         private void RebuildPlayerSlots()
         {
-            if (squadRail == null || turnManager == null)
+            if (pairSlotRow == null)
                 return;
 
-            for (int i = squadRail.childCount - 1; i >= 0; i--)
-                Destroy(squadRail.GetChild(i).gameObject);
-
+            ClearChildren(pairSlotRow);
             playerSlots.Clear();
-            slotLookup.Clear();
             UnbindCharacterEvents();
 
-            IReadOnlyList<CharacterInstance> players = turnManager.GetPlayerCombatants();
-            for (int i = 0; i < players.Count; i++)
-            {
-                CharacterInstance player = players[i];
-                if (player == null)
-                    continue;
+            int laneCount = 0;
+            if (battleManager != null)
+                laneCount = battleManager.GetPlayerLaneCount();
+            else if (turnManager != null)
+                laneCount = turnManager.GetPlayerCombatants().Count;
 
-                PlayerSlotView slot = CreatePlayerSlot(player, i);
-                playerSlots.Add(slot);
-                slotLookup[player] = slot;
-                BindCharacterEvents(player);
-            }
+            for (int i = 0; i < laneCount; i++)
+                playerSlots.Add(CreatePlayerSlot(i));
+
+            BindRosterCharacterEvents();
         }
 
-        private PlayerSlotView CreatePlayerSlot(CharacterInstance player, int index)
+        private PlayerSlotView CreatePlayerSlot(int laneIndex)
         {
-            RectTransform slotRoot = CreateRect($"PlayerSlot_{index}", squadRail, new Vector2(0f, 0f), new Vector2(0f, 0f), Vector2.zero, Vector2.zero);
-            slotRoot.sizeDelta = new Vector2(190f, bottomRailHeight - 36f);
+            RectTransform slotRoot = CreateRect($"PlayerPairSlot_{laneIndex}", pairSlotRow, new Vector2(0f, 0f), new Vector2(0f, 0f), Vector2.zero, Vector2.zero);
+            slotRoot.sizeDelta = new Vector2(206f, bottomRailHeight - 106f);
 
-            var layoutElement = slotRoot.gameObject.AddComponent<LayoutElement>();
-            layoutElement.preferredWidth = 190f;
-            layoutElement.preferredHeight = bottomRailHeight - 36f;
+            LayoutElement layoutElement = slotRoot.gameObject.AddComponent<LayoutElement>();
+            layoutElement.preferredWidth = 206f;
+            layoutElement.preferredHeight = bottomRailHeight - 106f;
 
             Image background = slotRoot.gameObject.AddComponent<Image>();
-            background.color = new Color(0.16f, 0.14f, 0.1f, 0.86f);
+            background.color = new Color(0.16f, 0.14f, 0.1f, 0.9f);
             background.raycastTarget = false;
 
             Outline outline = slotRoot.gameObject.AddComponent<Outline>();
@@ -509,23 +522,41 @@ namespace Shogun.Features.Combat
             frameImage.color = new Color(0.5f, 0.7f, 0.85f, 0f);
             frameImage.raycastTarget = false;
 
-            RectTransform portraitRect = CreateRect("Portrait", slotRoot, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(-68f, -140f), new Vector2(68f, -14f));
+            Text laneLabel = CreateText("LaneLabel", slotRoot, TextAnchor.UpperLeft, 15, FontStyle.Bold);
+            RectTransform laneRect = (RectTransform)laneLabel.transform;
+            laneRect.anchorMin = new Vector2(0f, 1f);
+            laneRect.anchorMax = new Vector2(0f, 1f);
+            laneRect.pivot = new Vector2(0f, 1f);
+            laneRect.offsetMin = new Vector2(12f, -30f);
+            laneRect.offsetMax = new Vector2(86f, -8f);
+            laneLabel.color = new Color(0.95f, 0.9f, 0.72f, 1f);
+
+            Text stateLabel = CreateText("State", slotRoot, TextAnchor.UpperRight, 18, FontStyle.Bold);
+            RectTransform stateRect = (RectTransform)stateLabel.transform;
+            stateRect.anchorMin = new Vector2(0f, 1f);
+            stateRect.anchorMax = new Vector2(1f, 1f);
+            stateRect.offsetMin = new Vector2(84f, -34f);
+            stateRect.offsetMax = new Vector2(-12f, -8f);
+            stateLabel.color = new Color(1f, 0.45f, 0.35f, 1f);
+
+            RectTransform portraitRect = CreateRect("FrontPortrait", slotRoot, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(12f, 34f), new Vector2(118f, -14f));
             Image portraitImage = portraitRect.gameObject.AddComponent<Image>();
             portraitImage.raycastTarget = false;
             portraitImage.preserveAspect = true;
-            portraitImage.sprite = player.Definition?.Portrait != null ? player.Definition.Portrait : player.Definition?.BattleSprite;
-            portraitImage.color = Color.white;
 
-            Text nameLabel = CreateText("Name", slotRoot, TextAnchor.MiddleCenter, 18, FontStyle.Bold);
+            Button reserveButton = CreateReservePortraitButton(slotRoot, laneIndex, out Image reservePortrait, out Text reserveName, out Text reserveHint);
+
+            Text nameLabel = CreateText("Name", slotRoot, TextAnchor.MiddleLeft, 17, FontStyle.Bold);
             RectTransform nameRect = (RectTransform)nameLabel.transform;
             nameRect.anchorMin = new Vector2(0f, 0f);
             nameRect.anchorMax = new Vector2(1f, 0f);
-            nameRect.offsetMin = new Vector2(10f, 44f);
-            nameRect.offsetMax = new Vector2(-10f, 76f);
+            nameRect.offsetMin = new Vector2(12f, 40f);
+            nameRect.offsetMax = new Vector2(-12f, 68f);
+            nameLabel.color = new Color(0.98f, 0.94f, 0.82f, 1f);
 
-            RectTransform hpBarBgRect = CreateRect("HpBarBg", slotRoot, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(16f, 12f), new Vector2(-16f, 34f));
+            RectTransform hpBarBgRect = CreateRect("HpBarBg", slotRoot, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(12f, 12f), new Vector2(-12f, 30f));
             Image hpBarBg = hpBarBgRect.gameObject.AddComponent<Image>();
-            hpBarBg.color = new Color(0.08f, 0.08f, 0.08f, 0.9f);
+            hpBarBg.color = new Color(0.08f, 0.08f, 0.08f, 0.92f);
             hpBarBg.raycastTarget = false;
 
             RectTransform hpFillRect = CreateRect("HpFill", hpBarBgRect, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(2f, 2f), new Vector2(-2f, -2f));
@@ -536,82 +567,63 @@ namespace Shogun.Features.Combat
             hpFill.color = new Color(0.2f, 0.92f, 0.38f, 0.98f);
             hpFill.raycastTarget = false;
 
-            Text hpLabel = CreateText("HpText", slotRoot, TextAnchor.MiddleCenter, 16, FontStyle.Bold);
+            Text hpLabel = CreateText("HpText", slotRoot, TextAnchor.MiddleCenter, 15, FontStyle.Bold);
             RectTransform hpRect = (RectTransform)hpLabel.transform;
             hpRect.anchorMin = new Vector2(0f, 0f);
             hpRect.anchorMax = new Vector2(1f, 0f);
-            hpRect.offsetMin = new Vector2(10f, 34f);
-            hpRect.offsetMax = new Vector2(-10f, 56f);
-
-            Text stateLabel = CreateText("State", slotRoot, TextAnchor.UpperRight, 20, FontStyle.Bold);
-            RectTransform stateRect = (RectTransform)stateLabel.transform;
-            stateRect.anchorMin = new Vector2(0f, 1f);
-            stateRect.anchorMax = new Vector2(1f, 1f);
-            stateRect.offsetMin = new Vector2(10f, -34f);
-            stateRect.offsetMax = new Vector2(-10f, -8f);
-            stateLabel.color = new Color(1f, 0.45f, 0.35f, 1f);
+            hpRect.offsetMin = new Vector2(12f, 28f);
+            hpRect.offsetMax = new Vector2(-12f, 46f);
+            hpLabel.color = new Color(0.96f, 0.94f, 0.9f, 1f);
 
             return new PlayerSlotView
             {
-                Character = player,
+                LaneIndex = laneIndex,
                 Root = slotRoot,
                 ActiveFrame = frameImage,
-                Portrait = portraitImage,
-                NameLabel = nameLabel,
-                HpFill = hpFill,
-                HpLabel = hpLabel,
-                StateLabel = stateLabel
+                LaneLabel = laneLabel,
+                FrontPortrait = portraitImage,
+                FrontNameLabel = nameLabel,
+                FrontHpFill = hpFill,
+                FrontHpLabel = hpLabel,
+                StateLabel = stateLabel,
+                ReserveButton = reserveButton,
+                ReservePortrait = reservePortrait,
+                ReserveNameLabel = reserveName,
+                ReserveHintLabel = reserveHint
             };
         }
-        private bool TryCreatePlayerSlotFromTemplate(CharacterInstance player, int index, out PlayerSlotView slot)
+        private Button CreateReservePortraitButton(Transform parent, int laneIndex, out Image reservePortrait, out Text reserveName, out Text reserveHint)
         {
-            slot = null;
-            if (playerSlotTemplate == null || squadRail == null)
-                return false;
+            RectTransform buttonRect = CreateRect("ReserveButton", parent, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-78f, -78f), new Vector2(-12f, -12f));
 
-            RectTransform slotRoot = Instantiate(playerSlotTemplate, squadRail, false);
-            slotRoot.name = $"PlayerSlot_{index}";
-            slotRoot.gameObject.SetActive(true);
+            Image buttonImage = buttonRect.gameObject.AddComponent<Image>();
+            buttonImage.color = new Color(0.22f, 0.18f, 0.12f, 0.92f);
 
-            Image frameImage = FindChildComponent<Image>(slotRoot, "ActiveFrame");
-            Image portraitImage = FindChildComponent<Image>(slotRoot, "Portrait");
-            Text nameLabel = FindChildComponent<Text>(slotRoot, "Name");
-            Image hpFill = FindChildComponent<Image>(slotRoot, "HpBarBg/HpFill");
-            Text hpLabel = FindChildComponent<Text>(slotRoot, "HpText");
-            Text stateLabel = FindChildComponent<Text>(slotRoot, "State");
+            Button button = buttonRect.gameObject.AddComponent<Button>();
+            button.targetGraphic = buttonImage;
+            button.onClick.AddListener(() => OnReserveButtonPressed(laneIndex));
 
-            bool isValid = frameImage != null
-                           && portraitImage != null
-                           && nameLabel != null
-                           && hpFill != null
-                           && hpLabel != null
-                           && stateLabel != null;
+            RectTransform portraitRect = CreateRect("Portrait", buttonRect, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(6f, 18f), new Vector2(-6f, -6f));
+            reservePortrait = portraitRect.gameObject.AddComponent<Image>();
+            reservePortrait.preserveAspect = true;
+            reservePortrait.raycastTarget = false;
 
-            if (!isValid)
-            {
-                Destroy(slotRoot.gameObject);
-                Debug.LogWarning("[BattleHudController] PlayerSlotTemplate is missing one or more required child bindings. Falling back to runtime slot generation.");
-                return false;
-            }
+            reserveName = CreateText("Name", buttonRect, TextAnchor.UpperCenter, 11, FontStyle.Bold);
+            RectTransform reserveNameRect = (RectTransform)reserveName.transform;
+            reserveNameRect.anchorMin = new Vector2(0f, 1f);
+            reserveNameRect.anchorMax = new Vector2(1f, 1f);
+            reserveNameRect.offsetMin = new Vector2(4f, -20f);
+            reserveNameRect.offsetMax = new Vector2(-4f, -2f);
+            reserveName.color = new Color(0.96f, 0.93f, 0.82f, 1f);
 
-            portraitImage.preserveAspect = true;
-            portraitImage.sprite = player.Definition?.Portrait != null ? player.Definition.Portrait : player.Definition?.BattleSprite;
-            portraitImage.color = Color.white;
-            stateLabel.color = new Color(1f, 0.45f, 0.35f, 1f);
-
-            slot = new PlayerSlotView
-            {
-                Character = player,
-                Root = slotRoot,
-                ActiveFrame = frameImage,
-                Portrait = portraitImage,
-                NameLabel = nameLabel,
-                HpFill = hpFill,
-                HpLabel = hpLabel,
-                StateLabel = stateLabel
-            };
-
-            return true;
+            reserveHint = CreateText("Hint", parent, TextAnchor.MiddleRight, 11, FontStyle.Bold);
+            RectTransform hintRect = (RectTransform)reserveHint.transform;
+            hintRect.anchorMin = new Vector2(0f, 1f);
+            hintRect.anchorMax = new Vector2(1f, 1f);
+            hintRect.offsetMin = new Vector2(120f, -84f);
+            hintRect.offsetMax = new Vector2(-14f, -64f);
+            reserveHint.color = new Color(0.95f, 0.83f, 0.48f, 1f);
+            return button;
         }
 
         private static Text CreateText(string name, Transform parent, TextAnchor alignment, int fontSize, FontStyle style)
@@ -648,13 +660,26 @@ namespace Shogun.Features.Combat
             return rt;
         }
 
+        private static void ClearChildren(Transform parent)
+        {
+            for (int i = parent.childCount - 1; i >= 0; i--)
+                Destroy(parent.GetChild(i).gameObject);
+        }
+
+        private void BindRosterCharacterEvents()
+        {
+            List<CharacterInstance> roster = ResolvePlayerRosterCharacters();
+            for (int i = 0; i < roster.Count; i++)
+                BindCharacterEvents(roster[i]);
+        }
+
         private void BindCharacterEvents(CharacterInstance character)
         {
             if (character == null || healthCallbacks.ContainsKey(character))
                 return;
 
-            Action<float> healthCallback = _ => RefreshSlot(character);
-            Action deathCallback = () => RefreshSlot(character);
+            Action<float> healthCallback = _ => RefreshHud();
+            Action deathCallback = RefreshHud;
 
             healthCallbacks[character] = healthCallback;
             deathCallbacks[character] = deathCallback;
@@ -684,8 +709,43 @@ namespace Shogun.Features.Combat
         private void RefreshHud()
         {
             RefreshTopBar();
+            RefreshSquadHealthBar();
             RefreshSlots();
             RefreshTurnIndicators();
+        }
+
+        private void RefreshSquadHealthBar()
+        {
+            if (squadHpFill == null || squadHpValueLabel == null)
+                return;
+
+            float totalCurrent = 0f;
+            float totalMax = 0f;
+
+            if (battleManager != null)
+            {
+                totalCurrent = battleManager.GetTotalPlayerHealth();
+                totalMax = battleManager.GetTotalPlayerMaxHealth();
+            }
+            else if (turnManager != null)
+            {
+                IReadOnlyList<CharacterInstance> players = turnManager.GetPlayerCombatants();
+                for (int i = 0; i < players.Count; i++)
+                {
+                    CharacterInstance player = players[i];
+                    if (player == null)
+                        continue;
+
+                    totalCurrent += Mathf.Max(0f, player.CurrentHealth);
+                    totalMax += Mathf.Max(0f, player.MaxHealth);
+                }
+            }
+
+            float maxHealth = Mathf.Max(1f, totalMax);
+            float normalized = Mathf.Clamp01(totalCurrent / maxHealth);
+            squadHpFill.fillAmount = normalized;
+            squadHpFill.color = Color.Lerp(new Color(0.89f, 0.28f, 0.22f, 1f), new Color(0.24f, 0.92f, 0.38f, 1f), normalized);
+            squadHpValueLabel.text = $"{Mathf.CeilToInt(totalCurrent)}/{Mathf.CeilToInt(maxHealth)}";
         }
 
         private void RefreshTurnIndicators()
@@ -753,7 +813,6 @@ namespace Shogun.Features.Combat
             turnIndicators[combatant] = indicator;
             return indicator;
         }
-
         private bool ShouldShowDangerIndicator(CharacterInstance combatant, int turnsUntil)
         {
             return EnableDangerIndicators
@@ -788,6 +847,7 @@ namespace Shogun.Features.Combat
 
             turnIndicators.Clear();
         }
+
         private void RefreshTopBar()
         {
             if (turnLabel == null || objectiveLabel == null)
@@ -833,42 +893,87 @@ namespace Shogun.Features.Combat
 
         private void RefreshSlots()
         {
+            int expectedCount = battleManager != null ? battleManager.GetPlayerLaneCount() : playerSlots.Count;
+            if (expectedCount != playerSlots.Count)
+                RebuildPlayerSlots();
+
             for (int i = 0; i < playerSlots.Count; i++)
-                RefreshSlot(playerSlots[i].Character);
+                RefreshSlot(playerSlots[i]);
         }
 
-        private void RefreshSlot(CharacterInstance character)
+        private void RefreshSlot(PlayerSlotView slot)
         {
-            if (character == null || !slotLookup.TryGetValue(character, out PlayerSlotView slot))
+            if (slot == null)
                 return;
 
-            float maxHealth = Mathf.Max(1f, character.MaxHealth);
-            float healthNormalized = Mathf.Clamp01(character.CurrentHealth / maxHealth);
-            bool isActive = turnManager != null && turnManager.GetCurrentCombatant() == character && character.IsAlive;
+            CharacterInstance front = battleManager != null ? battleManager.GetActivePlayerAtLane(slot.LaneIndex) : null;
+            CharacterInstance reserve = battleManager != null ? battleManager.GetReservePlayerAtLane(slot.LaneIndex) : null;
+            CharacterInstance current = turnManager != null ? turnManager.GetCurrentCombatant() : null;
 
-            Color accent = character.Definition != null ? character.Definition.PaletteAccentColor : new Color(0.45f, 0.82f, 0.96f, 1f);
-            accent.a = 1f;
+            bool currentPlayerTurn = current != null && turnManager != null && turnManager.IsPlayerUnit(current);
+            bool isCurrentLane = currentPlayerTurn && battleManager != null && battleManager.GetPlayerLaneForCharacter(current) == slot.LaneIndex;
+            bool canSwap = currentPlayerTurn && !isPaused && !autoModeEnabled && reserve != null && reserve.IsAlive && battleManager != null;
 
-            slot.NameLabel.text = ResolveCharacterName(character);
-            slot.HpFill.fillAmount = healthNormalized;
-            slot.HpFill.color = Color.Lerp(new Color(0.88f, 0.25f, 0.22f, 1f), new Color(0.2f, 0.92f, 0.38f, 1f), healthNormalized);
-            slot.HpLabel.text = $"{Mathf.CeilToInt(character.CurrentHealth)}/{Mathf.CeilToInt(maxHealth)}";
+            slot.LaneLabel.text = ResolveLaneLabel(slot.LaneIndex);
 
-            if (!character.IsAlive)
+            if (front == null)
             {
-                slot.StateLabel.text = "KO";
-                slot.Portrait.color = new Color(0.58f, 0.58f, 0.58f, 0.85f);
-                slot.ActiveFrame.color = new Color(0.32f, 0.22f, 0.22f, 0.55f);
+                slot.FrontPortrait.sprite = null;
+                slot.FrontPortrait.color = new Color(1f, 1f, 1f, 0f);
+                slot.FrontNameLabel.text = "EMPTY";
+                slot.FrontHpFill.fillAmount = 0f;
+                slot.FrontHpLabel.text = "-";
+                slot.StateLabel.text = string.Empty;
+                slot.ActiveFrame.color = new Color(0.34f, 0.36f, 0.42f, 0.12f);
                 slot.Root.localScale = Vector3.one;
-                return;
+            }
+            else
+            {
+                float maxHealth = Mathf.Max(1f, front.MaxHealth);
+                float healthNormalized = Mathf.Clamp01(front.CurrentHealth / maxHealth);
+                Color accent = front.Definition != null ? front.Definition.PaletteAccentColor : new Color(0.45f, 0.82f, 0.96f, 1f);
+                accent.a = 1f;
+
+                slot.FrontPortrait.sprite = ResolvePortrait(front);
+                slot.FrontPortrait.color = front.IsAlive ? Color.white : new Color(0.58f, 0.58f, 0.58f, 0.85f);
+                slot.FrontNameLabel.text = ResolveCharacterName(front);
+                slot.FrontHpFill.fillAmount = healthNormalized;
+                slot.FrontHpFill.color = Color.Lerp(new Color(0.88f, 0.25f, 0.22f, 1f), new Color(0.2f, 0.92f, 0.38f, 1f), healthNormalized);
+                slot.FrontHpLabel.text = $"{Mathf.CeilToInt(front.CurrentHealth)}/{Mathf.CeilToInt(maxHealth)}";
+                slot.StateLabel.text = !front.IsAlive ? "KO" : isCurrentLane ? "ACTIVE" : string.Empty;
+                slot.ActiveFrame.color = isCurrentLane
+                    ? new Color(accent.r, accent.g, accent.b, 0.72f)
+                    : new Color(0.34f, 0.36f, 0.42f, 0.25f);
+                slot.Root.localScale = isCurrentLane ? new Vector3(1.05f, 1.05f, 1f) : Vector3.one;
             }
 
-            slot.StateLabel.text = isActive ? "ACTIVE" : string.Empty;
-            slot.Portrait.color = Color.white;
-            slot.ActiveFrame.color = isActive
-                ? new Color(accent.r, accent.g, accent.b, 0.72f)
-                : new Color(0.34f, 0.36f, 0.42f, 0.25f);
-            slot.Root.localScale = isActive ? new Vector3(1.06f, 1.06f, 1f) : Vector3.one;
+            if (reserve != null)
+            {
+                slot.ReserveButton.gameObject.SetActive(true);
+                slot.ReserveButton.interactable = canSwap;
+                slot.ReservePortrait.sprite = ResolvePortrait(reserve);
+                slot.ReservePortrait.color = reserve.IsAlive ? Color.white : new Color(0.58f, 0.58f, 0.58f, 0.78f);
+                slot.ReserveNameLabel.text = ResolveCharacterName(reserve);
+                slot.ReserveHintLabel.text = reserve.IsAlive ? (canSwap ? "SWAP" : "BUDDY") : "KO";
+                slot.ReserveHintLabel.color = canSwap ? new Color(0.95f, 0.83f, 0.48f, 1f) : new Color(0.78f, 0.74f, 0.68f, 0.9f);
+            }
+            else
+            {
+                slot.ReserveButton.gameObject.SetActive(false);
+                slot.ReserveHintLabel.text = string.Empty;
+            }
+        }
+
+        private void OnReserveButtonPressed(int laneIndex)
+        {
+            if (battleManager == null || turnManager == null || isPaused || autoModeEnabled)
+                return;
+
+            CharacterInstance current = turnManager.GetCurrentCombatant();
+            if (current == null || !turnManager.IsPlayerUnit(current))
+                return;
+
+            battleManager.TrySwapPlayerLane(laneIndex, out _, out _);
         }
 
         private void OnSpeedButtonPressed()
@@ -900,7 +1005,6 @@ namespace Shogun.Features.Combat
             Time.timeScale = SpeedNormal;
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
-
         private void OnMainMenuButtonPressed()
         {
             Time.timeScale = SpeedNormal;
@@ -1033,7 +1137,6 @@ namespace Shogun.Features.Combat
             autoTurnCoroutine = null;
         }
 
-
         private List<CharacterInstance> GetActiveCombatantsExcept(CharacterInstance attacker, CharacterInstance target)
         {
             List<CharacterInstance> blockers = new List<CharacterInstance>();
@@ -1145,7 +1248,6 @@ namespace Shogun.Features.Combat
                     normalizedBossIds.Add(normalized);
             }
         }
-
         private bool IsBossEnemy(CharacterInstance enemy)
         {
             if (enemy == null || enemy.Definition == null)
@@ -1157,6 +1259,51 @@ namespace Shogun.Features.Combat
 
             string nameToken = ResolveCharacterName(enemy).ToLowerInvariant();
             return nameToken.Contains("boss");
+        }
+
+        private List<CharacterInstance> ResolvePlayerRosterCharacters()
+        {
+            if (battleManager != null)
+                return battleManager.GetAllPlayerCharacters();
+
+            List<CharacterInstance> roster = new List<CharacterInstance>();
+            if (turnManager == null)
+                return roster;
+
+            IReadOnlyList<CharacterInstance> activePlayers = turnManager.GetPlayerCombatants();
+            for (int i = 0; i < activePlayers.Count; i++)
+            {
+                CharacterInstance player = activePlayers[i];
+                if (player != null)
+                    roster.Add(player);
+            }
+
+            return roster;
+        }
+
+        private static Sprite ResolvePortrait(CharacterInstance character)
+        {
+            if (character == null || character.Definition == null)
+                return null;
+
+            return character.Definition.Portrait != null
+                ? character.Definition.Portrait
+                : character.Definition.BattleSprite;
+        }
+
+        private static string ResolveLaneLabel(int laneIndex)
+        {
+            switch (laneIndex)
+            {
+                case 0:
+                    return "1ST";
+                case 1:
+                    return "2ND";
+                case 2:
+                    return "3RD";
+                default:
+                    return $"{laneIndex + 1}TH";
+            }
         }
 
         private static string ResolveCharacterName(CharacterInstance character)
@@ -1193,23 +1340,19 @@ namespace Shogun.Features.Combat
 
         private sealed class PlayerSlotView
         {
-            public CharacterInstance Character;
+            public int LaneIndex;
             public RectTransform Root;
             public Image ActiveFrame;
-            public Image Portrait;
-            public Text NameLabel;
-            public Image HpFill;
-            public Text HpLabel;
+            public Text LaneLabel;
+            public Image FrontPortrait;
+            public Text FrontNameLabel;
+            public Image FrontHpFill;
+            public Text FrontHpLabel;
             public Text StateLabel;
+            public Button ReserveButton;
+            public Image ReservePortrait;
+            public Text ReserveNameLabel;
+            public Text ReserveHintLabel;
         }
     }
-
 }
-
-
-
-
-
-
-
-

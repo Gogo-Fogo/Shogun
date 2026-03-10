@@ -1,0 +1,119 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cae84c2d5f140e44b6318b2af561392, type: 3}
+  m_Name: OkamiJin_CharacterDefinition
+  m_EditorClassIdentifier: 
+  characterId: okami-jin
+  aliases: []
+  surname: 
+  givenName: OkamiJin
+  characterName: OkamiJin
+  description: A wolf samurai beastfighter promoted from the OkamiJin animal legacy lane.
+  portrait: {fileID: 0}
+  bannerSprite: {fileID: 0}
+  battleSprite: {fileID: 815424164945274260, guid: 108f8a34144b4a2798aee67d05cec97b, type: 3}
+  eventVignette: {fileID: 0}
+  animatorController: {fileID: 9100000, guid: dbfc1424b57a4fd887fc37d316545f31, type: 2}
+  colliderSize: {x: 1.15, y: 2.05}
+  colliderOffset: {x: 0, y: 0.03}
+  characterScale: {x: 1.1, y: 1.1, z: 1}
+  invertFacingX: 0
+  paletteAccentColor: {r: 0.48, g: 0.86, b: 0.94, a: 1}
+  characterType: 7
+  elementalType: 5
+  martialArtsType: 6
+  rarity: 4
+  attackRange: 1
+  baseHealth: 194
+  baseAttack: 70
+  baseDefense: 36
+  baseSpeed: 13
+  specialAbilityName: Frostfang Rush
+  specialAbilityDescription: He bursts through the lane with a savage dash attack.
+  specialAbilityCooldown: 3
+  specialAbilityDamage: 168
+  baseStealthEffectiveness: 10
+  stealthDecayRate: 20
+  baseCounterChance: 18
+  counterDamageMultiplier: 114
+  synergyTags:
+  - Animal
+  - Ice
+  worldPillar: 3
+  martialSchool: 6
+  collectibleFantasy: 2
+  collectibleTone: feral
+  visualHook: wolf helm and lunging beast silhouette
+  emotionalHook: hunger
+  loreBlurb: When OkamiJin starts running, the safe distance is already gone.
+  variantPotential: moonlit alpha, shrine guardian form
+  animationMappings:
+  - logicalName: IDLE
+    clip: {fileID: 7400000, guid: dd9bea5695d845db9ba9b440a8880930, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: RUN
+    clip: {fileID: 7400000, guid: ac3fdc8e843f46798210e979b4a2369e, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: WALK
+    clip: {fileID: 7400000, guid: 3db3bfb0f33c49bda9ea4af33c3ae42f, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: ATTACK 1
+    clip: {fileID: 7400000, guid: de74de20cea149619f6ac9e4c6d772a5, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: ATTACK 2
+    clip: {fileID: 7400000, guid: 10aa2e2d4c8c458386f70e88565aca5f, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: ATTACK 3
+    clip: {fileID: 7400000, guid: b3896f010604443393c1d4f5fdc97b9b, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: HURT
+    clip: {fileID: 7400000, guid: 15d9f0247f134e5ab969b45c0fc7187e, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DEATH
+    clip: {fileID: 7400000, guid: 01a2469053a142218973604abf539755, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DEFEND
+    clip: {fileID: 7400000, guid: 38994e801e5c4a5e8a5f0cbb184fb1e9, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: SPECIAL ATTACK
+    clip: {fileID: 7400000, guid: ba64da7442454dbcba8330c797c6871d, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DASH
+    clip: {fileID: 7400000, guid: f49e77815f154b309c4812f77b6da737, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP
+    clip: {fileID: 7400000, guid: 5a3760771b0e44aeb2af3018d31972ab, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-START
+    clip: {fileID: 7400000, guid: d8d0c649f3884930ad5a00a992d37d58, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-FALL
+    clip: {fileID: 7400000, guid: e83d6c87db064161be227be3cb3d9709, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-TRANSITION
+    clip: {fileID: 7400000, guid: 4447206f60a64664a6cb728ff30d03d7, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 

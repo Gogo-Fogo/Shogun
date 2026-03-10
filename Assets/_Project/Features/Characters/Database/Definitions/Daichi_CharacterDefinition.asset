@@ -1,0 +1,119 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cae84c2d5f140e44b6318b2af561392, type: 3}
+  m_Name: Daichi_CharacterDefinition
+  m_EditorClassIdentifier: 
+  characterId: daichi
+  aliases: []
+  surname: 
+  givenName: Daichi
+  characterName: Daichi
+  description: A grounded frontline samurai built from the Samurai #4 legacy lane.
+  portrait: {fileID: 0}
+  bannerSprite: {fileID: 0}
+  battleSprite: {fileID: 815424164945274260, guid: 70165062c30f46e7b15f5073784bd8ba, type: 3}
+  eventVignette: {fileID: 0}
+  animatorController: {fileID: 9100000, guid: 916e69a39b114027a06e468ed8b83710, type: 2}
+  colliderSize: {x: 1.1, y: 2.1}
+  colliderOffset: {x: 0, y: 0.05}
+  characterScale: {x: 1.08, y: 1.08, z: 1}
+  invertFacingX: 0
+  paletteAccentColor: {r: 0.67, g: 0.53, b: 0.22, a: 1}
+  characterType: 0
+  elementalType: 2
+  martialArtsType: 1
+  rarity: 3
+  attackRange: 1
+  baseHealth: 182
+  baseAttack: 64
+  baseDefense: 42
+  baseSpeed: 10
+  specialAbilityName: Stonebreaker Throw
+  specialAbilityDescription: He breaks formation with a heavy thrown follow-up.
+  specialAbilityCooldown: 3
+  specialAbilityDamage: 148
+  baseStealthEffectiveness: 8
+  stealthDecayRate: 20
+  baseCounterChance: 18
+  counterDamageMultiplier: 112
+  synergyTags:
+  - Samurai
+  - Earth
+  worldPillar: 0
+  martialSchool: 0
+  collectibleFantasy: 0
+  collectibleTone: stoic
+  visualHook: broad shoulderguard and grounded stance
+  emotionalHook: duty
+  loreBlurb: He plants his feet where others start negotiating.
+  variantPotential: armored captain, ceremonial retainer
+  animationMappings:
+  - logicalName: IDLE
+    clip: {fileID: 7400000, guid: 5a1e115dd42e4aa4b2ee4238419bfcfb, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: RUN
+    clip: {fileID: 7400000, guid: c6c1029ec72044d0a06845e55df84a05, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: WALK
+    clip: {fileID: 7400000, guid: 5f08a7f5e987460ea5a40df6d0b76488, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: ATTACK 1
+    clip: {fileID: 7400000, guid: 6f683b243f864860b6f5481aac771c83, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: ATTACK 2
+    clip: {fileID: 7400000, guid: d895e34d5eb143b180dcff5aa297624f, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: ATTACK 3
+    clip: {fileID: 7400000, guid: 36141ac414f948478e23be09ee260eca, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: HURT
+    clip: {fileID: 7400000, guid: 14e87886764d4b93a634b95bba711713, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DEATH
+    clip: {fileID: 7400000, guid: 7386a8eb721f4666afefd987efdfa9c7, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DEFEND
+    clip: {fileID: 7400000, guid: 3657ad0e099142a2b81bb1a74bd2c7ab, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: SPECIAL ATTACK
+    clip: {fileID: 7400000, guid: 54cf50a3277940ada22a6ffa582d03fc, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DASH
+    clip: {fileID: 7400000, guid: 9cacd90130f24b2e95a351ca1fe47bb5, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP
+    clip: {fileID: 7400000, guid: db69fe92c0bc4b67a39f8b541f6e0ca1, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-START
+    clip: {fileID: 7400000, guid: 1f47d091a69447f4a4d31cd0b1c0f5b4, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-FALL
+    clip: {fileID: 7400000, guid: 2efea85118f04216af411f7c49f6c57e, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-TRANSITION
+    clip: {fileID: 7400000, guid: 0769311d43f14b7b8c263297c6813e10, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 

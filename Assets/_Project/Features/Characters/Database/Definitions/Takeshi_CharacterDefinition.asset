@@ -1,0 +1,119 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cae84c2d5f140e44b6318b2af561392, type: 3}
+  m_Name: Takeshi_CharacterDefinition
+  m_EditorClassIdentifier: 
+  characterId: takeshi
+  aliases: []
+  surname: 
+  givenName: Takeshi
+  characterName: Takeshi
+  description: A disciplined spear-style samurai promoted from the Samurai #6 legacy lane.
+  portrait: {fileID: 0}
+  bannerSprite: {fileID: 0}
+  battleSprite: {fileID: 815424164945274260, guid: cede1742c70346f5a7a9d83d0985e4c3, type: 3}
+  eventVignette: {fileID: 0}
+  animatorController: {fileID: 9100000, guid: 3a66a7c03a2049edbf940623ed7187a3, type: 2}
+  colliderSize: {x: 1.08, y: 2.1}
+  colliderOffset: {x: 0, y: 0.05}
+  characterScale: {x: 1.06, y: 1.06, z: 1}
+  invertFacingX: 0
+  paletteAccentColor: {r: 0.86, g: 0.72, b: 0.2, a: 1}
+  characterType: 0
+  elementalType: 4
+  martialArtsType: 2
+  rarity: 3
+  attackRange: 1
+  baseHealth: 176
+  baseAttack: 61
+  baseDefense: 38
+  baseSpeed: 12
+  specialAbilityName: Storm Pike
+  specialAbilityDescription: A driving multi-hit thrust that lands like lightning.
+  specialAbilityCooldown: 3
+  specialAbilityDamage: 150
+  baseStealthEffectiveness: 6
+  stealthDecayRate: 20
+  baseCounterChance: 22
+  counterDamageMultiplier: 118
+  synergyTags:
+  - Samurai
+  - Lightning
+  worldPillar: 0
+  martialSchool: 0
+  collectibleFantasy: 0
+  collectibleTone: resolute
+  visualHook: long weapon silhouette and forward guard
+  emotionalHook: resolve
+  loreBlurb: He keeps enough distance to make every answer feel late.
+  variantPotential: ashigaru captain, storm-banner retainer
+  animationMappings:
+  - logicalName: IDLE
+    clip: {fileID: 7400000, guid: ed9553b259594a52959467dd726d5e71, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: RUN
+    clip: {fileID: 7400000, guid: a8c890517e214a8da8fc59d7e114af85, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: WALK
+    clip: {fileID: 7400000, guid: 813560508cc84816a6e19a05f45a8387, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: ATTACK 1
+    clip: {fileID: 7400000, guid: e3c62d929e48492caecbc5896114c30f, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: ATTACK 2
+    clip: {fileID: 7400000, guid: 80633301292c453096cb31f53e94d5c4, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: ATTACK 3
+    clip: {fileID: 7400000, guid: ebae20f192f244838d22d6c878a6f4fe, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: HURT
+    clip: {fileID: 7400000, guid: 6bc6198f43e841ef81c77d348ab28867, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DEATH
+    clip: {fileID: 7400000, guid: 4aa73868722440ee9c142b07ed80beb0, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DEFEND
+    clip: {fileID: 7400000, guid: 10b51c5f61e249ca9a9f0f10938b1751, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: SPECIAL ATTACK
+    clip: {fileID: 7400000, guid: 6ae0ffe1cc4342cda503b12ed2c5db08, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DASH
+    clip: {fileID: 7400000, guid: 4b3ff382a02447808fdc5fe8f308b37d, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP
+    clip: {fileID: 7400000, guid: 9bbe2a5c2abc40f5b3d69db0197ca8ad, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-START
+    clip: {fileID: 7400000, guid: 320a105ccf7a4ee5bb608ce4841c8e9f, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-FALL
+    clip: {fileID: 7400000, guid: 5ab66a5175c44afcb796ffc7ceb6e65a, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-TRANSITION
+    clip: {fileID: 7400000, guid: b74ba4aa4db140d8b103ef6f5e908cf2, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 

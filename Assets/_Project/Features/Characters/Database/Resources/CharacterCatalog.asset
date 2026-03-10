@@ -14,11 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   definitions:
   - {fileID: 11400000, guid: 9fd1014c8f6b4ea480c0f078ff8bc0e2, type: 2}
+  - {fileID: 11400000, guid: 37e588fd31544351beb950371538dd5c, type: 2}
+  - {fileID: 11400000, guid: df7507a5b89a4201a64da5b054964417, type: 2}
+  - {fileID: 11400000, guid: c84ed672553749478a0a8dd0c52c8db7, type: 2}
   - {fileID: 11400000, guid: 65ae2de9a2a542dfb0d9e70f47947591, type: 2}
   - {fileID: 11400000, guid: 7dfeef9ef6a84bba9c380579c9174be1, type: 2}
+  - {fileID: 11400000, guid: e1b956a0472a4a3d844799915812db1c, type: 2}
   - {fileID: 11400000, guid: aea9b57bb9a440fc906ca1dbca850bd0, type: 2}
   - {fileID: 11400000, guid: 9d1caeedbc4146239596fa7efe7561a3, type: 2}
   - {fileID: 11400000, guid: 23d00db518eb49c7aebbd755f2988e23, type: 2}
   - {fileID: 11400000, guid: e8d5d5e0979532040925a70dd3486f29, type: 2}
+  - {fileID: 11400000, guid: 17cbed9cf9524aea88f942c7585b9f8a, type: 2}
   - {fileID: 11400000, guid: a37db9f13b994e359d7a9f5bfd449298, type: 2}
   - {fileID: 11400000, guid: 8c9834636c9b45518fcc8edbd0d7250e, type: 2}

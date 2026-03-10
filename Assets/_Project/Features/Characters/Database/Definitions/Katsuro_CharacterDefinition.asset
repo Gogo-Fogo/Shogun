@@ -1,0 +1,119 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cae84c2d5f140e44b6318b2af561392, type: 3}
+  m_Name: Katsuro_CharacterDefinition
+  m_EditorClassIdentifier: 
+  characterId: katsuro
+  aliases: []
+  surname: 
+  givenName: Katsuro
+  characterName: Katsuro
+  description: A blazing duelist promoted from the Samurai #2 legacy lane.
+  portrait: {fileID: 0}
+  bannerSprite: {fileID: 0}
+  battleSprite: {fileID: 815424164945274260, guid: eb3240cf10b949938f535b7110bd8c3a, type: 3}
+  eventVignette: {fileID: 0}
+  animatorController: {fileID: 9100000, guid: 39170334b753445e9f1f63adebbe441d, type: 2}
+  colliderSize: {x: 1.05, y: 2.05}
+  colliderOffset: {x: 0, y: 0.05}
+  characterScale: {x: 1.05, y: 1.05, z: 1}
+  invertFacingX: 0
+  paletteAccentColor: {r: 0.82, g: 0.24, b: 0.18, a: 1}
+  characterType: 0
+  elementalType: 0
+  martialArtsType: 1
+  rarity: 3
+  attackRange: 1
+  baseHealth: 170
+  baseAttack: 68
+  baseDefense: 34
+  baseSpeed: 13
+  specialAbilityName: Flashstep Cut
+  specialAbilityDescription: He crashes through the lane with a dash attack.
+  specialAbilityCooldown: 3
+  specialAbilityDamage: 154
+  baseStealthEffectiveness: 12
+  stealthDecayRate: 20
+  baseCounterChance: 20
+  counterDamageMultiplier: 116
+  synergyTags:
+  - Samurai
+  - Fire
+  worldPillar: 1
+  martialSchool: 3
+  collectibleFantasy: 1
+  collectibleTone: fierce
+  visualHook: forward-leaning crimson slash silhouette
+  emotionalHook: aggression
+  loreBlurb: Katsuro wins by deciding the exchange before anyone else can breathe.
+  variantPotential: festival duelist, scarred exile
+  animationMappings:
+  - logicalName: IDLE
+    clip: {fileID: 7400000, guid: d97639c2966345a1aeafda050488923f, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: RUN
+    clip: {fileID: 7400000, guid: a6bca8e5d8de4e9497a6256ce1da71d2, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: WALK
+    clip: {fileID: 7400000, guid: ed2e5559dc004c70a04e184b02915638, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: ATTACK 1
+    clip: {fileID: 7400000, guid: eb04f764afe042929822dec29910bd64, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: ATTACK 2
+    clip: {fileID: 7400000, guid: 4e53e87e554042ad9ccc5f334a951352, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: ATTACK 3
+    clip: {fileID: 7400000, guid: b9aa8174426d4e6a8d0edd026f6bee23, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: HURT
+    clip: {fileID: 7400000, guid: b0b5c059741744a3919e93e0b5744160, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DEATH
+    clip: {fileID: 7400000, guid: f26a9cbb7c0d4643b3ee7f9515dd4c96, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DEFEND
+    clip: {fileID: 7400000, guid: 995687069f1d46da8a8e0e8c6f2d1713, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: SPECIAL ATTACK
+    clip: {fileID: 7400000, guid: f4c544475e74491387a0e33d1c3d49da, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: DASH
+    clip: {fileID: 7400000, guid: 8ee0902db2214576b9495e818239c2b5, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP
+    clip: {fileID: 7400000, guid: 332f08989c1943a597014ec47b12050d, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-START
+    clip: {fileID: 7400000, guid: 6785d24e633949e38b73285a323e6c13, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-FALL
+    clip: {fileID: 7400000, guid: 1f226a7e26e547c18bbd48f167841c0b, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
+  - logicalName: JUMP-TRANSITION
+    clip: {fileID: 7400000, guid: c8d23e2685444975aa356f2f19f654b2, type: 2}
+    useAutoAssignment: 0
+    customSearchPattern: 
