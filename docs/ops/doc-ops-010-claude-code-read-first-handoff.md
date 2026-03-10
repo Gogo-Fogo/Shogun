@@ -32,6 +32,14 @@ Read in this exact order before broad scanning:
 
 Only widen the read set after those files if the current task truly needs more context.
 
+## Mandatory docs-reference workflow (Claude and Codex)
+
+For feature implementation work (not pure bug triage or tiny hotfixes):
+
+1. Confirm the source-of-truth docs before coding.
+2. Keep implementation notes and final summaries doc-referenced with concrete file paths.
+3. If shipped behavior changes scope, update the matching docs in the same change or leave an explicit mismatch note.
+
 ## Do not assume
 
 - Do not assume broad system maturity.
@@ -57,3 +65,4 @@ Only widen the read set after those files if the current task truly needs more c
 - The docs tree is the source-of-truth router.
 - This handoff note is intentionally thin and should reduce token waste.
 - If the task is active implementation, prefer the short-term TODO and slice docs before reading broader roadmap material.
+

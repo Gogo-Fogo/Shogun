@@ -85,6 +85,15 @@ For most tasks:
 3. Prefer `design/` for product design, roster/world design, and character identity; `art/` for production-facing art rules; `ops/` for tooling and workflow; `legal/` for compliance and policy; and `research/` for engineering and comparative studies.
 4. Open the matching PDF in `recruiter/` only if formatting, page fidelity, or missing detail matters.
 
+## Feature implementation gate (Codex and Claude)
+
+For feature work, behavior changes, or architecture changes:
+
+1. Route through the smallest relevant docs set before coding.
+2. For active implementation by default, read `DOC-OPS-010`, `DOC-OPS-008`, `DESIGN-008`, and `DESIGN-009` first.
+3. In implementation summaries, cite the docs that drove key decisions with concrete file paths.
+4. If shipped behavior or scope changes, update the corresponding docs in the same change or record an explicit mismatch note.
+
 ## Canonical document catalog
 
 | ID | Topic | Primary AI path | Recruiter PDF path | Authority | Notes |
