@@ -54,6 +54,8 @@ Start here for next-stage implementation or Claude Code onboarding:
    - implementation artifact inventory and output manifest
 11. [`doc-ops-005-march-2026-repo-modernization-retrospective.md`](./doc-ops-005-march-2026-repo-modernization-retrospective.md)
    - retrospective explanation for the March 2026 repo/tooling cleanup batch
+12. [`doc-ops-012-2026-03-10-combat-ui-and-auto-positioning-retrospective.md`](./doc-ops-012-2026-03-10-combat-ui-and-auto-positioning-retrospective.md)
+   - retrospective explanation for the March 10, 2026 combat HUD and auto-positioning batch
 
 ## Companion docs outside this folder
 
@@ -81,7 +83,8 @@ Start here for next-stage implementation or Claude Code onboarding:
 9. `DOC-OPS-004`
 10. `DOC-OPS-001`
 11. `DOC-OPS-005`
-12. `DOC-LEGAL-001`
+12. `DOC-OPS-012`
+13. `DOC-LEGAL-001`
 
 ## Rule for future updates
 
@@ -92,5 +95,4 @@ Add new ops docs here when:
 - the Unity editor baseline or upgrade policy materially changes
 - a handoff/startup flow becomes stable enough to recommend before broad scanning
 - a new operational retrospective or inventory note is needed
-- a UI implementation backlog becomes stable enough to route active-slice work
 - a UI implementation backlog becomes stable enough to route active-slice work

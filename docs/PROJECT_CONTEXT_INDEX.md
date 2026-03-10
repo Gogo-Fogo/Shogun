@@ -51,6 +51,7 @@ docs/
     doc-ops-009-long-term-roadmap-todo.md
     doc-ops-010-claude-code-read-first-handoff.md
     doc-ops-011-ui-implementation-todo.md
+    doc-ops-012-2026-03-10-combat-ui-and-auto-positioning-retrospective.md
   research/
     RESEARCH_INDEX.md
     doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.md
@@ -103,6 +104,7 @@ For most tasks:
 | `DOC-OPS-009` | Long-term roadmap TODO | `ops/doc-ops-009-long-term-roadmap-todo.md` | No recruiter PDF in this folder | Operational deferment note | Use when the task is real but explicitly not part of the current slice backlog. |
 | `DOC-OPS-010` | Claude Code read-first handoff | `ops/doc-ops-010-claude-code-read-first-handoff.md` | No recruiter PDF in this folder | Operational handoff note | Use first when starting a new Claude Code implementation session and token efficiency matters. |
 | `DOC-OPS-011` | UI implementation TODO | `ops/doc-ops-011-ui-implementation-todo.md` | No recruiter PDF in this folder | Operational UI backlog | Use when the task is battle UI readability, mobile portrait layout, result-state clarity, or other UI work that must stay inside the active vertical slice. |
+| `DOC-OPS-012` | March 10, 2026 combat UI and auto-positioning retrospective | `ops/doc-ops-012-2026-03-10-combat-ui-and-auto-positioning-retrospective.md` | No recruiter PDF in this folder | Operational change log | Use when the question is what changed in pushed commit `cabf59a`, why it shipped as one combat-clarity batch, and what rationale was missing from the absent commit body. |
 | `DESIGN-001` | Character collection and fantasy strategy | `design/design-001-character-collection-and-fantasy-strategy.md` | No recruiter PDF in this folder | Primary collection-strategy note | Use for collectible fantasy, roster pillars, battle-vs-presentation art lanes, and variant planning. |
 | `DESIGN-002` | World pillars and combat identity framework | `design/design-002-world-pillars-and-combat-identity-framework.md` | No recruiter PDF in this folder | Primary roster-identity note | Use for world pillars, elemental affinity, weapon families, martial schools, and how those layers stack into a character identity. |
 | `DESIGN-003` | Long-term balance and power-creep policy | `design/design-003-long-term-balance-and-power-creep-policy.md` | No recruiter PDF in this folder | Primary live-balance note | Use for banner-value policy, power-creep controls, old-unit refresh cadence, and ranked/PvE balance boundaries. |
