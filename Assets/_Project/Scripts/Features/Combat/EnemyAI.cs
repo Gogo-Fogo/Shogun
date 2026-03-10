@@ -88,9 +88,9 @@ namespace Shogun.Features.Combat
             Animator attackerAnimator = attacker.GetComponentInChildren<Animator>();
             Vector3 strikeWorldPos = CombatMovementUtility.GetAttackApproachPosition(attacker, target, GetActiveCombatantsExcept(attacker, target));
 
-            // Distance-proportional travel time so the run is always visible,
-            // regardless of how far the enemy starts from its target.
-            float travelDist = Vector3.Distance(CombatMovementUtility.GetWorldPosition(attacker.transform), strikeWorldPos);
+            float travelDist = Vector2.Distance(
+                (Vector2)CombatMovementUtility.GetWorldPosition(attacker.transform),
+                (Vector2)strikeWorldPos);
             float dynamicTravelTime = Mathf.Clamp(travelDist / Mathf.Max(0.1f, movementSpeed), minTravelTime, maxTravelTime);
 
             CombatMovementUtility.FaceCharacterTowards(attacker, target);
@@ -102,29 +102,48 @@ namespace Shogun.Features.Combat
             if (attackerAnimator != null)
                 attackerAnimator.SetBool("isRunning", false);
 
-            // Range check: only deal damage if the enemy is actually within attack range
-            // of the target after moving (blocker avoidance can push to a far slot).
-            float attackRange = attacker.GetAttackRangeRadius();
-            float distToTarget = Vector3.Distance(
-                CombatMovementUtility.GetColliderWorldCenter(attacker),
-                CombatMovementUtility.GetColliderWorldCenter(target));
-            bool withinRange = distToTarget <= attackRange + CombatMovementUtility.GetColliderHalfWidth(target) + 0.25f;
+            if (!CombatMovementUtility.IsTargetWithinAttackRange(attacker, target))
+            {
+                Vector3 correctedStrikeWorldPos = CombatMovementUtility.GetAttackApproachPosition(attacker, target);
+                float correctionDistance = Vector2.Distance(
+                    (Vector2)CombatMovementUtility.GetWorldPosition(attacker.transform),
+                    (Vector2)correctedStrikeWorldPos);
 
-            attacker.PerformBasicAttack();
-            yield return new WaitForSeconds(attackHitPause);
+                if (correctionDistance > 0.05f)
+                {
+                    if (attackerAnimator != null)
+                        attackerAnimator.SetBool("isRunning", true);
+
+                    float correctionTravelTime = Mathf.Clamp(correctionDistance / Mathf.Max(0.1f, movementSpeed), minTravelTime, maxTravelTime);
+                    yield return CombatMovementUtility.MoveCharacterToWorldPosition(attacker.transform, correctedStrikeWorldPos, correctionTravelTime);
+
+                    if (attackerAnimator != null)
+                        attackerAnimator.SetBool("isRunning", false);
+                }
+            }
+
+            bool withinRange = CombatMovementUtility.IsTargetWithinAttackRange(attacker, target);
+            float rangeThreshold = CombatMovementUtility.GetAttackRangeThreshold(attacker, target);
+            float distToTarget = Vector2.Distance(
+                (Vector2)CombatMovementUtility.GetColliderWorldCenter(attacker),
+                (Vector2)CombatMovementUtility.GetColliderWorldCenter(target));
 
             float damage = 0f;
             if (withinRange)
             {
+                attacker.PerformBasicAttack();
+                yield return new WaitForSeconds(attackHitPause);
+
                 damage = attacker.CalculateDamageAgainst(target);
                 target.TakeDamage(damage);
                 BattleFloatingText.SpawnDamage(target, damage);
             }
             else
             {
-                Debug.LogWarning($"[EnemyAI] {attacker.Definition?.CharacterName} out of range " +
-                                 $"({distToTarget:F2} > {attackRange + CombatMovementUtility.GetColliderHalfWidth(target) + 0.25f:F2}) — attack whiffed.");
+                Debug.LogWarning($"[EnemyAI] {attacker.Definition?.CharacterName} could not reach {target.Definition?.CharacterName} " +
+                                 $"({distToTarget:F2} > {rangeThreshold:F2}) - attack skipped.");
             }
+
             yield return new WaitForSeconds(attackRecoverDelay);
 
             if (attackerAnimator != null)
@@ -213,10 +232,3 @@ namespace Shogun.Features.Combat
         }
     }
 }
-
-
-
-
-
-
-

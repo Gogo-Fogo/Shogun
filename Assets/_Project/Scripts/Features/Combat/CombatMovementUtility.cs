@@ -13,24 +13,30 @@ namespace Shogun.Features.Combat
     public static class CombatMovementUtility
     {
         private const float AttackSeparationPadding = 0.12f;
-        private const float SlotSpacingScale = 1.15f;
-        private const float MinimumSlotSpacing = 0.95f;
+        private const float SlotSpacingScale = 1.25f;
+        private const float MinimumSlotSpacing = 1.15f;
         private const int CandidateSlotDepth = 5;
+        private const int CandidateSeparationDepth = 2;
+        private const float CandidateSeparationStep = 0.42f;
         private const float CandidateDistancePenalty = 0.08f;
         private const float SlotIndexPenalty = 0.05f;
-        private const float BlockerClearancePadding = 0.24f;
-        private const float OverlapPenaltyScale = 4f;
+        private const float SideSwitchPenalty = 0.12f;
+        private const float SeparationPenalty = 0.05f;
+        private const float BlockerClearancePadding = 0.34f;
+        private const float OverlapPenaltyScale = 10f;
+        private const float AttackRangeTolerance = 0.25f;
+        private const float VariationPreferenceWeight = 0.12f;
+        private const float VariationSlotFalloff = 0.28f;
+        private const float VariationSeparationFalloff = 0.55f;
 
         private static readonly int[] SlotOrder = BuildSlotOrder();
 
-        // ──────────────────────────────────────────────────────────────────────
         // Movement
-        // ──────────────────────────────────────────────────────────────────────
 
         /// <summary>
         /// Smoothly moves <paramref name="characterTransform"/> to a world-space position
-        /// over <paramref name="duration"/> seconds.  Parent-aware — sets localPosition when
-        /// a parent exists so that other parent-relative logic stays consistent.
+        /// over <paramref name="duration"/> seconds. Parent-aware so child combatants stay
+        /// correct under the Characters scene container.
         /// </summary>
         public static IEnumerator MoveCharacterToWorldPosition(Transform characterTransform, Vector3 worldPos, float duration)
         {
@@ -50,14 +56,12 @@ namespace Shogun.Features.Combat
             SetWorldPosition(characterTransform, worldPos);
         }
 
-        // ──────────────────────────────────────────────────────────────────────
         // Attack positioning
-        // ──────────────────────────────────────────────────────────────────────
 
         /// <summary>
         /// Returns the best world-space position for <paramref name="attacker"/> to stand
         /// when striking <paramref name="target"/>, scoring candidate slots to avoid
-        /// overlapping <paramref name="blockers"/>.
+        /// overlapping <paramref name="blockers"/> while still respecting the attack range.
         /// </summary>
         public static Vector3 GetAttackApproachPosition(CharacterInstance attacker, CharacterInstance target, IEnumerable<CharacterInstance> blockers = null)
         {
@@ -69,48 +73,81 @@ namespace Shogun.Features.Combat
             Vector3 targetCenter = GetColliderWorldCenter(target);
             Vector3 attackerCenterOffset = attackerCenter - attackerWorldPos;
 
-            float horizontalDirection = ResolveHorizontalAttackDirection(attacker, attackerCenter, targetCenter);
-            float separation = Mathf.Max(0.2f, GetVisualHalfWidth(attacker) + GetVisualHalfWidth(target) + AttackSeparationPadding);
-            float slotSpacing = Mathf.Max(MinimumSlotSpacing, GetFootprintRadius(attacker) * SlotSpacingScale);
+            float preferredSide = ResolveHorizontalAttackDirection(attacker, attackerCenter, targetCenter);
+            float maxReach = Mathf.Max(0.2f, GetAttackRangeThreshold(attacker, target) - 0.05f);
+            float desiredSeparation = Mathf.Max(0.2f, GetVisualHalfWidth(attacker) + GetVisualHalfWidth(target) + AttackSeparationPadding);
+            float baseSeparation = Mathf.Min(desiredSeparation, maxReach);
+            float slotSpacing = Mathf.Max(
+                MinimumSlotSpacing,
+                Mathf.Max(GetFootprintRadius(attacker), GetFootprintRadius(target)) * SlotSpacingScale);
 
-            // Precompute the direct adjacent position — used as a guaranteed fallback
-            // when slot scoring produces NaN or -Infinity for every candidate.
-            // This happens when any blocker's GetFootprintRadius() overflows to Infinity
-            // (e.g. a character with extreme or malformed sprite bounds), which makes every
-            // ScoreCandidate return -Infinity, and -Inf > -Inf is false so bestWorldPos
-            // is never written and the attacker silently stays at its spawn point.
-            Vector3 directCenter = new Vector3(
-                targetCenter.x - horizontalDirection * separation,
-                targetCenter.y,
-                targetCenter.z);
-            Vector3 directWorldPos = directCenter - attackerCenterOffset;
-            directWorldPos.z = attackerWorldPos.z;
+            int variationSeed = BuildVariationSeed(attacker, target, attackerWorldPos, targetCenter);
+            int preferredSlotIndex = ResolvePreferredSlotIndex(variationSeed);
+            int preferredSeparationStep = ResolvePreferredSeparationStep(variationSeed);
 
-            Vector3 bestWorldPos = directWorldPos;   // safe fallback — always adjacent
+            Vector3 bestWorldPos = BuildWorldPosition(targetCenter, attackerCenterOffset, attackerWorldPos.z, preferredSide, baseSeparation, 0f);
             float bestScore = float.NegativeInfinity;
+            bool bestOverlaps = true;
 
-            for (int i = 0; i < SlotOrder.Length; i++)
+            for (int sidePass = 0; sidePass < 2; sidePass++)
             {
-                int slotIndex = SlotOrder[i];
-                Vector3 desiredCenter = new Vector3(
-                    targetCenter.x - horizontalDirection * separation,
-                    targetCenter.y + slotIndex * slotSpacing,
-                    targetCenter.z);
+                float side = sidePass == 0 ? preferredSide : -preferredSide;
+                float sidePenalty = sidePass == 0 ? 0f : SideSwitchPenalty;
 
-                Vector3 candidateWorldPos = desiredCenter - attackerCenterOffset;
-                candidateWorldPos.z = attackerWorldPos.z;
-
-                float candidateScore = ScoreCandidate(candidateWorldPos, attacker, target, blockers, attackerCenterOffset, attackerWorldPos, slotIndex);
-
-                // Skip NaN/-Infinity scores — they indicate overflow in footprint math.
-                // Any finite score, even a very negative one, is a valid candidate.
-                if (!float.IsFinite(candidateScore))
-                    continue;
-
-                if (candidateScore > bestScore)
+                for (int separationStep = 0; separationStep <= CandidateSeparationDepth; separationStep++)
                 {
-                    bestScore = candidateScore;
-                    bestWorldPos = candidateWorldPos;
+                    float separation = Mathf.Min(maxReach, baseSeparation + separationStep * CandidateSeparationStep);
+                    float extraPenalty = sidePenalty + separationStep * SeparationPenalty;
+
+                    for (int i = 0; i < SlotOrder.Length; i++)
+                    {
+                        int slotIndex = SlotOrder[i];
+                        Vector3 desiredCenter = new Vector3(
+                            targetCenter.x - side * separation,
+                            targetCenter.y + slotIndex * slotSpacing,
+                            targetCenter.z);
+
+                        float candidateDistanceFromTarget = Vector2.Distance((Vector2)desiredCenter, (Vector2)targetCenter);
+                        if (candidateDistanceFromTarget > maxReach)
+                            continue;
+
+                        Vector3 candidateWorldPos = desiredCenter - attackerCenterOffset;
+                        candidateWorldPos.z = attackerWorldPos.z;
+
+                        float candidateScore = ScoreCandidate(
+                            candidateWorldPos,
+                            attacker,
+                            target,
+                            blockers,
+                            attackerCenterOffset,
+                            attackerWorldPos,
+                            slotIndex,
+                            extraPenalty,
+                            out bool candidateOverlaps);
+
+                        if (!float.IsFinite(candidateScore))
+                            continue;
+
+                        candidateScore += GetVariationBonus(slotIndex, separationStep, preferredSlotIndex, preferredSeparationStep);
+
+                        if (candidateOverlaps != bestOverlaps)
+                        {
+                            if (!candidateOverlaps)
+                            {
+                                bestOverlaps = false;
+                                bestScore = candidateScore;
+                                bestWorldPos = candidateWorldPos;
+                            }
+
+                            continue;
+                        }
+
+                        if (candidateScore > bestScore)
+                        {
+                            bestScore = candidateScore;
+                            bestWorldPos = candidateWorldPos;
+                        }
+                    }
                 }
             }
 
@@ -118,13 +155,11 @@ namespace Shogun.Features.Combat
             return bestWorldPos;
         }
 
-        // ──────────────────────────────────────────────────────────────────────
         // Facing
-        // ──────────────────────────────────────────────────────────────────────
 
         /// <summary>
         /// Flips <paramref name="attacker"/>'s X scale so it faces <paramref name="target"/>,
-        /// respecting the character's <c>InvertFacingX</c> definition flag.
+        /// respecting the character definition's facing inversion flag.
         /// </summary>
         public static void FaceCharacterTowards(CharacterInstance attacker, CharacterInstance target)
         {
@@ -140,9 +175,7 @@ namespace Shogun.Features.Combat
             attacker.transform.localScale = scale;
         }
 
-        // ──────────────────────────────────────────────────────────────────────
-        // World-position helpers (parent-aware)
-        // ──────────────────────────────────────────────────────────────────────
+        // World-position helpers
 
         public static Vector3 GetWorldPosition(Transform characterTransform)
         {
@@ -165,9 +198,7 @@ namespace Shogun.Features.Combat
                 characterTransform.position = worldPos;
         }
 
-        // ──────────────────────────────────────────────────────────────────────
         // Collider / bounds queries
-        // ──────────────────────────────────────────────────────────────────────
 
         public static Vector3 GetColliderWorldCenter(CharacterInstance character)
         {
@@ -186,8 +217,6 @@ namespace Shogun.Features.Combat
 
             Vector3 lossy = character.transform.lossyScale;
             float scaledWidth = Mathf.Abs(col.size.x * lossy.x);
-            // Clamp to sane range — prevents Infinity from malformed/extreme-scale sprites
-            // propagating through ScoreCandidate and making every slot score -Infinity.
             return Mathf.Clamp(scaledWidth * 0.5f, 0.05f, 8f);
         }
 
@@ -221,9 +250,36 @@ namespace Shogun.Features.Combat
             return Mathf.Min(Mathf.Max(halfWidth, halfHeight * 0.8f), 8f);
         }
 
-        // ──────────────────────────────────────────────────────────────────────
+        public static float GetAttackRangeThreshold(CharacterInstance attacker, CharacterInstance target)
+        {
+            if (attacker == null || target == null)
+                return 0f;
+
+            return Mathf.Max(0.2f, attacker.GetAttackRangeRadius() + GetColliderHalfWidth(target) + AttackRangeTolerance);
+        }
+
+        public static bool IsTargetWithinAttackRange(CharacterInstance attacker, CharacterInstance target)
+        {
+            if (attacker == null || target == null)
+                return false;
+
+            float distance = Vector2.Distance((Vector2)GetColliderWorldCenter(attacker), (Vector2)GetColliderWorldCenter(target));
+            return distance <= GetAttackRangeThreshold(attacker, target);
+        }
+
         // Private helpers
-        // ──────────────────────────────────────────────────────────────────────
+
+        private static Vector3 BuildWorldPosition(Vector3 targetCenter, Vector3 attackerCenterOffset, float worldZ, float side, float separation, float verticalOffset)
+        {
+            Vector3 desiredCenter = new Vector3(
+                targetCenter.x - side * separation,
+                targetCenter.y + verticalOffset,
+                targetCenter.z);
+
+            Vector3 worldPos = desiredCenter - attackerCenterOffset;
+            worldPos.z = worldZ;
+            return worldPos;
+        }
 
         private static float ScoreCandidate(
             Vector3 candidateWorldPos,
@@ -232,11 +288,14 @@ namespace Shogun.Features.Combat
             IEnumerable<CharacterInstance> blockers,
             Vector3 attackerCenterOffset,
             Vector3 attackerWorldPos,
-            int slotIndex)
+            int slotIndex,
+            float extraPenalty,
+            out bool overlaps)
         {
             Vector3 candidateCenter = candidateWorldPos + attackerCenterOffset;
             float minClearance = float.MaxValue;
             float overlapPenalty = 0f;
+            overlaps = false;
 
             if (blockers != null)
             {
@@ -250,7 +309,10 @@ namespace Shogun.Features.Combat
                     minClearance = Mathf.Min(minClearance, clearance);
 
                     if (clearance < 0f)
-                        overlapPenalty += -clearance * OverlapPenaltyScale;
+                    {
+                        overlaps = true;
+                        overlapPenalty += (-clearance + 0.05f) * OverlapPenaltyScale;
+                    }
                 }
             }
 
@@ -259,7 +321,49 @@ namespace Shogun.Features.Combat
 
             float distancePenalty = Vector2.Distance((Vector2)candidateWorldPos, (Vector2)attackerWorldPos) * CandidateDistancePenalty;
             float slotPenalty = Mathf.Abs(slotIndex) * SlotIndexPenalty;
-            return minClearance - overlapPenalty - distancePenalty - slotPenalty;
+            return minClearance - overlapPenalty - distancePenalty - slotPenalty - extraPenalty;
+        }
+
+        private static float GetVariationBonus(int slotIndex, int separationStep, int preferredSlotIndex, int preferredSeparationStep)
+        {
+            float slotScore = Mathf.Max(0f, 1f - Mathf.Abs(slotIndex - preferredSlotIndex) * VariationSlotFalloff);
+            float separationScore = Mathf.Max(0f, 1f - Mathf.Abs(separationStep - preferredSeparationStep) * VariationSeparationFalloff);
+            return VariationPreferenceWeight * slotScore * separationScore;
+        }
+
+        private static int ResolvePreferredSlotIndex(int variationSeed)
+        {
+            float normalized = Hash01(variationSeed, 11) * 2f - 1f;
+            float scaled = normalized * CandidateSlotDepth * 0.65f;
+            return Mathf.Clamp(Mathf.RoundToInt(scaled), -CandidateSlotDepth, CandidateSlotDepth);
+        }
+
+        private static int ResolvePreferredSeparationStep(int variationSeed)
+        {
+            return Mathf.Clamp(Mathf.FloorToInt(Hash01(variationSeed, 29) * (CandidateSeparationDepth + 1)), 0, CandidateSeparationDepth);
+        }
+
+        private static int BuildVariationSeed(CharacterInstance attacker, CharacterInstance target, Vector3 attackerWorldPos, Vector3 targetCenter)
+        {
+            int seed = 17;
+            seed = seed * 31 + (attacker != null ? attacker.GetInstanceID() : 0);
+            seed = seed * 31 + (target != null ? target.GetInstanceID() : 0);
+            seed = seed * 31 + Mathf.RoundToInt(attackerWorldPos.x * 10f);
+            seed = seed * 31 + Mathf.RoundToInt(attackerWorldPos.y * 10f);
+            seed = seed * 31 + Mathf.RoundToInt(targetCenter.x * 10f);
+            seed = seed * 31 + Mathf.RoundToInt(targetCenter.y * 10f);
+            return seed;
+        }
+
+        private static float Hash01(int seed, int salt)
+        {
+            uint value = (uint)(seed ^ (salt * 374761393));
+            value ^= value >> 16;
+            value *= 2246822519u;
+            value ^= value >> 13;
+            value *= 3266489917u;
+            value ^= value >> 16;
+            return (value & 0x00FFFFFFu) / 16777215f;
         }
 
         private static float ResolveHorizontalAttackDirection(CharacterInstance attacker, Vector3 attackerCenter, Vector3 targetCenter)

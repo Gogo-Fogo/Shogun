@@ -772,7 +772,26 @@ namespace Shogun.Features.Combat
             if (attackerAnimator != null)
                 attackerAnimator.SetBool("isRunning", false);
 
-            if (attacker.CanAttack)
+            if (!CombatMovementUtility.IsTargetWithinAttackRange(attacker, target))
+            {
+                Vector3 correctedStrikeWorldPos = CombatMovementUtility.GetAttackApproachPosition(attacker, target);
+                float correctionDistance = Vector2.Distance(
+                    (Vector2)CombatMovementUtility.GetWorldPosition(attacker.transform),
+                    (Vector2)correctedStrikeWorldPos);
+
+                if (correctionDistance > 0.05f)
+                {
+                    if (attackerAnimator != null)
+                        attackerAnimator.SetBool("isRunning", true);
+
+                    yield return CombatMovementUtility.MoveCharacterToWorldPosition(attacker.transform, correctedStrikeWorldPos, Mathf.Max(0.1f, AutoTurnTravelTime * 0.7f));
+
+                    if (attackerAnimator != null)
+                        attackerAnimator.SetBool("isRunning", false);
+                }
+            }
+
+            if (attacker.CanAttack && CombatMovementUtility.IsTargetWithinAttackRange(attacker, target))
             {
                 attacker.PerformBasicAttack();
                 yield return new WaitForSeconds(AutoTurnHitPause);
@@ -965,3 +984,4 @@ namespace Shogun.Features.Combat
     }
 
 }
+
