@@ -32,6 +32,8 @@
    - the one current implementation target, anchored on `Dev_Sandbox`, with explicit in-scope and out-of-scope rules
 10. [`design-009-first-vertical-slice-roster-and-encounter-plan.md`](./design-009-first-vertical-slice-roster-and-encounter-plan.md)
    - the concrete first slice roster, enemy archetypes, authored encounter, and minimal result/reward handoff
+11. [`design-010-combat-hud-and-battle-ui-specification.md`](./design-010-combat-hud-and-battle-ui-specification.md)
+   - portrait combat HUD, drag/release feedback, combo presentation, boss ribbon behavior, and battlefield-first UI hierarchy
 
 ## Companion docs outside this folder
 
@@ -53,6 +55,8 @@
   - use for raid/event burden, alliance-style co-op lessons, and long-run content-sustainability warnings
 - [`../research/doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.md`](../research/doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.md)
   - use when deciding how ambitious online systems should be and what order they should be built in
+- [`../ops/doc-ops-011-ui-implementation-todo.md`](../ops/doc-ops-011-ui-implementation-todo.md)
+  - use when the question shifts from battle UI design to slice-bound execution backlog
 - [`../ops/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md`](../ops/doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)
   - use when the question is PixelLab fit and production-tool boundaries rather than world structure
 
@@ -72,9 +76,20 @@
 
 1. `DOC-GDD-001`
 2. `DESIGN-007`
-3. `DOC-REF-001`
-4. `DESIGN-002`
-5. `DESIGN-003`
+3. `DESIGN-010`
+4. `DOC-REF-001`
+5. `DESIGN-002`
+6. `DESIGN-003`
+
+### Battle HUD, combo feedback, and mobile combat presentation
+
+1. `DOC-GDD-001`
+2. `DESIGN-010`
+3. `DESIGN-006`
+4. `DESIGN-007`
+5. `ART-001`
+6. `DOC-REF-001`
+7. `DOC-OPS-011`
 
 ### Active implementation slice and rebuild target
 
@@ -130,3 +145,4 @@ Add new design docs here when:
 - elements, schools, weapon families, or collection planning materially change
 - the active implementation slice changes materially
 - the concrete roster or authored encounter for the first slice changes materially
+- the battle HUD and combat UI rules become stable enough to enforce

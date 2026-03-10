@@ -21,11 +21,13 @@ Start here for next-stage implementation or Claude Code onboarding:
    - low-token Claude entrypoint, read order, and repo assumptions
 2. [`doc-ops-008-short-term-implementation-todo.md`](./doc-ops-008-short-term-implementation-todo.md)
    - strict near-term backlog for the active vertical slice only
-3. [`../design/design-008-active-vertical-slice-definition.md`](../design/design-008-active-vertical-slice-definition.md)
+3. [`doc-ops-011-ui-implementation-todo.md`](./doc-ops-011-ui-implementation-todo.md)
+   - UI-specific slice backlog for battle readability, mobile portrait layout, and result-state clarity
+4. [`../design/design-008-active-vertical-slice-definition.md`](../design/design-008-active-vertical-slice-definition.md)
    - what the current implementation slice must prove
-4. [`../design/design-009-first-vertical-slice-roster-and-encounter-plan.md`](../design/design-009-first-vertical-slice-roster-and-encounter-plan.md)
+5. [`../design/design-009-first-vertical-slice-roster-and-encounter-plan.md`](../design/design-009-first-vertical-slice-roster-and-encounter-plan.md)
    - the first trustworthy team/enemy/encounter target
-5. [`doc-ops-009-long-term-roadmap-todo.md`](./doc-ops-009-long-term-roadmap-todo.md)
+6. [`doc-ops-009-long-term-roadmap-todo.md`](./doc-ops-009-long-term-roadmap-todo.md)
    - deferred roadmap so the slice backlog stays clean
 
 ## Document order
@@ -34,21 +36,23 @@ Start here for next-stage implementation or Claude Code onboarding:
    - low-token entrypoint for Claude Code and next-stage implementation work
 2. [`doc-ops-008-short-term-implementation-todo.md`](./doc-ops-008-short-term-implementation-todo.md)
    - strict near-term vertical-slice backlog
-3. [`doc-ops-009-long-term-roadmap-todo.md`](./doc-ops-009-long-term-roadmap-todo.md)
+3. [`doc-ops-011-ui-implementation-todo.md`](./doc-ops-011-ui-implementation-todo.md)
+   - UI-specific implementation backlog for the active slice
+4. [`doc-ops-009-long-term-roadmap-todo.md`](./doc-ops-009-long-term-roadmap-todo.md)
    - deferred roadmap lanes kept out of the active slice backlog
-4. [`doc-ops-002-unity-mcp-bridge-setup-and-usage.md`](./doc-ops-002-unity-mcp-bridge-setup-and-usage.md)
+5. [`doc-ops-002-unity-mcp-bridge-setup-and-usage.md`](./doc-ops-002-unity-mcp-bridge-setup-and-usage.md)
    - Unity MCP bridge setup, live-editor access, and safe usage rules
-5. [`doc-ops-003-ai-workspace-safety-and-backup-plan.md`](./doc-ops-003-ai-workspace-safety-and-backup-plan.md)
+6. [`doc-ops-003-ai-workspace-safety-and-backup-plan.md`](./doc-ops-003-ai-workspace-safety-and-backup-plan.md)
    - repo-scope rules, backup cadence, restore drill, and off-site backup workflow
-6. [`doc-ops-006-unity-editor-version-policy-and-upgrade-checklist.md`](./doc-ops-006-unity-editor-version-policy-and-upgrade-checklist.md)
+7. [`doc-ops-006-unity-editor-version-policy-and-upgrade-checklist.md`](./doc-ops-006-unity-editor-version-policy-and-upgrade-checklist.md)
    - project-specific Unity editor baseline, stable upgrade target, and safe upgrade checklist
-7. [`doc-ops-007-stage-1-unity-project-reality-audit.md`](./doc-ops-007-stage-1-unity-project-reality-audit.md)
+8. [`doc-ops-007-stage-1-unity-project-reality-audit.md`](./doc-ops-007-stage-1-unity-project-reality-audit.md)
    - stage-1 reality check for what the current Unity project actually is, what is salvageable, and what needs rebuilding
-8. [`doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md`](./doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)
+9. [`doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md`](./doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)
    - PixelLab fit, subscription vs API, and AI-assisted sprite workflow boundaries
-9. [`doc-ops-001-project-document-and-telemetry-index.md`](./doc-ops-001-project-document-and-telemetry-index.md)
+10. [`doc-ops-001-project-document-and-telemetry-index.md`](./doc-ops-001-project-document-and-telemetry-index.md)
    - implementation artifact inventory and output manifest
-10. [`doc-ops-005-march-2026-repo-modernization-retrospective.md`](./doc-ops-005-march-2026-repo-modernization-retrospective.md)
+11. [`doc-ops-005-march-2026-repo-modernization-retrospective.md`](./doc-ops-005-march-2026-repo-modernization-retrospective.md)
    - retrospective explanation for the March 2026 repo/tooling cleanup batch
 
 ## Companion docs outside this folder
@@ -68,15 +72,16 @@ Start here for next-stage implementation or Claude Code onboarding:
 
 1. `DOC-OPS-010`
 2. `DOC-OPS-008`
-3. `DOC-OPS-009`
-4. `DOC-OPS-002`
-5. `DOC-OPS-003`
-6. `DOC-OPS-006`
-7. `DOC-OPS-007`
-8. `DOC-OPS-004`
-9. `DOC-OPS-001`
-10. `DOC-OPS-005`
-11. `DOC-LEGAL-001`
+3. `DOC-OPS-011`
+4. `DOC-OPS-009`
+5. `DOC-OPS-002`
+6. `DOC-OPS-003`
+7. `DOC-OPS-006`
+8. `DOC-OPS-007`
+9. `DOC-OPS-004`
+10. `DOC-OPS-001`
+11. `DOC-OPS-005`
+12. `DOC-LEGAL-001`
 
 ## Rule for future updates
 
@@ -87,3 +92,5 @@ Add new ops docs here when:
 - the Unity editor baseline or upgrade policy materially changes
 - a handoff/startup flow becomes stable enough to recommend before broad scanning
 - a new operational retrospective or inventory note is needed
+- a UI implementation backlog becomes stable enough to route active-slice work
+- a UI implementation backlog becomes stable enough to route active-slice work

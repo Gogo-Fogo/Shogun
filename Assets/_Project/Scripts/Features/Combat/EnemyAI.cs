@@ -1,7 +1,6 @@
 // EnemyAI.cs
-// Prototype enemy AI: when an enemy's turn starts, wait briefly then auto-attack
-// the closest alive player character.
-
+// Prototype enemy AI: when an enemy's turn starts, move into melee range,
+// attack the closest alive player, and hold a resolved spaced position.
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,7 +15,10 @@ namespace Shogun.Features.Combat
         [SerializeField] private BattleManager battleManager;
 
         [Header("AI Timing")]
-        [SerializeField] private float attackDelay = 0.8f; // seconds before auto-attack fires
+        [SerializeField] private float attackDelay = 0.8f;
+        [SerializeField] private float attackHitPause = 0.18f;
+        [SerializeField] private float attackRecoverDelay = 0.22f;
+        [SerializeField] private float attackTravelTime = 0.24f;
 
         [Header("Facing")]
         [SerializeField] private bool faceClosestPlayerContinuously = true;
@@ -56,7 +58,7 @@ namespace Shogun.Features.Combat
         private void OnTurnStarted(CharacterInstance current)
         {
             if (turnManager == null || battleManager == null) return;
-            if (turnManager.IsPlayerUnit(current)) return; // player turn — do nothing
+            if (turnManager.IsPlayerUnit(current)) return;
 
             UpdateEnemyFacing();
             StartCoroutine(EnemyTurnRoutine(current));
@@ -66,25 +68,40 @@ namespace Shogun.Features.Combat
         {
             yield return new WaitForSeconds(attackDelay);
 
-            if (!turnManager.IsBattleActive) yield break;
-            if (!attacker.IsAlive) yield break;
+            if (!turnManager.IsBattleActive || attacker == null || !attacker.IsAlive)
+                yield break;
 
-            // Pick the closest alive player as target.
             CharacterInstance target = FindClosestAlivePlayer(attacker, battleManager.activeCharacters);
             if (target == null)
             {
-                // No alive players found — TurnManager win/loss check will handle it
                 turnManager.EndTurn();
                 yield break;
             }
 
-            FaceEnemyTowards(attacker, target);
+            Animator attackerAnimator = attacker.GetComponentInChildren<Animator>();
+            Vector3 strikeWorldPos = CombatMovementUtility.GetAttackApproachPosition(attacker, target, GetActiveCombatantsExcept(attacker, target));
+
+            CombatMovementUtility.FaceCharacterTowards(attacker, target);
+            if (attackerAnimator != null)
+                attackerAnimator.SetBool("isRunning", true);
+
+            yield return CombatMovementUtility.MoveCharacterToWorldPosition(attacker.transform, strikeWorldPos, attackTravelTime);
+
+            if (attackerAnimator != null)
+                attackerAnimator.SetBool("isRunning", false);
+
             attacker.PerformBasicAttack();
+            yield return new WaitForSeconds(attackHitPause);
 
             float damage = attacker.CalculateDamageAgainst(target);
             target.TakeDamage(damage);
+            BattleFloatingText.SpawnDamage(target, damage);
+            yield return new WaitForSeconds(attackRecoverDelay);
 
-            Debug.Log($"[EnemyAI] {attacker.Definition?.CharacterName} → {target.Definition?.CharacterName}: " +
+            if (attackerAnimator != null)
+                attackerAnimator.SetBool("isRunning", false);
+
+            Debug.Log($"[EnemyAI] {attacker.Definition?.CharacterName} -> {target.Definition?.CharacterName}: " +
                       $"{damage:F1} dmg  (HP left: {target.CurrentHealth:F1}/{target.MaxHealth:F1})");
 
             turnManager.EndTurn();
@@ -133,6 +150,25 @@ namespace Shogun.Features.Combat
             return closest;
         }
 
+        private List<CharacterInstance> GetActiveCombatantsExcept(CharacterInstance attacker, CharacterInstance target)
+        {
+            List<CharacterInstance> blockers = new List<CharacterInstance>();
+            if (battleManager == null)
+                return blockers;
+
+            List<CharacterInstance> combatants = battleManager.GetAllActiveCombatants();
+            for (int i = 0; i < combatants.Count; i++)
+            {
+                CharacterInstance combatant = combatants[i];
+                if (combatant == null || combatant == attacker || combatant == target)
+                    continue;
+
+                blockers.Add(combatant);
+            }
+
+            return blockers;
+        }
+
         private static void FaceEnemyTowards(CharacterInstance enemy, CharacterInstance target)
         {
             if (enemy == null || target == null) return;
@@ -147,3 +183,10 @@ namespace Shogun.Features.Combat
         }
     }
 }
+
+
+
+
+
+
+

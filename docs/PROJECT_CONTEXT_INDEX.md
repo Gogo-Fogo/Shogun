@@ -20,6 +20,7 @@ docs/
     design-007-range-circles-and-threat-geometry-framework.md
     design-008-active-vertical-slice-definition.md
     design-009-first-vertical-slice-roster-and-encounter-plan.md
+    design-010-combat-hud-and-battle-ui-specification.md
   art/
     ART_INDEX.md
     art-001-style-bible-and-visual-targets.md
@@ -49,6 +50,7 @@ docs/
     doc-ops-008-short-term-implementation-todo.md
     doc-ops-009-long-term-roadmap-todo.md
     doc-ops-010-claude-code-read-first-handoff.md
+    doc-ops-011-ui-implementation-todo.md
   research/
     RESEARCH_INDEX.md
     doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.md
@@ -100,6 +102,7 @@ For most tasks:
 | `DOC-OPS-008` | Short-term implementation TODO | `ops/doc-ops-008-short-term-implementation-todo.md` | No recruiter PDF in this folder | Operational execution backlog | Use when the task is active-slice execution and the goal is to keep near-term work tightly scoped to `Dev_Sandbox` and `Courtyard Ambush`. |
 | `DOC-OPS-009` | Long-term roadmap TODO | `ops/doc-ops-009-long-term-roadmap-todo.md` | No recruiter PDF in this folder | Operational deferment note | Use when the task is real but explicitly not part of the current slice backlog. |
 | `DOC-OPS-010` | Claude Code read-first handoff | `ops/doc-ops-010-claude-code-read-first-handoff.md` | No recruiter PDF in this folder | Operational handoff note | Use first when starting a new Claude Code implementation session and token efficiency matters. |
+| `DOC-OPS-011` | UI implementation TODO | `ops/doc-ops-011-ui-implementation-todo.md` | No recruiter PDF in this folder | Operational UI backlog | Use when the task is battle UI readability, mobile portrait layout, result-state clarity, or other UI work that must stay inside the active vertical slice. |
 | `DESIGN-001` | Character collection and fantasy strategy | `design/design-001-character-collection-and-fantasy-strategy.md` | No recruiter PDF in this folder | Primary collection-strategy note | Use for collectible fantasy, roster pillars, battle-vs-presentation art lanes, and variant planning. |
 | `DESIGN-002` | World pillars and combat identity framework | `design/design-002-world-pillars-and-combat-identity-framework.md` | No recruiter PDF in this folder | Primary roster-identity note | Use for world pillars, elemental affinity, weapon families, martial schools, and how those layers stack into a character identity. |
 | `DESIGN-003` | Long-term balance and power-creep policy | `design/design-003-long-term-balance-and-power-creep-policy.md` | No recruiter PDF in this folder | Primary live-balance note | Use for banner-value policy, power-creep controls, old-unit refresh cadence, and ranked/PvE balance boundaries. |
@@ -109,6 +112,7 @@ For most tasks:
 | `DESIGN-007` | Range circles and threat geometry framework | `design/design-007-range-circles-and-threat-geometry-framework.md` | No recruiter PDF in this folder | Primary combat-readability note | Use for why range circles matter, how short/mid/long attack bands should work, how threat overlap should shape tactics, and how to keep range design readable over time. |
 | `DESIGN-008` | Active vertical slice definition | `design/design-008-active-vertical-slice-definition.md` | No recruiter PDF in this folder | Primary implementation-target note | Use when deciding what the next real slice is, what `Dev_Sandbox` must prove, and what is explicitly out of scope until later. |
 | `DESIGN-009` | First vertical-slice roster and encounter plan | `design/design-009-first-vertical-slice-roster-and-encounter-plan.md` | No recruiter PDF in this folder | Primary slice-content note | Use when deciding which units, enemies, and authored battle scenario should become the first trustworthy gameplay loop. |
+| `DESIGN-010` | Combat HUD and battle UI specification | `design/design-010-combat-hud-and-battle-ui-specification.md` | No recruiter PDF in this folder | Primary battle-UI note | Use when defining the portrait combat HUD, drag/release feedback, combo presentation, boss ribbon behavior, and battlefield-first UI hierarchy. |
 | `ART-001` | Style bible and visual targets | `art/art-001-style-bible-and-visual-targets.md` | No recruiter PDF in this folder | Primary art-direction note | Use first for silhouette rules, palette direction, detail limits, and gameplay readability targets. |
 | `ART-002` | Sprite production pipeline | `art/art-002-sprite-production-pipeline.md` | No recruiter PDF in this folder | Primary art workflow note | Use for the bounded PixelLab-to-Aseprite-to-Unity production flow and trial/pass-fail rules. |
 | `ART-005` | Legacy and production asset separation policy | `art/art-005-legacy-and-production-asset-separation-policy.md` | No recruiter PDF in this folder | Primary asset-organization note | Use for how old imported packs, Gemini/PixelLab working files, and approved runtime assets should be separated. |
@@ -130,7 +134,7 @@ For most tasks:
 
 ### Product and feature intent
 1. `DOC-GDD-001`
-2. `DESIGN-001` to `DESIGN-009` for living collection, world, combat-identity, range-readability, balance, replayability, multiplayer structure, active-slice definition, and first-slice content planning
+2. `DESIGN-001` to `DESIGN-010` for living collection, world, combat-identity, range-readability, battle-UI structure, balance, replayability, multiplayer structure, active-slice definition, and first-slice content planning
 3. `DOC-ENG-001`, `DOC-ENG-002`, and `DOC-DATA-001` for implementation detail
 4. `DOC-REF-001` to `DOC-REF-004` for inspiration and caution only
 
@@ -168,12 +172,13 @@ For most tasks:
 ### Active implementation slice and first-slice content
 1. `DOC-OPS-010`
 2. `DOC-OPS-008`
-3. `DOC-OPS-007`
-4. `DESIGN-008`
-5. `DESIGN-009`
-6. `DOC-GDD-001`
-7. `DESIGN-007`
-8. `ART-005`
+3. `DOC-OPS-011`
+4. `DOC-OPS-007`
+5. `DESIGN-008`
+6. `DESIGN-009`
+7. `DOC-GDD-001`
+8. `DESIGN-007`
+9. `ART-005`
 
 ### AI-assisted sprite production and PixelLab workflow
 1. `ART-001`
@@ -279,10 +284,22 @@ Open:
 Open:
 1. `DOC-OPS-010`
 2. `DOC-OPS-008`
-3. `DESIGN-008`
-4. `DESIGN-009`
-5. `DOC-OPS-007`
-6. `DOC-GDD-001`
+3. `DOC-OPS-011`
+4. `DESIGN-008`
+5. `DESIGN-009`
+6. `DOC-OPS-007`
+7. `DOC-GDD-001`
+
+### UI readability, battle HUD, and mobile combat presentation
+Open:
+1. `DOC-OPS-011`
+2. `DESIGN-010`
+3. `DOC-GDD-001`
+4. `DESIGN-006`
+5. `DESIGN-007`
+6. `DESIGN-008`
+7. `DOC-OPS-008`
+8. `DOC-ENG-002`
 
 ### Unity editor baseline, LTS upgrades, and version-move safety
 Open:
@@ -405,6 +422,7 @@ Update this file whenever:
 Read PROJECT_CONTEXT_INDEX.md first.
 Do not scan the entire folder by default.
 If the task is Claude Code onboarding or next-stage implementation, start with DOC-OPS-010 and DOC-OPS-008 before broad scanning.
+If the task is battle UI readability or mobile combat presentation, open DOC-OPS-011 and DESIGN-010 before scanning broader UI or menu work.
 Prefer the smallest relevant Markdown companion in design/, art/, legal/, ops/, or research/ first, then open recruiter/ PDFs only when needed.
 Use DOC-GDD-001 as primary design truth, DESIGN-* docs as living roster/world identity guidance, DOC-ENG-001 and DOC-ENG-002 plus DOC-DATA-001 as implementation truth, DOC-LEGAL-* docs as compliance constraints, DOC-OPS-* docs as workflow/tooling truth, and DOC-REF-* docs as inspiration/caution only.
 If live Unity editor state or AI tooling workflow matters, open OPS_INDEX.md first, then DOC-OPS-002.

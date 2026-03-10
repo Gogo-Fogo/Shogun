@@ -20,9 +20,17 @@ namespace Shogun.Features.Combat
         public bool snapToGrid = true;
         public float tapMoveSpeed = 50f;
         [Range(0.1f, 1f)] public float dragOpacity = 0.6f;
+        public float dragStopIdleBuffer = 0.08f;
+
+        [Header("Attack Sequence")]
+        public float chainedAttackTravelTime = 0.12f;
+        public float chainedAttackHitPause = 0.08f;
+        public float chainedAttackRecoverTime = 0.10f;
+        public float chainedAttackReturnTime = 0.16f;
 
         private const float tapTimeThreshold = 0.2f;
         private const float tapMoveThreshold = 20f;
+        private const float dragIdleDistanceThresholdSqr = 0.0004f;
 
         private Camera mainCamera;
         private Vector2 pointerDownPos;
@@ -30,6 +38,7 @@ namespace Shogun.Features.Combat
         private bool hasValidPointerDown = false;
         private bool hasValidPointerSample = false;
         private Vector2 lastValidScreenPos = Vector2.zero;
+        private float lastDragMotionTime = float.NegativeInfinity;
 
         private bool isDragging = false;
         private Vector3 dragTargetWorldPos;
@@ -40,6 +49,9 @@ namespace Shogun.Features.Combat
         private Color draggingOriginalColor = Color.white;
         private Coroutine tapMoveCoroutine = null;
         private RangeCircleDisplay dragRangeCircle = null;
+        private DragMultiTargetIndicator dragMultiTargetIndicator = null;
+        private Coroutine attackResolutionCoroutine = null;
+        private bool isResolvingAttackSequence = false;
 
         private static readonly Color EnemyRangeColor  = new Color(1f, 0.25f, 0.25f, 0.70f);
 
@@ -55,6 +67,9 @@ namespace Shogun.Features.Combat
 
         public void OnPointerDown(PointerEventData eventData)
         {
+            if (isResolvingAttackSequence)
+                return;
+
             if (!TryNormalizeScreenPosition(eventData.position, out Vector2 normalizedPos))
             {
                 hasValidPointerDown = false;
@@ -69,6 +84,9 @@ namespace Shogun.Features.Combat
 
         public void OnPointerUp(PointerEventData eventData)
         {
+            if (isResolvingAttackSequence)
+                return;
+
             if (!hasValidPointerDown)
             {
                 ClearDragState();
@@ -87,19 +105,38 @@ namespace Shogun.Features.Combat
             if (!isDragging && heldTime < tapTimeThreshold && movedDist < tapMoveThreshold)
             {
                 StartTapMove(releasePos);
+                ClearDragState();
+                return;
             }
-            else if (isDragging && draggingCharacter != null)
+
+            if (isDragging && draggingCharacter != null)
             {
-                if (TryGetPointerWorld(releasePos, draggingCharacter.transform, out Vector3 pointerWorld))
+                CharacterInstance releasedCharacter = draggingCharacter;
+                Animator releasedAnimator = characterAnimator;
+                Vector3 releaseWorldPos = GetCharacterPosition(releasedCharacter.transform);
+
+                if (TryGetPointerWorld(releasePos, releasedCharacter.transform, out Vector3 pointerWorld))
                 {
-                    Vector3 finalTargetPos = snapToGrid ? SnapToGrid(pointerWorld) : pointerWorld;
-                    SetCharacterPosition(draggingCharacter.transform, finalTargetPos);
+                    releaseWorldPos = snapToGrid ? SnapToGrid(pointerWorld) : pointerWorld;
+                    SetCharacterPosition(releasedCharacter.transform, releaseWorldPos);
                 }
 
-                if (characterAnimator != null)
-                    characterAnimator.SetBool("isRunning", false);
+                if (releasedAnimator != null)
+                    releasedAnimator.SetBool("isRunning", false);
 
                 RestoreDragOpacity();
+
+                List<CharacterInstance> releaseTargets = GetReleaseAttackTargets(releasedCharacter);
+                ClearDragState();
+
+                if (releaseTargets.Count > 0)
+                {
+                    if (attackResolutionCoroutine != null)
+                        StopCoroutine(attackResolutionCoroutine);
+
+                    attackResolutionCoroutine = StartCoroutine(ResolveReleaseAttackSequence(releasedCharacter, releaseWorldPos, releaseTargets));
+                    return;
+                }
             }
 
             ClearDragState();
@@ -107,6 +144,9 @@ namespace Shogun.Features.Combat
 
         public void OnDrag(PointerEventData eventData)
         {
+            if (isResolvingAttackSequence)
+                return;
+
             if (turnManager == null)
                 return;
 
@@ -136,6 +176,7 @@ namespace Shogun.Features.Combat
 
                 SetCharacterPosition(charTransform, pointerWorldPos);
                 dragTargetWorldPos = pointerWorldPos;
+                lastDragMotionTime = Time.unscaledTime;
 
                 if (characterAnimator != null)
                     characterAnimator.SetBool("isRunning", true);
@@ -150,6 +191,12 @@ namespace Shogun.Features.Combat
                         dragRangeCircle = draggingCharacter.gameObject.AddComponent<RangeCircleDisplay>();
 
                     dragRangeCircle.Show(draggingCharacter.GetAttackRangeRadius(), GetPlayerRangeColor(draggingCharacter));
+
+                    dragMultiTargetIndicator = draggingCharacter.GetComponent<DragMultiTargetIndicator>();
+                    if (dragMultiTargetIndicator == null)
+                        dragMultiTargetIndicator = draggingCharacter.gameObject.AddComponent<DragMultiTargetIndicator>();
+
+                    dragMultiTargetIndicator.Hide();
                 }
             }
 
@@ -161,6 +208,9 @@ namespace Shogun.Features.Combat
 
         void Update()
         {
+            if (isResolvingAttackSequence)
+                return;
+
             if (!isDragging || draggingCharacter == null)
                 return;
 
@@ -168,32 +218,52 @@ namespace Shogun.Features.Combat
             Vector3 before = GetCharacterPosition(charTransform);
             Vector3 newPos = Vector3.SmoothDamp(before, dragTargetWorldPos, ref dragVelocity, dragSmoothTime);
             SetCharacterPosition(charTransform, newPos);
+            UpdateDragRunningState(newPos);
 
             UpdateEnemyRangeCircles();
         }
 
+
+        private void UpdateDragRunningState(Vector3 currentWorldPos)
+        {
+            if (characterAnimator == null)
+                return;
+
+            float remainingDistanceSqr = (dragTargetWorldPos - currentWorldPos).sqrMagnitude;
+            if (remainingDistanceSqr > dragIdleDistanceThresholdSqr)
+                lastDragMotionTime = Time.unscaledTime;
+
+            bool shouldRun = remainingDistanceSqr > dragIdleDistanceThresholdSqr
+                             || Time.unscaledTime - lastDragMotionTime <= dragStopIdleBuffer;
+            if (characterAnimator.GetBool("isRunning") != shouldRun)
+                characterAnimator.SetBool("isRunning", shouldRun);
+        }
+
         private void UpdateEnemyRangeCircles()
         {
-            if (turnManager == null) return;
+            if (turnManager == null || draggingCharacter == null)
+                return;
+
             var enemies = turnManager.GetEnemyCombatants();
 
             // Use collider centres throughout so detection aligns with visible bodies.
-            Vector3 playerCenter      = GetColliderWorldCenter(draggingCharacter);
-            float   playerBodyRadius  = GetColliderHalfWidth(draggingCharacter);
-            float   playerAttackRange = draggingCharacter.GetAttackRangeRadius();
+            Vector3 playerCenter = GetColliderWorldCenter(draggingCharacter);
+            float playerBodyRadius = GetColliderHalfWidth(draggingCharacter);
+            float playerAttackRange = draggingCharacter.GetAttackRangeRadius();
+            int enemiesInAttackRange = 0;
 
             foreach (var enemy in enemies)
             {
-                if (!enemy.IsAlive) continue;
+                if (enemy == null || !enemy.IsAlive)
+                    continue;
 
-                Vector3 enemyCenter     = GetColliderWorldCenter(enemy);
-                float   distSqr         = (playerCenter - enemyCenter).sqrMagnitude;
+                Vector3 enemyCenter = GetColliderWorldCenter(enemy);
+                float distSqr = (playerCenter - enemyCenter).sqrMagnitude;
 
-                // ── Red threat circle ──────────────────────────────────────────
-                // Visible when the player's body edge enters the enemy's danger zone.
-                float   threatThreshold  = enemy.GetAttackRangeRadius() + playerBodyRadius;
-                bool    inThreatRange    = distSqr <= threatThreshold * threatThreshold;
-                bool    wasShowingThreat = enemiesShowingRange.Contains(enemy);
+                // Red threat circle.
+                float threatThreshold = enemy.GetAttackRangeRadius() + playerBodyRadius;
+                bool inThreatRange = distSqr <= threatThreshold * threatThreshold;
+                bool wasShowingThreat = enemiesShowingRange.Contains(enemy);
 
                 if (inThreatRange && !wasShowingThreat)
                 {
@@ -205,27 +275,27 @@ namespace Shogun.Features.Combat
                 else if (!inThreatRange && wasShowingThreat)
                 {
                     var display = enemy.GetComponent<RangeCircleDisplay>();
-                    if (display != null) display.Hide();
+                    if (display != null)
+                        display.Hide();
                     enemiesShowingRange.Remove(enemy);
                 }
 
-                // ── Attack-ready / combo indicator ────────────────────────────
-                // Visible when the dragged character can reach this enemy from
-                // their current drag position.  Upgrades to "combo" when another
-                // alive player unit also has this enemy in their attack range.
-                float   enemyBodyRadius   = GetColliderHalfWidth(enemy);
-                float   attackThreshold   = playerAttackRange + enemyBodyRadius;
-                bool    canAttack         = distSqr <= attackThreshold * attackThreshold;
-                bool    wasShowingIndicator = enemiesShowingAttackIndicator.Contains(enemy);
+                // Attack-ready or ally-combo indicator on the enemy.
+                float enemyBodyRadius = GetColliderHalfWidth(enemy);
+                float attackThreshold = playerAttackRange + enemyBodyRadius;
+                bool canAttack = distSqr <= attackThreshold * attackThreshold;
+                bool wasShowingIndicator = enemiesShowingAttackIndicator.Contains(enemy);
 
                 if (canAttack)
                 {
+                    enemiesInAttackRange++;
+
                     var indicator = enemy.GetComponent<AttackTargetIndicator>()
                                     ?? enemy.gameObject.AddComponent<AttackTargetIndicator>();
 
                     int comboPartners = CountComboPartners(enemy, enemyCenter);
                     if (comboPartners > 0)
-                        indicator.ShowComboReady(comboPartners + 1); // +1 for the dragging character
+                        indicator.ShowComboReady(comboPartners + 1);
                     else
                         indicator.ShowAttackReady();
 
@@ -235,9 +305,18 @@ namespace Shogun.Features.Combat
                 else if (!canAttack && wasShowingIndicator)
                 {
                     var indicator = enemy.GetComponent<AttackTargetIndicator>();
-                    if (indicator != null) indicator.Hide();
+                    if (indicator != null)
+                        indicator.Hide();
                     enemiesShowingAttackIndicator.Remove(enemy);
                 }
+            }
+
+            if (dragMultiTargetIndicator != null)
+            {
+                if (enemiesInAttackRange >= 2)
+                    dragMultiTargetIndicator.Show(enemiesInAttackRange);
+                else
+                    dragMultiTargetIndicator.Hide();
             }
         }
 
@@ -252,12 +331,158 @@ namespace Shogun.Features.Combat
             {
                 if (ally == draggingCharacter) continue;
                 if (!ally.IsAlive) continue;
-                float allyRange   = ally.GetAttackRangeRadius() + GetColliderHalfWidth(enemy);
+                float allyRange = ally.GetAttackRangeRadius() + GetColliderHalfWidth(enemy);
                 float allyDistSqr = (GetColliderWorldCenter(ally) - enemyCenter).sqrMagnitude;
                 if (allyDistSqr <= allyRange * allyRange)
                     count++;
             }
             return count;
+        }
+
+        private List<CharacterInstance> GetReleaseAttackTargets(CharacterInstance attacker)
+        {
+            List<CharacterInstance> targets = new List<CharacterInstance>();
+            if (turnManager == null || attacker == null)
+                return targets;
+
+            if (!turnManager.IsPlayerUnit(attacker) || !attacker.CanAttack)
+                return targets;
+
+            Vector3 attackerCenter = GetColliderWorldCenter(attacker);
+            IReadOnlyList<CharacterInstance> enemies = turnManager.GetEnemyCombatants();
+            foreach (CharacterInstance enemy in enemies)
+            {
+                if (enemy == null || !enemy.IsAlive)
+                    continue;
+
+                Vector3 enemyCenter = GetColliderWorldCenter(enemy);
+                float attackThreshold = attacker.GetAttackRangeRadius() + GetColliderHalfWidth(enemy);
+                float distSqr = (attackerCenter - enemyCenter).sqrMagnitude;
+                if (distSqr <= attackThreshold * attackThreshold)
+                    targets.Add(enemy);
+            }
+
+            targets.Sort((left, right) =>
+            {
+                float leftSqr = (GetColliderWorldCenter(left) - attackerCenter).sqrMagnitude;
+                float rightSqr = (GetColliderWorldCenter(right) - attackerCenter).sqrMagnitude;
+                return leftSqr.CompareTo(rightSqr);
+            });
+
+            return targets;
+        }
+
+        private IEnumerator ResolveReleaseAttackSequence(CharacterInstance attacker, Vector3 releaseWorldPos, List<CharacterInstance> targets)
+        {
+            isResolvingAttackSequence = true;
+
+            try
+            {
+                if (attacker == null || !attacker.IsAlive)
+                    yield break;
+
+                Animator attackerAnimator = attacker.GetComponentInChildren<Animator>();
+                for (int i = 0; i < targets.Count; i++)
+                {
+                    CharacterInstance target = targets[i];
+                    if (target == null || !target.IsAlive)
+                        continue;
+
+                    Vector3 strikeWorldPos = GetAttackApproachPosition(attacker, target);
+                    FaceCharacterTowards(attacker, target);
+
+                    if (attackerAnimator != null)
+                        attackerAnimator.SetBool("isRunning", true);
+
+                    yield return MoveCharacterToWorldPosition(attacker.transform, strikeWorldPos, chainedAttackTravelTime);
+
+                    if (attackerAnimator != null)
+                        attackerAnimator.SetBool("isRunning", false);
+
+                    attacker.PerformBasicAttack(consumeAttackAction: i == 0);
+                    yield return new WaitForSeconds(chainedAttackHitPause);
+
+                    float damage = attacker.CalculateDamageAgainst(target);
+                    target.TakeDamage(damage);
+                    BattleFloatingText.SpawnDamage(target, damage);
+
+                    if (i > 0)
+                    {
+                        AttackTargetIndicator indicator = target.GetComponent<AttackTargetIndicator>()
+                            ?? target.gameObject.AddComponent<AttackTargetIndicator>();
+                        indicator.PlayComboBurst(i + 1);
+                    }
+
+                    yield return new WaitForSeconds(chainedAttackRecoverTime);
+                }
+
+                if (attacker != null && attacker.IsAlive)
+                {
+                    if (attackerAnimator != null)
+                        attackerAnimator.SetBool("isRunning", true);
+
+                    yield return MoveCharacterToWorldPosition(attacker.transform, releaseWorldPos, chainedAttackReturnTime);
+
+                    if (attackerAnimator != null)
+                        attackerAnimator.SetBool("isRunning", false);
+                }
+
+                if (turnManager != null && turnManager.IsBattleActive && turnManager.GetCurrentCombatant() == attacker)
+                    turnManager.EndTurn();
+            }
+            finally
+            {
+                attackResolutionCoroutine = null;
+                isResolvingAttackSequence = false;
+            }
+        }
+
+        private IEnumerator MoveCharacterToWorldPosition(Transform characterTransform, Vector3 worldPos, float duration)
+        {
+            Vector3 startWorldPos = GetCharacterPosition(characterTransform);
+            float elapsed = 0f;
+            float clampedDuration = Mathf.Max(0.01f, duration);
+
+            while (elapsed < clampedDuration)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsed / clampedDuration);
+                Vector3 nextWorldPos = Vector3.Lerp(startWorldPos, worldPos, t);
+                SetCharacterPosition(characterTransform, nextWorldPos);
+                yield return null;
+            }
+
+            SetCharacterPosition(characterTransform, worldPos);
+        }
+
+        private Vector3 GetAttackApproachPosition(CharacterInstance attacker, CharacterInstance target)
+        {
+            Vector3 attackerCenter = GetColliderWorldCenter(attacker);
+            Vector3 targetCenter = GetColliderWorldCenter(target);
+            Vector3 direction = targetCenter - attackerCenter;
+            if (direction.sqrMagnitude <= 0.0001f)
+                direction = target.transform.position.x >= attacker.transform.position.x ? Vector3.right : Vector3.left;
+
+            direction.Normalize();
+
+            float separation = Mathf.Max(0.1f, GetColliderHalfWidth(attacker) + GetColliderHalfWidth(target) - 0.05f);
+            Vector3 desiredCenter = targetCenter - direction * separation;
+            Vector3 attackerCenterOffset = attackerCenter - attacker.transform.position;
+            return desiredCenter - attackerCenterOffset;
+        }
+
+        private static void FaceCharacterTowards(CharacterInstance attacker, CharacterInstance target)
+        {
+            if (attacker == null || target == null)
+                return;
+
+            float direction = target.transform.position.x < attacker.transform.position.x ? -1f : 1f;
+            if (attacker.Definition != null && attacker.Definition.InvertFacingX)
+                direction *= -1f;
+
+            Vector3 scale = attacker.transform.localScale;
+            scale.x = Mathf.Abs(scale.x) * direction;
+            attacker.transform.localScale = scale;
         }
 
         // Returns the range-circle colour for a player unit: reads the character's
@@ -537,7 +762,16 @@ namespace Shogun.Features.Combat
                 dragRangeCircle = null;
             }
 
+            if (dragMultiTargetIndicator != null)
+            {
+                dragMultiTargetIndicator.Hide();
+                dragMultiTargetIndicator = null;
+            }
+
             HideAllEnemyRangeCircles();
+
+            if (characterAnimator != null)
+                characterAnimator.SetBool("isRunning", false);
 
             isDragging = false;
             draggingCharacter = null;
@@ -545,6 +779,14 @@ namespace Shogun.Features.Combat
             draggingSpriteRenderer = null;
             dragVelocity = Vector3.zero;
             hasValidPointerDown = false;
+            lastDragMotionTime = float.NegativeInfinity;
         }
     }
 }
+
+
+
+
+
+
+

@@ -40,9 +40,13 @@ namespace Shogun.Features.Characters
         
         [Header("Status Effects")]
         [SerializeField] private StatusEffect[] activeStatusEffects = new StatusEffect[0];
-        
+
         // Movement tracking
         private Coroutine currentMovementCoroutine = null;
+        private Coroutine attackRecoveryCoroutine = null;
+        private const float AttackStateDetectTimeoutSeconds = 0.15f;
+        private const float AttackRecoveryFallbackSeconds = 0.32f;
+        private const float AttackRecoveryMaxSeconds = 1.10f;
         
         // Events
         public event Action<float> OnHealthChanged;
@@ -254,23 +258,122 @@ namespace Shogun.Features.Characters
         }
         
         /// <summary>
-        /// Perform a Blazing-style basic attack: randomly triggers ATTACK 1, 2, or 3 animation.
+        /// Perform a Blazing-style basic attack animation.
+        /// The first hit in a turn consumes the attack action; chained follow-up hits can opt out.
         /// </summary>
-        public void PerformBasicAttack()
+        public void PerformBasicAttack(bool consumeAttackAction = true)
         {
-            if (!CanAttack) return;
-            hasAttackedThisTurn = true;
-            // Randomly pick one of the three attack animations
-            string[] attackStates = { "ATTACK 1", "ATTACK 2", "ATTACK 3" };
-            string chosen = attackStates[UnityEngine.Random.Range(0, attackStates.Length)];
-            var anim = GetComponent<Animator>();
+            if (!isAlive)
+                return;
+
+            if (consumeAttackAction)
+            {
+                if (!CanAttack)
+                    return;
+
+                hasAttackedThisTurn = true;
+            }
+
+            Animator anim = ResolveAnimator();
             if (anim != null)
             {
+                anim.SetBool("isRunning", false);
+                anim.ResetTrigger("AttackTrigger");
                 anim.SetTrigger("AttackTrigger");
-                // Optionally, set a parameter to indicate which attack (if you want to use sub-states)
-                // anim.SetInteger("AttackIndex", Array.IndexOf(attackStates, chosen));
+
+                if (attackRecoveryCoroutine != null)
+                    StopCoroutine(attackRecoveryCoroutine);
+
+                attackRecoveryCoroutine = StartCoroutine(RecoverToIdleAfterAttack(anim));
             }
-            // TODO: Apply attack logic/effects here
+        }
+        private IEnumerator RecoverToIdleAfterAttack(Animator anim)
+        {
+            float detectElapsed = 0f;
+            float waitSeconds = AttackRecoveryFallbackSeconds;
+
+            while (detectElapsed < AttackStateDetectTimeoutSeconds)
+            {
+                if (anim == null || !anim.isActiveAndEnabled)
+                {
+                    attackRecoveryCoroutine = null;
+                    yield break;
+                }
+
+                AnimatorStateInfo state = anim.GetCurrentAnimatorStateInfo(0);
+                if (IsAttackState(state))
+                {
+                    waitSeconds = Mathf.Clamp(
+                        Mathf.Max(AttackRecoveryFallbackSeconds, state.length + 0.02f),
+                        AttackRecoveryFallbackSeconds,
+                        AttackRecoveryMaxSeconds);
+                    break;
+                }
+
+                detectElapsed += Time.deltaTime;
+                yield return null;
+            }
+
+            yield return new WaitForSeconds(waitSeconds);
+
+            if (anim == null || !anim.isActiveAndEnabled || !isAlive)
+            {
+                attackRecoveryCoroutine = null;
+                yield break;
+            }
+
+            ForceLocomotionState(anim);
+            attackRecoveryCoroutine = null;
+        }
+
+        private void ForceLocomotionState(Animator anim)
+        {
+            if (anim == null)
+                return;
+
+            string desiredState = anim.GetBool("isRunning") ? "RUN" : "IDLE";
+            if (TryPlayState(anim, desiredState))
+                return;
+
+            if (!string.Equals(desiredState, "IDLE", StringComparison.Ordinal) && TryPlayState(anim, "IDLE"))
+                return;
+
+            anim.Rebind();
+            anim.Update(0f);
+        }
+
+        private static bool TryPlayState(Animator anim, string stateName)
+        {
+            if (anim == null || string.IsNullOrWhiteSpace(stateName))
+                return false;
+
+            int stateHash = Animator.StringToHash(stateName);
+            if (anim.HasState(0, stateHash))
+            {
+                anim.Play(stateHash, 0, 0f);
+                anim.Update(0f);
+                return true;
+            }
+
+            int baseLayerStateHash = Animator.StringToHash($"Base Layer.{stateName}");
+            if (anim.HasState(0, baseLayerStateHash))
+            {
+                anim.Play(baseLayerStateHash, 0, 0f);
+                anim.Update(0f);
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool IsAttackState(AnimatorStateInfo state)
+        {
+            return state.IsName("ATTACK 1")
+                   || state.IsName("ATTACK 2")
+                   || state.IsName("ATTACK 3")
+                   || state.IsName("Base Layer.ATTACK 1")
+                   || state.IsName("Base Layer.ATTACK 2")
+                   || state.IsName("Base Layer.ATTACK 3");
         }
 
         /// <summary>
@@ -699,3 +802,6 @@ namespace Shogun.Features.Characters
         Bleed           // Physical damage over time
     }
 } 
+
+
+
