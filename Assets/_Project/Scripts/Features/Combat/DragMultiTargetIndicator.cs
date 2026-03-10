@@ -37,7 +37,7 @@ namespace Shogun.Features.Combat
                 return;
 
             int normalizedCount = Mathf.Max(2, targetCount);
-            string labelText = $"X{normalizedCount}!";
+            string labelText = $"\u00D7{normalizedCount}!";
             if (mainLabel != null)
                 mainLabel.text = labelText;
             if (shadowLabel != null)
@@ -62,7 +62,7 @@ namespace Shogun.Features.Combat
             baseLocalPosition = labelRoot.localPosition;
 
             mainLabel = root.AddComponent<TextMesh>();
-            mainLabel.text = "X2!";
+            mainLabel.text = "\u00D72!";
             mainLabel.fontSize = LabelFontSize;
             mainLabel.fontStyle = FontStyle.Bold;
             mainLabel.alignment = TextAlignment.Center;
@@ -74,7 +74,7 @@ namespace Shogun.Features.Combat
             shadow.transform.localPosition = new Vector3(LabelShadowOffsetX, LabelShadowOffsetY, 0.02f);
 
             shadowLabel = shadow.AddComponent<TextMesh>();
-            shadowLabel.text = mainLabel.text;
+            shadowLabel.text = mainLabel.text;  // synced from mainLabel
             shadowLabel.fontSize = LabelFontSize;
             shadowLabel.fontStyle = FontStyle.Bold;
             shadowLabel.alignment = TextAlignment.Center;

@@ -722,12 +722,7 @@ namespace Shogun.Features.Characters
                 return false;
 
             if (rawScreenPos.sqrMagnitude <= 0.0001f)
-            {
-                Vector3 fallbackMouse = Input.mousePosition;
-                rawScreenPos = new Vector2(fallbackMouse.x, fallbackMouse.y);
-                if (!IsFinite(rawScreenPos) || rawScreenPos.sqrMagnitude <= 0.0001f)
-                    return false;
-            }
+                return false;
 
             float minX = 0f;
             float minY = 0f;

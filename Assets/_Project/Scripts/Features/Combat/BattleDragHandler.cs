@@ -437,53 +437,18 @@ namespace Shogun.Features.Combat
             }
         }
 
+        // ── Forwarding wrappers → CombatMovementUtility ──────────────────────
+        // Movement uses the parent-aware CMU version (same semantics as the old
+        // GetCharacterPosition/SetCharacterPosition helpers, just shared).
         private IEnumerator MoveCharacterToWorldPosition(Transform characterTransform, Vector3 worldPos, float duration)
-        {
-            Vector3 startWorldPos = GetCharacterPosition(characterTransform);
-            float elapsed = 0f;
-            float clampedDuration = Mathf.Max(0.01f, duration);
+            => CombatMovementUtility.MoveCharacterToWorldPosition(characterTransform, worldPos, duration);
 
-            while (elapsed < clampedDuration)
-            {
-                elapsed += Time.deltaTime;
-                float t = Mathf.Clamp01(elapsed / clampedDuration);
-                Vector3 nextWorldPos = Vector3.Lerp(startWorldPos, worldPos, t);
-                SetCharacterPosition(characterTransform, nextWorldPos);
-                yield return null;
-            }
-
-            SetCharacterPosition(characterTransform, worldPos);
-        }
-
+        // CMU version includes slot-scoring + blocker avoidance — strictly better.
         private Vector3 GetAttackApproachPosition(CharacterInstance attacker, CharacterInstance target)
-        {
-            Vector3 attackerCenter = GetColliderWorldCenter(attacker);
-            Vector3 targetCenter = GetColliderWorldCenter(target);
-            Vector3 direction = targetCenter - attackerCenter;
-            if (direction.sqrMagnitude <= 0.0001f)
-                direction = target.transform.position.x >= attacker.transform.position.x ? Vector3.right : Vector3.left;
-
-            direction.Normalize();
-
-            float separation = Mathf.Max(0.1f, GetColliderHalfWidth(attacker) + GetColliderHalfWidth(target) - 0.05f);
-            Vector3 desiredCenter = targetCenter - direction * separation;
-            Vector3 attackerCenterOffset = attackerCenter - attacker.transform.position;
-            return desiredCenter - attackerCenterOffset;
-        }
+            => CombatMovementUtility.GetAttackApproachPosition(attacker, target);
 
         private static void FaceCharacterTowards(CharacterInstance attacker, CharacterInstance target)
-        {
-            if (attacker == null || target == null)
-                return;
-
-            float direction = target.transform.position.x < attacker.transform.position.x ? -1f : 1f;
-            if (attacker.Definition != null && attacker.Definition.InvertFacingX)
-                direction *= -1f;
-
-            Vector3 scale = attacker.transform.localScale;
-            scale.x = Mathf.Abs(scale.x) * direction;
-            attacker.transform.localScale = scale;
-        }
+            => CombatMovementUtility.FaceCharacterTowards(attacker, target);
 
         // Returns the range-circle colour for a player unit: reads the character's
         // paletteAccentColor at 0.85 opacity so every fighter has a distinct glow.
@@ -499,26 +464,12 @@ namespace Shogun.Features.Combat
             return new Color(0.2f, 0.9f, 1f, 0.85f); // fallback teal
         }
 
-        // Returns the world-space centre of a character's CapsuleCollider2D.
-        // Falls back to transform.position when no collider is present.
+        // Collider query forwarding — shared with the rest of the combat pipeline.
         private static Vector3 GetColliderWorldCenter(CharacterInstance character)
-        {
-            var col = character.GetComponent<CapsuleCollider2D>();
-            if (col != null)
-                return character.transform.TransformPoint(col.offset);
-            return character.transform.position;
-        }
+            => CombatMovementUtility.GetColliderWorldCenter(character);
 
-        // Returns the world-space half-width of a character's CapsuleCollider2D
-        // (X axis, scaled).  Used to expand the detection radius so the circle
-        // activates when the player's body edge crosses the boundary.
         private static float GetColliderHalfWidth(CharacterInstance character)
-        {
-            var col = character.GetComponent<CapsuleCollider2D>();
-            if (col != null)
-                return col.size.x * 0.5f * Mathf.Abs(character.transform.lossyScale.x);
-            return 0.5f; // sensible fallback — ~half a world-unit
-        }
+            => CombatMovementUtility.GetColliderHalfWidth(character);
 
         private void HideAllEnemyRangeCircles()
         {
