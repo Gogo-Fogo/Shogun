@@ -73,7 +73,20 @@ namespace Shogun.Features.Combat
             float separation = Mathf.Max(0.2f, GetVisualHalfWidth(attacker) + GetVisualHalfWidth(target) + AttackSeparationPadding);
             float slotSpacing = Mathf.Max(MinimumSlotSpacing, GetFootprintRadius(attacker) * SlotSpacingScale);
 
-            Vector3 bestWorldPos = attackerWorldPos;
+            // Precompute the direct adjacent position — used as a guaranteed fallback
+            // when slot scoring produces NaN or -Infinity for every candidate.
+            // This happens when any blocker's GetFootprintRadius() overflows to Infinity
+            // (e.g. a character with extreme or malformed sprite bounds), which makes every
+            // ScoreCandidate return -Infinity, and -Inf > -Inf is false so bestWorldPos
+            // is never written and the attacker silently stays at its spawn point.
+            Vector3 directCenter = new Vector3(
+                targetCenter.x - horizontalDirection * separation,
+                targetCenter.y,
+                targetCenter.z);
+            Vector3 directWorldPos = directCenter - attackerCenterOffset;
+            directWorldPos.z = attackerWorldPos.z;
+
+            Vector3 bestWorldPos = directWorldPos;   // safe fallback — always adjacent
             float bestScore = float.NegativeInfinity;
 
             for (int i = 0; i < SlotOrder.Length; i++)
@@ -88,6 +101,12 @@ namespace Shogun.Features.Combat
                 candidateWorldPos.z = attackerWorldPos.z;
 
                 float candidateScore = ScoreCandidate(candidateWorldPos, attacker, target, blockers, attackerCenterOffset, attackerWorldPos, slotIndex);
+
+                // Skip NaN/-Infinity scores — they indicate overflow in footprint math.
+                // Any finite score, even a very negative one, is a valid candidate.
+                if (!float.IsFinite(candidateScore))
+                    continue;
+
                 if (candidateScore > bestScore)
                 {
                     bestScore = candidateScore;
@@ -167,7 +186,9 @@ namespace Shogun.Features.Combat
 
             Vector3 lossy = character.transform.lossyScale;
             float scaledWidth = Mathf.Abs(col.size.x * lossy.x);
-            return Mathf.Max(0.05f, scaledWidth * 0.5f);
+            // Clamp to sane range — prevents Infinity from malformed/extreme-scale sprites
+            // propagating through ScoreCandidate and making every slot score -Infinity.
+            return Mathf.Clamp(scaledWidth * 0.5f, 0.05f, 8f);
         }
 
         public static float GetColliderHalfHeight(CharacterInstance character)
@@ -178,7 +199,7 @@ namespace Shogun.Features.Combat
 
             Vector3 lossy = character.transform.lossyScale;
             float scaledHeight = Mathf.Abs(col.size.y * lossy.y);
-            return Mathf.Max(0.05f, scaledHeight * 0.5f);
+            return Mathf.Clamp(scaledHeight * 0.5f, 0.05f, 8f);
         }
 
         public static float GetVisualHalfWidth(CharacterInstance character)
@@ -197,7 +218,7 @@ namespace Shogun.Features.Combat
         {
             float halfWidth = GetVisualHalfWidth(character);
             float halfHeight = GetVisualHalfHeight(character);
-            return Mathf.Max(halfWidth, halfHeight * 0.8f);
+            return Mathf.Min(Mathf.Max(halfWidth, halfHeight * 0.8f), 8f);
         }
 
         // ──────────────────────────────────────────────────────────────────────
@@ -300,8 +321,8 @@ namespace Shogun.Features.Combat
                 return;
 
             Vector3 extents = combinedBounds.extents;
-            halfWidth = Mathf.Max(0.05f, Mathf.Abs(extents.x));
-            halfHeight = Mathf.Max(0.05f, Mathf.Abs(extents.y));
+            halfWidth = Mathf.Clamp(Mathf.Abs(extents.x), 0.05f, 8f);
+            halfHeight = Mathf.Clamp(Mathf.Abs(extents.y), 0.05f, 8f);
         }
     }
 }
