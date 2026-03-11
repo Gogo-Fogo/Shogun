@@ -73,6 +73,7 @@ The player should be able to identify:
 - team health at a glance
 - encounter objective or boss state
 - utility actions like speed, auto, and menu
+- subtle left/right edge framing when it is the player's turn, without dimming the battlefield center too aggressively
 
 This state should stay calm and low-noise.
 
@@ -84,6 +85,7 @@ The player should immediately understand:
 - that unit's attack range
 - which enemies are currently in range
 - whether a combo opportunity exists
+- which allies are feeding critical-rate support into that combo
 - whether a counter or major risk exists at release
 
 This state should prioritize geometry and prediction over spectacle.
@@ -121,12 +123,14 @@ Use this area for:
 
 - compact turn-order strip or initiative lane
 - wave or map count
+- compact element and weapon legend strip when those systems are active in the slice
 - small objective marker when needed
 
 Rules:
 
 - the active unit should be visually obvious in the turn strip
 - future units should be readable but lower contrast
+- the legend should read as a fast reminder, not a tutorial wall or full rules matrix
 - if the mode does not need a timer, do not force a timer into this zone just because other games do
 
 #### Top-center: encounter focus module
@@ -156,6 +160,19 @@ Rules:
 - these controls must stay reachable but visually secondary to turn and threat information
 - they should read as utility buttons, not primary combat state
 
+#### Below top-right: combo tracker
+
+Use this area for:
+
+- live hit count during confirmed combo resolution
+- a tier label under the count that escalates as the chain grows
+
+Rules:
+
+- this tracker should stay off during drag prediction and only appear once confirmed hits begin landing
+- the numeric hit total should be the primary read; the tier label should be secondary flair
+- it should sit near the top-right without covering the battlefield center or the utility buttons themselves
+
 ### Battlefield center
 
 The center of the screen remains the hero area.
@@ -173,6 +190,7 @@ Rules:
 - avoid large opaque panels cutting into this space during normal play
 - avoid constantly animating UI elements over the battlefield
 - range, target, and danger overlays should be crisp and legible against busy backgrounds
+- player-controlled range auras can carry the richer fill, glow, and marker treatment; enemy threat circles should stay simpler to avoid overlap clutter
 
 ### Bottom squad rail
 
@@ -213,13 +231,15 @@ When the player is holding and dragging a unit, the UI should show:
 - that unit's attack range circle
 - currently targetable enemies with clear brackets or ring highlights
 - multi-target readiness with a static `X2!`, `X3!`, and so on
+- per-participant `Critical Rate Boost xN` callouts for units that will join the combo
 - counter-danger or threat-risk markers where relevant
 - optional release ghost or commit marker if it improves clarity
 
 ### Drag-state rules
 
 - drag-time indicators should be predictive, not celebratory
-- drag-time combo counts should stay hidden until confirmed combo resolution is complete
+- drag-time combo counts should stay hidden until confirmed hits begin resolving
+- crit-boost preview should appear only for confirmed combo participants and should read as a multiplier, not raw percent math
 - enemy-in-range state should use shape and contrast, not color alone
 - out-of-range enemies should recede without disappearing entirely
 - the player's finger should not hide the main decision readout when possible
@@ -232,12 +252,15 @@ This is the main improvement opportunity over `Blazing`.
 
 1. The player drags and sees which enemies are in range.
 2. The UI shows in-range readiness during drag, but does not surface combo hit counts yet.
-3. The player releases.
-4. The unit attacks the first enemy.
-5. Damage text appears above that enemy.
-6. The unit follows through to the next valid enemy.
-7. After the combo sequence finishes, the combo hit label gets the dramatic bounce and burst treatment.
-8. The unit returns to the release position.
+3. Combo-eligible frontline allies display their current critical-rate boost multipliers during drag, including reserve-buddy support when applicable.
+4. The player releases on an enemy to confirm the attack.
+5. The released-on unit attacks that enemy first.
+6. Any active frontline allies whose attack circles already cover that same enemy join as follow-up hits without spending their own turns.
+7. Damage text appears above the enemy for each confirmed hit, with crit results using the boosted per-unit rate.
+8. A top-right combo tracker updates live on each confirmed hit and escalates its tier text as the chain grows.
+9. If more valid enemies remain inside the acting unit's release range, the lead unit follows through to them and eligible allies can join again.
+10. After the combo sequence finishes, the tracker gets its strongest pulse before fading.
+11. The acting unit returns to the release position.
 
 ### Presentation rules
 
@@ -245,6 +268,8 @@ This is the main improvement opportunity over `Blazing`.
 - second and later hits are where combo spectacle should peak
 - damage text must appear above the impacted enemy and clear quickly
 - combo celebration should not hide the target that was actually hit
+- the live combo tracker should update per hit, but only after hits are confirmed
+- support-based crit preview should sit above the participating allies instead of covering the battlefield center
 - hit-stop and bounce should support readability, not smear it
 
 ## Boss UI
@@ -411,3 +436,7 @@ When choosing between:
 - and stronger payoff after release
 
 save the spectacle for after release.
+
+
+
+

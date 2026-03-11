@@ -128,15 +128,13 @@ namespace Shogun.Features.Combat
                 (Vector2)CombatMovementUtility.GetColliderWorldCenter(attacker),
                 (Vector2)CombatMovementUtility.GetColliderWorldCenter(target));
 
-            float damage = 0f;
+            CombatHitResult hitResult = default;
             if (withinRange)
             {
                 attacker.PerformBasicAttack();
                 yield return new WaitForSeconds(attackHitPause);
 
-                damage = attacker.CalculateDamageAgainst(target);
-                target.TakeDamage(damage);
-                BattleFloatingText.SpawnDamage(target, damage);
+                CombatCriticalSupportUtility.TryResolveBasicHit(battleManager, attacker, target, null, out hitResult);
             }
             else
             {
@@ -151,7 +149,7 @@ namespace Shogun.Features.Combat
 
             if (withinRange)
                 Debug.Log($"[EnemyAI] {attacker.Definition?.CharacterName} -> {target.Definition?.CharacterName}: " +
-                          $"{damage:F1} dmg  (HP left: {target.CurrentHealth:F1}/{target.MaxHealth:F1})");
+                          $"{hitResult.Damage:F1} dmg{(hitResult.WasCritical ? " CRIT" : string.Empty)}  (HP left: {target.CurrentHealth:F1}/{target.MaxHealth:F1})");
 
             turnManager.EndTurn();
         }
@@ -232,3 +230,4 @@ namespace Shogun.Features.Combat
         }
     }
 }
+

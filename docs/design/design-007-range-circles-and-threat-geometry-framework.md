@@ -353,6 +353,7 @@ Use overlap to support:
 
 - enemy focus fire
 - ally link attacks
+- crit-rate support previews driven by overlap, weapon affinity, and lane pairing
 - boss hazard stacking
 - frontline / backline tension
 
@@ -530,3 +531,5 @@ When deciding whether a combat feature supports the game's identity, ask:
 - does this make unit identity more spatially distinct?
 
 If the answer is "no," it is probably not strengthening the combat signature that made `Naruto Blazing`'s range design memorable.
+
+

@@ -8,6 +8,7 @@ namespace Shogun.Features.Combat
         private const float Lifetime = 0.55f;
         private const float RiseDistance = 0.95f;
         private const float PopScale = 0.075f;
+        private const float CriticalPopScale = 0.095f;
         private const int FontSize = 84;
 
         private TextMesh mainLabel;
@@ -16,19 +17,26 @@ namespace Shogun.Features.Combat
         private float spawnedAt;
         private Color mainColor;
         private Color shadowColor;
+        private bool criticalHit;
 
         public static void SpawnDamage(CharacterInstance target, float damage)
+        {
+            SpawnDamage(target, damage, false);
+        }
+
+        public static void SpawnDamage(CharacterInstance target, float damage, bool critical)
         {
             if (target == null)
                 return;
 
             GameObject go = new GameObject("DamagePopup");
             BattleFloatingText popup = go.AddComponent<BattleFloatingText>();
-            popup.Initialize(target, Mathf.RoundToInt(damage).ToString());
+            popup.Initialize(target, Mathf.RoundToInt(damage).ToString(), critical);
         }
 
-        private void Initialize(CharacterInstance target, string text)
+        private void Initialize(CharacterInstance target, string text, bool critical)
         {
+            criticalHit = critical;
             startPosition = GetPopupWorldPosition(target);
             transform.position = startPosition;
 
@@ -38,7 +46,9 @@ namespace Shogun.Features.Combat
             mainLabel.fontStyle = FontStyle.Bold;
             mainLabel.alignment = TextAlignment.Center;
             mainLabel.anchor = TextAnchor.MiddleCenter;
-            mainLabel.color = new Color(1f, 0.97f, 0.82f, 1f);
+            mainLabel.color = criticalHit
+                ? new Color(1f, 0.54f, 0.12f, 1f)
+                : new Color(1f, 0.97f, 0.82f, 1f);
             mainColor = mainLabel.color;
 
             GameObject shadow = new GameObject("Shadow");
@@ -51,7 +61,9 @@ namespace Shogun.Features.Combat
             shadowLabel.fontStyle = FontStyle.Bold;
             shadowLabel.alignment = TextAlignment.Center;
             shadowLabel.anchor = TextAnchor.MiddleCenter;
-            shadowLabel.color = new Color(0.18f, 0.05f, 0f, 0.85f);
+            shadowLabel.color = criticalHit
+                ? new Color(0.28f, 0.08f, 0f, 0.9f)
+                : new Color(0.18f, 0.05f, 0f, 0.85f);
             shadowColor = shadowLabel.color;
 
             MeshRenderer renderer = mainLabel.GetComponent<MeshRenderer>();
@@ -73,7 +85,9 @@ namespace Shogun.Features.Combat
             float elapsed = Time.time - spawnedAt;
             float t = Mathf.Clamp01(elapsed / Lifetime);
             float easeOut = 1f - Mathf.Pow(1f - t, 3f);
-            float scale = PopScale * (1f + Mathf.Sin(t * Mathf.PI) * 0.24f);
+            float baseScale = criticalHit ? CriticalPopScale : PopScale;
+            float pulseStrength = criticalHit ? 0.34f : 0.24f;
+            float scale = baseScale * (1f + Mathf.Sin(t * Mathf.PI) * pulseStrength);
 
             transform.position = startPosition + new Vector3(0f, easeOut * RiseDistance, 0f);
             transform.localScale = Vector3.one * scale;

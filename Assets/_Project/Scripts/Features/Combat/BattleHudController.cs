@@ -27,6 +27,15 @@ namespace Shogun.Features.Combat
         private const int DangerSpecialTurnThreshold = 2;
         private const bool EnableDangerIndicators = false;
         private const string MainMenuSceneName = "MainMenu";
+        private const float TurnVignetteWidth = 148f;
+        private const float TurnVignetteMaxAlpha = 0.18f;
+        private const float TurnVignetteFadeSpeed = 1.8f;
+        private const float ComboTrackerFadeInSpeed = 8.5f;
+        private const float ComboTrackerFadeOutSpeed = 3.8f;
+        private const float ComboTrackerHitHoldSeconds = 0.85f;
+        private const float ComboTrackerFinishHoldSeconds = 1.2f;
+        private const float ComboTrackerBasePulseSeconds = 0.18f;
+        private const float ComboTrackerFinishPulseSeconds = 0.34f;
 
         [Header("Dependencies (auto-resolved if left empty)")]
         [SerializeField] private TurnManager turnManager;
@@ -35,7 +44,7 @@ namespace Shogun.Features.Combat
         [SerializeField] private RectTransform hudPrefab;
 
         [Header("Layout")]
-        [SerializeField] private float topBarHeight = 108f;
+        [SerializeField] private float topBarHeight = 124f;
         [SerializeField] private float bottomRailHeight = 116f;
 
         [Header("Boss Detection")]
@@ -45,6 +54,7 @@ namespace Shogun.Features.Combat
         private RectTransform hudRoot;
         private Text turnLabel;
         private Text objectiveLabel;
+        private Image turnPanelBackground;
         private Image objectivePillBackground;
         private RectTransform pairSlotRow;
         private Image squadHpFill;
@@ -53,7 +63,9 @@ namespace Shogun.Features.Combat
         private Text speedButtonLabel;
         private Text autoButtonLabel;
         private Text menuButtonLabel;
-
+        private CanvasGroup turnVignetteCanvasGroup;
+        private readonly List<LegendTokenView> elementLegendTokens = new List<LegendTokenView>();
+        private readonly List<LegendTokenView> weaponLegendTokens = new List<LegendTokenView>();
         private readonly List<PlayerSlotView> playerSlots = new List<PlayerSlotView>();
         private readonly Dictionary<CharacterInstance, Action<float>> healthCallbacks = new Dictionary<CharacterInstance, Action<float>>();
         private readonly Dictionary<CharacterInstance, Action> deathCallbacks = new Dictionary<CharacterInstance, Action>();
@@ -62,13 +74,49 @@ namespace Shogun.Features.Combat
 
         private static Sprite s_CircleSprite;
         private static Sprite s_RingSprite;
-
+        private static Sprite s_EdgeVignetteSprite;
+        private static readonly Color TurnVignetteColor = new Color(0.05f, 0.03f, 0.02f, 1f);
+        private static readonly ElementalType[] ElementLegendOrder =
+        {
+            ElementalType.Earth,
+            ElementalType.Water,
+            ElementalType.Fire,
+            ElementalType.Wind,
+            ElementalType.Lightning,
+            ElementalType.Ice,
+            ElementalType.Shadow
+        };
+        private static readonly MartialArtsType[] WeaponLegendOrder =
+        {
+            MartialArtsType.Sword,
+            MartialArtsType.Spear,
+            MartialArtsType.Bow,
+            MartialArtsType.Staff,
+            MartialArtsType.DualDaggers,
+            MartialArtsType.HeavyWeapons,
+            MartialArtsType.Unarmed
+        };
         private Coroutine pollCoroutine;
         private Coroutine autoTurnCoroutine;
 
         private float speedMultiplier = SpeedNormal;
         private bool autoModeEnabled;
         private bool isPaused;
+        private float turnVignetteTargetAlpha;
+        private float turnVignetteCurrentAlpha;
+        private RectTransform comboTrackerRoot;
+        private CanvasGroup comboTrackerCanvasGroup;
+        private Text comboHitCountLabel;
+        private Text comboHitsSuffixLabel;
+        private Text comboTypeLabel;
+        private Image comboTrackerGlowImage;
+        private Image comboTrackerStreakImage;
+        private Vector2 comboTrackerBaseAnchoredPosition;
+        private float comboTrackerTargetAlpha;
+        private float comboTrackerCurrentAlpha;
+        private float comboTrackerHideAt = float.NegativeInfinity;
+        private float comboTrackerPulseTimer;
+        private float comboTrackerPulseDuration = ComboTrackerBasePulseSeconds;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void EnsureHudControllerExists()
@@ -112,6 +160,12 @@ namespace Shogun.Features.Combat
             UnbindCharacterEvents();
             ClearTurnIndicators();
             Time.timeScale = SpeedNormal;
+        }
+
+        private void Update()
+        {
+            UpdateTurnVignetteVisual();
+            UpdateComboTrackerVisual();
         }
 
         private void ResolveDependencies()
@@ -171,6 +225,10 @@ namespace Shogun.Features.Combat
 
             if (battleManager != null)
                 battleManager.OnPlayerFormationChanged += HandlePlayerFormationChanged;
+
+            CombatComboPresentationBus.ComboHitRegistered += HandleComboHitRegistered;
+            CombatComboPresentationBus.ComboSequenceFinished += HandleComboSequenceFinished;
+            CombatComboPresentationBus.ComboPresentationReset += HandleComboPresentationReset;
         }
 
         private void UnbindEvents()
@@ -185,6 +243,10 @@ namespace Shogun.Features.Combat
 
             if (battleManager != null)
                 battleManager.OnPlayerFormationChanged -= HandlePlayerFormationChanged;
+
+            CombatComboPresentationBus.ComboHitRegistered -= HandleComboHitRegistered;
+            CombatComboPresentationBus.ComboSequenceFinished -= HandleComboSequenceFinished;
+            CombatComboPresentationBus.ComboPresentationReset -= HandleComboPresentationReset;
         }
 
         private void HandleTurnChanged(CharacterInstance _)
@@ -222,7 +284,23 @@ namespace Shogun.Features.Combat
             Time.timeScale = SpeedNormal;
             ClearTurnIndicators();
             RefreshHud();
+            HideComboTrackerImmediate();
             UpdateUtilityLabels();
+        }
+
+        private void HandleComboHitRegistered(int hitCount)
+        {
+            ApplyComboTrackerState(hitCount, false);
+        }
+
+        private void HandleComboSequenceFinished(int hitCount)
+        {
+            ApplyComboTrackerState(hitCount, true);
+        }
+
+        private void HandleComboPresentationReset()
+        {
+            HideComboTrackerImmediate();
         }
 
         private void BuildHud()
@@ -235,33 +313,305 @@ namespace Shogun.Features.Combat
                 : CreateRect("BattleHudRoot", targetCanvas.transform, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
 
             hudRoot.name = "BattleHudRoot";
+            BuildTurnVignette();
             BuildTopBar();
+            BuildComboTracker();
             BuildBottomRail();
             BuildPauseMenu();
             UpdateUtilityLabels();
         }
+
+        private void BuildTurnVignette()
+        {
+            RectTransform existing = hudRoot.Find("TurnEdgeVignette") as RectTransform;
+            if (existing != null)
+                Destroy(existing.gameObject);
+
+            RectTransform vignette = CreateRect("TurnEdgeVignette", hudRoot, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+            vignette.SetAsFirstSibling();
+
+            turnVignetteCanvasGroup = vignette.gameObject.AddComponent<CanvasGroup>();
+            turnVignetteCanvasGroup.alpha = 0f;
+            turnVignetteCanvasGroup.interactable = false;
+            turnVignetteCanvasGroup.blocksRaycasts = false;
+
+            Sprite edgeSprite = GetEdgeVignetteSprite();
+
+            RectTransform leftEdge = CreateRect("LeftEdge", vignette, new Vector2(0f, 0f), new Vector2(0f, 1f), Vector2.zero, new Vector2(TurnVignetteWidth, 0f));
+            Image leftImage = leftEdge.gameObject.AddComponent<Image>();
+            leftImage.sprite = edgeSprite;
+            leftImage.color = TurnVignetteColor;
+            leftImage.raycastTarget = false;
+
+            RectTransform rightEdge = CreateRect("RightEdge", vignette, new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(-TurnVignetteWidth, 0f), Vector2.zero);
+            Image rightImage = rightEdge.gameObject.AddComponent<Image>();
+            rightImage.sprite = edgeSprite;
+            rightImage.color = TurnVignetteColor;
+            rightImage.raycastTarget = false;
+            rightEdge.localScale = new Vector3(-1f, 1f, 1f);
+
+            turnVignetteCurrentAlpha = 0f;
+            turnVignetteTargetAlpha = ResolveTurnVignetteTargetAlpha();
+        }
+
         private void BuildTopBar()
         {
             RectTransform existing = hudRoot.Find("TopCombatBar") as RectTransform;
             if (existing != null)
                 Destroy(existing.gameObject);
-
-            RectTransform topBar = CreateRect("TopCombatBar", hudRoot, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(20f, -topBarHeight - 12f), new Vector2(-20f, -12f));
+            elementLegendTokens.Clear();
+            weaponLegendTokens.Clear();
+            RectTransform topBar = CreateRect("TopCombatBar", hudRoot, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(18f, -topBarHeight - 14f), new Vector2(-18f, -10f));
             Image topBarBg = topBar.gameObject.AddComponent<Image>();
-            topBarBg.color = new Color(0.05f, 0.07f, 0.1f, 0.62f);
+            topBarBg.color = new Color(0.37f, 0.31f, 0.1f, 0.9f);
             topBarBg.raycastTarget = false;
-
-            HorizontalLayoutGroup topLayout = topBar.gameObject.AddComponent<HorizontalLayoutGroup>();
-            topLayout.padding = new RectOffset(14, 14, 10, 10);
-            topLayout.spacing = 10f;
-            topLayout.childForceExpandWidth = true;
+            Outline topBarOutline = topBar.gameObject.AddComponent<Outline>();
+            topBarOutline.effectColor = new Color(0.97f, 0.9f, 0.56f, 0.16f);
+            topBarOutline.effectDistance = new Vector2(1.6f, -1.6f);
+            RectTransform inner = CreateRect("Inner", topBar, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(4f, 4f), new Vector2(-4f, -4f));
+            Image innerBg = inner.gameObject.AddComponent<Image>();
+            innerBg.color = new Color(0.08f, 0.06f, 0.03f, 0.95f);
+            innerBg.raycastTarget = false;
+            RectTransform topSheen = CreateRect("TopSheen", inner, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(12f, -5f), new Vector2(-12f, -1f));
+            Image topSheenImage = topSheen.gameObject.AddComponent<Image>();
+            topSheenImage.color = new Color(0.98f, 0.9f, 0.54f, 0.14f);
+            topSheenImage.raycastTarget = false;
+            RectTransform contentRoot = CreateRect("Content", inner, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+            HorizontalLayoutGroup topLayout = contentRoot.gameObject.AddComponent<HorizontalLayoutGroup>();
+            topLayout.padding = new RectOffset(8, 8, 8, 8);
+            topLayout.spacing = 8f;
+            topLayout.childForceExpandWidth = false;
             topLayout.childForceExpandHeight = true;
-
-            turnLabel = CreatePillLabel(topBar, "TurnPill", TextAnchor.MiddleLeft);
-            objectiveLabel = CreatePillLabel(topBar, "ObjectivePill", TextAnchor.MiddleCenter, out objectivePillBackground);
-            BuildUtilityControls(topBar);
+            topLayout.childControlWidth = true;
+            topLayout.childControlHeight = true;
+            BuildTurnContextModule(contentRoot);
+            objectiveLabel = CreatePillLabel(contentRoot, "ObjectivePill", TextAnchor.MiddleCenter, out objectivePillBackground);
+            LayoutElement objectiveLayout = objectivePillBackground != null
+                ? objectivePillBackground.transform.parent.GetComponent<LayoutElement>()
+                : null;
+            if (objectiveLayout != null)
+            {
+                objectiveLayout.flexibleWidth = 1f;
+                objectiveLayout.minWidth = 176f;
+            }
+            BuildUtilityControls(contentRoot);
         }
+        private void BuildComboTracker()
+        {
+            if (hudRoot == null)
+                return;
 
+            RectTransform existing = hudRoot.Find("ComboTracker") as RectTransform;
+            if (existing != null)
+                Destroy(existing.gameObject);
+
+            RectTransform tracker = CreateRect("ComboTracker", hudRoot, Vector2.one, Vector2.one, Vector2.zero, Vector2.zero);
+            tracker.anchorMin = Vector2.one;
+            tracker.anchorMax = Vector2.one;
+            tracker.pivot = Vector2.one;
+            tracker.sizeDelta = new Vector2(336f, 132f);
+            tracker.anchoredPosition = new Vector2(-22f, -topBarHeight - 22f);
+            tracker.SetAsLastSibling();
+
+            comboTrackerRoot = tracker;
+            comboTrackerBaseAnchoredPosition = tracker.anchoredPosition;
+            comboTrackerCanvasGroup = tracker.gameObject.AddComponent<CanvasGroup>();
+            comboTrackerCanvasGroup.alpha = 0f;
+            comboTrackerCanvasGroup.interactable = false;
+            comboTrackerCanvasGroup.blocksRaycasts = false;
+
+            RectTransform glow = CreateRect("Glow", tracker, new Vector2(0.1f, 0.14f), new Vector2(1f, 0.94f), Vector2.zero, Vector2.zero);
+            comboTrackerGlowImage = glow.gameObject.AddComponent<Image>();
+            comboTrackerGlowImage.color = new Color(1f, 0.72f, 0.24f, 0.1f);
+            comboTrackerGlowImage.raycastTarget = false;
+
+            RectTransform streak = CreateRect("Streak", tracker, new Vector2(0.18f, 0.46f), new Vector2(1f, 0.6f), Vector2.zero, Vector2.zero);
+            comboTrackerStreakImage = streak.gameObject.AddComponent<Image>();
+            comboTrackerStreakImage.color = new Color(1f, 0.82f, 0.28f, 0.24f);
+            comboTrackerStreakImage.raycastTarget = false;
+            streak.localRotation = Quaternion.Euler(0f, 0f, -5f);
+
+            RectTransform countRoot = CreateRect("CountRoot", tracker, new Vector2(0.12f, 0.36f), new Vector2(0.82f, 1f), Vector2.zero, Vector2.zero);
+            comboHitCountLabel = CreateText("Count", countRoot, TextAnchor.LowerRight, 82, FontStyle.Bold);
+            comboHitCountLabel.resizeTextForBestFit = true;
+            comboHitCountLabel.resizeTextMinSize = 44;
+            comboHitCountLabel.resizeTextMaxSize = 82;
+            comboHitCountLabel.color = new Color(1f, 0.95f, 0.86f, 1f);
+            comboHitCountLabel.text = string.Empty;
+
+            RectTransform hitsRoot = CreateRect("HitsRoot", tracker, new Vector2(0.76f, 0.54f), new Vector2(1f, 0.86f), Vector2.zero, Vector2.zero);
+            comboHitsSuffixLabel = CreateText("Hits", hitsRoot, TextAnchor.LowerLeft, 26, FontStyle.BoldAndItalic);
+            comboHitsSuffixLabel.resizeTextForBestFit = true;
+            comboHitsSuffixLabel.resizeTextMinSize = 16;
+            comboHitsSuffixLabel.resizeTextMaxSize = 26;
+            comboHitsSuffixLabel.color = new Color(1f, 0.84f, 0.26f, 1f);
+            comboHitsSuffixLabel.text = "Hits!";
+
+            RectTransform typeRoot = CreateRect("ComboTypeRoot", tracker, new Vector2(0.04f, 0.02f), new Vector2(1f, 0.48f), Vector2.zero, Vector2.zero);
+            typeRoot.localRotation = Quaternion.Euler(0f, 0f, -3.5f);
+            comboTypeLabel = CreateText("ComboType", typeRoot, TextAnchor.UpperRight, 42, FontStyle.BoldAndItalic);
+            comboTypeLabel.resizeTextForBestFit = true;
+            comboTypeLabel.resizeTextMinSize = 20;
+            comboTypeLabel.resizeTextMaxSize = 42;
+            comboTypeLabel.color = new Color(1f, 0.48f, 0.12f, 1f);
+            comboTypeLabel.text = string.Empty;
+            Outline comboOutline = comboTypeLabel.gameObject.AddComponent<Outline>();
+            comboOutline.effectColor = new Color(0.18f, 0.05f, 0f, 0.52f);
+            comboOutline.effectDistance = new Vector2(1.6f, -1.6f);
+
+            HideComboTrackerImmediate();
+        }
+        private void BuildTurnContextModule(Transform parent)
+        {
+            RectTransform contextRoot = CreateTopBarModule(parent, "TurnContextPill", 246f, 88f, out turnPanelBackground);
+            VerticalLayoutGroup layout = contextRoot.gameObject.AddComponent<VerticalLayoutGroup>();
+            layout.padding = new RectOffset(8, 8, 6, 6);
+            layout.spacing = 4f;
+            layout.childAlignment = TextAnchor.UpperLeft;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+            BuildAffinityLegend(contextRoot);
+            RectTransform labelRoot = CreateRect("TurnLabel", contextRoot, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+            LayoutElement labelLayout = labelRoot.gameObject.AddComponent<LayoutElement>();
+            labelLayout.preferredHeight = 40f;
+            labelLayout.minHeight = 40f;
+            turnLabel = CreateText("Label", labelRoot, TextAnchor.MiddleLeft, 24, FontStyle.Bold);
+            turnLabel.color = new Color(0.98f, 0.95f, 0.84f, 1f);
+            turnLabel.resizeTextForBestFit = true;
+            turnLabel.resizeTextMinSize = 14;
+            turnLabel.resizeTextMaxSize = 24;
+            turnLabel.text = "-";
+        }
+        private void BuildAffinityLegend(Transform parent)
+        {
+            RectTransform legendRoot = CreateRect("AffinityLegend", parent, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+            LayoutElement legendLayout = legendRoot.gameObject.AddComponent<LayoutElement>();
+            legendLayout.preferredHeight = 30f;
+            legendLayout.minHeight = 30f;
+            VerticalLayoutGroup layout = legendRoot.gameObject.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = 2f;
+            layout.childAlignment = TextAnchor.UpperLeft;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+            RectTransform elementRow = BuildLegendRow(legendRoot, "ElementLegendRow", "EL");
+            for (int i = 0; i < ElementLegendOrder.Length; i++)
+            {
+                ElementalType element = ElementLegendOrder[i];
+                LegendTokenView token = CreateLegendToken(
+                    elementRow,
+                    $"Element_{element}",
+                    ResolveElementLegendLabel(element),
+                    ResolveElementColor(element),
+                    16f,
+                    16f,
+                    circular: true);
+                token.ElementalType = element;
+                elementLegendTokens.Add(token);
+            }
+            RectTransform weaponRow = BuildLegendRow(legendRoot, "WeaponLegendRow", "AR");
+            for (int i = 0; i < WeaponLegendOrder.Length; i++)
+            {
+                MartialArtsType weapon = WeaponLegendOrder[i];
+                LegendTokenView token = CreateLegendToken(
+                    weaponRow,
+                    $"Weapon_{weapon}",
+                    ResolveWeaponLegendLabel(weapon),
+                    ResolveWeaponLegendColor(weapon),
+                    20f,
+                    12f,
+                    circular: false);
+                token.MartialArtsType = weapon;
+                weaponLegendTokens.Add(token);
+            }
+        }
+        private RectTransform BuildLegendRow(Transform parent, string name, string caption)
+        {
+            RectTransform row = CreateRect(name, parent, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+            LayoutElement rowLayout = row.gameObject.AddComponent<LayoutElement>();
+            rowLayout.preferredHeight = 14f;
+            rowLayout.minHeight = 14f;
+            HorizontalLayoutGroup layout = row.gameObject.AddComponent<HorizontalLayoutGroup>();
+            layout.spacing = 4f;
+            layout.childAlignment = TextAnchor.MiddleLeft;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = false;
+            layout.childForceExpandHeight = false;
+            RectTransform captionRoot = CreateRect("Caption", row, new Vector2(0f, 0f), new Vector2(0f, 1f), Vector2.zero, Vector2.zero);
+            LayoutElement captionLayout = captionRoot.gameObject.AddComponent<LayoutElement>();
+            captionLayout.preferredWidth = 18f;
+            captionLayout.minWidth = 18f;
+            Text captionLabel = CreateText("Label", captionRoot, TextAnchor.MiddleLeft, 11, FontStyle.Bold);
+            captionLabel.text = caption;
+            captionLabel.color = new Color(0.91f, 0.84f, 0.68f, 0.92f);
+            RectTransform tokenRoot = CreateRect("Tokens", row, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+            LayoutElement tokenLayout = tokenRoot.gameObject.AddComponent<LayoutElement>();
+            tokenLayout.flexibleWidth = 1f;
+            HorizontalLayoutGroup tokenGroup = tokenRoot.gameObject.AddComponent<HorizontalLayoutGroup>();
+            tokenGroup.spacing = 3f;
+            tokenGroup.childAlignment = TextAnchor.MiddleLeft;
+            tokenGroup.childControlWidth = true;
+            tokenGroup.childControlHeight = true;
+            tokenGroup.childForceExpandWidth = false;
+            tokenGroup.childForceExpandHeight = false;
+            return tokenRoot;
+        }
+        private LegendTokenView CreateLegendToken(Transform parent, string name, string label, Color baseColor, float width, float height, bool circular)
+        {
+            RectTransform tokenRoot = CreateRect(name, parent, new Vector2(0f, 0f), new Vector2(0f, 1f), Vector2.zero, Vector2.zero);
+            LayoutElement layoutElement = tokenRoot.gameObject.AddComponent<LayoutElement>();
+            layoutElement.preferredWidth = width;
+            layoutElement.minWidth = width;
+            layoutElement.preferredHeight = height;
+            layoutElement.minHeight = height;
+            Image background = tokenRoot.gameObject.AddComponent<Image>();
+            background.color = baseColor;
+            background.raycastTarget = false;
+            if (circular)
+                background.sprite = GetCircleSprite();
+            Outline outline = tokenRoot.gameObject.AddComponent<Outline>();
+            outline.effectColor = new Color(0.03f, 0.03f, 0.03f, 0.88f);
+            outline.effectDistance = new Vector2(0.6f, -0.6f);
+            Text labelText = CreateText("Label", tokenRoot, TextAnchor.MiddleCenter, circular ? 9 : 10, FontStyle.Bold);
+            labelText.text = label;
+            labelText.color = ResolveLegendTextColor(baseColor);
+            labelText.resizeTextForBestFit = true;
+            labelText.resizeTextMinSize = circular ? 7 : 8;
+            labelText.resizeTextMaxSize = circular ? 9 : 10;
+            return new LegendTokenView
+            {
+                Root = tokenRoot,
+                Background = background,
+                Outline = outline,
+                Label = labelText,
+                BaseColor = baseColor,
+                BaseTextColor = labelText.color
+            };
+        }
+        private static RectTransform CreateTopBarModule(Transform parent, string name, float minWidth, float preferredHeight, out Image backgroundImage)
+        {
+            RectTransform module = CreateRect(name, parent, new Vector2(0f, 0f), new Vector2(0f, 1f), Vector2.zero, Vector2.zero);
+            LayoutElement layoutElement = module.gameObject.AddComponent<LayoutElement>();
+            layoutElement.minWidth = minWidth;
+            layoutElement.preferredWidth = minWidth;
+            layoutElement.preferredHeight = preferredHeight;
+            layoutElement.minHeight = preferredHeight;
+            Image frame = module.gameObject.AddComponent<Image>();
+            frame.color = new Color(0.43f, 0.39f, 0.14f, 0.96f);
+            frame.raycastTarget = false;
+            Outline frameOutline = module.gameObject.AddComponent<Outline>();
+            frameOutline.effectColor = new Color(0.98f, 0.92f, 0.6f, 0.16f);
+            frameOutline.effectDistance = new Vector2(1.1f, -1.1f);
+            RectTransform inner = CreateRect("Inner", module, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(4f, 4f), new Vector2(-4f, -4f));
+            backgroundImage = inner.gameObject.AddComponent<Image>();
+            backgroundImage.color = new Color(0.16f, 0.12f, 0.07f, 0.96f);
+            backgroundImage.raycastTarget = false;
+            return inner;
+        }
         private void BuildBottomRail()
         {
             RectTransform existing = hudRoot.Find("BottomSquadRail") as RectTransform;
@@ -363,66 +713,51 @@ namespace Shogun.Features.Combat
         {
             return CreatePillLabel(parent, name, alignment, out _);
         }
-
         private Text CreatePillLabel(Transform parent, string name, TextAnchor alignment, out Image backgroundImage)
         {
-            RectTransform pill = CreateRect(name, parent, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
-            LayoutElement layoutElement = pill.gameObject.AddComponent<LayoutElement>();
-            layoutElement.preferredHeight = 80f;
-            layoutElement.minWidth = 220f;
-
-            Image bg = pill.gameObject.AddComponent<Image>();
-            bg.color = new Color(0.14f, 0.13f, 0.11f, 0.85f);
-            bg.raycastTarget = false;
+            RectTransform pill = CreateTopBarModule(parent, name, 180f, 88f, out Image bg);
             backgroundImage = bg;
-
-            Text label = CreateText("Label", pill, alignment, 26, FontStyle.Bold);
+            Text label = CreateText("Label", pill, alignment, 24, FontStyle.Bold);
             label.text = "-";
-            label.color = new Color(0.96f, 0.93f, 0.82f, 1f);
+            label.color = new Color(0.97f, 0.94f, 0.84f, 1f);
+            label.resizeTextForBestFit = true;
+            label.resizeTextMinSize = 14;
+            label.resizeTextMaxSize = 24;
             return label;
         }
-
         private void BuildUtilityControls(Transform parent)
         {
-            RectTransform utilityRoot = CreateRect("UtilityPill", parent, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
-            LayoutElement layoutElement = utilityRoot.gameObject.AddComponent<LayoutElement>();
-            layoutElement.preferredHeight = 80f;
-            layoutElement.minWidth = 320f;
-
-            Image bg = utilityRoot.gameObject.AddComponent<Image>();
-            bg.color = new Color(0.14f, 0.13f, 0.11f, 0.85f);
-            bg.raycastTarget = false;
-
+            RectTransform utilityRoot = CreateTopBarModule(parent, "UtilityPill", 194f, 88f, out _);
             HorizontalLayoutGroup layout = utilityRoot.gameObject.AddComponent<HorizontalLayoutGroup>();
-            layout.padding = new RectOffset(8, 8, 8, 8);
-            layout.spacing = 8f;
+            layout.padding = new RectOffset(6, 6, 6, 6);
+            layout.spacing = 6f;
             layout.childAlignment = TextAnchor.MiddleCenter;
             layout.childControlWidth = true;
             layout.childControlHeight = true;
             layout.childForceExpandWidth = true;
             layout.childForceExpandHeight = true;
-
             speedButtonLabel = CreateUtilityButton(utilityRoot, "SpeedButton", OnSpeedButtonPressed);
             autoButtonLabel = CreateUtilityButton(utilityRoot, "AutoButton", OnAutoButtonPressed);
             menuButtonLabel = CreateUtilityButton(utilityRoot, "MenuButton", OnMenuButtonPressed);
         }
-
         private static Text CreateUtilityButton(Transform parent, string name, UnityEngine.Events.UnityAction onClick)
         {
             RectTransform buttonRect = CreateRect(name, parent, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
-
             Image buttonImage = buttonRect.gameObject.AddComponent<Image>();
-            buttonImage.color = new Color(0.25f, 0.2f, 0.12f, 0.9f);
-
+            buttonImage.color = new Color(0.26f, 0.18f, 0.08f, 0.96f);
+            Outline buttonOutline = buttonRect.gameObject.AddComponent<Outline>();
+            buttonOutline.effectColor = new Color(0.96f, 0.86f, 0.44f, 0.14f);
+            buttonOutline.effectDistance = new Vector2(0.8f, -0.8f);
             Button button = buttonRect.gameObject.AddComponent<Button>();
             button.targetGraphic = buttonImage;
             button.onClick.AddListener(onClick);
-
-            Text label = CreateText("Label", buttonRect, TextAnchor.MiddleCenter, 20, FontStyle.Bold);
+            Text label = CreateText("Label", buttonRect, TextAnchor.MiddleCenter, 18, FontStyle.Bold);
             label.color = new Color(0.98f, 0.93f, 0.75f, 1f);
+            label.resizeTextForBestFit = true;
+            label.resizeTextMinSize = 10;
+            label.resizeTextMaxSize = 18;
             return label;
         }
-
         private void RebuildPlayerSlots()
         {
             if (pairSlotRow == null)
@@ -620,6 +955,31 @@ namespace Shogun.Features.Combat
             return s_RingSprite;
         }
 
+        private static Sprite GetEdgeVignetteSprite()
+        {
+            if (s_EdgeVignetteSprite != null)
+                return s_EdgeVignetteSprite;
+
+            const int width = 128;
+            const int height = 4;
+            Texture2D tex = new Texture2D(width, height, TextureFormat.RGBA32, false) { filterMode = FilterMode.Bilinear };
+            tex.wrapMode = TextureWrapMode.Clamp;
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    float normalized = 1f - (x / (float)(width - 1));
+                    float alpha = normalized * normalized * (3f - (2f * normalized));
+                    tex.SetPixel(x, y, new Color(1f, 1f, 1f, alpha));
+                }
+            }
+
+            tex.Apply();
+            s_EdgeVignetteSprite = Sprite.Create(tex, new Rect(0, 0, width, height), new Vector2(0.5f, 0.5f));
+            return s_EdgeVignetteSprite;
+        }
+
         private static Text CreateText(string name, Transform parent, TextAnchor alignment, int fontSize, FontStyle style)
         {
             RectTransform rt = CreateRect(name, parent, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
@@ -706,8 +1066,148 @@ namespace Shogun.Features.Combat
             RefreshSquadHealthBar();
             RefreshSlots();
             RefreshTurnIndicators();
+            RefreshTurnVignette();
         }
 
+        private void RefreshTurnVignette()
+        {
+            turnVignetteTargetAlpha = ResolveTurnVignetteTargetAlpha();
+            if (turnVignetteCanvasGroup == null)
+                return;
+
+            if (!Application.isPlaying)
+            {
+                turnVignetteCurrentAlpha = turnVignetteTargetAlpha;
+                turnVignetteCanvasGroup.alpha = turnVignetteCurrentAlpha;
+            }
+        }
+
+        private void UpdateTurnVignetteVisual()
+        {
+            if (turnVignetteCanvasGroup == null)
+                return;
+
+            float nextAlpha = Mathf.MoveTowards(
+                turnVignetteCurrentAlpha,
+                turnVignetteTargetAlpha,
+                TurnVignetteFadeSpeed * Time.unscaledDeltaTime);
+
+            if (Mathf.Approximately(nextAlpha, turnVignetteCurrentAlpha))
+                return;
+
+            turnVignetteCurrentAlpha = nextAlpha;
+            turnVignetteCanvasGroup.alpha = turnVignetteCurrentAlpha;
+        }
+
+        private float ResolveTurnVignetteTargetAlpha()
+        {
+            if (turnManager == null || !turnManager.IsBattleActive)
+                return 0f;
+
+            CharacterInstance current = turnManager.GetCurrentCombatant();
+            if (current == null || !current.IsAlive || !turnManager.IsPlayerUnit(current))
+                return 0f;
+
+            return TurnVignetteMaxAlpha;
+        }
+
+        private void UpdateComboTrackerVisual()
+        {
+            if (comboTrackerRoot == null || comboTrackerCanvasGroup == null)
+                return;
+
+            if (comboTrackerPulseTimer > 0f)
+                comboTrackerPulseTimer = Mathf.Max(0f, comboTrackerPulseTimer - Time.unscaledDeltaTime);
+
+            comboTrackerTargetAlpha = Time.unscaledTime <= comboTrackerHideAt ? 1f : 0f;
+            float fadeSpeed = comboTrackerTargetAlpha > comboTrackerCurrentAlpha ? ComboTrackerFadeInSpeed : ComboTrackerFadeOutSpeed;
+            comboTrackerCurrentAlpha = Mathf.MoveTowards(comboTrackerCurrentAlpha, comboTrackerTargetAlpha, fadeSpeed * Time.unscaledDeltaTime);
+            comboTrackerCanvasGroup.alpha = comboTrackerCurrentAlpha;
+
+            float pulse = 0f;
+            if (comboTrackerPulseTimer > 0f && comboTrackerPulseDuration > 0.001f)
+            {
+                float normalized = 1f - (comboTrackerPulseTimer / comboTrackerPulseDuration);
+                pulse = Mathf.Sin(normalized * Mathf.PI) * Mathf.Lerp(0.16f, 0.05f, normalized);
+            }
+
+            comboTrackerRoot.localScale = Vector3.one * (1f + pulse);
+            float yOffset = -((1f - comboTrackerCurrentAlpha) * 18f) + pulse * 6f;
+            comboTrackerRoot.anchoredPosition = comboTrackerBaseAnchoredPosition + new Vector2(0f, yOffset);
+        }
+
+        private void ApplyComboTrackerState(int hitCount, bool finished)
+        {
+            if (comboHitCountLabel == null || comboHitsSuffixLabel == null || comboTypeLabel == null)
+                return;
+
+            int visibleHitCount = Mathf.Max(1, hitCount);
+            Color accent = ResolveComboTrackerAccentColor(visibleHitCount);
+
+            comboHitCountLabel.text = visibleHitCount.ToString();
+            comboHitCountLabel.color = Color.Lerp(new Color(1f, 0.97f, 0.9f, 1f), accent, 0.22f);
+            comboHitsSuffixLabel.text = "Hits!";
+            comboHitsSuffixLabel.color = Color.Lerp(accent, Color.white, 0.16f);
+            comboTypeLabel.text = ResolveComboTierLabel(visibleHitCount);
+            comboTypeLabel.color = Color.Lerp(accent, new Color(1f, 0.96f, 0.9f, 1f), 0.08f);
+
+            if (comboTrackerGlowImage != null)
+                comboTrackerGlowImage.color = new Color(accent.r, accent.g, accent.b, finished ? 0.16f : 0.1f);
+
+            if (comboTrackerStreakImage != null)
+                comboTrackerStreakImage.color = new Color(accent.r, accent.g, accent.b, finished ? 0.34f : 0.24f);
+
+            comboTrackerHideAt = Time.unscaledTime + (finished ? ComboTrackerFinishHoldSeconds : ComboTrackerHitHoldSeconds);
+            comboTrackerPulseDuration = finished ? ComboTrackerFinishPulseSeconds : ComboTrackerBasePulseSeconds;
+            comboTrackerPulseTimer = comboTrackerPulseDuration;
+            comboTrackerTargetAlpha = 1f;
+        }
+
+        private void HideComboTrackerImmediate()
+        {
+            comboTrackerHideAt = float.NegativeInfinity;
+            comboTrackerPulseTimer = 0f;
+            comboTrackerPulseDuration = ComboTrackerBasePulseSeconds;
+            comboTrackerTargetAlpha = 0f;
+            comboTrackerCurrentAlpha = 0f;
+
+            if (comboTrackerCanvasGroup != null)
+                comboTrackerCanvasGroup.alpha = 0f;
+
+            if (comboTrackerRoot != null)
+            {
+                comboTrackerRoot.localScale = Vector3.one;
+                comboTrackerRoot.anchoredPosition = comboTrackerBaseAnchoredPosition;
+            }
+        }
+
+        private static string ResolveComboTierLabel(int hitCount)
+        {
+            if (hitCount <= 1)
+                return string.Empty;
+            if (hitCount >= 30)
+                return "Endless Combo";
+            if (hitCount >= 20)
+                return "Savage Combo";
+            if (hitCount >= 10)
+                return "Ultra Combo";
+            if (hitCount >= 5)
+                return "Great Combo";
+            return "Combo";
+        }
+
+        private static Color ResolveComboTrackerAccentColor(int hitCount)
+        {
+            if (hitCount >= 30)
+                return new Color(1f, 0.1f, 0.14f, 1f);
+            if (hitCount >= 20)
+                return new Color(1f, 0.2f, 0.08f, 1f);
+            if (hitCount >= 10)
+                return new Color(1f, 0.34f, 0.08f, 1f);
+            if (hitCount >= 5)
+                return new Color(1f, 0.48f, 0.12f, 1f);
+            return new Color(1f, 0.64f, 0.18f, 1f);
+        }
         private void RefreshSquadHealthBar()
         {
             if (squadHpFill == null || squadHpValueLabel == null)
@@ -846,11 +1346,11 @@ namespace Shogun.Features.Combat
         {
             if (turnLabel == null || objectiveLabel == null)
                 return;
-
             CharacterInstance current = turnManager != null ? turnManager.GetCurrentCombatant() : null;
             string currentName = current != null ? ResolveCharacterName(current) : "-";
             turnLabel.text = $"TURN: {currentName}";
-
+            RefreshTurnContextVisuals(current);
+            RefreshLegendTokens(current);
             int aliveEnemies = 0;
             int totalEnemies = 0;
             IReadOnlyList<CharacterInstance> enemies = turnManager != null ? turnManager.GetEnemyCombatants() : null;
@@ -863,7 +1363,6 @@ namespace Shogun.Features.Combat
                         aliveEnemies++;
                 }
             }
-
             if (turnManager != null && turnManager.IsBattleActive)
             {
                 if (TryGetBossEnemy(out CharacterInstance bossEnemy))
@@ -878,13 +1377,164 @@ namespace Shogun.Features.Combat
                 {
                     objectiveLabel.text = $"DEFEAT ALL ENEMIES  {aliveEnemies}/{Mathf.Max(1, totalEnemies)}";
                     if (objectivePillBackground != null)
-                        objectivePillBackground.color = new Color(0.14f, 0.13f, 0.11f, 0.85f);
+                        objectivePillBackground.color = new Color(0.16f, 0.12f, 0.07f, 0.96f);
                 }
             }
-
             UpdateUtilityLabels();
         }
-
+        private void RefreshTurnContextVisuals(CharacterInstance current)
+        {
+            if (turnPanelBackground == null)
+                return;
+            Color baseColor = new Color(0.16f, 0.12f, 0.07f, 0.96f);
+            Color accent = ResolveCharacterAccentColor(current);
+            float blend = 0f;
+            if (current != null && turnManager != null)
+                blend = turnManager.IsPlayerUnit(current) ? 0.28f : 0.18f;
+            turnPanelBackground.color = Color.Lerp(baseColor, accent, blend);
+        }
+        private void RefreshLegendTokens(CharacterInstance current)
+        {
+            ElementalType? activeElement = null;
+            MartialArtsType? activeWeapon = null;
+            if (current != null && current.Definition != null)
+            {
+                activeElement = current.Definition.ElementalType;
+                activeWeapon = current.Definition.MartialArtsType;
+            }
+            for (int i = 0; i < elementLegendTokens.Count; i++)
+                ApplyLegendTokenState(elementLegendTokens[i], activeElement.HasValue && elementLegendTokens[i].ElementalType == activeElement.Value);
+            for (int i = 0; i < weaponLegendTokens.Count; i++)
+                ApplyLegendTokenState(weaponLegendTokens[i], activeWeapon.HasValue && weaponLegendTokens[i].MartialArtsType == activeWeapon.Value);
+        }
+        private static void ApplyLegendTokenState(LegendTokenView token, bool highlighted)
+        {
+            if (token == null)
+                return;
+            if (token.Root != null)
+                token.Root.localScale = highlighted ? new Vector3(1.08f, 1.08f, 1f) : Vector3.one;
+            if (token.Background != null)
+            {
+                Color background = token.BaseColor;
+                background.a = highlighted ? 0.96f : 0.48f;
+                token.Background.color = background;
+            }
+            if (token.Outline != null)
+                token.Outline.effectColor = highlighted
+                    ? new Color(0.99f, 0.92f, 0.62f, 0.84f)
+                    : new Color(0.03f, 0.03f, 0.03f, 0.88f);
+            if (token.Label != null)
+            {
+                Color labelColor = token.BaseTextColor;
+                labelColor.a = highlighted ? 1f : 0.76f;
+                token.Label.color = labelColor;
+            }
+        }
+        private static Color ResolveCharacterAccentColor(CharacterInstance character)
+        {
+            if (character != null && character.Definition != null)
+            {
+                Color accent = character.Definition.PaletteAccentColor;
+                accent.a = 0.96f;
+                return accent;
+            }
+            return new Color(0.34f, 0.48f, 0.62f, 0.96f);
+        }
+        private static Color ResolveElementColor(ElementalType elementalType)
+        {
+            switch (elementalType)
+            {
+                case ElementalType.Fire:
+                    return new Color(0.92f, 0.3f, 0.2f, 1f);
+                case ElementalType.Water:
+                    return new Color(0.2f, 0.64f, 0.9f, 1f);
+                case ElementalType.Earth:
+                    return new Color(0.73f, 0.57f, 0.27f, 1f);
+                case ElementalType.Wind:
+                    return new Color(0.31f, 0.81f, 0.49f, 1f);
+                case ElementalType.Lightning:
+                    return new Color(0.93f, 0.77f, 0.21f, 1f);
+                case ElementalType.Ice:
+                    return new Color(0.49f, 0.89f, 0.97f, 1f);
+                case ElementalType.Shadow:
+                    return new Color(0.52f, 0.34f, 0.78f, 1f);
+                default:
+                    return new Color(0.82f, 0.82f, 0.82f, 1f);
+            }
+        }
+        private static Color ResolveWeaponLegendColor(MartialArtsType martialArtsType)
+        {
+            switch (martialArtsType)
+            {
+                case MartialArtsType.Sword:
+                    return new Color(0.74f, 0.8f, 0.9f, 1f);
+                case MartialArtsType.Spear:
+                    return new Color(0.83f, 0.63f, 0.28f, 1f);
+                case MartialArtsType.Bow:
+                    return new Color(0.44f, 0.68f, 0.36f, 1f);
+                case MartialArtsType.Staff:
+                    return new Color(0.39f, 0.72f, 0.84f, 1f);
+                case MartialArtsType.DualDaggers:
+                    return new Color(0.75f, 0.36f, 0.45f, 1f);
+                case MartialArtsType.HeavyWeapons:
+                    return new Color(0.72f, 0.47f, 0.25f, 1f);
+                case MartialArtsType.Unarmed:
+                    return new Color(0.57f, 0.59f, 0.62f, 1f);
+                default:
+                    return new Color(0.78f, 0.76f, 0.7f, 1f);
+            }
+        }
+        private static string ResolveElementLegendLabel(ElementalType elementalType)
+        {
+            switch (elementalType)
+            {
+                case ElementalType.Fire:
+                    return "F";
+                case ElementalType.Water:
+                    return "Wa";
+                case ElementalType.Earth:
+                    return "E";
+                case ElementalType.Wind:
+                    return "Wi";
+                case ElementalType.Lightning:
+                    return "L";
+                case ElementalType.Ice:
+                    return "I";
+                case ElementalType.Shadow:
+                    return "Sh";
+                default:
+                    return "?";
+            }
+        }
+        private static string ResolveWeaponLegendLabel(MartialArtsType martialArtsType)
+        {
+            switch (martialArtsType)
+            {
+                case MartialArtsType.Unarmed:
+                    return "UN";
+                case MartialArtsType.Sword:
+                    return "SW";
+                case MartialArtsType.Spear:
+                    return "SP";
+                case MartialArtsType.Bow:
+                    return "BW";
+                case MartialArtsType.Staff:
+                    return "ST";
+                case MartialArtsType.DualDaggers:
+                    return "DG";
+                case MartialArtsType.HeavyWeapons:
+                    return "HV";
+                default:
+                    return "?";
+            }
+        }
+        private static Color ResolveLegendTextColor(Color backgroundColor)
+        {
+            float luminance = 0.299f * backgroundColor.r + 0.587f * backgroundColor.g + 0.114f * backgroundColor.b;
+            return luminance >= 0.62f
+                ? new Color(0.16f, 0.11f, 0.07f, 1f)
+                : new Color(0.98f, 0.95f, 0.88f, 1f);
+        }
         private void RefreshSlots()
         {
             int expectedCount = battleManager != null ? battleManager.GetPlayerLaneCount() : playerSlots.Count;
@@ -1106,15 +1756,15 @@ namespace Shogun.Features.Combat
             }
 
             Animator attackerAnimator = attacker.GetComponentInChildren<Animator>();
+            CharacterInstance finalResolvedTarget = null;
+            int resolvedHitCount = 0;
+            CombatComboPresentationBus.Reset();
 
             attacker.StopMovement();
             CombatMovementUtility.FaceCharacterTowards(attacker, target);
 
             Vector3 strikeWorldPos = CombatMovementUtility.GetAttackApproachPosition(attacker, target, GetActiveCombatantsExcept(attacker, target));
-            float travelDist = Vector2.Distance(
-                (Vector2)CombatMovementUtility.GetWorldPosition(attacker.transform),
-                (Vector2)strikeWorldPos);
-            float dynamicTravelTime = Mathf.Clamp(travelDist / Mathf.Max(0.1f, AutoTurnMovementSpeed), AutoTurnMinTravelTime, AutoTurnMaxTravelTime);
+            float dynamicTravelTime = GetAutoTurnTravelTime(attacker.transform, strikeWorldPos);
 
             if (attackerAnimator != null)
                 attackerAnimator.SetBool("isRunning", true);
@@ -1126,7 +1776,7 @@ namespace Shogun.Features.Combat
 
             if (!CombatMovementUtility.IsTargetWithinAttackRange(attacker, target))
             {
-                Vector3 correctedStrikeWorldPos = CombatMovementUtility.GetAttackApproachPosition(attacker, target);
+                Vector3 correctedStrikeWorldPos = CombatMovementUtility.GetAttackApproachPosition(attacker, target, GetActiveCombatantsExcept(attacker, target));
                 float correctionDistance = Vector2.Distance(
                     (Vector2)CombatMovementUtility.GetWorldPosition(attacker.transform),
                     (Vector2)correctedStrikeWorldPos);
@@ -1146,13 +1796,73 @@ namespace Shogun.Features.Combat
 
             if (attacker.CanAttack && CombatMovementUtility.IsTargetWithinAttackRange(attacker, target))
             {
+                List<CharacterInstance> comboParticipants = CombatComboUtility.GetPlayerComboParticipants(turnManager, attacker, target);
+
                 attacker.PerformBasicAttack();
                 yield return new WaitForSeconds(AutoTurnHitPause);
 
-                float damage = attacker.CalculateDamageAgainst(target);
-                target.TakeDamage(damage);
-                BattleFloatingText.SpawnDamage(target, damage);
+                if (CombatCriticalSupportUtility.TryResolveBasicHit(battleManager, attacker, target, comboParticipants, out _))
+                {
+                    finalResolvedTarget = target;
+                    resolvedHitCount++;
+                    CombatComboPresentationBus.ReportHit(resolvedHitCount);
+                }
+
+                for (int participantIndex = 1; participantIndex < comboParticipants.Count; participantIndex++)
+                {
+                    CharacterInstance ally = comboParticipants[participantIndex];
+                    if (ally == null || !ally.IsAlive || target == null || !target.IsAlive)
+                        continue;
+
+                    Vector3 allyStartWorldPos = CombatMovementUtility.GetWorldPosition(ally.transform);
+                    Animator allyAnimator = ally.GetComponentInChildren<Animator>();
+                    Vector3 allyStrikeWorldPos = CombatMovementUtility.GetAttackApproachPosition(ally, target, GetActiveCombatantsExcept(ally, target));
+                    float allyTravelTime = GetAutoTurnTravelTime(ally.transform, allyStrikeWorldPos);
+
+                    CombatMovementUtility.FaceCharacterTowards(ally, target);
+
+                    if (allyAnimator != null)
+                        allyAnimator.SetBool("isRunning", true);
+
+                    yield return CombatMovementUtility.MoveCharacterToWorldPosition(ally.transform, allyStrikeWorldPos, allyTravelTime);
+
+                    if (allyAnimator != null)
+                        allyAnimator.SetBool("isRunning", false);
+
+                    if (ally.IsAlive && target != null && target.IsAlive)
+                    {
+                        ally.PerformBasicAttack(consumeAttackAction: false);
+                        yield return new WaitForSeconds(AutoTurnHitPause);
+
+                        if (CombatCriticalSupportUtility.TryResolveBasicHit(battleManager, ally, target, comboParticipants, out _))
+                        {
+                            finalResolvedTarget = target;
+                            resolvedHitCount++;
+                            CombatComboPresentationBus.ReportHit(resolvedHitCount);
+                        }
+                    }
+
+                    if (ally != null && ally.IsAlive)
+                    {
+                        if (allyAnimator != null)
+                            allyAnimator.SetBool("isRunning", true);
+
+                        yield return CombatMovementUtility.MoveCharacterToWorldPosition(ally.transform, allyStartWorldPos, allyTravelTime);
+
+                        if (allyAnimator != null)
+                            allyAnimator.SetBool("isRunning", false);
+                    }
+                }
             }
+
+            if (resolvedHitCount >= 2 && finalResolvedTarget != null)
+            {
+                AttackTargetIndicator targetIndicator = finalResolvedTarget.GetComponent<AttackTargetIndicator>()
+                    ?? finalResolvedTarget.gameObject.AddComponent<AttackTargetIndicator>();
+                targetIndicator.PlayComboBurst(resolvedHitCount);
+            }
+
+            CombatComboPresentationBus.ReportFinished(resolvedHitCount);
 
             yield return new WaitForSeconds(AutoTurnRecoverDelay);
 
@@ -1165,29 +1875,18 @@ namespace Shogun.Features.Combat
             autoTurnCoroutine = null;
         }
 
+        private float GetAutoTurnTravelTime(Transform characterTransform, Vector3 destinationWorldPos)
+        {
+            float travelDist = Vector2.Distance(
+                (Vector2)CombatMovementUtility.GetWorldPosition(characterTransform),
+                (Vector2)destinationWorldPos);
+            return Mathf.Clamp(travelDist / Mathf.Max(0.1f, AutoTurnMovementSpeed), AutoTurnMinTravelTime, AutoTurnMaxTravelTime);
+        }
+
         private List<CharacterInstance> GetActiveCombatantsExcept(CharacterInstance attacker, CharacterInstance target)
         {
-            List<CharacterInstance> blockers = new List<CharacterInstance>();
-            AddCombatants(blockers, turnManager != null ? turnManager.GetPlayerCombatants() : null, attacker, target);
-            AddCombatants(blockers, turnManager != null ? turnManager.GetEnemyCombatants() : null, attacker, target);
-            return blockers;
+            return CombatComboUtility.GetActiveCombatantsExcept(turnManager, attacker, target);
         }
-
-        private static void AddCombatants(List<CharacterInstance> blockers, IReadOnlyList<CharacterInstance> combatants, CharacterInstance attacker, CharacterInstance target)
-        {
-            if (blockers == null || combatants == null)
-                return;
-
-            for (int i = 0; i < combatants.Count; i++)
-            {
-                CharacterInstance combatant = combatants[i];
-                if (combatant == null || combatant == attacker || combatant == target)
-                    continue;
-
-                blockers.Add(combatant);
-            }
-        }
-
         private bool IsCurrentPlayerTurn(CharacterInstance attacker)
         {
             return attacker != null
@@ -1366,6 +2065,18 @@ namespace Shogun.Features.Combat
             return canvas;
         }
 
+        private sealed class LegendTokenView
+        {
+            public RectTransform Root;
+            public Image Background;
+            public Outline Outline;
+            public Text Label;
+            public Color BaseColor;
+            public Color BaseTextColor;
+            public ElementalType? ElementalType;
+            public MartialArtsType? MartialArtsType;
+        }
+
         private sealed class PlayerSlotView
         {
             public int           LaneIndex;
@@ -1379,10 +2090,126 @@ namespace Shogun.Features.Combat
             public Image         ReserveButtonBackground;
             public Image         ReservePortrait;
         }
+
+    }
+
+    internal static class CombatComboPresentationBus
+    {
+        public static event Action<int> ComboHitRegistered;
+        public static event Action<int> ComboSequenceFinished;
+        public static event Action ComboPresentationReset;
+
+        public static void Reset()
+        {
+            Action handler = ComboPresentationReset;
+            if (handler != null)
+                handler();
+        }
+
+        public static void ReportHit(int hitCount)
+        {
+            if (hitCount < 1)
+                return;
+
+            Action<int> handler = ComboHitRegistered;
+            if (handler != null)
+                handler(hitCount);
+        }
+
+        public static void ReportFinished(int hitCount)
+        {
+            if (hitCount >= 1)
+            {
+                Action<int> finishedHandler = ComboSequenceFinished;
+                if (finishedHandler != null)
+                    finishedHandler(hitCount);
+                return;
+            }
+
+            Action resetHandler = ComboPresentationReset;
+            if (resetHandler != null)
+                resetHandler();
+        }
+    }
+    internal static class CombatComboUtility
+    {
+        public static List<CharacterInstance> GetPlayerComboParticipants(
+            TurnManager turnManager,
+            CharacterInstance leadAttacker,
+            CharacterInstance target)
+        {
+            List<CharacterInstance> participants = new List<CharacterInstance>();
+            if (turnManager == null || leadAttacker == null || target == null || !leadAttacker.IsAlive || !target.IsAlive)
+                return participants;
+
+            participants.Add(leadAttacker);
+
+            IReadOnlyList<CharacterInstance> players = turnManager.GetPlayerCombatants();
+            if (players == null)
+                return participants;
+
+            List<CharacterInstance> eligibleAllies = new List<CharacterInstance>();
+            for (int i = 0; i < players.Count; i++)
+            {
+                CharacterInstance ally = players[i];
+                if (ally == null || ally == leadAttacker || !ally.IsAlive)
+                    continue;
+
+                if (CombatMovementUtility.IsTargetWithinAttackRange(ally, target))
+                    eligibleAllies.Add(ally);
+            }
+
+            Vector3 targetCenter = CombatMovementUtility.GetColliderWorldCenter(target);
+            eligibleAllies.Sort((left, right) =>
+            {
+                float leftDistance = Vector2.SqrMagnitude((Vector2)(CombatMovementUtility.GetColliderWorldCenter(left) - targetCenter));
+                float rightDistance = Vector2.SqrMagnitude((Vector2)(CombatMovementUtility.GetColliderWorldCenter(right) - targetCenter));
+                return leftDistance.CompareTo(rightDistance);
+            });
+
+            participants.AddRange(eligibleAllies);
+            return participants;
+        }
+
+        public static List<CharacterInstance> GetActiveCombatantsExcept(
+            TurnManager turnManager,
+            CharacterInstance excludedAttacker,
+            CharacterInstance excludedTarget)
+        {
+            List<CharacterInstance> blockers = new List<CharacterInstance>();
+            if (turnManager == null)
+                return blockers;
+
+            AddCombatants(blockers, turnManager.GetPlayerCombatants(), excludedAttacker, excludedTarget);
+            AddCombatants(blockers, turnManager.GetEnemyCombatants(), excludedAttacker, excludedTarget);
+            return blockers;
+        }
+
+        public static bool TryResolveBasicHit(CharacterInstance attacker, CharacterInstance target)
+        {
+            return CombatCriticalSupportUtility.TryResolveBasicHit(null, attacker, target, null, out _);
+        }
+
+        private static void AddCombatants(
+            List<CharacterInstance> blockers,
+            IReadOnlyList<CharacterInstance> combatants,
+            CharacterInstance excludedAttacker,
+            CharacterInstance excludedTarget)
+        {
+            if (blockers == null || combatants == null)
+                return;
+
+            for (int i = 0; i < combatants.Count; i++)
+            {
+                CharacterInstance combatant = combatants[i];
+                if (combatant == null || !combatant.IsAlive || combatant == excludedAttacker || combatant == excludedTarget)
+                    continue;
+
+                blockers.Add(combatant);
+            }
+        }
     }
 }
-
-
 
 
 

@@ -190,7 +190,7 @@ namespace Shogun.Features.Combat
 
         private void UpdateTurnVisuals()
         {
-            bool showTurnNumber = turnsUntilTurn > 0 && !isCurrentTurn;
+            bool showTurnNumber = ShouldShowTurnNumber();
             SetTextGroupVisible(turnText, turnTextOutlines, showTurnNumber);
 
             if (!showTurnNumber)
@@ -257,6 +257,11 @@ namespace Shogun.Features.Combat
             ApplyTextSorting(turnText, turnTextOutlines, targetRenderer, 13, 12);
         }
 
+        private bool ShouldShowTurnNumber()
+        {
+            return enemyUnit && turnsUntilTurn > 0 && !isCurrentTurn;
+        }
+
         private void SetVisible(bool visible)
         {
             SetRendererVisible(badgeOutlineRenderer, visible);
@@ -265,7 +270,7 @@ namespace Shogun.Features.Combat
             SetRendererVisible(barBackgroundRenderer, visible);
             SetRendererVisible(barFillRenderer, visible);
             SetTextGroupVisible(badgeText, badgeTextOutlines, visible);
-            SetTextGroupVisible(turnText, turnTextOutlines, visible && turnsUntilTurn > 0 && !isCurrentTurn);
+            SetTextGroupVisible(turnText, turnTextOutlines, visible && ShouldShowTurnNumber());
         }
 
         private static float ResolveBarWidth(CharacterInstance character, Bounds groundBounds)

@@ -12,6 +12,7 @@ namespace Shogun.Features.Combat
     {
         [Header("References")]
         public TurnManager turnManager;
+        [SerializeField] private BattleManager battleManager;
 
         [Header("Settings")]
         public float dragThreshold = 10f;
@@ -59,10 +60,20 @@ namespace Shogun.Features.Combat
         private readonly HashSet<CharacterInstance> enemiesShowingRange          = new HashSet<CharacterInstance>();
         // Tracks which enemies currently have an attack-ready / combo indicator visible
         private readonly HashSet<CharacterInstance> enemiesShowingAttackIndicator = new HashSet<CharacterInstance>();
+        private readonly HashSet<CharacterInstance> alliesShowingCriticalRateBoostPreview = new HashSet<CharacterInstance>();
+        private readonly List<CharacterInstance> staleCriticalRateBoostPreviews = new List<CharacterInstance>();
 
         void Awake()
         {
             mainCamera = Camera.main;
+            if (battleManager == null)
+                battleManager = FindFirstObjectByType<BattleManager>();
+        }
+
+        void OnDisable()
+        {
+            HideAllEnemyRangeCircles();
+            HideAllCriticalRateBoostPreviews();
         }
 
         public void OnPointerDown(PointerEventData eventData)
@@ -116,6 +127,7 @@ namespace Shogun.Features.Combat
                 CharacterInstance releasedCharacter = draggingCharacter;
                 Animator releasedAnimator = characterAnimator;
                 Vector3 releaseWorldPos = GetCharacterPosition(releasedCharacter.transform);
+                CharacterInstance releaseTarget = null;
 
                 if (TryGetPointerWorld(releasePos, releasedCharacter.transform, out Vector3 pointerWorld))
                 {
@@ -123,11 +135,28 @@ namespace Shogun.Features.Combat
                     SetCharacterPosition(releasedCharacter.transform, releaseWorldPos);
                 }
 
+                if (TryGetEnemyAtScreenPosition(releasePos, out CharacterInstance hoveredEnemy))
+                    releaseTarget = hoveredEnemy;
+
                 if (releasedAnimator != null)
                     releasedAnimator.SetBool("isRunning", false);
 
                 RestoreDragOpacity();
+                List<CharacterInstance> releaseTargets = releaseTarget != null
+                    ? GetReleaseAttackTargets(releasedCharacter, releaseTarget)
+                    : null;
                 ClearDragState();
+
+                if (releaseTargets != null && releaseTargets.Count > 0)
+                {
+                    if (attackResolutionCoroutine != null)
+                        StopCoroutine(attackResolutionCoroutine);
+
+                    attackResolutionCoroutine = StartCoroutine(
+                        ResolveReleaseAttackSequence(releasedCharacter, releaseWorldPos, releaseTargets));
+                    return;
+                }
+
                 return;
             }
 
@@ -243,6 +272,7 @@ namespace Shogun.Features.Combat
             float playerBodyRadius = GetColliderHalfWidth(draggingCharacter);
             float playerAttackRange = draggingCharacter.GetAttackRangeRadius();
             int enemiesInAttackRange = 0;
+            List<CharacterInstance> attackableEnemies = new List<CharacterInstance>();
 
             foreach (var enemy in enemies)
             {
@@ -261,7 +291,7 @@ namespace Shogun.Features.Combat
                 {
                     var display = enemy.GetComponent<RangeCircleDisplay>()
                                   ?? enemy.gameObject.AddComponent<RangeCircleDisplay>();
-                    display.Show(enemy.GetAttackRangeRadius(), EnemyRangeColor);
+                    display.Show(enemy.GetAttackRangeRadius(), EnemyRangeColor, decorativeMarkers: false);
                     enemiesShowingRange.Add(enemy);
                 }
                 else if (!inThreatRange && wasShowingThreat)
@@ -282,6 +312,7 @@ namespace Shogun.Features.Combat
                 if (canAttack)
                 {
                     enemiesInAttackRange++;
+                    attackableEnemies.Add(enemy);
 
                     var indicator = enemy.GetComponent<AttackTargetIndicator>()
                                     ?? enemy.gameObject.AddComponent<AttackTargetIndicator>();
@@ -306,9 +337,116 @@ namespace Shogun.Features.Combat
                 else
                     dragMultiTargetIndicator.Hide();
             }
+
+            UpdateCriticalRateBoostPreviews(attackableEnemies);
         }
 
-        private List<CharacterInstance> GetReleaseAttackTargets(CharacterInstance attacker)
+        private void UpdateCriticalRateBoostPreviews(List<CharacterInstance> attackableEnemies)
+        {
+            CharacterInstance previewTarget = ResolveCriticalRatePreviewTarget(attackableEnemies);
+            if (previewTarget == null || battleManager == null)
+            {
+                HideAllCriticalRateBoostPreviews();
+                return;
+            }
+
+            List<CharacterInstance> comboParticipants = CombatComboUtility.GetPlayerComboParticipants(turnManager, draggingCharacter, previewTarget);
+            if (comboParticipants.Count < 2)
+            {
+                HideAllCriticalRateBoostPreviews();
+                return;
+            }
+
+            HashSet<CharacterInstance> visibleThisFrame = new HashSet<CharacterInstance>();
+            for (int i = 0; i < comboParticipants.Count; i++)
+            {
+                CharacterInstance participant = comboParticipants[i];
+                if (participant == null || !participant.IsAlive)
+                    continue;
+
+                float criticalRateMultiplier = CombatCriticalSupportUtility.GetCriticalRateMultiplier(
+                    battleManager,
+                    participant,
+                    previewTarget,
+                    comboParticipants);
+
+                if (criticalRateMultiplier <= 1.01f)
+                    continue;
+
+                CriticalRateBoostPreview preview = participant.GetComponent<CriticalRateBoostPreview>()
+                    ?? participant.gameObject.AddComponent<CriticalRateBoostPreview>();
+                preview.Show(criticalRateMultiplier);
+                visibleThisFrame.Add(participant);
+            }
+
+            staleCriticalRateBoostPreviews.Clear();
+            foreach (CharacterInstance ally in alliesShowingCriticalRateBoostPreview)
+            {
+                if (ally == null || visibleThisFrame.Contains(ally))
+                    continue;
+
+                staleCriticalRateBoostPreviews.Add(ally);
+            }
+
+            for (int i = 0; i < staleCriticalRateBoostPreviews.Count; i++)
+            {
+                CharacterInstance staleAlly = staleCriticalRateBoostPreviews[i];
+                if (staleAlly != null)
+                {
+                    CriticalRateBoostPreview preview = staleAlly.GetComponent<CriticalRateBoostPreview>();
+                    if (preview != null)
+                        preview.Hide();
+                }
+
+                alliesShowingCriticalRateBoostPreview.Remove(staleAlly);
+            }
+
+            staleCriticalRateBoostPreviews.Clear();
+            foreach (CharacterInstance visibleAlly in visibleThisFrame)
+                alliesShowingCriticalRateBoostPreview.Add(visibleAlly);
+        }
+
+        private CharacterInstance ResolveCriticalRatePreviewTarget(List<CharacterInstance> attackableEnemies)
+        {
+            if (attackableEnemies == null || attackableEnemies.Count == 0 || draggingCharacter == null)
+                return null;
+
+            if (hasValidPointerSample
+                && TryGetEnemyAtScreenPosition(lastValidScreenPos, out CharacterInstance hoveredEnemy)
+                && attackableEnemies.Contains(hoveredEnemy))
+            {
+                return hoveredEnemy;
+            }
+
+            return attackableEnemies.Count == 1 ? attackableEnemies[0] : null;
+        }
+
+        private void HideAllCriticalRateBoostPreviews()
+        {
+            if (alliesShowingCriticalRateBoostPreview.Count == 0)
+                return;
+
+            staleCriticalRateBoostPreviews.Clear();
+            foreach (CharacterInstance ally in alliesShowingCriticalRateBoostPreview)
+                staleCriticalRateBoostPreviews.Add(ally);
+
+            for (int i = 0; i < staleCriticalRateBoostPreviews.Count; i++)
+            {
+                CharacterInstance ally = staleCriticalRateBoostPreviews[i];
+                if (ally == null)
+                    continue;
+
+                CriticalRateBoostPreview preview = ally.GetComponent<CriticalRateBoostPreview>();
+                if (preview != null)
+                    preview.Hide();
+            }
+
+            staleCriticalRateBoostPreviews.Clear();
+            alliesShowingCriticalRateBoostPreview.Clear();
+        }
+        private List<CharacterInstance> GetReleaseAttackTargets(
+            CharacterInstance attacker,
+            CharacterInstance preferredPrimaryTarget = null)
         {
             List<CharacterInstance> targets = new List<CharacterInstance>();
             if (turnManager == null || attacker == null)
@@ -333,6 +471,14 @@ namespace Shogun.Features.Combat
 
             targets.Sort((left, right) =>
             {
+                if (preferredPrimaryTarget != null)
+                {
+                    bool leftPreferred = left == preferredPrimaryTarget;
+                    bool rightPreferred = right == preferredPrimaryTarget;
+                    if (leftPreferred != rightPreferred)
+                        return leftPreferred ? -1 : 1;
+                }
+
                 float leftSqr = (GetColliderWorldCenter(left) - attackerCenter).sqrMagnitude;
                 float rightSqr = (GetColliderWorldCenter(right) - attackerCenter).sqrMagnitude;
                 return leftSqr.CompareTo(rightSqr);
@@ -353,6 +499,8 @@ namespace Shogun.Features.Combat
                 Animator attackerAnimator = attacker.GetComponentInChildren<Animator>();
                 CharacterInstance finalResolvedTarget = null;
                 int resolvedHitCount = 0;
+                bool consumedAttackAction = false;
+                CombatComboPresentationBus.Reset();
 
                 for (int i = 0; i < targets.Count; i++)
                 {
@@ -360,7 +508,10 @@ namespace Shogun.Features.Combat
                     if (target == null || !target.IsAlive)
                         continue;
 
-                    Vector3 strikeWorldPos = GetAttackApproachPosition(attacker, target);
+                    Vector3 strikeWorldPos = CombatMovementUtility.GetAttackApproachPosition(
+                        attacker,
+                        target,
+                        CombatComboUtility.GetActiveCombatantsExcept(turnManager, attacker, target));
                     FaceCharacterTowards(attacker, target);
 
                     if (attackerAnimator != null)
@@ -371,14 +522,74 @@ namespace Shogun.Features.Combat
                     if (attackerAnimator != null)
                         attackerAnimator.SetBool("isRunning", false);
 
-                    attacker.PerformBasicAttack(consumeAttackAction: i == 0);
+                    if (target == null || !target.IsAlive || !attacker.IsAlive)
+                        continue;
+
+                    List<CharacterInstance> comboParticipants = CombatComboUtility.GetPlayerComboParticipants(turnManager, attacker, target);
+                    bool consumeAttackAction = !consumedAttackAction;
+                    if (consumeAttackAction && !attacker.CanAttack)
+                        continue;
+
+                    attacker.PerformBasicAttack(consumeAttackAction: consumeAttackAction);
+                    consumedAttackAction = true;
                     yield return new WaitForSeconds(chainedAttackHitPause);
 
-                    float damage = attacker.CalculateDamageAgainst(target);
-                    target.TakeDamage(damage);
-                    BattleFloatingText.SpawnDamage(target, damage);
-                    finalResolvedTarget = target;
-                    resolvedHitCount++;
+                    if (CombatCriticalSupportUtility.TryResolveBasicHit(battleManager, attacker, target, comboParticipants, out _))
+                    {
+                        finalResolvedTarget = target;
+                        resolvedHitCount++;
+                        CombatComboPresentationBus.ReportHit(resolvedHitCount);
+                    }
+
+                    for (int participantIndex = 1; participantIndex < comboParticipants.Count; participantIndex++)
+                    {
+                        CharacterInstance ally = comboParticipants[participantIndex];
+                        if (ally == null || !ally.IsAlive || target == null || !target.IsAlive)
+                            continue;
+
+                        Vector3 allyStartWorldPos = CombatMovementUtility.GetWorldPosition(ally.transform);
+                        Animator allyAnimator = ally.GetComponentInChildren<Animator>();
+                        Vector3 allyStrikeWorldPos = CombatMovementUtility.GetAttackApproachPosition(
+                            ally,
+                            target,
+                            CombatComboUtility.GetActiveCombatantsExcept(turnManager, ally, target));
+
+                        FaceCharacterTowards(ally, target);
+
+                        if (allyAnimator != null)
+                            allyAnimator.SetBool("isRunning", true);
+
+                        yield return MoveCharacterToWorldPosition(ally.transform, allyStrikeWorldPos, chainedAttackTravelTime);
+
+                        if (allyAnimator != null)
+                            allyAnimator.SetBool("isRunning", false);
+
+                        if (ally.IsAlive && target != null && target.IsAlive)
+                        {
+                            ally.PerformBasicAttack(consumeAttackAction: false);
+                            yield return new WaitForSeconds(chainedAttackHitPause);
+
+                            if (CombatCriticalSupportUtility.TryResolveBasicHit(battleManager, ally, target, comboParticipants, out _))
+                            {
+                                finalResolvedTarget = target;
+                                resolvedHitCount++;
+                                CombatComboPresentationBus.ReportHit(resolvedHitCount);
+                            }
+
+                            yield return new WaitForSeconds(chainedAttackRecoverTime);
+                        }
+
+                        if (ally != null && ally.IsAlive)
+                        {
+                            if (allyAnimator != null)
+                                allyAnimator.SetBool("isRunning", true);
+
+                            yield return MoveCharacterToWorldPosition(ally.transform, allyStartWorldPos, chainedAttackReturnTime);
+
+                            if (allyAnimator != null)
+                                allyAnimator.SetBool("isRunning", false);
+                        }
+                    }
 
                     yield return new WaitForSeconds(chainedAttackRecoverTime);
                 }
@@ -389,6 +600,8 @@ namespace Shogun.Features.Combat
                         ?? finalResolvedTarget.gameObject.AddComponent<AttackTargetIndicator>();
                     indicator.PlayComboBurst(resolvedHitCount);
                 }
+
+                CombatComboPresentationBus.ReportFinished(resolvedHitCount);
 
                 if (attacker != null && attacker.IsAlive)
                 {
@@ -410,10 +623,6 @@ namespace Shogun.Features.Combat
                 isResolvingAttackSequence = false;
             }
         }
-
-        // ── Forwarding wrappers → CombatMovementUtility ──────────────────────
-        // Movement uses the parent-aware CMU version (same semantics as the old
-        // GetCharacterPosition/SetCharacterPosition helpers, just shared).
         private IEnumerator MoveCharacterToWorldPosition(Transform characterTransform, Vector3 worldPos, float duration)
             => CombatMovementUtility.MoveCharacterToWorldPosition(characterTransform, worldPos, duration);
 
@@ -462,10 +671,16 @@ namespace Shogun.Features.Combat
                 if (indicator != null) indicator.Hide();
             }
             enemiesShowingAttackIndicator.Clear();
+            HideAllCriticalRateBoostPreviews();
         }
 
         private bool IsTapOnEnemy(Vector2 screenPosition)
+            => TryGetEnemyAtScreenPosition(screenPosition, out _);
+
+        private bool TryGetEnemyAtScreenPosition(Vector2 screenPosition, out CharacterInstance enemy)
         {
+            enemy = null;
+
             if (turnManager == null)
                 return false;
 
@@ -481,7 +696,11 @@ namespace Shogun.Features.Combat
                 return false;
 
             CharacterInstance target = hit.GetComponent<CharacterInstance>();
-            return target != null && target.IsAlive && turnManager.IsEnemyUnit(target);
+            if (target == null || !target.IsAlive || !turnManager.IsEnemyUnit(target))
+                return false;
+
+            enemy = target;
+            return true;
         }
 
         private void StartTapMove(Vector2 screenPosition)
@@ -728,3 +947,8 @@ namespace Shogun.Features.Combat
         }
     }
 }
+
+
+
+
+

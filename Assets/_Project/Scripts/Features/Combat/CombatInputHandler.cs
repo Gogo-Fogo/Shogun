@@ -80,11 +80,12 @@ namespace Shogun.Features.Combat
             CombatMovementUtility.FaceCharacterTowards(current, target);
             current.PerformBasicAttack();
 
-            float damage = current.CalculateDamageAgainst(target);
-            target.TakeDamage(damage);
+            if (!CombatCriticalSupportUtility.TryResolveBasicHit(battleManager, current, target, null, out CombatHitResult hitResult))
+                return;
 
+            string criticalLabel = hitResult.WasCritical ? " CRIT" : string.Empty;
             Debug.Log($"[Battle] {current.Definition?.CharacterName} → {target.Definition?.CharacterName}: " +
-                      $"{damage:F1} dmg  (HP left: {target.CurrentHealth:F1}/{target.MaxHealth:F1})");
+                      $"{hitResult.Damage:F1} dmg{criticalLabel}  (HP left: {target.CurrentHealth:F1}/{target.MaxHealth:F1})");
 
             turnManager.EndTurn();
         }
@@ -149,17 +150,9 @@ namespace Shogun.Features.Combat
         {
             T component = GetComponent<T>();
             if (component != null)
-            {
                 return component;
-            }
 
-            component = GetComponentInChildren<T>(true);
-            if (component != null)
-            {
-                return component;
-            }
-
-            return GetComponentInParent<T>();
+            return FindFirstObjectByType<T>();
         }
     }
-} 
+}
