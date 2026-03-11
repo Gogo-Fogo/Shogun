@@ -32,6 +32,7 @@ namespace Shogun.Features.Combat
         private const float tapTimeThreshold = 0.2f;
         private const float tapMoveThreshold = 20f;
         private const float dragIdleDistanceThresholdSqr = 0.0004f;
+        private const float movementCommitDistanceThreshold = 0.05f;
 
         private Camera mainCamera;
         private Vector2 pointerDownPos;
@@ -42,6 +43,7 @@ namespace Shogun.Features.Combat
         private float lastDragMotionTime = float.NegativeInfinity;
 
         private bool isDragging = false;
+        private Vector3 dragStartWorldPos = Vector3.zero;
         private Vector3 dragTargetWorldPos;
         private Vector3 dragVelocity = Vector3.zero;
         private CharacterInstance draggingCharacter = null;
@@ -142,9 +144,7 @@ namespace Shogun.Features.Combat
                     releasedAnimator.SetBool("isRunning", false);
 
                 RestoreDragOpacity();
-                List<CharacterInstance> releaseTargets = releaseTarget != null
-                    ? GetReleaseAttackTargets(releasedCharacter, releaseTarget)
-                    : null;
+                List<CharacterInstance> releaseTargets = GetReleaseAttackTargets(releasedCharacter, releaseTarget);
                 ClearDragState();
 
                 if (releaseTargets != null && releaseTargets.Count > 0)
@@ -156,6 +156,9 @@ namespace Shogun.Features.Combat
                         ResolveReleaseAttackSequence(releasedCharacter, releaseWorldPos, releaseTargets));
                     return;
                 }
+
+                if (DidCommitMovement(dragStartWorldPos, releaseWorldPos))
+                    ConsumeTurnAfterMovement(releasedCharacter);
 
                 return;
             }
@@ -195,6 +198,7 @@ namespace Shogun.Features.Combat
                 characterAnimator = currentCharacter.GetComponentInChildren<Animator>();
                 draggingSpriteRenderer = currentCharacter.GetComponentInChildren<SpriteRenderer>();
 
+                dragStartWorldPos = GetCharacterPosition(charTransform);
                 SetCharacterPosition(charTransform, pointerWorldPos);
                 dragTargetWorldPos = pointerWorldPos;
                 lastDragMotionTime = Time.unscaledTime;
@@ -725,6 +729,7 @@ namespace Shogun.Features.Combat
         {
             Transform charTransform = character.transform;
             Transform charParent = charTransform.parent;
+            Vector3 startWorldPos = GetCharacterPosition(charTransform);
             Animator anim = character.GetComponentInChildren<Animator>();
             if (anim != null)
                 anim.SetBool("isRunning", true);
@@ -773,7 +778,42 @@ namespace Shogun.Features.Combat
                 anim.SetBool("isRunning", false);
 
             tapMoveCoroutine = null;
+
+            if (character is not CharacterInstance movedCharacter)
+                yield break;
+
+            List<CharacterInstance> releaseTargets = GetReleaseAttackTargets(movedCharacter);
+            if (releaseTargets.Count > 0)
+            {
+                if (attackResolutionCoroutine != null)
+                    StopCoroutine(attackResolutionCoroutine);
+
+                attackResolutionCoroutine = StartCoroutine(
+                    ResolveReleaseAttackSequence(movedCharacter, targetWorldPos, releaseTargets));
+                yield break;
+            }
+
+            if (DidCommitMovement(startWorldPos, targetWorldPos))
+                ConsumeTurnAfterMovement(movedCharacter);
         }
+
+        private void ConsumeTurnAfterMovement(CharacterInstance movedCharacter)
+        {
+            if (turnManager == null
+                || movedCharacter == null
+                || !turnManager.IsBattleActive
+                || !movedCharacter.IsAlive
+                || !turnManager.IsPlayerUnit(movedCharacter)
+                || turnManager.GetCurrentCombatant() != movedCharacter)
+            {
+                return;
+            }
+
+            turnManager.EndTurn();
+        }
+
+        private static bool DidCommitMovement(Vector3 startWorldPos, Vector3 endWorldPos)
+            => Vector3.Distance(startWorldPos, endWorldPos) > movementCommitDistanceThreshold;
 
         private bool TryGetPointerWorld(Vector2 screenPosition, Transform charTransform, out Vector3 pointerWorld)
         {
@@ -935,6 +975,7 @@ namespace Shogun.Features.Combat
                 characterAnimator.SetBool("isRunning", false);
 
             isDragging = false;
+            dragStartWorldPos = Vector3.zero;
             draggingCharacter = null;
             characterAnimator = null;
             draggingSpriteRenderer = null;
@@ -944,8 +985,4 @@ namespace Shogun.Features.Combat
         }
     }
 }
-
-
-
-
 
