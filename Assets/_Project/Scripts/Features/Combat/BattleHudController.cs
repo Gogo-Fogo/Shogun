@@ -19,7 +19,9 @@ namespace Shogun.Features.Combat
         private const float SpeedNormal = 1f;
         private const float SpeedFast = 2f;
         private const float AutoTurnLeadDelay = 0.24f;
-        private const float AutoTurnTravelTime = 0.26f;
+        private const float AutoTurnMovementSpeed = 8f;
+        private const float AutoTurnMinTravelTime = 0.08f;
+        private const float AutoTurnMaxTravelTime = 0.65f;
         private const float AutoTurnHitPause = 0.14f;
         private const float AutoTurnRecoverDelay = 0.22f;
         private const int DangerSpecialTurnThreshold = 2;
@@ -1173,10 +1175,15 @@ namespace Shogun.Features.Combat
             CombatMovementUtility.FaceCharacterTowards(attacker, target);
 
             Vector3 strikeWorldPos = CombatMovementUtility.GetAttackApproachPosition(attacker, target, GetActiveCombatantsExcept(attacker, target));
+            float travelDist = Vector2.Distance(
+                (Vector2)CombatMovementUtility.GetWorldPosition(attacker.transform),
+                (Vector2)strikeWorldPos);
+            float dynamicTravelTime = Mathf.Clamp(travelDist / Mathf.Max(0.1f, AutoTurnMovementSpeed), AutoTurnMinTravelTime, AutoTurnMaxTravelTime);
+
             if (attackerAnimator != null)
                 attackerAnimator.SetBool("isRunning", true);
 
-            yield return CombatMovementUtility.MoveCharacterToWorldPosition(attacker.transform, strikeWorldPos, AutoTurnTravelTime);
+            yield return CombatMovementUtility.MoveCharacterToWorldPosition(attacker.transform, strikeWorldPos, dynamicTravelTime);
 
             if (attackerAnimator != null)
                 attackerAnimator.SetBool("isRunning", false);
@@ -1193,7 +1200,8 @@ namespace Shogun.Features.Combat
                     if (attackerAnimator != null)
                         attackerAnimator.SetBool("isRunning", true);
 
-                    yield return CombatMovementUtility.MoveCharacterToWorldPosition(attacker.transform, correctedStrikeWorldPos, Mathf.Max(0.1f, AutoTurnTravelTime * 0.7f));
+                    float correctionTravelTime = Mathf.Clamp(correctionDistance / Mathf.Max(0.1f, AutoTurnMovementSpeed), AutoTurnMinTravelTime, AutoTurnMaxTravelTime);
+                    yield return CombatMovementUtility.MoveCharacterToWorldPosition(attacker.transform, correctedStrikeWorldPos, correctionTravelTime);
 
                     if (attackerAnimator != null)
                         attackerAnimator.SetBool("isRunning", false);

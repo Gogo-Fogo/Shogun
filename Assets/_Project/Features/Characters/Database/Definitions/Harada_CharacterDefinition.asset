@@ -25,7 +25,7 @@ MonoBehaviour:
   animatorController: {fileID: 9100000, guid: 164c4a8c48504a1e918de9d1862c5cfe, type: 2}
   colliderSize: {x: 1, y: 1.95}
   colliderOffset: {x: 0, y: 0.03}
-  characterScale: {x: 1, y: 1, z: 1}
+  characterScale: {x: 1.8, y: 1.8, z: 1}
   invertFacingX: 0
   paletteAccentColor: {r: 0.26, g: 0.74, b: 0.54, a: 1}
   characterType: 0
