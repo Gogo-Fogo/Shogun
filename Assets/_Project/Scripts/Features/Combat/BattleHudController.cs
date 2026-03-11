@@ -36,7 +36,7 @@ namespace Shogun.Features.Combat
 
         [Header("Layout")]
         [SerializeField] private float topBarHeight = 108f;
-        [SerializeField] private float bottomRailHeight = 248f;
+        [SerializeField] private float bottomRailHeight = 116f;
 
         [Header("Boss Detection")]
         [SerializeField] private string[] bossCharacterIds = Array.Empty<string>();
@@ -59,6 +59,9 @@ namespace Shogun.Features.Combat
         private readonly Dictionary<CharacterInstance, Action> deathCallbacks = new Dictionary<CharacterInstance, Action>();
         private readonly Dictionary<CharacterInstance, TurnCountdownIndicator> turnIndicators = new Dictionary<CharacterInstance, TurnCountdownIndicator>();
         private readonly HashSet<string> normalizedBossIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        private static Sprite s_CircleSprite;
+        private static Sprite s_RingSprite;
 
         private Coroutine pollCoroutine;
         private Coroutine autoTurnCoroutine;
@@ -265,96 +268,28 @@ namespace Shogun.Features.Combat
             if (existing != null)
                 Destroy(existing.gameObject);
 
-            RectTransform bottomRail = CreateRect("BottomSquadRail", hudRoot, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(20f, 12f), new Vector2(-20f, bottomRailHeight + 12f));
+            // Low-profile rail anchored to the bottom edge.
+            RectTransform bottomRail = CreateRect("BottomSquadRail", hudRoot,
+                new Vector2(0f, 0f), new Vector2(1f, 0f),
+                new Vector2(0f, 0f), new Vector2(0f, bottomRailHeight));
+
             Image bottomBg = bottomRail.gameObject.AddComponent<Image>();
-            bottomBg.color = new Color(0.07f, 0.055f, 0.04f, 0.64f);
+            bottomBg.color = new Color(0.06f, 0.05f, 0.04f, 0.78f);
             bottomBg.raycastTarget = false;
 
-            Outline bottomOutline = bottomRail.gameObject.AddComponent<Outline>();
-            bottomOutline.effectDistance = new Vector2(1f, 1f);
-            bottomOutline.effectColor = new Color(0.44f, 0.34f, 0.14f, 0.22f);
-
-            VerticalLayoutGroup layout = bottomRail.gameObject.AddComponent<VerticalLayoutGroup>();
-            layout.padding = new RectOffset(18, 18, 12, 16);
-            layout.spacing = 8f;
-            layout.childAlignment = TextAnchor.LowerCenter;
-            layout.childControlWidth = true;
-            layout.childControlHeight = false;
-            layout.childForceExpandWidth = true;
-            layout.childForceExpandHeight = false;
-
-            BuildSquadHealthPanel(bottomRail);
-            BuildPairSlotRow(bottomRail);
-        }
-
-        private void BuildSquadHealthPanel(RectTransform parent)
-        {
-            RectTransform summary = CreateRect("SquadHealthPanel", parent, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
-            LayoutElement summaryLayout = summary.gameObject.AddComponent<LayoutElement>();
-            summaryLayout.preferredHeight = 78f;
-            summaryLayout.minHeight = 78f;
-
-            Image bg = summary.gameObject.AddComponent<Image>();
-            bg.color = new Color(0.1f, 0.08f, 0.06f, 0.78f);
-            bg.raycastTarget = false;
-
-            Outline outline = summary.gameObject.AddComponent<Outline>();
-            outline.effectDistance = new Vector2(2f, -2f);
-            outline.effectColor = new Color(0f, 0f, 0f, 0.45f);
-
-            RectTransform titleChip = CreateRect("TitleChip", summary, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(10f, 10f), new Vector2(122f, -10f));
-            Image titleChipBg = titleChip.gameObject.AddComponent<Image>();
-            titleChipBg.color = new Color(0.29f, 0.23f, 0.12f, 0.9f);
-            titleChipBg.raycastTarget = false;
-
-            Text title = CreateText("Title", titleChip, TextAnchor.MiddleCenter, 16, FontStyle.Bold);
-            title.text = "SQUAD HP";
-            title.color = new Color(0.99f, 0.96f, 0.86f, 1f);
-
-            RectTransform hpBarBgRect = CreateRect("SquadHpBarBg", summary, new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(136f, -15f), new Vector2(-148f, 15f));
-            Image hpBarBg = hpBarBgRect.gameObject.AddComponent<Image>();
-            hpBarBg.color = new Color(0.09f, 0.08f, 0.08f, 0.95f);
-            hpBarBg.raycastTarget = false;
-
-            Outline hpBarOutline = hpBarBgRect.gameObject.AddComponent<Outline>();
-            hpBarOutline.effectDistance = new Vector2(1f, -1f);
-            hpBarOutline.effectColor = new Color(0.42f, 0.32f, 0.12f, 0.38f);
-
-            RectTransform hpFillRect = CreateRect("SquadHpFill", hpBarBgRect, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(3f, 3f), new Vector2(-3f, -3f));
-            squadHpFill = hpFillRect.gameObject.AddComponent<Image>();
-            squadHpFill.type = Image.Type.Filled;
-            squadHpFill.fillMethod = Image.FillMethod.Horizontal;
-            squadHpFill.fillAmount = 1f;
-            squadHpFill.color = new Color(0.22f, 0.9f, 0.4f, 0.98f);
-            squadHpFill.raycastTarget = false;
-
-            squadHpValueLabel = CreateText("Value", summary, TextAnchor.MiddleRight, 22, FontStyle.Bold);
-            RectTransform valueRect = (RectTransform)squadHpValueLabel.transform;
-            valueRect.anchorMin = new Vector2(1f, 0f);
-            valueRect.anchorMax = new Vector2(1f, 1f);
-            valueRect.pivot = new Vector2(1f, 0.5f);
-            valueRect.offsetMin = new Vector2(-160f, 0f);
-            valueRect.offsetMax = new Vector2(-12f, 0f);
-            squadHpValueLabel.text = "0/0";
-            squadHpValueLabel.color = new Color(0.98f, 0.94f, 0.82f, 1f);
-        }
-
-        private void BuildPairSlotRow(RectTransform parent)
-        {
-            pairSlotRow = CreateRect("PairSlotRow", parent, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
-            LayoutElement rowLayout = pairSlotRow.gameObject.AddComponent<LayoutElement>();
-            rowLayout.preferredHeight = bottomRailHeight - 96f;
-            rowLayout.minHeight = bottomRailHeight - 96f;
-
-            HorizontalLayoutGroup layout = pairSlotRow.gameObject.AddComponent<HorizontalLayoutGroup>();
-            layout.spacing = 8f;
-            layout.padding = new RectOffset(0, 0, 0, 0);
+            HorizontalLayoutGroup layout = bottomRail.gameObject.AddComponent<HorizontalLayoutGroup>();
+            layout.padding = new RectOffset(20, 20, 8, 8);
+            layout.spacing = 16f;
             layout.childAlignment = TextAnchor.MiddleCenter;
             layout.childControlWidth = true;
-            layout.childControlHeight = false;
-            layout.childForceExpandWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = false;
             layout.childForceExpandHeight = false;
+
+            // The rail itself serves as the medallion row.
+            pairSlotRow = bottomRail;
         }
+
 
         private void BuildPauseMenu()
         {
@@ -509,156 +444,180 @@ namespace Shogun.Features.Combat
             BindRosterCharacterEvents();
         }
 
+        // Creates a circular portrait medallion for one player lane.
         private PlayerSlotView CreatePlayerSlot(int laneIndex)
         {
-            RectTransform slotRoot = CreateRect($"PlayerPairSlot_{laneIndex}", pairSlotRow, new Vector2(0f, 0f), new Vector2(0f, 0f), Vector2.zero, Vector2.zero);
-            slotRoot.sizeDelta = new Vector2(182f, bottomRailHeight - 102f);
+            const float diameter  = 76f;   // inner portrait circle
+            const float ringSize  = 88f;   // outer arc/ring
+            const float hpBarH    = 8f;
+            const float badgeSize = 34f;
+            float slotW = ringSize + 8f;   // 96px
+            float slotH = ringSize + hpBarH + 10f; // 106px
 
-            LayoutElement layoutElement = slotRoot.gameObject.AddComponent<LayoutElement>();
-            layoutElement.preferredWidth = 182f;
-            layoutElement.preferredHeight = bottomRailHeight - 102f;
-            layoutElement.minWidth = 168f;
-            layoutElement.flexibleWidth = 1f;
+            // Slot root — LayoutElement tells HorizontalLayoutGroup the preferred size.
+            RectTransform slotRoot = CreateRect($"Medallion_{laneIndex}", pairSlotRow,
+                new Vector2(0f, 0f), new Vector2(0f, 0f), Vector2.zero, Vector2.zero);
 
-            Image background = slotRoot.gameObject.AddComponent<Image>();
-            background.color = new Color(0.11f, 0.085f, 0.06f, 0.84f);
-            background.raycastTarget = false;
+            LayoutElement le = slotRoot.gameObject.AddComponent<LayoutElement>();
+            le.preferredWidth  = slotW;
+            le.preferredHeight = slotH;
+            le.minWidth        = slotW;
 
-            Outline outline = slotRoot.gameObject.AddComponent<Outline>();
-            outline.effectDistance = new Vector2(2f, -2f);
-            outline.effectColor = new Color(0f, 0f, 0f, 0.55f);
+            Sprite circleSpr = GetCircleSprite();
+            Sprite ringSpr   = GetRingSprite();
 
-            RectTransform activeFrame = CreateRect("ActiveFrame", slotRoot, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(-2f, -2f), new Vector2(2f, 2f));
-            Image frameImage = activeFrame.gameObject.AddComponent<Image>();
-            frameImage.color = new Color(0.5f, 0.7f, 0.85f, 0f);
-            frameImage.raycastTarget = false;
+            // Circle area — top of slot, horizontally centered.
+            float circleX = (slotW - ringSize) * 0.5f;   // 4px each side
+            RectTransform circleArea = CreateRect("CircleArea", slotRoot,
+                new Vector2(0f, 1f), new Vector2(0f, 1f),
+                new Vector2(circleX, -ringSize), new Vector2(circleX + ringSize, 0f));
 
-            RectTransform laneChip = CreateRect("LaneChip", slotRoot, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(10f, -34f), new Vector2(72f, -10f));
-            Image laneChipBg = laneChip.gameObject.AddComponent<Image>();
-            laneChipBg.color = new Color(0.28f, 0.22f, 0.11f, 0.88f);
-            laneChipBg.raycastTarget = false;
+            // 1. Arc background ring — always visible, dim gray.
+            Image arcBg = circleArea.gameObject.AddComponent<Image>();
+            arcBg.sprite        = ringSpr;
+            arcBg.color         = new Color(0.28f, 0.28f, 0.28f, 0.5f);
+            arcBg.raycastTarget = false;
 
-            Text laneLabel = CreateText("LaneLabel", laneChip, TextAnchor.MiddleCenter, 15, FontStyle.Bold);
-            RectTransform laneRect = (RectTransform)laneLabel.transform;
-            laneRect.offsetMin = Vector2.zero;
-            laneRect.offsetMax = Vector2.zero;
-            laneLabel.color = new Color(0.95f, 0.9f, 0.72f, 1f);
+            // 2. Ability charge arc fill — grows clockwise as charge builds.
+            RectTransform arcFillRect = CreateRect("AbilityArc", circleArea,
+                new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+            Image arcFill = arcFillRect.gameObject.AddComponent<Image>();
+            arcFill.sprite        = ringSpr;
+            arcFill.type          = Image.Type.Filled;
+            arcFill.fillMethod    = Image.FillMethod.Radial360;
+            arcFill.fillOrigin    = (int)Image.Origin360.Top;
+            arcFill.fillAmount    = 0f;
+            arcFill.color         = new Color(0.96f, 0.82f, 0.28f, 1f);
+            arcFill.raycastTarget = false;
 
-            RectTransform stateChip = CreateRect("StateChip", slotRoot, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-84f, -34f), new Vector2(-10f, -10f));
-            Image stateChipBg = stateChip.gameObject.AddComponent<Image>();
-            stateChipBg.color = new Color(0.2f, 0.18f, 0.14f, 0.88f);
-            stateChipBg.raycastTarget = false;
+            // 3. Portrait mask — clips the battle sprite to a circle.
+            float inset = (ringSize - diameter) * 0.5f;   // 6px
+            RectTransform maskRect = CreateRect("PortraitMask", circleArea,
+                new Vector2(0f, 0f), new Vector2(1f, 1f),
+                new Vector2(inset, inset), new Vector2(-inset, -inset));
+            Image maskImage = maskRect.gameObject.AddComponent<Image>();
+            maskImage.sprite        = circleSpr;
+            maskImage.raycastTarget = false;
+            Mask maskComp = maskRect.gameObject.AddComponent<Mask>();
+            maskComp.showMaskGraphic = false;
 
-            Text stateLabel = CreateText("State", stateChip, TextAnchor.MiddleCenter, 14, FontStyle.Bold);
-            RectTransform stateRect = (RectTransform)stateLabel.transform;
-            stateRect.offsetMin = Vector2.zero;
-            stateRect.offsetMax = Vector2.zero;
-            stateLabel.color = new Color(0.98f, 0.93f, 0.84f, 1f);
-
-            RectTransform portraitFrameRect = CreateRect("FrontPortraitFrame", slotRoot, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(10f, -50f), new Vector2(86f, 58f));
-            Image portraitFrame = portraitFrameRect.gameObject.AddComponent<Image>();
-            portraitFrame.color = new Color(0.24f, 0.19f, 0.13f, 0.94f);
-            portraitFrame.raycastTarget = false;
-
-            Outline portraitOutline = portraitFrameRect.gameObject.AddComponent<Outline>();
-            portraitOutline.effectDistance = new Vector2(1f, -1f);
-            portraitOutline.effectColor = new Color(0f, 0f, 0f, 0.5f);
-
-            RectTransform portraitRect = CreateRect("FrontPortrait", portraitFrameRect, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(6f, 6f), new Vector2(-6f, -6f));
+            RectTransform portraitRect = CreateRect("Portrait", maskRect,
+                new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
             Image portraitImage = portraitRect.gameObject.AddComponent<Image>();
-            portraitImage.raycastTarget = false;
             portraitImage.preserveAspect = true;
+            portraitImage.raycastTarget  = false;
 
-            Button reserveButton = CreateReservePortraitButton(slotRoot, laneIndex, out Image reservePortrait, out Text reserveName, out Text reserveHint);
-            Image reserveButtonImage = reserveButton.targetGraphic as Image;
+            // 4. Dead overlay — darkens the portrait when the unit is KO'd.
+            RectTransform deadRect = CreateRect("DeadOverlay", circleArea,
+                new Vector2(0f, 0f), new Vector2(1f, 1f),
+                new Vector2(inset, inset), new Vector2(-inset, -inset));
+            Image deadOverlay = deadRect.gameObject.AddComponent<Image>();
+            deadOverlay.sprite        = circleSpr;
+            deadOverlay.color         = new Color(0.08f, 0.05f, 0.05f, 0f);
+            deadOverlay.raycastTarget = false;
 
-            Text nameLabel = CreateText("Name", slotRoot, TextAnchor.MiddleLeft, 16, FontStyle.Bold);
-            RectTransform nameRect = (RectTransform)nameLabel.transform;
-            nameRect.anchorMin = new Vector2(0f, 1f);
-            nameRect.anchorMax = new Vector2(1f, 1f);
-            nameRect.offsetMin = new Vector2(94f, -66f);
-            nameRect.offsetMax = new Vector2(-10f, -36f);
-            nameLabel.color = new Color(0.98f, 0.94f, 0.82f, 1f);
+            // 5. Active highlight ring — glows with the character's accent on their turn.
+            RectTransform activeRingRect = CreateRect("ActiveRing", circleArea,
+                new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+            Image activeRing = activeRingRect.gameObject.AddComponent<Image>();
+            activeRing.sprite        = ringSpr;
+            activeRing.color         = new Color(1f, 1f, 1f, 0f);
+            activeRing.raycastTarget = false;
 
-            RectTransform hpBarBgRect = CreateRect("HpBarBg", slotRoot, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(94f, 44f), new Vector2(-10f, 62f));
-            Image hpBarBg = hpBarBgRect.gameObject.AddComponent<Image>();
-            hpBarBg.color = new Color(0.08f, 0.08f, 0.08f, 0.92f);
-            hpBarBg.raycastTarget = false;
+            // HP bar — slim bar anchored to the bottom of the slot.
+            RectTransform hpBgRect = CreateRect("HpBarBg", slotRoot,
+                new Vector2(0f, 0f), new Vector2(1f, 0f),
+                new Vector2(4f, 2f), new Vector2(-4f, hpBarH + 2f));
+            Image hpBg = hpBgRect.gameObject.AddComponent<Image>();
+            hpBg.color        = new Color(0.08f, 0.08f, 0.08f, 0.9f);
+            hpBg.raycastTarget = false;
 
-            Outline hpBarOutline = hpBarBgRect.gameObject.AddComponent<Outline>();
-            hpBarOutline.effectDistance = new Vector2(1f, -1f);
-            hpBarOutline.effectColor = new Color(0f, 0f, 0f, 0.45f);
-
-            RectTransform hpFillRect = CreateRect("HpFill", hpBarBgRect, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(2f, 2f), new Vector2(-2f, -2f));
+            RectTransform hpFillRect = CreateRect("HpFill", hpBgRect,
+                new Vector2(0f, 0f), new Vector2(1f, 1f),
+                new Vector2(1f, 1f), new Vector2(-1f, -1f));
             Image hpFill = hpFillRect.gameObject.AddComponent<Image>();
-            hpFill.type = Image.Type.Filled;
-            hpFill.fillMethod = Image.FillMethod.Horizontal;
-            hpFill.fillAmount = 1f;
-            hpFill.color = new Color(0.2f, 0.92f, 0.38f, 0.98f);
+            hpFill.type          = Image.Type.Filled;
+            hpFill.fillMethod    = Image.FillMethod.Horizontal;
+            hpFill.fillAmount    = 1f;
+            hpFill.color         = new Color(0.2f, 0.92f, 0.38f, 0.98f);
             hpFill.raycastTarget = false;
 
-            Text hpLabel = CreateText("HpText", slotRoot, TextAnchor.MiddleLeft, 14, FontStyle.Bold);
-            RectTransform hpRect = (RectTransform)hpLabel.transform;
-            hpRect.anchorMin = new Vector2(0f, 0f);
-            hpRect.anchorMax = new Vector2(1f, 0f);
-            hpRect.offsetMin = new Vector2(94f, 20f);
-            hpRect.offsetMax = new Vector2(-10f, 42f);
-            hpLabel.color = new Color(0.96f, 0.94f, 0.9f, 1f);
+            // Reserve swap badge — small circle at bottom-right, above the HP bar.
+            RectTransform swapRect = CreateRect("SwapBadge", slotRoot,
+                new Vector2(1f, 0f), new Vector2(1f, 0f),
+                new Vector2(-badgeSize - 2f, hpBarH + 6f), new Vector2(-2f, hpBarH + 6f + badgeSize));
+            Image swapBg = swapRect.gameObject.AddComponent<Image>();
+            swapBg.sprite = circleSpr;
+            swapBg.color  = new Color(0.22f, 0.18f, 0.12f, 0.88f);
+            Button swapButton = swapRect.gameObject.AddComponent<Button>();
+            swapButton.targetGraphic = swapBg;
+            swapButton.onClick.AddListener(() => OnReserveButtonPressed(laneIndex));
+
+            RectTransform swapPortraitRect = CreateRect("Portrait", swapRect,
+                new Vector2(0f, 0f), new Vector2(1f, 1f),
+                new Vector2(4f, 4f), new Vector2(-4f, -4f));
+            Image swapPortrait = swapPortraitRect.gameObject.AddComponent<Image>();
+            swapPortrait.preserveAspect = true;
+            swapPortrait.raycastTarget  = false;
+
+            swapRect.gameObject.SetActive(false);
 
             return new PlayerSlotView
             {
-                LaneIndex = laneIndex,
-                Root = slotRoot,
-                Background = background,
-                ActiveFrame = frameImage,
-                LaneLabel = laneLabel,
-                StateChip = stateChipBg,
-                PortraitFrame = portraitFrame,
-                FrontPortrait = portraitImage,
-                FrontNameLabel = nameLabel,
-                FrontHpFill = hpFill,
-                FrontHpLabel = hpLabel,
-                StateLabel = stateLabel,
-                ReserveButton = reserveButton,
-                ReserveButtonBackground = reserveButtonImage,
-                ReservePortrait = reservePortrait,
-                ReserveNameLabel = reserveName,
-                ReserveHintLabel = reserveHint
+                LaneIndex              = laneIndex,
+                Root                   = slotRoot,
+                FrontPortrait          = portraitImage,
+                FrontHpFill            = hpFill,
+                ActiveRing             = activeRing,
+                AbilityArcFill         = arcFill,
+                DeadOverlay            = deadOverlay,
+                ReserveButton          = swapButton,
+                ReserveButtonBackground = swapBg,
+                ReservePortrait        = swapPortrait,
             };
         }
 
-        private Button CreateReservePortraitButton(Transform parent, int laneIndex, out Image reservePortrait, out Text reserveName, out Text reserveHint)
+        // Generates a filled-circle sprite at runtime (used for portrait masking and overlays).
+        private static Sprite GetCircleSprite()
         {
-            RectTransform buttonRect = CreateRect("ReserveButton", parent, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-62f, 14f), new Vector2(-10f, 66f));
+            if (s_CircleSprite != null)
+                return s_CircleSprite;
 
-            Image buttonImage = buttonRect.gameObject.AddComponent<Image>();
-            buttonImage.color = new Color(0.22f, 0.18f, 0.12f, 0.92f);
+            const int res = 64;
+            Texture2D tex = new Texture2D(res, res, TextureFormat.RGBA32, false) { filterMode = FilterMode.Bilinear };
+            float c = res / 2f;
+            float r = c - 0.5f;
+            for (int y = 0; y < res; y++)
+                for (int x = 0; x < res; x++)
+                    tex.SetPixel(x, y, (new Vector2(x + 0.5f, y + 0.5f) - new Vector2(c, c)).magnitude <= r ? Color.white : Color.clear);
+            tex.Apply();
+            s_CircleSprite = Sprite.Create(tex, new Rect(0, 0, res, res), new Vector2(0.5f, 0.5f));
+            return s_CircleSprite;
+        }
 
-            Button button = buttonRect.gameObject.AddComponent<Button>();
-            button.targetGraphic = buttonImage;
-            button.onClick.AddListener(() => OnReserveButtonPressed(laneIndex));
+        // Generates a donut/ring sprite at runtime (used for the ability charge arc and active highlight).
+        private static Sprite GetRingSprite()
+        {
+            if (s_RingSprite != null)
+                return s_RingSprite;
 
-            RectTransform portraitRect = CreateRect("Portrait", buttonRect, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(6f, 18f), new Vector2(-6f, -6f));
-            reservePortrait = portraitRect.gameObject.AddComponent<Image>();
-            reservePortrait.preserveAspect = true;
-            reservePortrait.raycastTarget = false;
-
-            reserveName = CreateText("Name", buttonRect, TextAnchor.UpperCenter, 11, FontStyle.Bold);
-            RectTransform reserveNameRect = (RectTransform)reserveName.transform;
-            reserveNameRect.anchorMin = new Vector2(0f, 1f);
-            reserveNameRect.anchorMax = new Vector2(1f, 1f);
-            reserveNameRect.offsetMin = new Vector2(4f, -20f);
-            reserveNameRect.offsetMax = new Vector2(-4f, -2f);
-            reserveName.color = new Color(0.96f, 0.93f, 0.82f, 1f);
-
-            reserveHint = CreateText("Hint", parent, TextAnchor.MiddleRight, 11, FontStyle.Bold);
-            RectTransform hintRect = (RectTransform)reserveHint.transform;
-            hintRect.anchorMin = new Vector2(0f, 0f);
-            hintRect.anchorMax = new Vector2(1f, 0f);
-            hintRect.offsetMin = new Vector2(82f, 68f);
-            hintRect.offsetMax = new Vector2(-10f, 90f);
-            reserveHint.color = new Color(0.95f, 0.83f, 0.48f, 1f);
-            return button;
+            const int   res        = 64;
+            const float innerRatio = 0.72f;
+            Texture2D tex = new Texture2D(res, res, TextureFormat.RGBA32, false) { filterMode = FilterMode.Bilinear };
+            float c      = res / 2f;
+            float outerR = c - 0.5f;
+            float innerR = outerR * innerRatio;
+            for (int y = 0; y < res; y++)
+            {
+                for (int x = 0; x < res; x++)
+                {
+                    float d = (new Vector2(x + 0.5f, y + 0.5f) - new Vector2(c, c)).magnitude;
+                    tex.SetPixel(x, y, (d <= outerR && d >= innerR) ? Color.white : Color.clear);
+                }
+            }
+            tex.Apply();
+            s_RingSprite = Sprite.Create(tex, new Rect(0, 0, res, res), new Vector2(0.5f, 0.5f));
+            return s_RingSprite;
         }
 
         private static Text CreateText(string name, Transform parent, TextAnchor alignment, int fontSize, FontStyle style)
@@ -941,99 +900,77 @@ namespace Shogun.Features.Combat
             if (slot == null)
                 return;
 
-            CharacterInstance front = battleManager != null ? battleManager.GetActivePlayerAtLane(slot.LaneIndex) : null;
+            CharacterInstance front   = battleManager != null ? battleManager.GetActivePlayerAtLane(slot.LaneIndex) : null;
             CharacterInstance reserve = battleManager != null ? battleManager.GetReservePlayerAtLane(slot.LaneIndex) : null;
-            CharacterInstance current = turnManager != null ? turnManager.GetCurrentCombatant() : null;
+            CharacterInstance current = turnManager   != null ? turnManager.GetCurrentCombatant() : null;
 
             bool currentPlayerTurn = current != null && turnManager != null && turnManager.IsPlayerUnit(current);
-            bool isCurrentLane = currentPlayerTurn && battleManager != null && battleManager.GetPlayerLaneForCharacter(current) == slot.LaneIndex;
-            bool canSwap = currentPlayerTurn && !isPaused && !autoModeEnabled && reserve != null && reserve.IsAlive && battleManager != null;
-
-            slot.LaneLabel.text = ResolveLaneLabel(slot.LaneIndex);
+            bool isCurrentLane     = currentPlayerTurn && battleManager != null &&
+                                     battleManager.GetPlayerLaneForCharacter(current) == slot.LaneIndex;
+            bool canSwap           = currentPlayerTurn && !isPaused && !autoModeEnabled &&
+                                     reserve != null && reserve.IsAlive && battleManager != null;
 
             if (front == null)
             {
-                slot.FrontPortrait.sprite = null;
-                slot.FrontPortrait.color = new Color(1f, 1f, 1f, 0f);
-                slot.FrontNameLabel.text = "EMPTY";
-                slot.FrontHpFill.fillAmount = 0f;
-                slot.FrontHpLabel.text = "-";
-                slot.StateLabel.text = string.Empty;
-                if (slot.StateChip != null)
-                    slot.StateChip.color = new Color(0.18f, 0.16f, 0.13f, 0.38f);
-                if (slot.Background != null)
-                    slot.Background.color = new Color(0.09f, 0.08f, 0.07f, 0.46f);
-                if (slot.PortraitFrame != null)
-                    slot.PortraitFrame.color = new Color(0.18f, 0.16f, 0.13f, 0.5f);
-                slot.ActiveFrame.color = new Color(0.34f, 0.36f, 0.42f, 0.12f);
-                slot.Root.localScale = Vector3.one;
+                slot.FrontPortrait.sprite      = null;
+                slot.FrontPortrait.color       = new Color(1f, 1f, 1f, 0f);
+                slot.FrontHpFill.fillAmount    = 0f;
+                slot.ActiveRing.color          = new Color(1f, 1f, 1f, 0f);
+                slot.AbilityArcFill.fillAmount = 0f;
+                slot.DeadOverlay.color         = new Color(0.08f, 0.05f, 0.05f, 0.5f);
+                slot.Root.localScale           = Vector3.one;
             }
             else
             {
-                float maxHealth = Mathf.Max(1f, front.MaxHealth);
+                float maxHealth        = Mathf.Max(1f, front.MaxHealth);
                 float healthNormalized = Mathf.Clamp01(front.CurrentHealth / maxHealth);
-                Color accent = front.Definition != null ? front.Definition.PaletteAccentColor : new Color(0.45f, 0.82f, 0.96f, 1f);
+                Color accent           = front.Definition != null
+                    ? front.Definition.PaletteAccentColor
+                    : new Color(0.45f, 0.82f, 0.96f, 1f);
                 accent.a = 1f;
-                float pulse01 = 0.5f + (0.5f * Mathf.Sin(Time.unscaledTime * 5.5f));
+                float pulse01    = 0.5f + (0.5f * Mathf.Sin(Time.unscaledTime * 5.5f));
                 bool specialReady = front.IsAlive && front.CanUseSpecialAbility;
 
+                // Portrait.
                 slot.FrontPortrait.sprite = ResolvePortrait(front);
-                slot.FrontPortrait.color = front.IsAlive ? Color.white : new Color(0.58f, 0.58f, 0.58f, 0.85f);
-                slot.FrontNameLabel.text = ResolveCharacterName(front);
+                slot.FrontPortrait.color  = front.IsAlive ? Color.white : new Color(0.55f, 0.55f, 0.55f, 0.9f);
+
+                // HP bar.
                 slot.FrontHpFill.fillAmount = healthNormalized;
-                slot.FrontHpFill.color = Color.Lerp(new Color(0.88f, 0.25f, 0.22f, 1f), new Color(0.2f, 0.92f, 0.38f, 1f), healthNormalized);
-                slot.FrontHpLabel.text = $"{Mathf.CeilToInt(front.CurrentHealth)}/{Mathf.CeilToInt(maxHealth)}";
-                slot.StateLabel.text = !front.IsAlive ? "KO" : isCurrentLane ? "TURN" : specialReady ? "READY" : "STBY";
+                slot.FrontHpFill.color      = Color.Lerp(
+                    new Color(0.88f, 0.25f, 0.22f, 1f),
+                    new Color(0.2f, 0.92f, 0.38f, 1f),
+                    healthNormalized);
 
-                if (slot.StateChip != null)
-                {
-                    slot.StateChip.color = !front.IsAlive
-                        ? new Color(0.34f, 0.16f, 0.14f, 0.82f)
-                        : isCurrentLane
-                            ? Color.Lerp(new Color(accent.r, accent.g, accent.b, 0.88f), new Color(accent.r, accent.g, accent.b, 0.68f), pulse01 * 0.45f)
-                            : specialReady
-                                ? new Color(0.32f, 0.3f, 0.12f, 0.82f)
-                                : new Color(0.2f, 0.18f, 0.14f, 0.78f);
-                }
+                // Ability charge arc — gold when ready, dim blue while charging.
+                slot.AbilityArcFill.fillAmount = front.IsAlive ? (specialReady ? 1f : 0.35f) : 0f;
+                slot.AbilityArcFill.color      = specialReady
+                    ? new Color(0.96f, 0.82f, 0.28f, 1f)
+                    : new Color(0.4f, 0.5f, 0.62f, 0.5f);
 
-                if (slot.Background != null)
-                {
-                    Color activeBackground = new Color(
-                        Mathf.Lerp(0.11f, accent.r * 0.38f, 0.65f),
-                        Mathf.Lerp(0.085f, accent.g * 0.34f, 0.65f),
-                        Mathf.Lerp(0.06f, accent.b * 0.32f, 0.65f),
-                        Mathf.Lerp(0.82f, 0.94f, pulse01 * 0.28f));
-                    slot.Background.color = !front.IsAlive
-                        ? new Color(0.12f, 0.08f, 0.08f, 0.72f)
-                        : isCurrentLane
-                            ? activeBackground
-                            : new Color(0.11f, 0.085f, 0.06f, 0.84f);
-                }
+                // Active highlight ring — glows with character accent on their turn.
+                slot.ActiveRing.color = isCurrentLane
+                    ? new Color(accent.r, accent.g, accent.b, Mathf.Lerp(0.65f, 0.9f, pulse01))
+                    : new Color(1f, 1f, 1f, 0f);
 
-                if (slot.PortraitFrame != null)
-                {
-                    slot.PortraitFrame.color = !front.IsAlive
-                        ? new Color(0.21f, 0.16f, 0.16f, 0.84f)
-                        : isCurrentLane
-                            ? new Color(accent.r * 0.45f + 0.16f, accent.g * 0.45f + 0.12f, accent.b * 0.45f + 0.1f, 0.96f)
-                            : new Color(0.24f, 0.19f, 0.13f, 0.94f);
-                }
+                // Dead overlay — dims portrait for KO'd units.
+                slot.DeadOverlay.color = front.IsAlive
+                    ? new Color(0.08f, 0.05f, 0.05f, 0f)
+                    : new Color(0.08f, 0.05f, 0.05f, 0.52f);
 
-                slot.ActiveFrame.color = isCurrentLane
-                    ? new Color(accent.r, accent.g, accent.b, Mathf.Lerp(0.58f, 0.8f, pulse01))
-                    : new Color(0.34f, 0.36f, 0.42f, 0.16f);
-                slot.Root.localScale = isCurrentLane ? new Vector3(1.055f + (0.02f * pulse01), 1.055f + (0.02f * pulse01), 1f) : Vector3.one;
+                // Scale pulse when it's this lane's turn.
+                slot.Root.localScale = isCurrentLane
+                    ? new Vector3(1.08f + (0.02f * pulse01), 1.08f + (0.02f * pulse01), 1f)
+                    : Vector3.one;
             }
 
+            // Reserve swap badge.
             if (reserve != null)
             {
                 slot.ReserveButton.gameObject.SetActive(true);
                 slot.ReserveButton.interactable = canSwap;
-                slot.ReservePortrait.sprite = ResolvePortrait(reserve);
-                slot.ReservePortrait.color = reserve.IsAlive ? Color.white : new Color(0.58f, 0.58f, 0.58f, 0.78f);
-                slot.ReserveNameLabel.text = ResolveCharacterName(reserve);
-                slot.ReserveHintLabel.text = reserve.IsAlive ? (canSwap ? "TAP SWAP" : "BUDDY") : "KO";
-                slot.ReserveHintLabel.color = canSwap ? new Color(0.97f, 0.84f, 0.42f, 1f) : new Color(0.78f, 0.74f, 0.68f, 0.9f);
+                slot.ReservePortrait.sprite     = ResolvePortrait(reserve);
+                slot.ReservePortrait.color      = reserve.IsAlive ? Color.white : new Color(0.55f, 0.55f, 0.55f, 0.75f);
                 if (slot.ReserveButtonBackground != null)
                 {
                     slot.ReserveButtonBackground.color = !reserve.IsAlive
@@ -1046,7 +983,6 @@ namespace Shogun.Features.Combat
             else
             {
                 slot.ReserveButton.gameObject.SetActive(false);
-                slot.ReserveHintLabel.text = string.Empty;
             }
         }
 
@@ -1432,23 +1368,16 @@ namespace Shogun.Features.Combat
 
         private sealed class PlayerSlotView
         {
-            public int LaneIndex;
+            public int           LaneIndex;
             public RectTransform Root;
-            public Image Background;
-            public Image ActiveFrame;
-            public Text LaneLabel;
-            public Image StateChip;
-            public Image PortraitFrame;
-            public Image FrontPortrait;
-            public Text FrontNameLabel;
-            public Image FrontHpFill;
-            public Text FrontHpLabel;
-            public Text StateLabel;
-            public Button ReserveButton;
-            public Image ReserveButtonBackground;
-            public Image ReservePortrait;
-            public Text ReserveNameLabel;
-            public Text ReserveHintLabel;
+            public Image         FrontPortrait;
+            public Image         FrontHpFill;
+            public Image         ActiveRing;
+            public Image         AbilityArcFill;
+            public Image         DeadOverlay;
+            public Button        ReserveButton;
+            public Image         ReserveButtonBackground;
+            public Image         ReservePortrait;
         }
     }
 }
