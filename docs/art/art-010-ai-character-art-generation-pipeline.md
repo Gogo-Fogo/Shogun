@@ -486,15 +486,73 @@ Dark hair tied back loosely.
 Palette: iron grey, black, vivid crimson accent on weapon only.
 ```
 
-### Animation descriptions
+### Animation prompt template
 
-Use the Gemini pose art as your reference when writing animation descriptions.
-Look at the attack pose and describe what you see:
+Use the Gemini pose art as your visual reference when writing each animation description.
+Look at the relevant pose and translate what you see into motion language.
+
+**Template — one block per animation:**
 
 ```
-attack: wide diagonal slash, katana swinging overhead right to lower left,
-tattered haori trailing behind motion, crimson energy arc following blade path
+[Character description from brief — paste verbatim]
+
+ANIMATION: [name]
+Pose arc: [start position] → [peak/key action] → [recovery/end position]
+Body lead: [which body part drives the motion — shoulder, hips, weapon arm]
+Physics: [what trails or reacts — haori flap direction, hair lag, cloth sweep]
+Effect: [element colour behaviour — arc, trail, pulse, none]
+Frame count: [4–6]
+Loop: [yes / no / hold-on-end]
 ```
+
+**Proven example — Ronin Footman attack:**
+
+```
+Dark samurai grunt. Lean weathered build. Tattered ragged-edged dark haori.
+Iron chest armor with gold trim. One katana with crimson glowing blade.
+Dark hair tied back. Palette: iron grey, black, vivid crimson accent on weapon only.
+
+ANIMATION: attack
+Pose arc: weight loaded on back foot, katana raised above right shoulder →
+  explosive diagonal slash downward-left, full body commitment, feet planted →
+  follow-through, weapon at hip level, haori still trailing
+Body lead: weapon shoulder and hip drive simultaneously — committed overhand cut
+Physics: haori explodes outward left from force of stroke, hair whips forward
+Effect: vivid crimson energy arc follows the blade path — painted brushstroke trail,
+  bright at peak, fading at end of follow-through
+Frame count: 5 (wind-up, lift, peak slash, follow-through, recovery)
+Loop: no — hold on recovery frame
+```
+
+### Animation vocabulary — what survives at 64px
+
+Only large, clear movements read at sprite scale. Use these motion types:
+
+| Animation | PixelLab Description Pattern |
+|---|---|
+| Idle | Subtle chest rise/fall. Weight shift L then R every 4 frames. Hair sways slightly. |
+| Walk | Forward lean 5°. Arm swings opposite leg. Weapon at hip, bobs slightly each step. |
+| Attack | Wind-up on frame 1 → full body commitment on frame 3 → follow-through frame 4–5. Hold impact 2× longer. |
+| Hit / damage | Head snaps back. Body twists away from impact direction. One knee dips. Weapon still gripped. |
+| Death | Knees buckle on frame 1. Body tilts sideways frames 2–3. Hits ground frame 4–5. Slow — each frame twice as long. |
+| Special | Frames 1–2: glow charges, weight drops into stance. Frame 3: peak explosion — maximum energy fill. Frame 4: dissipation. |
+
+### Frame timing guidance
+
+| Animation | Frames | Playback | Notes |
+|---|---|---|---|
+| Idle | 6–8 | 8 fps looped | Gentle — avoid cartoon bounce |
+| Walk | 6 | 10 fps looped | 3 per step cycle |
+| Attack | 4–5 | 14 fps, no loop | Hold impact frame 2× duration |
+| Hit | 3–4 | 12 fps, no loop | Fast snap — reads as responsive |
+| Death | 5–6 | 6 fps, no loop | Hold on final frame |
+| Special | 5–7 | 12 fps, no loop | Hold peak frame 3× — the dopamine moment |
+
+### Attaching Gemini art to PixelLab
+
+When prompting PixelLab for the **attack animation**, attach the Gemini attack pose image directly
+alongside the prompt. PixelLab uses the reference to match weapon angle, body lean direction,
+clothing silhouette, and energy colour. Same principle as attaching the portrait for pfp generation.
 
 ---
 
@@ -542,33 +600,59 @@ For the vertical slice, cleanup priority:
 ### File placement
 
 ```
-Portrait card art:
-Assets/_Project/Art/Production/Characters/[CharacterName]/Portraits/
-  [CharacterName]_portrait.png
-  [CharacterName]_attack.png
-  [CharacterName]_damage.png
-  [CharacterName]_special.png
+Support art:
+Assets/_Project/Features/Characters/Art/Production/Portraits/[characterId]/
+  [AssetName]_portrait.png
+  [AssetName]_pfp.png
+  [AssetName]_banner.png
+  [AssetName]_comboCutIn.png
+  [AssetName]_ultimateCutIn.png
+  [AssetName]_damage.png
 
-Sprite sheet:
-Assets/_Project/Features/Characters/Art/Production/[CharacterName]/
-  [CharacterName]_spritesheet.png
+Event vignette art:
+Assets/_Project/Features/Characters/Art/Production/EventVignettes/[characterId]/
+  [AssetName]_eventVignette.png
+
+Sprite sheets:
+Assets/_Project/Features/Characters/Art/Production/PlayableSprites/[characterId]/
+  [AssetName]_IDLE.png
+  [AssetName]_[ACTION].png
 
 Animation clips:
-Assets/_Project/Features/Characters/Art/Production/[CharacterName]/Animations/
-  [CharacterName]_idle.anim
-  [CharacterName]_attack.anim
-  [CharacterName]_hit.anim
-  [CharacterName]_death.anim
+Assets/_Project/Features/Characters/Art/Production/Animations/[characterId]/
+  [AssetName]_idle.anim
+  [AssetName]_attack.anim
+  [AssetName]_hit.anim
+  [AssetName]_death.anim
 ```
 
 ### CharacterDefinition wiring
 
 After sprites and anims are imported, wire into the CharacterDefinition SO:
-- `battleSprite` → idle frame 0 of sprite sheet
-- `animatorController` → the .controller referencing the .anim clips
-- `portraitSprite` → the portrait PNG
-- Confirm stats, element affinity, weapon family match the character brief
+- `battleSprite` → idle frame 0 of the production sprite-sheet lane
+- `animatorController` → the `.controller` referencing the `.anim` clips
+- `portrait` → `[AssetName]_portrait.png`
+- `pfpSprite` → `[AssetName]_pfp.png` (HUD medallion only)
+- `bannerSprite` → `[AssetName]_banner.png`
+- `comboCutInSprite` → `[AssetName]_comboCutIn.png` (narrow attack-pose face/eye strip)
+- `ultimateCutInSprite` → `[AssetName]_ultimateCutIn.png` (second ability / ultimate presentation art)
+- `eventVignette` → `[AssetName]_eventVignette.png` from the dedicated `EventVignettes` lane only
+- `damage` pose art can live beside the other portrait outputs without being auto-wired yet
+- Confirm stats, element affinity, weapon family, and accent colour match the character brief
 
+### Support-art naming rule
+
+The production sync tooling matches exact support-art suffixes. Do not rely on “first file in folder”.
+If multiple files live in one support-art folder, use these canonical names:
+
+- `_portrait`
+- `_pfp`
+- `_banner`
+- `_comboCutIn`
+- `_ultimateCutIn`
+- `_eventVignette` (only in `Production/EventVignettes`)
+
+Do **not** put ultimate cut-in art into `eventVignette`.
 ---
 
 ## Element colour system
@@ -664,3 +748,5 @@ Square format. No text. No watermark.
 | Character looks too heroic/protagonist | Sharpen the emotional identity + expression description |
 | Too many effects, quality drops | Simplify the effects section — less instruction = more quality budget |
 | Character drifts between poses | Add skin tone + hair colour explicitly to every prompt |
+
+

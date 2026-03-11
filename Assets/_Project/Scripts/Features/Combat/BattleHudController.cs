@@ -1755,9 +1755,12 @@ namespace Shogun.Features.Combat
 
         private static Sprite ResolveComboCutInPortrait(CharacterInstance participant)
         {
-            Sprite portrait = ResolvePortrait(participant);
-            if (portrait != null)
-                return portrait;
+            if (participant != null && participant.Definition != null)
+            {
+                Sprite cutInSprite = participant.Definition.ComboCutInSprite;
+                if (cutInSprite != null)
+                    return cutInSprite;
+            }
 
             SpriteRenderer spriteRenderer = participant != null ? participant.GetComponentInChildren<SpriteRenderer>() : null;
             return spriteRenderer != null ? spriteRenderer.sprite : null;
@@ -2183,7 +2186,7 @@ namespace Shogun.Features.Combat
                 bool specialReady = front.IsAlive && front.CanUseSpecialAbility;
                 bool ultimateReady = front.IsAlive && front.CanUseUltimateAbility;
 
-                slot.FrontPortrait.sprite = ResolvePortrait(front);
+                slot.FrontPortrait.sprite = ResolveHudPortrait(front);
                 slot.FrontPortrait.color = front.IsAlive ? Color.white : new Color(0.55f, 0.55f, 0.55f, 0.9f);
 
                 slot.FrontHpFill.fillAmount = healthNormalized;
@@ -2211,7 +2214,7 @@ namespace Shogun.Features.Combat
             {
                 slot.ReserveButton.gameObject.SetActive(true);
                 slot.ReserveButton.interactable = canSwap;
-                slot.ReservePortrait.sprite = ResolvePortrait(reserve);
+                slot.ReservePortrait.sprite = ResolveHudPortrait(reserve);
                 slot.ReservePortrait.color = reserve.IsAlive ? Color.white : new Color(0.55f, 0.55f, 0.55f, 0.75f);
                 if (slot.ReserveButtonBackground != null)
                 {
@@ -2686,13 +2689,13 @@ namespace Shogun.Features.Combat
             return roster;
         }
 
-        private static Sprite ResolvePortrait(CharacterInstance character)
+        private static Sprite ResolveHudPortrait(CharacterInstance character)
         {
             if (character == null || character.Definition == null)
                 return null;
 
-            return character.Definition.Portrait != null
-                ? character.Definition.Portrait
+            return character.Definition.PfpSprite != null
+                ? character.Definition.PfpSprite
                 : character.Definition.BattleSprite;
         }
 
@@ -2921,6 +2924,7 @@ namespace Shogun.Features.Combat
         }
     }
 }
+
 
 
 

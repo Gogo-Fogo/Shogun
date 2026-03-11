@@ -25,6 +25,12 @@ namespace Shogun.Features.Characters
         [SerializeField] private Sprite bannerSprite;
         [SerializeField] private Sprite battleSprite;
         [SerializeField] private Sprite eventVignette;
+        [Tooltip("Face close-up for the battle HUD squad rail medallion. Square format. Falls back to portrait if null.")]
+        [SerializeField] private Sprite pfpSprite;
+        [Tooltip("Combat combo cut-in art. Use a narrow attack-pose face/eye crop, not the HUD pfp.")]
+        [SerializeField] private Sprite comboCutInSprite;
+        [Tooltip("Combat ultimate cut-in art used for the second ability / ultimate presentation.")]
+        [SerializeField] private Sprite ultimateCutInSprite;
         [SerializeField] private RuntimeAnimatorController animatorController;
         
         [Header("Prefab/Collider Settings")]
@@ -108,6 +114,12 @@ namespace Shogun.Features.Characters
         public Sprite BannerSprite => bannerSprite;
         public Sprite BattleSprite => battleSprite;
         public Sprite EventVignette => eventVignette;
+        /// <summary>Face close-up for the battle HUD medallion. Falls back to Portrait if null.</summary>
+        public Sprite PfpSprite => pfpSprite != null ? pfpSprite : portrait;
+        /// <summary>Combat combo cut-in art. Falls back to banner art, then portrait.</summary>
+        public Sprite ComboCutInSprite => comboCutInSprite != null ? comboCutInSprite : (bannerSprite != null ? bannerSprite : portrait);
+        /// <summary>Ultimate cut-in art. Falls back to banner art, then portrait.</summary>
+        public Sprite UltimateCutInSprite => ultimateCutInSprite != null ? ultimateCutInSprite : (bannerSprite != null ? bannerSprite : portrait);
         public RuntimeAnimatorController AnimatorController => animatorController;
         public CharacterType CharacterType => characterType;
         public ElementalType ElementalType => elementalType;
@@ -401,3 +413,6 @@ namespace Shogun.Features.Characters
         }
     }
 } 
+
+
+

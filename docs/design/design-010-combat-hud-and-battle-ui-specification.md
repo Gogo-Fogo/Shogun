@@ -274,7 +274,7 @@ This is the main improvement opportunity over `Blazing`.
 6. If no enemy is in range after the committed move, the reposition still consumes the acting unit's turn.
 7. Any active frontline allies whose attack circles already cover that same enemy join as follow-up hits without spending their own turns.
 8. Damage text appears above the enemy for each confirmed hit, with crit results using the boosted per-unit rate.
-9. A brief slanted team cut-in can flash on confirmed `2-unit` and `3-unit` combos before the live hit-count tracker takes over.
+9. A brief slanted team cut-in can flash on confirmed `2-unit` and `3-unit` combos before the live hit-count tracker takes over. These cut-ins should use dedicated narrow face/eye-strip art from the attack-pose lane, not the circular HUD pfp crop.
 10. A top-right combo tracker updates live on each confirmed hit and escalates its tier text as the chain grows.
 11. If more valid enemies remain inside the acting unit's release range, the lead unit follows through to them and eligible allies can join again.
 12. After the combo sequence finishes, the tracker gets its strongest pulse before fading.
@@ -282,12 +282,13 @@ This is the main improvement opportunity over `Blazing`.
 ### Presentation rules
 
 - first hit should feel clean and readable, not overloaded
-- confirmed `2-unit` and `3-unit` combos can use a brief portrait cut-in, but solo hits should never trigger it
+- confirmed `2-unit` and `3-unit` combos can use a brief slanted face/eye-strip cut-in, but solo hits should never trigger it
 - second and later hits are where combo spectacle should peak
 - damage text must appear above the impacted enemy and clear quickly
 - combo celebration should not hide the target that was actually hit
 - the live combo tracker should update per hit, but only after hits are confirmed
 - support-based crit preview should sit above the participating allies instead of covering the battlefield center
+- bottom-rail HUD medallions should use dedicated pfp face crops, not the combo cut-in art
 - hit-stop and bounce should support readability, not smear it
 
 ## Boss UI
@@ -454,5 +455,7 @@ When choosing between:
 - and stronger payoff after release
 
 save the spectacle for after release.
+
+
 
 

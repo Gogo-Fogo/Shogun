@@ -68,9 +68,16 @@
 13. `DOC-LEGAL-001`
 
 10. [`art-010-ai-character-art-generation-pipeline.md`](./art-010-ai-character-art-generation-pipeline.md)
-   - full AI-assisted pipeline: Gemini portrait art, PixelLab sprites, Aseprite cleanup, Unity wiring
-   - includes proven prompt templates for all 4 poses, ghost design rules, element colour system,
-     Gemini gotchas, and monetisation psychology behind the 4-pose system
+    - full AI-assisted pipeline: Gemini portrait art, PixelLab sprites, Aseprite cleanup, Unity wiring
+    - includes proven prompt templates for all 4 poses, ghost design rules, element colour system,
+      Gemini gotchas, monetisation psychology, PFP/medallion template, and PixelLab animation prompts
+11. [`art-011-ui-art-generation-pipeline.md`](./art-011-ui-art-generation-pipeline.md)
+    - Gemini prompts for battle UI chrome: medallion frames, buttons, HP bars, combo tracker, result card, cut-in stripe
+    - tool split rule (Gemini vs PixelLab vs Unity native), visual language, element colour tinting table
+    - PixelLab skill icon spec template, font strategy, file placement, and import settings
+
+## Use ART-010 for: character portraits, attack/damage/special poses, pfp medallion face, PixelLab battle sprites
+## Use ART-011 for: UI frames, buttons, panel backgrounds, HUD chrome, skill icons, status effect icons
 
 ## Rule for future updates
 

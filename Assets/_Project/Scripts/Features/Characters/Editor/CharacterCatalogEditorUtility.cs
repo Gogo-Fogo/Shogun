@@ -357,14 +357,20 @@ namespace Shogun.Features.Characters
 
             Sprite battleSprite = FindBattleSprite(characterId);
             RuntimeAnimatorController animatorController = FindAnimatorController(characterId);
-            Sprite portrait = FindSupportSprite(PortraitsRoot, characterId);
-            Sprite bannerSprite = FindSupportSprite(PortraitsRoot, characterId);
-            Sprite eventVignette = FindSupportSprite(EventVignettesRoot, characterId);
+            Sprite portrait = FindSupportSprite(PortraitsRoot, characterId, "portrait");
+            Sprite pfpSprite = FindSupportSprite(PortraitsRoot, characterId, "pfp");
+            Sprite bannerSprite = FindSupportSprite(PortraitsRoot, characterId, "banner", "bannerArt", "attack");
+            Sprite comboCutInSprite = FindSupportSprite(PortraitsRoot, characterId, "comboCutIn", "combo", "attackCutIn");
+            Sprite ultimateCutInSprite = FindSupportSprite(PortraitsRoot, characterId, "ultimateCutIn", "ultimate", "special");
+            Sprite eventVignette = FindSupportSprite(EventVignettesRoot, characterId, "eventVignette", "vignette", "event");
 
             changed |= AssignReference(serializedObject, "battleSprite", battleSprite);
             changed |= AssignReference(serializedObject, "animatorController", animatorController);
             changed |= AssignReference(serializedObject, "portrait", portrait);
+            changed |= AssignReference(serializedObject, "pfpSprite", pfpSprite);
             changed |= AssignReference(serializedObject, "bannerSprite", bannerSprite);
+            changed |= AssignReference(serializedObject, "comboCutInSprite", comboCutInSprite);
+            changed |= AssignReference(serializedObject, "ultimateCutInSprite", ultimateCutInSprite);
             changed |= AssignReference(serializedObject, "eventVignette", eventVignette);
             changed |= SyncAnimationMappings(definition, characterId);
 
@@ -544,33 +550,77 @@ namespace Shogun.Features.Characters
             return clips.FirstOrDefault(existing => existing.name.Replace(" ", string.Empty).Replace("-", string.Empty).Contains(normalizedLogicalName, StringComparison.OrdinalIgnoreCase));
         }
 
-        private static Sprite FindSupportSprite(string rootPath, string characterId)
+        private static Sprite FindSupportSprite(string rootPath, string characterId, params string[] roleTokens)
         {
             if (!AssetDatabase.IsValidFolder(rootPath))
                 return null;
 
             string directFolder = $"{rootPath}/{characterId}";
+            string assetPrefix = ToAssetName(characterId);
+
             if (AssetDatabase.IsValidFolder(directFolder))
             {
-                string[] directGuids = AssetDatabase.FindAssets("t:Texture2D", new[] { directFolder });
-                foreach (string guid in directGuids)
+                Sprite directMatch = FindSupportSpriteInFolder(directFolder, assetPrefix, roleTokens);
+                if (directMatch != null)
+                    return directMatch;
+            }
+
+            return FindSupportSpriteInFolder(rootPath, assetPrefix, roleTokens);
+        }
+
+        private static Sprite FindSupportSpriteInFolder(string folderPath, string assetPrefix, params string[] roleTokens)
+        {
+            string[] textureGuids = AssetDatabase.FindAssets("t:Texture2D", new[] { folderPath });
+            if (textureGuids == null || textureGuids.Length == 0)
+                return null;
+
+            foreach (string normalizedRole in NormalizeRoleTokens(roleTokens))
+            {
+                foreach (string guid in textureGuids.OrderBy(value => value, StringComparer.OrdinalIgnoreCase))
                 {
-                    Sprite sprite = LoadRepresentativeSprite(AssetDatabase.GUIDToAssetPath(guid));
+                    string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+                    string fileName = Path.GetFileNameWithoutExtension(assetPath);
+                    if (!MatchesSupportSprite(fileName, assetPrefix, normalizedRole))
+                        continue;
+
+                    Sprite sprite = LoadRepresentativeSprite(assetPath);
                     if (sprite != null)
                         return sprite;
                 }
             }
 
-            string assetPrefix = ToAssetName(characterId);
-            string[] fallbackGuids = AssetDatabase.FindAssets($"{assetPrefix} t:Texture2D", new[] { rootPath });
-            foreach (string guid in fallbackGuids)
-            {
-                Sprite sprite = LoadRepresentativeSprite(AssetDatabase.GUIDToAssetPath(guid));
-                if (sprite != null)
-                    return sprite;
-            }
-
             return null;
+        }
+
+        private static IEnumerable<string> NormalizeRoleTokens(IEnumerable<string> roleTokens)
+        {
+            return (roleTokens ?? Array.Empty<string>())
+                .Where(token => !string.IsNullOrWhiteSpace(token))
+                .Select(NormalizeToken)
+                .Distinct(StringComparer.OrdinalIgnoreCase);
+        }
+
+        private static bool MatchesSupportSprite(string fileName, string assetPrefix, string normalizedRole)
+        {
+            if (string.IsNullOrWhiteSpace(fileName) || string.IsNullOrWhiteSpace(normalizedRole))
+                return false;
+
+            string normalizedFileName = NormalizeToken(fileName);
+            string normalizedPrefix = NormalizeToken(assetPrefix);
+
+            if (!string.IsNullOrEmpty(normalizedPrefix) && normalizedFileName.StartsWith(normalizedPrefix, StringComparison.OrdinalIgnoreCase))
+                normalizedFileName = normalizedFileName.Substring(normalizedPrefix.Length);
+
+            return normalizedFileName.Equals(normalizedRole, StringComparison.OrdinalIgnoreCase)
+                || normalizedFileName.EndsWith(normalizedRole, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static string NormalizeToken(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return string.Empty;
+
+            return new string(value.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
         }
 
         private static Sprite LoadRepresentativeSprite(string assetPath)
@@ -621,7 +671,10 @@ namespace Shogun.Features.Characters
 
             ValidateProductionReference(definition.name, "battleSprite", definition.BattleSprite, ref report);
             ValidateProductionReference(definition.name, "portrait", definition.Portrait, ref report);
+            ValidateProductionReference(definition.name, "pfpSprite", definition.PfpSprite, ref report);
             ValidateProductionReference(definition.name, "bannerSprite", definition.BannerSprite, ref report);
+            ValidateProductionReference(definition.name, "comboCutInSprite", definition.ComboCutInSprite, ref report);
+            ValidateProductionReference(definition.name, "ultimateCutInSprite", definition.UltimateCutInSprite, ref report);
             ValidateProductionReference(definition.name, "eventVignette", definition.EventVignette, ref report);
             ValidateProductionReference(definition.name, "animatorController", definition.AnimatorController, ref report);
 
@@ -784,3 +837,4 @@ namespace Shogun.Features.Characters
     }
 }
 #endif
+
