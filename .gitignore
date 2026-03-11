@@ -85,3 +85,6 @@ Assets/_Project/Art/References/
 
 # Claude Code local overrides (machine-specific)
 .claude/settings.local.json
+
+# Codex temporary profile/runtime state
+/_tmp_codex_profile_test/
