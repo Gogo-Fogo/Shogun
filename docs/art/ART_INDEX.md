@@ -67,6 +67,11 @@
 12. `DOC-OPS-004`
 13. `DOC-LEGAL-001`
 
+10. [`art-010-ai-character-art-generation-pipeline.md`](./art-010-ai-character-art-generation-pipeline.md)
+   - full AI-assisted pipeline: Gemini portrait art, PixelLab sprites, Aseprite cleanup, Unity wiring
+   - includes proven prompt templates for all 4 poses, ghost design rules, element colour system,
+     Gemini gotchas, and monetisation psychology behind the 4-pose system
+
 ## Rule for future updates
 
 Add new art docs here when:

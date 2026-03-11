@@ -129,7 +129,8 @@ An asset becomes production-canonical only when:
 1. it has a clear character or feature owner
 2. it passed the current style and readability standard
 3. its provenance is captured per `ART-004`
-4. it is placed in the correct `Production/` folder
+4. it is placed in the correct Production/ folder
+5. its matching CharacterDefinition and runtime catalog entry are synced to that production asset lane
 
 If those conditions are not met, the asset remains source or legacy material.
 
@@ -148,4 +149,5 @@ For now:
 - `ART-009` for style experimentation lanes
 - `DOC-OPS-004` for PixelLab operating guidance
 - `DOC-OPS-007` for the broader stage-1 reality audit
+
 

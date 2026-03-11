@@ -17,7 +17,7 @@ MonoBehaviour:
   surname: 
   givenName: Akai
   characterName: Akai
-  description: A dark red samurai duelist used as a debug enemy target.
+  description: A crimson execution duelist whose counter-focused swordwork turns pride into a weakness.
   portrait: {fileID: 0}
   bannerSprite: {fileID: 0}
   battleSprite: {fileID: 4723107735738678597, guid: 0a6a77c7ad34b4a44959d24957c475dc, type: 3}
@@ -38,7 +38,7 @@ MonoBehaviour:
   baseDefense: 34
   baseSpeed: 12
   specialAbilityName: Crimson Counter
-  specialAbilityDescription: A red-lined sword flurry used for sandbox enemy behavior testing.
+  specialAbilityDescription: A red-lined sword flurry that punishes anyone trapped in his guard.
   specialAbilityCooldown: 3
   specialAbilityDamage: 140
   baseStealthEffectiveness: 10
@@ -48,14 +48,14 @@ MonoBehaviour:
   synergyTags:
   - Samurai
   - DarkRed
-  worldPillar: 0
+  worldPillar: 4
   martialSchool: 0
   collectibleFantasy: 3
   collectibleTone: cruel
-  visualHook: deep crimson armor, blood-red blade, counter stance
-  emotionalHook: arrogance
-  loreBlurb: He never loses. He stopped counting what he spends to keep it that way.
-  variantPotential: full corruption form, ceremonial tournament champion
+  visualHook: deep crimson armor, lacquered half-mask, blood-red blade
+  emotionalHook: domination
+  loreBlurb: He offers mercy only to hear what pride sounds like when it breaks.
+  variantPotential: full corruption form, execution tournament regalia, blood-rite champion
   animationMappings:
   - logicalName: IDLE
     clip: {fileID: 7400000, guid: 0d73e4c2b54748f582c96702e183fc64, type: 2}

@@ -17,7 +17,7 @@ MonoBehaviour:
   surname: 
   givenName: Katsuro
   characterName: Katsuro
-  description: A blazing duelist promoted from the Samurai #2 legacy lane.
+  description: A fire-bright exile duelist who overwhelms openings with relentless forward pressure.
   portrait: {fileID: 0}
   bannerSprite: {fileID: 0}
   battleSprite: {fileID: 815424164945274260, guid: eb3240cf10b949938f535b7110bd8c3a, type: 3}
@@ -38,7 +38,7 @@ MonoBehaviour:
   baseDefense: 34
   baseSpeed: 13
   specialAbilityName: Flashstep Cut
-  specialAbilityDescription: He crashes through the lane with a dash attack.
+  specialAbilityDescription: He surges through the lane in a fire-bright dash slash.
   specialAbilityCooldown: 3
   specialAbilityChargeRequirement: 3
   ultimateAbilityChargeRequirement: 6
@@ -51,13 +51,13 @@ MonoBehaviour:
   - Samurai
   - Fire
   worldPillar: 1
-  martialSchool: 3
+  martialSchool: 0
   collectibleFantasy: 1
   collectibleTone: fierce
-  visualHook: forward-leaning crimson slash silhouette
-  emotionalHook: aggression
-  loreBlurb: Katsuro wins by deciding the exchange before anyone else can breathe.
-  variantPotential: festival duelist, scarred exile
+  visualHook: flame-bright sash, forward-drawn blade, duelist lean
+  emotionalHook: resentment
+  loreBlurb: Katsuro fights like a house fire trying to remember who lit it.
+  variantPotential: scarred exile, masked pit champion, festival duel attire
   animationMappings:
   - logicalName: IDLE
     clip: {fileID: 7400000, guid: d97639c2966345a1aeafda050488923f, type: 2}

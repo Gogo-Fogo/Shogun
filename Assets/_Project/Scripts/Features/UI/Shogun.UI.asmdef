@@ -2,7 +2,8 @@
     "name": "Shogun.UI",
     "rootNamespace": "Shogun.Features.UI",
     "references": [
-        "GUID:716e414e3a6173047aa1b3dc9de87423"
+        "GUID:716e414e3a6173047aa1b3dc9de87423",
+        "GUID:ff4be0973a4c07243a64d3180ba019c3"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

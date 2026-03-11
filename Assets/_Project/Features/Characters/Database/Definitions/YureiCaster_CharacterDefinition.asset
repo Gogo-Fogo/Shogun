@@ -17,7 +17,7 @@ MonoBehaviour:
   surname: 
   givenName: Yurei Caster
   characterName: Yurei Caster
-  description: A drifting spirit that pressures the player from long range and threatens cursed follow-up damage.
+  description: A bound ritual spirit that attacks from afar and leaves curses hanging in the air behind each cast.
   portrait: {fileID: 0}
   bannerSprite: {fileID: 0}
   battleSprite: {fileID: 4723107735738678597, guid: b897f873f8866a94b9cd8ec2c583b948, type: 3}
@@ -48,14 +48,14 @@ MonoBehaviour:
   - Yokai
   - Caster
   - Shadow
-  worldPillar: 3
+  worldPillar: 2
   martialSchool: 6
   collectibleFantasy: 4
   collectibleTone: devotional
-  visualHook: translucent form, trailing spiritual chains, hollow eyes, paper charms
+  visualHook: translucent form, trailing prayer chains, talisman seals
   emotionalHook: obsession
-  loreBlurb: She never left. She never understood that she was supposed to.
-  variantPotential: bound spirit form, festival haunting event, boss manifestation
+  loreBlurb: She repeats the rite that killed her because no one ever taught the dead how to stop.
+  variantPotential: bound shrine revenant, eclipse exorcism form, boss manifestation
   animationMappings:
   - logicalName: IDLE
     clip: {fileID: 7400000, guid: 4d00c7cf4b914ed193f385a715f92b4f, type: 2}

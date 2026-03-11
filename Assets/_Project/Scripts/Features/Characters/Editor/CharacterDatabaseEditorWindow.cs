@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -21,7 +22,7 @@ namespace Shogun.Features.Characters
         private void OnGUI()
         {
             EditorGUILayout.LabelField("Character Database", EditorStyles.boldLabel);
-            EditorGUILayout.HelpBox("Use this window to scaffold character folders/assets, rebuild the runtime catalog, validate production asset placement, and enforce crisp sprite import quality.", MessageType.Info);
+            EditorGUILayout.HelpBox("Use this window to scaffold character folders/assets, sync the production roster into CharacterDefinition assets, rebuild the runtime catalog, validate production asset placement, and enforce crisp sprite import quality.", MessageType.Info);
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("New Character Scaffold", EditorStyles.boldLabel);
@@ -41,6 +42,13 @@ namespace Shogun.Features.Characters
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Catalog", EditorStyles.boldLabel);
+
+            if (GUILayout.Button("Sync Production Assets To Definitions"))
+            {
+                CharacterCatalogEditorUtility.SyncReport report = CharacterCatalogEditorUtility.SyncProductionDefinitions();
+                _lastValidationReport = FormatSyncReport(report);
+            }
+
             if (GUILayout.Button("Rebuild Character Catalog"))
             {
                 CharacterCatalogEditorUtility.RebuildCatalog();
@@ -63,10 +71,29 @@ namespace Shogun.Features.Characters
             {
                 EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Validation Report", EditorStyles.boldLabel);
-                _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition, GUILayout.Height(240));
+                _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition, GUILayout.Height(260));
                 EditorGUILayout.TextArea(_lastValidationReport, GUILayout.ExpandHeight(true));
                 EditorGUILayout.EndScrollView();
             }
+        }
+
+        private static string FormatSyncReport(CharacterCatalogEditorUtility.SyncReport report)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine($"Created definitions: {report.CreatedDefinitions}");
+            builder.AppendLine($"Updated definitions: {report.UpdatedDefinitions}");
+            builder.AppendLine($"Catalog rebuilt: {report.CatalogRebuilt}");
+            builder.AppendLine($"Warnings: {report.WarningCount}");
+            builder.AppendLine($"Errors: {report.ErrorCount}");
+
+            if (report.Messages != null && report.Messages.Count > 0)
+            {
+                builder.AppendLine();
+                foreach (string message in report.Messages)
+                    builder.AppendLine(message);
+            }
+
+            return builder.ToString().TrimEnd();
         }
     }
 }

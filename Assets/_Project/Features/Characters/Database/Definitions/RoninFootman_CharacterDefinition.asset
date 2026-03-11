@@ -17,7 +17,7 @@ MonoBehaviour:
   surname: 
   givenName: Ronin Footman
   characterName: Ronin Footman
-  description: A disposable frontline swordsman used to pressure the player and establish range overlap.
+  description: A battered frontline ronin whose only remaining trade is surviving one more battle.
   portrait: {fileID: 0}
   bannerSprite: {fileID: 0}
   battleSprite: {fileID: 4723107735738678597, guid: 9dacc4093dd1dd74e9e2c30e0cd5bb4e, type: 3}
@@ -37,7 +37,7 @@ MonoBehaviour:
   baseDefense: 26
   baseSpeed: 10
   specialAbilityName: Guard Break
-  specialAbilityDescription: A straightforward strike intended to open space for stronger enemies.
+  specialAbilityDescription: A blunt rushing cut meant to break formation and buy the next killer room.
   specialAbilityCooldown: 3
   specialAbilityDamage: 95
   baseStealthEffectiveness: 10
@@ -51,11 +51,11 @@ MonoBehaviour:
   worldPillar: 1
   martialSchool: 1
   collectibleFantasy: 1
-  collectibleTone: brutal
-  visualHook: patched armor, scarred face, battered blade
+  collectibleTone: hardened
+  visualHook: patched armor, nicked blade, rope-bound plating
   emotionalHook: survival
-  loreBlurb: His lord fell. He kept fighting. No one thought to ask him why.
-  variantPotential: promoted officer variant, veteran berserker form
+  loreBlurb: He outlived his lord, his banner, and most of the men who swore beside him.
+  variantPotential: veteran raider, promoted captain, berserker survivor
   animationMappings:
   - logicalName: IDLE
     clip: {fileID: 7400000, guid: 493b6c5c828348c0ae5c4febe1070613, type: 2}

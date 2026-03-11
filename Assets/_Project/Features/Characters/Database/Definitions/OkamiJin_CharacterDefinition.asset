@@ -17,7 +17,7 @@ MonoBehaviour:
   surname: 
   givenName: OkamiJin
   characterName: OkamiJin
-  description: A wolf samurai beastfighter promoted from the OkamiJin animal legacy lane.
+  description: A frost-bitten wolf warrior who crashes through lines before prey can reset its footing.
   portrait: {fileID: 0}
   bannerSprite: {fileID: 0}
   battleSprite: {fileID: 815424164945274260, guid: 108f8a34144b4a2798aee67d05cec97b, type: 3}
@@ -54,10 +54,10 @@ MonoBehaviour:
   martialSchool: 6
   collectibleFantasy: 2
   collectibleTone: feral
-  visualHook: wolf helm and lunging beast silhouette
+  visualHook: white pelt mane, crescent helm, lunging frost-beast silhouette
   emotionalHook: hunger
-  loreBlurb: When OkamiJin starts running, the safe distance is already gone.
-  variantPotential: moonlit alpha, shrine guardian form
+  loreBlurb: By the time prey hears the ice on his breath, the chase is already over.
+  variantPotential: moon-hunted alpha, shrine guardian form, winter beast lord
   animationMappings:
   - logicalName: IDLE
     clip: {fileID: 7400000, guid: dd9bea5695d845db9ba9b440a8880930, type: 2}

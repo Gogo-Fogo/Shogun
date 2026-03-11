@@ -421,7 +421,7 @@ Do not stretch a phone UI blindly and call that tablet support.
 
 These are the most useful follow-ups if the team adopts this strategy:
 
-1. make [`AppFrameRate.cs`](../../Assets/_Project/Scripts/Core/Utilities/AppFrameRate.cs) settings-driven instead of hard-forcing `120`
+1. keep [`AppFrameRate.cs`](../../Assets/_Project/Scripts/Core/Utilities/AppFrameRate.cs) settings-driven and keep the local settings scene exposing `30`, `60`, and `120` presets cleanly
 2. enable iOS ProMotion only when the game has a real high-refresh settings path
 3. revisit `uIRequiresFullScreen` when iPad support becomes a real target
 4. audit portrait-first prefabs that still use landscape reference resolutions

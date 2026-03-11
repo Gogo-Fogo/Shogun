@@ -17,7 +17,7 @@ MonoBehaviour:
   surname: 
   givenName: Takeshi
   characterName: Takeshi
-  description: A disciplined spear-style samurai promoted from the Samurai #6 legacy lane.
+  description: A disciplined spear retainer who keeps the enemy where his reach says they belong.
   portrait: {fileID: 0}
   bannerSprite: {fileID: 0}
   battleSprite: {fileID: 815424164945274260, guid: cede1742c70346f5a7a9d83d0985e4c3, type: 3}
@@ -54,10 +54,10 @@ MonoBehaviour:
   martialSchool: 0
   collectibleFantasy: 0
   collectibleTone: resolute
-  visualHook: long weapon silhouette and forward guard
+  visualHook: long yari silhouette, storm tassel, disciplined forward guard
   emotionalHook: resolve
-  loreBlurb: He keeps enough distance to make every answer feel late.
-  variantPotential: ashigaru captain, storm-banner retainer
+  loreBlurb: Takeshi keeps enough distance to make every answer arrive too late.
+  variantPotential: ashigaru captain, storm-banner retainer, siege escort attire
   animationMappings:
   - logicalName: IDLE
     clip: {fileID: 7400000, guid: ed9553b259594a52959467dd726d5e71, type: 2}

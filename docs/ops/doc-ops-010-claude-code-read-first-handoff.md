@@ -11,10 +11,11 @@ It is not in broad feature implementation mode.
 Current repo truth:
 
 - `Assets/_Project/Scenes/Dev/Dev_Sandbox.unity` is the only meaningful gameplay scene.
-- `MainMenu`, `Battle_Prototype`, and `UI_Demo` are shell/support scenes.
+- `MainMenu` is now a lightweight support front door that links into `Dev_Sandbox`, `Summon`, `Barracks`, and `Settings`, while `Summon`, `Battle_Prototype`, `UI_Demo`, `Barracks`, and `Settings` remain support/test scenes.
 - `Characters` and `Combat` are real but prototype-grade.
-- `Gacha`, broader `UI`, `Networking`, and broader `Input` are planned architecture, not trustworthy implementation surfaces.
+- `Gacha` still lacks trustworthy backend/economy authority; the new `Summon` scene is only a local test harness, while broader `UI`, `Networking`, and broader `Input` remain planned architecture.
 - New work should stay centered on the first authored slice: `Courtyard Ambush`.
+- `Barracks` is collection-facing support UI and currently uses the debug player roster as its owned-character placeholder.
 - Slice player trio: `Ryoma`, `Kuro`, `Tsukiko`.
 - Slice enemy trio: `Ronin Footman`, `Oni Brute`, `Yurei Caster`.
 - Old imported-heavy art is legacy by default, not canonical production art.
@@ -67,3 +68,7 @@ For feature implementation work (not pure bug triage or tiny hotfixes):
 - The docs tree is the source-of-truth router.
 - This handoff note is intentionally thin and should reduce token waste.
 - If the task is active implementation, prefer the short-term TODO and slice docs before reading broader roadmap material.
+
+
+
+

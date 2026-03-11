@@ -10,6 +10,9 @@ If a task does not directly help make `Dev_Sandbox` and `Courtyard Ambush` trust
 
 - `[After slice]` Add more authored encounters after `Courtyard Ambush` proves the core battle loop.
 - `[Post-production-foundation]` Build a trustworthy reward/progression chain beyond placeholder result handoff.
+- `[Post-production-foundation]` Replace the `Barracks` placeholder debug-owned roster with real player ownership/save data and progression hooks.
+- `[Post-production-foundation]` Replace the local `Summon` test harness with a backend-authoritative banner, inventory, pity, and odds-disclosure flow.
+- `[Post-production-foundation]` Replace the support-scene `MainMenu` front door with a progression-aware home hub once more than the first slice, summon harness, and barracks placeholder need routing.
 - `[Launch-scale]` Expand roster breadth, enemy archetypes, and encounter families into a fuller content cadence.
 - `[Only if traction]` Build aggressive alt/variant production cadence tied to live-service banners.
 
@@ -64,3 +67,8 @@ Do not pull these items into active implementation unless a direct slice blocker
 - clan-first or PvP-first planning
 - launch-scale backend hosting decisions
 - platform-expansion work beyond basic mobile-first discipline
+
+
+
+
+

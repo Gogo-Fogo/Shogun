@@ -18,7 +18,7 @@ MonoBehaviour:
   surname: 
   givenName: Kumada
   characterName: Kumada
-  description: A heavy panda samurai added as a sandbox enemy to test mixed enemy silhouettes and spacing.
+  description: A swaggering mercenary bruiser whose size and mock-court manners make him impossible to ignore.
   portrait: {fileID: 0}
   bannerSprite: {fileID: 0}
   battleSprite: {fileID: 815424164945274260, guid: cff9c4d45bd1be040b85a738d05f58d2, type: 3}
@@ -39,7 +39,7 @@ MonoBehaviour:
   baseDefense: 38
   baseSpeed: 8
   specialAbilityName: Iron Panda Rush
-  specialAbilityDescription: A grounded rushing strike that helps validate enemy spacing and nearest-target facing.
+  specialAbilityDescription: A grounded rushing strike that bowls through anyone slow enough to hold the lane.
   specialAbilityCooldown: 4
   specialAbilityDamage: 132
   baseStealthEffectiveness: 4
@@ -53,11 +53,11 @@ MonoBehaviour:
   worldPillar: 1
   martialSchool: 1
   collectibleFantasy: 1
-  collectibleTone: brutal
-  visualHook: bear-pelt mantle, crushing grip, scarred forearms
+  collectibleTone: swaggering
+  visualHook: bear-pelt mantle, crushing grip, split-jaw grin
   emotionalHook: arrogance
-  loreBlurb: He fights because he can. That is reason enough.
-  variantPotential: decorated warlord form, festival champion variant
+  loreBlurb: He laughs hardest when the first shield breaks.
+  variantPotential: decorated warlord form, drunken festival champion, winter raid lord
   animationMappings:
   - logicalName: IDLE
     clip: {fileID: 7400000, guid: 094140d4cf7f4ba99df47a119ff4fab6, type: 2}

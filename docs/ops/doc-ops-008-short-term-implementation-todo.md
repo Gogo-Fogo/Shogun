@@ -13,9 +13,9 @@ Do not add broad feature ambitions here unless they directly unblock the slice.
 ## Slice scope guardrails
 
 - Only `Dev_Sandbox` is implementation-truth right now.
-- `MainMenu`, `Battle_Prototype`, and `UI_Demo` remain shell/support scenes.
+- `MainMenu` is a support front door only; `Summon`, `Battle_Prototype`, `UI_Demo`, `Barracks`, and `Settings` remain shell/support scenes.
 - `Characters` and `Combat` are real but prototype-grade.
-- `Gacha`, broader `UI`, `Networking`, and broader `Input` remain planned architecture.
+- `Summon` may exist as a local test harness, but real `Gacha`, broader `UI`, `Networking`, and broader `Input` remain planned architecture.
 - New art/source work goes into the current `Source / Production` lanes.
 - Imported-heavy legacy art remains archive material by default.
 
@@ -68,3 +68,6 @@ These do not belong in the short-term slice backlog unless they become true bloc
 - large-scale UI rewrite
 - broad content expansion outside the first slice
 - wide project cleanup unrelated to the slice
+
+
+

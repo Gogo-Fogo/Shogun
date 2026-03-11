@@ -17,7 +17,7 @@ MonoBehaviour:
   surname: 
   givenName: Daichi
   characterName: Daichi
-  description: A grounded frontline samurai built from the Samurai #4 legacy lane.
+  description: A stone-set frontline retainer who absorbs pressure and refuses to yield the center.
   portrait: {fileID: 0}
   bannerSprite: {fileID: 0}
   battleSprite: {fileID: 815424164945274260, guid: 70165062c30f46e7b15f5073784bd8ba, type: 3}
@@ -38,7 +38,7 @@ MonoBehaviour:
   baseDefense: 42
   baseSpeed: 10
   specialAbilityName: Stonebreaker Throw
-  specialAbilityDescription: He breaks formation with a heavy thrown follow-up.
+  specialAbilityDescription: A crushing guard-break follow-up that knocks stubborn enemies off balance.
   specialAbilityCooldown: 3
   specialAbilityChargeRequirement: 4
   ultimateAbilityChargeRequirement: 8
@@ -54,10 +54,10 @@ MonoBehaviour:
   martialSchool: 0
   collectibleFantasy: 0
   collectibleTone: stoic
-  visualHook: broad shoulderguard and grounded stance
+  visualHook: broad shoulderguard, weathered crest, stone-low stance
   emotionalHook: duty
-  loreBlurb: He plants his feet where others start negotiating.
-  variantPotential: armored captain, ceremonial retainer
+  loreBlurb: Daichi is the wall men notice only after it refuses to move.
+  variantPotential: siege captain, funeral-armored retainer, mountain campaign attire
   animationMappings:
   - logicalName: IDLE
     clip: {fileID: 7400000, guid: 5a1e115dd42e4aa4b2ee4238419bfcfb, type: 2}

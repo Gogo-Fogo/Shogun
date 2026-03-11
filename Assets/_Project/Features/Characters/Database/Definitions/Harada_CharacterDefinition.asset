@@ -17,7 +17,7 @@ MonoBehaviour:
   surname: 
   givenName: Harada
   characterName: Harada
-  description: A ranged samurai archer promoted from the Harada legacy lane.
+  description: A wind-reading court archer who kills from the distance where hesitation still looks like dignity.
   portrait: {fileID: 0}
   bannerSprite: {fileID: 0}
   battleSprite: {fileID: 4723107735738678597, guid: 20ba977bda114324bd9cd04df230350b, type: 3}
@@ -38,7 +38,7 @@ MonoBehaviour:
   baseDefense: 28
   baseSpeed: 15
   specialAbilityName: Storm of Arrows
-  specialAbilityDescription: He draws, steps, and fills the lane with a rapid shot.
+  specialAbilityDescription: He draws, steps, and fills the lane with a disciplined volley.
   specialAbilityCooldown: 3
   specialAbilityChargeRequirement: 4
   ultimateAbilityChargeRequirement: 8
@@ -52,12 +52,12 @@ MonoBehaviour:
   - Wind
   worldPillar: 0
   martialSchool: 6
-  collectibleFantasy: 4
-  collectibleTone: focused
-  visualHook: bow silhouette and crisp archer posture
-  emotionalHook: discipline
-  loreBlurb: Harada is quiet right up until the arrow is already in the air.
-  variantPotential: festival hunter, night watch captain
+  collectibleFantasy: 0
+  collectibleTone: restrained
+  visualHook: long asymmetrical bow, falconer sleeve, upright archer silhouette
+  emotionalHook: patience
+  loreBlurb: Harada measures the wind like a prayer and releases before doubt can speak.
+  variantPotential: moon-hunt commander, falconry retainer, autumn procession attire
   animationMappings:
   - logicalName: IDLE
     clip: {fileID: 7400000, guid: 5252f17aeddc4cde8657f61a225dc0b1, type: 2}

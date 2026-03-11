@@ -17,7 +17,7 @@ MonoBehaviour:
   surname: 
   givenName: Ryoma
   characterName: Ryoma
-  description: A skilled samurai known for his honor and swordsmanship.
+  description: A court-trained swordsman whose clean fundamentals make him the line's steady center.
   portrait: {fileID: 0}
   bannerSprite: {fileID: 0}
   battleSprite: {fileID: 815424164945274260, guid: de5ba5e6ae97b8a49a810206133de9a2, type: 3}
@@ -57,8 +57,8 @@ MonoBehaviour:
   collectibleTone: noble
   visualHook: steel-blue hakama, unadorned blade, steady stance
   emotionalHook: duty
-  loreBlurb: A blade without a master. He carries his lord's name forward even after his lord's name is gone.
-  variantPotential: corrupted samurai form, ceremonial court attire, festival warrior
+  loreBlurb: A blade without a master, he carries his lord's name forward long after the court stopped speaking it.
+  variantPotential: mourning armor, ceremonial court attire, festival duelist
   animationMappings:
   - logicalName: IDLE
     clip: {fileID: 7400000, guid: 9d45e97cbe73c724c984b57ebe89913b, type: 2}

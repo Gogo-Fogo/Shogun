@@ -17,7 +17,7 @@ MonoBehaviour:
   surname: 
   givenName: Reiji
   characterName: Reiji
-  description: A midnight duelist samurai added as a sandbox enemy for target-facing behavior tests.
+  description: A shadow-bound ronin duelist who treats every fight like a funeral rite.
   portrait: {fileID: 0}
   bannerSprite: {fileID: 0}
   battleSprite: {fileID: 4723107735738678597, guid: 7b369293c6812b84891ca9d815e330d8, type: 3}
@@ -38,7 +38,7 @@ MonoBehaviour:
   baseDefense: 30
   baseSpeed: 13
   specialAbilityName: Midnight Slash
-  specialAbilityDescription: A quick shadow-laced sword combo for testing enemy pressure in front-line range.
+  specialAbilityDescription: A shadow-laced sword combo that punishes anyone who stands in front of him too long.
   specialAbilityCooldown: 3
   specialAbilityDamage: 138
   baseStealthEffectiveness: 12
@@ -50,13 +50,13 @@ MonoBehaviour:
   - Shadow
   - Duelist
   worldPillar: 1
-  martialSchool: 3
+  martialSchool: 0
   collectibleFantasy: 0
   collectibleTone: tragic
-  visualHook: midnight silhouette, shadow-wreathed blade, quiet duelist stance
+  visualHook: midnight haori, shadow-wreathed blade, mourner stance
   emotionalHook: grief
-  loreBlurb: He duels at night so no one sees what it costs him.
-  variantPotential: corrupted shadow form, ceremonial rematch variant, festival darkness
+  loreBlurb: He duels after sunset because grief looks cleaner in the dark.
+  variantPotential: eclipse revenant, mourning-veil duelist, festival of lamps attire
   animationMappings:
   - logicalName: IDLE
     clip: {fileID: 7400000, guid: 54d0b24590c041e194590806899f6428, type: 2}

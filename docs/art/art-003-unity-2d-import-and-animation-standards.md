@@ -88,6 +88,7 @@ Every imported character should be checked for:
 - clear directional facing
 - no muddy weapon trails or unreadable limbs
 - no timing that feels too fast or too floaty on device-scale playback
+- no promoted production sprite sheet left orphaned without at least one referencing animation clip
 
 ## Animation quality rules
 
@@ -111,3 +112,4 @@ Escalate above the default standard only when the asset category needs it:
 - larger portrait or cut-in assets should live in a separate presentation-art pipeline
 
 Do not let rare exceptions quietly become the default standard for all characters.
+

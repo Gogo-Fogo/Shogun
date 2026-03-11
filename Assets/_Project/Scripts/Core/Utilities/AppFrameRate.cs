@@ -1,13 +1,13 @@
 // AppFrameRate.cs
-// Utility MonoBehaviour for setting and managing the application's target frame rate.
-// Attach to a GameObject in the initial scene to enforce consistent frame timing.
+// Utility MonoBehaviour for applying the current saved frame-rate target at startup.
 
+using Shogun.Core;
 using UnityEngine;
 
 public class AppFrameRate : MonoBehaviour
 {
-    [Header("Set your desired FPS here")]
-    public int targetFrameRate = 120;
+    [Header("Fallback FPS if saved settings are unavailable")]
+    public int targetFrameRate = 60;
 
     private static AppFrameRate instance;
 
@@ -16,13 +16,13 @@ public class AppFrameRate : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            Application.targetFrameRate = targetFrameRate;
-            QualitySettings.vSyncCount = 0;
             DontDestroyOnLoad(gameObject);
+            GameSettingsService.ApplyRuntimeSettings(targetFrameRate);
+            targetFrameRate = GameSettingsService.GetSnapshot().TargetFrameRate;
         }
         else
         {
-            Destroy(gameObject); // Ensure only one instance exists
+            Destroy(gameObject);
         }
     }
 }
