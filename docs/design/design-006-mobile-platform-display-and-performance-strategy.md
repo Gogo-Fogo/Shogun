@@ -127,8 +127,9 @@ If `Shogun` supports iPad and flexible layout behavior well, that is the most se
 
 The Unity project already has several good foundations:
 
-- [`Assets/_Project/Scripts/Core/Utilities/SafeAreaHandler.cs`](../../Assets/_Project/Scripts/Core/Utilities/SafeAreaHandler.cs)
+- [Assets/_Project/Scripts/Core/Utilities/SafeAreaHandler.cs](../../Assets/_Project/Scripts/Core/Utilities/SafeAreaHandler.cs)
   - safe-area-aware UI behavior already exists
+  - this is a HUD/layout concern only; battle cameras should fit battlefield art directly rather than exposing side gutters as pseudo-safe-area padding
 - [`Assets/_Project/Prefabs/System/SharedSceneRoot.prefab`](../../Assets/_Project/Prefabs/System/SharedSceneRoot.prefab)
   - shared UI root is portrait-first with `1080 x 1920` reference resolution and a safe-area panel
 - [`ProjectSettings/ProjectSettings.asset`](../../ProjectSettings/ProjectSettings.asset)
@@ -367,6 +368,8 @@ That should remain the core mobile baseline.
 - keep portrait-first reference framing
 - keep a single shared safe-area layer
 - build adaptive layout rules for large screens
+- keep battle HUD modules inside a centered max-width content lane on large portrait screens instead of stretching them edge to edge
+- recompute layout when safe area or window size changes so foldables and iPad multitasking stay stable without a separate UX branch
 - do not rely on one exact aspect ratio or one exact phone size
 
 ### What larger screens should get
@@ -474,3 +477,4 @@ Unity:
 - [`design-004-roguelite-replayability-and-run-mode-framework.md`](./design-004-roguelite-replayability-and-run-mode-framework.md)
 - [`../art/art-001-style-bible-and-visual-targets.md`](../art/art-001-style-bible-and-visual-targets.md)
 - [`../art/art-008-roguelite-event-vignette-art.md`](../art/art-008-roguelite-event-vignette-art.md)
+

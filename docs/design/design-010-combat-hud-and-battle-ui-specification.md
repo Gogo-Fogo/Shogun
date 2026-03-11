@@ -73,7 +73,6 @@ The player should be able to identify:
 - team health at a glance
 - encounter objective or boss state
 - utility actions like speed, auto, and menu
-- subtle left/right edge framing when it is the player's turn, without dimming the battlefield center too aggressively
 
 This state should stay calm and low-noise.
 
@@ -172,6 +171,18 @@ Rules:
 - this tracker should stay off during drag prediction and only appear once confirmed hits begin landing
 - the numeric hit total should be the primary read; the tier label should be secondary flair
 - it should sit near the top-right without covering the battlefield center or the utility buttons themselves
+- on tablet and foldable portrait widths it should stay aligned to the same centered HUD content lane as the top bar, not drift to the physical screen edge
+
+### Large-screen portrait rule
+
+The top bar, combo tracker, and bottom squad rail should live inside one centered adaptive content lane.
+
+Rules:
+
+- on phone-width portrait screens this lane can use nearly the full safe-area width
+- on tablet and foldable portrait screens this lane should clamp to a readable max width and leave side breathing room for the battlefield
+- if the available window changes size or safe area at runtime, the lane should recompute immediately instead of waiting for scene reload
+- this is still one shared portrait HUD, not a separate tablet-only combat layout
 
 ### Battlefield center
 
@@ -193,6 +204,7 @@ Rules:
 - player-controlled range auras can carry the richer fill, glow, and marker treatment; enemy threat circles should stay simpler to avoid overlap clutter
 - active ally attack circles should use one shared blue battlefield grammar; precision should come from the consistent outer rim, not per-character palette variation
 - ally-circle interior fill should stay airy near the center and bias its opacity toward the edge so the boundary line remains the clearest collision read
+- safe-area handling should stay in the HUD layer only; the battlefield camera should fit the arena art cleanly instead of exposing decorative side gutters or edge bands
 
 ### Bottom squad rail
 
@@ -441,6 +453,7 @@ When choosing between:
 - and stronger payoff after release
 
 save the spectacle for after release.
+
 
 
 

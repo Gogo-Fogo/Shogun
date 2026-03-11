@@ -77,8 +77,8 @@ If a proposed UI task does not materially help the active slice, it should move 
 
 - `[Now]` Audit battle UI prefabs for portrait-first reference behavior and safe-area correctness.
 - `[Now]` Remove landscape assumptions from slice-facing battle panels where they break portrait-first behavior.
-- `[Next]` Validate the slice on large-screen portrait layouts so extra space becomes breathing room rather than stretched UI.
-- `[Next]` Keep future tablet and foldable adaptation in mind, but only through adaptive layout rules, not bespoke large-screen UX.
+- `[Now]` Keep the slice HUD inside a centered adaptive content lane so large portrait screens gain breathing room instead of stretched UI.
+- `[Now]` Reflow slice HUD layout on safe-area and window-shape changes so foldables and iPad multitasking behave correctly without a separate UX branch.
 - `[Do not start yet]` Do not build a separate tablet UX branch or desktop-style combat layout.
 
 ### Accessibility and input clarity

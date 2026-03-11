@@ -28,7 +28,7 @@ namespace Shogun.Features.Combat
         private const bool EnableDangerIndicators = false;
         private const string MainMenuSceneName = "MainMenu";
         private const float TurnVignetteWidth = 148f;
-        private const float TurnVignetteMaxAlpha = 0.18f;
+        private const float TurnVignetteMaxAlpha = 0f;
         private const float TurnVignetteFadeSpeed = 1.8f;
         private const float ComboTrackerFadeInSpeed = 8.5f;
         private const float ComboTrackerFadeOutSpeed = 3.8f;
@@ -43,6 +43,14 @@ namespace Shogun.Features.Combat
         private const float ComboCutInStripeWidth = 980f;
         private const float ComboCutInStripeHeight = 124f;
         private const float ComboCutInRotation = -13f;
+        private const float HudHorizontalMargin = 18f;
+        private const float HudTopMargin = 10f;
+        private const float HudTopBottomGap = 14f;
+        private const float PhoneHudContentMaxWidth = 1080f;
+        private const float TabletHudContentMaxWidth = 1220f;
+        private const float ExpandedHudContentMaxWidth = 1320f;
+        private const float TabletHudBreakpoint = 1200f;
+        private const float ExpandedHudBreakpoint = 1480f;
 
         [Header("Dependencies (auto-resolved if left empty)")]
         [SerializeField] private TurnManager turnManager;
@@ -59,6 +67,7 @@ namespace Shogun.Features.Combat
         [SerializeField] private bool singleEnemyCanBeBoss = true;
 
         private RectTransform hudRoot;
+        private RectTransform hudContentFrame;
         private Text turnLabel;
         private Text objectiveLabel;
         private Image turnPanelBackground;
@@ -130,6 +139,9 @@ namespace Shogun.Features.Combat
         private CanvasGroup comboCutInCanvasGroup;
         private Coroutine comboCutInCoroutine;
         private readonly List<ComboCutInSlotView> comboCutInSlots = new List<ComboCutInSlotView>();
+        private Vector2 lastHudViewportSize = new Vector2(-1f, -1f);
+        private Vector2Int lastResponsiveScreenSize = new Vector2Int(-1, -1);
+        private Rect lastResponsiveSafeArea = new Rect(-1f, -1f, -1f, -1f);
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void EnsureHudControllerExists()
@@ -182,6 +194,7 @@ namespace Shogun.Features.Combat
         {
             UpdateTurnVignetteVisual();
             UpdateComboTrackerVisual();
+            UpdateResponsiveLayout();
         }
 
         private void ResolveDependencies()
@@ -333,18 +346,142 @@ namespace Shogun.Features.Combat
             if (targetCanvas == null || hudRoot != null)
                 return;
 
+            RectTransform hudParent = ResolveHudParent();
+
             hudRoot = hudPrefab != null
-                ? Instantiate(hudPrefab, targetCanvas.transform, false)
-                : CreateRect("BattleHudRoot", targetCanvas.transform, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+                ? Instantiate(hudPrefab, hudParent, false)
+                : CreateRect("BattleHudRoot", hudParent, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
 
             hudRoot.name = "BattleHudRoot";
+            BuildResponsiveLayoutFrame();
             BuildTurnVignette();
             BuildTopBar();
             BuildComboTracker();
             BuildComboCutIn();
             BuildBottomRail();
             BuildPauseMenu();
+            UpdateResponsiveLayout();
             UpdateUtilityLabels();
+        }
+
+        private RectTransform ResolveHudParent()
+        {
+            RectTransform preferredParent = FindPreferredHudParent();
+            if (preferredParent != null)
+                return preferredParent;
+
+            return targetCanvas != null
+                ? targetCanvas.transform as RectTransform
+                : null;
+        }
+
+        private RectTransform FindPreferredHudParent()
+        {
+            if (targetCanvas == null)
+                return null;
+
+            Transform safeAreaPanel = targetCanvas.transform.Find("UI_SafeAreaPanel");
+            if (safeAreaPanel != null)
+            {
+                Transform hudTransform = safeAreaPanel.Find("HUD");
+                if (hudTransform is RectTransform hudRect)
+                    return hudRect;
+
+                if (safeAreaPanel is RectTransform safeAreaRect)
+                    return safeAreaRect;
+            }
+
+            SafeAreaHandler safeAreaHandler = targetCanvas.GetComponentInChildren<SafeAreaHandler>(true);
+            if (safeAreaHandler != null)
+            {
+                Transform hudTransform = safeAreaHandler.transform.Find("HUD");
+                if (hudTransform is RectTransform hudRect)
+                    return hudRect;
+
+                if (safeAreaHandler.transform is RectTransform safeAreaRect)
+                    return safeAreaRect;
+            }
+
+            return null;
+        }
+
+        private void BuildResponsiveLayoutFrame()
+        {
+            if (hudRoot == null)
+                return;
+
+            RectTransform existing = hudRoot.Find("ResponsiveLayoutFrame") as RectTransform;
+            if (existing != null)
+                Destroy(existing.gameObject);
+
+            RectTransform frame = CreateRect("ResponsiveLayoutFrame", hudRoot, new Vector2(0.5f, 0f), new Vector2(0.5f, 1f), Vector2.zero, Vector2.zero);
+            frame.pivot = new Vector2(0.5f, 0.5f);
+            hudContentFrame = frame;
+            ApplyResponsiveLayout(force: true);
+        }
+
+        private void UpdateResponsiveLayout()
+        {
+            if (hudRoot == null || hudContentFrame == null)
+                return;
+
+            Vector2 viewportSize = hudRoot.rect.size;
+            Vector2Int screenSize = new Vector2Int(Screen.width, Screen.height);
+            Rect safeArea = Screen.safeArea;
+            if (!HasResponsiveLayoutChanged(viewportSize, screenSize, safeArea))
+                return;
+
+            ApplyResponsiveLayout(force: true);
+        }
+
+        private bool HasResponsiveLayoutChanged(Vector2 viewportSize, Vector2Int screenSize, Rect safeArea)
+        {
+            if ((viewportSize - lastHudViewportSize).sqrMagnitude > 0.25f)
+                return true;
+
+            if (screenSize != lastResponsiveScreenSize)
+                return true;
+
+            if (safeArea != lastResponsiveSafeArea)
+                return true;
+
+            return false;
+        }
+
+        private void ApplyResponsiveLayout(bool force = false)
+        {
+            if (hudRoot == null || hudContentFrame == null)
+                return;
+
+            Vector2 viewportSize = hudRoot.rect.size;
+            Vector2Int screenSize = new Vector2Int(Screen.width, Screen.height);
+            Rect safeArea = Screen.safeArea;
+            if (!force && !HasResponsiveLayoutChanged(viewportSize, screenSize, safeArea))
+                return;
+
+            float contentWidth = ResolveHudContentWidth(viewportSize.x, viewportSize.y);
+            hudContentFrame.sizeDelta = new Vector2(contentWidth, 0f);
+            hudContentFrame.anchoredPosition = Vector2.zero;
+
+            lastHudViewportSize = viewportSize;
+            lastResponsiveScreenSize = screenSize;
+            lastResponsiveSafeArea = safeArea;
+        }
+
+        private static float ResolveHudContentWidth(float availableWidth, float availableHeight)
+        {
+            if (availableWidth <= 0.01f || availableHeight <= 0.01f)
+                return PhoneHudContentMaxWidth;
+
+            float maxWidth = PhoneHudContentMaxWidth;
+            if (availableWidth >= ExpandedHudBreakpoint)
+                maxWidth = ExpandedHudContentMaxWidth;
+            else if (availableWidth >= TabletHudBreakpoint)
+                maxWidth = TabletHudContentMaxWidth;
+
+            float boundedWidth = Mathf.Min(availableWidth, maxWidth);
+            float minimumWidth = Mathf.Min(availableWidth, 720f);
+            return Mathf.Clamp(boundedWidth, minimumWidth, availableWidth);
         }
 
         private void BuildTurnVignette()
@@ -387,7 +524,8 @@ namespace Shogun.Features.Combat
                 Destroy(existing.gameObject);
             elementLegendTokens.Clear();
             weaponLegendTokens.Clear();
-            RectTransform topBar = CreateRect("TopCombatBar", hudRoot, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(18f, -topBarHeight - 14f), new Vector2(-18f, -10f));
+            RectTransform layoutParent = hudContentFrame != null ? hudContentFrame : hudRoot;
+            RectTransform topBar = CreateRect("TopCombatBar", layoutParent, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(HudHorizontalMargin, -topBarHeight - HudTopBottomGap), new Vector2(-HudHorizontalMargin, -HudTopMargin));
             Image topBarBg = topBar.gameObject.AddComponent<Image>();
             topBarBg.color = new Color(0.37f, 0.31f, 0.1f, 0.9f);
             topBarBg.raycastTarget = false;
@@ -431,12 +569,13 @@ namespace Shogun.Features.Combat
             if (existing != null)
                 Destroy(existing.gameObject);
 
-            RectTransform tracker = CreateRect("ComboTracker", hudRoot, Vector2.one, Vector2.one, Vector2.zero, Vector2.zero);
+            RectTransform layoutParent = hudContentFrame != null ? hudContentFrame : hudRoot;
+            RectTransform tracker = CreateRect("ComboTracker", layoutParent, Vector2.one, Vector2.one, Vector2.zero, Vector2.zero);
             tracker.anchorMin = Vector2.one;
             tracker.anchorMax = Vector2.one;
             tracker.pivot = Vector2.one;
             tracker.sizeDelta = new Vector2(336f, 132f);
-            tracker.anchoredPosition = new Vector2(-22f, -topBarHeight - 22f);
+            tracker.anchoredPosition = new Vector2(-(HudHorizontalMargin + 4f), -topBarHeight - 22f);
             tracker.SetAsLastSibling();
 
             comboTrackerRoot = tracker;
@@ -731,9 +870,10 @@ namespace Shogun.Features.Combat
                 Destroy(existing.gameObject);
 
             // Low-profile rail anchored to the bottom edge.
-            RectTransform bottomRail = CreateRect("BottomSquadRail", hudRoot,
+            RectTransform layoutParent = hudContentFrame != null ? hudContentFrame : hudRoot;
+            RectTransform bottomRail = CreateRect("BottomSquadRail", layoutParent,
                 new Vector2(0f, 0f), new Vector2(1f, 0f),
-                new Vector2(0f, 0f), new Vector2(0f, bottomRailHeight));
+                new Vector2(HudHorizontalMargin, 0f), new Vector2(-HudHorizontalMargin, bottomRailHeight));
 
             Image bottomBg = bottomRail.gameObject.AddComponent<Image>();
             bottomBg.color = new Color(0.06f, 0.05f, 0.04f, 0.78f);
@@ -2541,6 +2681,11 @@ namespace Shogun.Features.Combat
             scaler.matchWidthOrHeight = 1f;
 
             canvasGo.AddComponent<GraphicRaycaster>();
+
+            RectTransform safeAreaRoot = CreateRect("UI_SafeAreaPanel", canvasGo.transform, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+            safeAreaRoot.gameObject.AddComponent<SafeAreaHandler>();
+            CreateRect("HUD", safeAreaRoot, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+            CreateRect("Popups", safeAreaRoot, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
             return canvas;
         }
 
@@ -2717,6 +2862,7 @@ namespace Shogun.Features.Combat
         }
     }
 }
+
 
 
 
