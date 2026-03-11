@@ -26,9 +26,10 @@ Read in this exact order before broad scanning:
 
 1. [`docs/PROJECT_CONTEXT_INDEX.md`](../PROJECT_CONTEXT_INDEX.md)
 2. [`doc-ops-010-claude-code-read-first-handoff.md`](./doc-ops-010-claude-code-read-first-handoff.md)
-3. [`doc-ops-008-short-term-implementation-todo.md`](./doc-ops-008-short-term-implementation-todo.md)
-4. [`../design/design-008-active-vertical-slice-definition.md`](../design/design-008-active-vertical-slice-definition.md)
-5. [`../design/design-009-first-vertical-slice-roster-and-encounter-plan.md`](../design/design-009-first-vertical-slice-roster-and-encounter-plan.md)
+3. [`doc-ops-013-docs-routed-feature-workflow.md`](./doc-ops-013-docs-routed-feature-workflow.md)
+4. [`doc-ops-008-short-term-implementation-todo.md`](./doc-ops-008-short-term-implementation-todo.md)
+5. [`../design/design-008-active-vertical-slice-definition.md`](../design/design-008-active-vertical-slice-definition.md)
+6. [`../design/design-009-first-vertical-slice-roster-and-encounter-plan.md`](../design/design-009-first-vertical-slice-roster-and-encounter-plan.md)
 
 Only widen the read set after those files if the current task truly needs more context.
 
@@ -36,9 +37,10 @@ Only widen the read set after those files if the current task truly needs more c
 
 For feature implementation work (not pure bug triage or tiny hotfixes):
 
-1. Confirm the source-of-truth docs before coding.
-2. Keep implementation notes and final summaries doc-referenced with concrete file paths.
-3. If shipped behavior changes scope, update the matching docs in the same change or leave an explicit mismatch note.
+1. Run the checklist in [`DOC-OPS-013`](./doc-ops-013-docs-routed-feature-workflow.md) before coding.
+2. Confirm the source-of-truth docs before coding.
+3. Keep implementation notes and final summaries doc-referenced with concrete file paths.
+4. If shipped behavior changes scope, update the matching docs in the same change or leave an explicit mismatch note.
 
 ## Do not assume
 
@@ -65,4 +67,3 @@ For feature implementation work (not pure bug triage or tiny hotfixes):
 - The docs tree is the source-of-truth router.
 - This handoff note is intentionally thin and should reduce token waste.
 - If the task is active implementation, prefer the short-term TODO and slice docs before reading broader roadmap material.
-

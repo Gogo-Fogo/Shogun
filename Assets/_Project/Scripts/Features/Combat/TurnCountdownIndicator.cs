@@ -9,19 +9,19 @@ namespace Shogun.Features.Combat
     /// </summary>
     public sealed class TurnCountdownIndicator : MonoBehaviour
     {
-        private const float StripGapBelowFeet = 0.4f;
-        private const float BarHeight = 0.22f;
-        private const float BarMinWidth = 1.02f;
-        private const float BarMaxWidth = 1.78f;
+        private const float StripGapBelowFeet = 0.52f;
+        private const float BarHeight = 0.25f;
+        private const float BarMinWidth = 1.14f;
+        private const float BarMaxWidth = 1.95f;
         private const float BarWidthScale = 0.9f;
         private const float BarFramePadding = 0.03f;
         private const float BarInnerPadding = 0.026f;
-        private const float BadgeSize = 0.32f;
+        private const float BadgeSize = 0.36f;
         private const float BadgeOutlineScale = 1.2f;
-        private const float BadgeGapFromBar = 0.09f;
-        private const float TurnGapFromBar = 0.24f;
+        private const float BadgeGapFromBar = 0.11f;
+        private const float TurnGapFromBar = 0.26f;
         private const float TurnTextScale = 0.0175f;
-        private const float BadgeTextScale = 0.0125f;
+        private const float BadgeTextScale = 0.0135f;
         private const int TurnFontSize = 128;
         private const int BadgeFontSize = 110;
         private const float OutlineTextOffset = 0.09f;
@@ -289,7 +289,7 @@ namespace Shogun.Features.Combat
         private static float ResolveStripGap(Bounds groundBounds)
         {
             float height = Mathf.Max(groundBounds.size.y, 0.5f);
-            return StripGapBelowFeet + Mathf.Clamp(height * 0.05f, 0.03f, 0.12f);
+            return StripGapBelowFeet + Mathf.Clamp(height * 0.06f, 0.04f, 0.15f);
         }
 
         private static Color ResolveHealthColor(float normalizedHealth)
@@ -536,6 +536,7 @@ namespace Shogun.Features.Combat
         }
     }
 }
+
 
 
 

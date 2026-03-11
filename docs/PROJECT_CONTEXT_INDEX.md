@@ -52,6 +52,7 @@ docs/
     doc-ops-010-claude-code-read-first-handoff.md
     doc-ops-011-ui-implementation-todo.md
     doc-ops-012-2026-03-10-combat-ui-and-auto-positioning-retrospective.md
+    doc-ops-013-docs-routed-feature-workflow.md
   research/
     RESEARCH_INDEX.md
     doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.md
@@ -90,7 +91,7 @@ For most tasks:
 For feature work, behavior changes, or architecture changes:
 
 1. Route through the smallest relevant docs set before coding.
-2. For active implementation by default, read `DOC-OPS-010`, `DOC-OPS-008`, `DESIGN-008`, and `DESIGN-009` first.
+2. For active implementation by default, read `DOC-OPS-010`, `DOC-OPS-013`, `DOC-OPS-008`, `DESIGN-008`, and `DESIGN-009` first.
 3. In implementation summaries, cite the docs that drove key decisions with concrete file paths.
 4. If shipped behavior or scope changes, update the corresponding docs in the same change or record an explicit mismatch note.
 
@@ -114,6 +115,7 @@ For feature work, behavior changes, or architecture changes:
 | `DOC-OPS-010` | Claude Code read-first handoff | `ops/doc-ops-010-claude-code-read-first-handoff.md` | No recruiter PDF in this folder | Operational handoff note | Use first when starting a new Claude Code implementation session and token efficiency matters. |
 | `DOC-OPS-011` | UI implementation TODO | `ops/doc-ops-011-ui-implementation-todo.md` | No recruiter PDF in this folder | Operational UI backlog | Use when the task is battle UI readability, mobile portrait layout, result-state clarity, or other UI work that must stay inside the active vertical slice. |
 | `DOC-OPS-012` | March 10, 2026 combat UI and auto-positioning retrospective | `ops/doc-ops-012-2026-03-10-combat-ui-and-auto-positioning-retrospective.md` | No recruiter PDF in this folder | Operational change log | Use when the question is what changed in pushed commit `cabf59a`, why it shipped as one combat-clarity batch, and what rationale was missing from the absent commit body. |
+| `DOC-OPS-013` | Docs-routed feature workflow | `ops/doc-ops-013-docs-routed-feature-workflow.md` | No recruiter PDF in this folder | Operational enforcement policy | Use when implementing features, behavior changes, or architecture changes so docs-first routing, citations, and mismatch-note handling are applied consistently. |
 | `DESIGN-001` | Character collection and fantasy strategy | `design/design-001-character-collection-and-fantasy-strategy.md` | No recruiter PDF in this folder | Primary collection-strategy note | Use for collectible fantasy, roster pillars, battle-vs-presentation art lanes, and variant planning. |
 | `DESIGN-002` | World pillars and combat identity framework | `design/design-002-world-pillars-and-combat-identity-framework.md` | No recruiter PDF in this folder | Primary roster-identity note | Use for world pillars, elemental affinity, weapon families, martial schools, and how those layers stack into a character identity. |
 | `DESIGN-003` | Long-term balance and power-creep policy | `design/design-003-long-term-balance-and-power-creep-policy.md` | No recruiter PDF in this folder | Primary live-balance note | Use for banner-value policy, power-creep controls, old-unit refresh cadence, and ranked/PvE balance boundaries. |
@@ -182,14 +184,15 @@ For feature work, behavior changes, or architecture changes:
 
 ### Active implementation slice and first-slice content
 1. `DOC-OPS-010`
-2. `DOC-OPS-008`
-3. `DOC-OPS-011`
-4. `DOC-OPS-007`
-5. `DESIGN-008`
-6. `DESIGN-009`
-7. `DOC-GDD-001`
-8. `DESIGN-007`
-9. `ART-005`
+2. `DOC-OPS-013`
+3. `DOC-OPS-008`
+4. `DOC-OPS-011`
+5. `DOC-OPS-007`
+6. `DESIGN-008`
+7. `DESIGN-009`
+8. `DOC-GDD-001`
+9. `DESIGN-007`
+10. `ART-005`
 
 ### AI-assisted sprite production and PixelLab workflow
 1. `ART-001`
@@ -294,12 +297,13 @@ Open:
 ### Claude handoff / next-stage implementation
 Open:
 1. `DOC-OPS-010`
-2. `DOC-OPS-008`
-3. `DOC-OPS-011`
-4. `DESIGN-008`
-5. `DESIGN-009`
-6. `DOC-OPS-007`
-7. `DOC-GDD-001`
+2. `DOC-OPS-013`
+3. `DOC-OPS-008`
+4. `DOC-OPS-011`
+5. `DESIGN-008`
+6. `DESIGN-009`
+7. `DOC-OPS-007`
+8. `DOC-GDD-001`
 
 ### UI readability, battle HUD, and mobile combat presentation
 Open:
@@ -432,7 +436,7 @@ Update this file whenever:
 ```text
 Read PROJECT_CONTEXT_INDEX.md first.
 Do not scan the entire folder by default.
-If the task is Claude Code onboarding or next-stage implementation, start with DOC-OPS-010 and DOC-OPS-008 before broad scanning.
+If the task is Claude Code onboarding or next-stage implementation, start with DOC-OPS-010, DOC-OPS-013, and DOC-OPS-008 before broad scanning.
 If the task is battle UI readability or mobile combat presentation, open DOC-OPS-011 and DESIGN-010 before scanning broader UI or menu work.
 Prefer the smallest relevant Markdown companion in design/, art/, legal/, ops/, or research/ first, then open recruiter/ PDFs only when needed.
 Use DOC-GDD-001 as primary design truth, DESIGN-* docs as living roster/world identity guidance, DOC-ENG-001 and DOC-ENG-002 plus DOC-DATA-001 as implementation truth, DOC-LEGAL-* docs as compliance constraints, DOC-OPS-* docs as workflow/tooling truth, and DOC-REF-* docs as inspiration/caution only.

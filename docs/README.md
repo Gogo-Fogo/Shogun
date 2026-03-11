@@ -54,8 +54,7 @@ Markdown and PDF companions share the same base filename whenever both versions 
 ## Suggested usage
 
 1. Start with `PROJECT_CONTEXT_INDEX.md`.
-2. If the task is next-stage implementation or Claude Code onboarding, start with the lean handoff pack in `ops/` before broad scanning.
+2. If the task is next-stage implementation or Claude Code onboarding, start with the lean handoff pack in `ops/`, including `DOC-OPS-010` and `DOC-OPS-013`, before broad scanning.
 3. Open the relevant file in `design/`, `art/`, `legal/`, `ops/`, or `research/`, depending on the task.
 4. Open the matching file in `recruiter/` only if you need the PDF version.
-5. For feature implementation, cite the docs used in your summary and update docs in the same change when shipped behavior or scope changes.
-
+5. For feature implementation, apply `DOC-OPS-013`, cite the docs used in your summary, and update docs in the same change when shipped behavior or scope changes (or leave a mismatch note).
