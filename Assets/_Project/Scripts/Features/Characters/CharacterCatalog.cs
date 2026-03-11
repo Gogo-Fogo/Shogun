@@ -17,7 +17,10 @@ namespace Shogun.Features.Characters
 
         private void OnEnable()
         {
-            RebuildLookupTables();
+            // Reset flag so tables are rebuilt lazily on first access,
+            // ensuring all referenced CharacterDefinition assets are fully
+            // deserialized before we iterate them.
+            _lookupBuilt = false;
         }
 
         public IReadOnlyList<CharacterDefinition> GetAll()
@@ -42,7 +45,36 @@ namespace Shogun.Features.Characters
             if (TryGetById(lookupValue, out definition))
                 return true;
 
-            return TryGetByAlias(lookupValue, out definition);
+            if (TryGetByAlias(lookupValue, out definition))
+                return true;
+
+            // Linear scan fallback — catches any edge case where the lookup tables
+            // were built before all referenced assets were fully deserialized.
+            string normalizedId     = CharacterKeyUtility.NormalizeCharacterId(lookupValue);
+            string normalizedLookup = CharacterKeyUtility.NormalizeLookupKey(lookupValue);
+            foreach (CharacterDefinition def in definitions)
+            {
+                if (def == null)
+                    continue;
+
+                if (CharacterKeyUtility.NormalizeCharacterId(def.CharacterId) == normalizedId)
+                {
+                    definition = def;
+                    return true;
+                }
+
+                foreach (string term in def.GetLookupTerms())
+                {
+                    if (CharacterKeyUtility.NormalizeLookupKey(term) == normalizedLookup)
+                    {
+                        definition = def;
+                        return true;
+                    }
+                }
+            }
+
+            definition = null;
+            return false;
         }
 
         public void SetDefinitions(IEnumerable<CharacterDefinition> sourceDefinitions)
