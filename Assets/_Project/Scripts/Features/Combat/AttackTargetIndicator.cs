@@ -6,7 +6,7 @@ namespace Shogun.Features.Combat
     {
         public enum State { Hidden, AttackReady, ComboReady }
 
-        private static readonly Color AttackReadyTint = new Color(1.00f, 0.35f, 0.35f);
+        private static readonly Color AttackReadyTint = new Color(1.60f, 1.60f, 1.60f);
         private static readonly Color ComboReadyTint = new Color(1.00f, 0.50f, 0.20f);
 
         private const float TintPulseMin = 0.10f;
@@ -99,7 +99,9 @@ namespace Shogun.Features.Combat
             float pulse = (Mathf.Sin(Time.time * TintPulseHz * Mathf.PI * 2f) + 1f) * 0.5f;
             float tintBlend = Mathf.Lerp(TintPulseMin, TintPulseMax, pulse);
             Color tint = currentState == State.ComboReady ? ComboReadyTint : AttackReadyTint;
-            mainRenderer.color = Color.Lerp(Color.white, tint, tintBlend);
+            mainRenderer.color = currentState == State.AttackReady
+                ? Color.Lerp(originalColor, tint, tintBlend)
+                : Color.Lerp(Color.white, tint, tintBlend);
         }
 
         private void UpdateComboLabel()

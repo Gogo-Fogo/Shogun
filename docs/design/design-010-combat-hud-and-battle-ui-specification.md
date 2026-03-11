@@ -219,7 +219,7 @@ When the player is holding and dragging a unit, the UI should show:
 ### Drag-state rules
 
 - drag-time indicators should be predictive, not celebratory
-- drag-time combo labels should stay readable and static, not bouncy
+- drag-time combo counts should stay hidden until confirmed combo resolution is complete
 - enemy-in-range state should use shape and contrast, not color alone
 - out-of-range enemies should recede without disappearing entirely
 - the player's finger should not hide the main decision readout when possible
@@ -231,12 +231,12 @@ This is the main improvement opportunity over `Blazing`.
 ### Required flow
 
 1. The player drags and sees which enemies are in range.
-2. The UI shows a static readiness label such as `X2!` during drag.
+2. The UI shows in-range readiness during drag, but does not surface combo hit counts yet.
 3. The player releases.
 4. The unit attacks the first enemy.
 5. Damage text appears above that enemy.
 6. The unit follows through to the next valid enemy.
-7. On the second and later hit, the combo label gets the dramatic bounce and burst treatment.
+7. After the combo sequence finishes, the combo hit label gets the dramatic bounce and burst treatment.
 8. The unit returns to the release position.
 
 ### Presentation rules

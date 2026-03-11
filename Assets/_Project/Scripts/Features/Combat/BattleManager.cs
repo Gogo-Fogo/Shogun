@@ -19,12 +19,19 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private Vector3 enemyReserveOrigin = new Vector3(4.5f, -3f, 0f);
     [SerializeField] private float frontlineLaneSpacing = 2.25f;
     [SerializeField] private float reserveLaneSpacing = 2.25f;
+    [SerializeField] private float allyFrontlineVerticalSpacing = 1.15f;
+    [SerializeField] private float allyReserveVerticalSpacing = 1.15f;
+    [SerializeField] private float allyVerticalSpacingPadding = 0.8f;
     [SerializeField] private float enemyFrontlineVerticalSpacing = 1.15f;
     [SerializeField] private float enemyReserveVerticalSpacing = 1.15f;
     [SerializeField] private float enemyVerticalSpacingPadding = 0.8f;
 
     private readonly Dictionary<CharacterInstance, Action> playerRosterDeathCallbacks = new Dictionary<CharacterInstance, Action>();
 
+    private float resolvedAllyFrontlineSpacing;
+    private float resolvedAllyReserveSpacing;
+    private int resolvedAllyActiveCount;
+    private int resolvedAllyReserveCount;
     private float resolvedEnemyFrontlineSpacing;
     private float resolvedEnemyReserveSpacing;
     private int resolvedEnemyActiveCount;
@@ -46,7 +53,31 @@ public class BattleManager : MonoBehaviour
         activeEnemyCharacters.Clear();
         reserveEnemyCharacters.Clear();
 
-        SpawnTeam(playerTeam, activeCharacters, reserveCharacters, GetSpawnPosition, GetReservePosition, faceLeft: false);
+        resolvedAllyFrontlineSpacing = Mathf.Max(0.1f, allyFrontlineVerticalSpacing);
+        resolvedAllyReserveSpacing = Mathf.Max(0.1f, allyReserveVerticalSpacing);
+        resolvedAllyActiveCount = 0;
+        resolvedAllyReserveCount = 0;
+
+        if (playerTeam != null && playerTeam.Count > 0)
+        {
+            resolvedAllyActiveCount = Mathf.Min(3, playerTeam.Count);
+            resolvedAllyReserveCount = Mathf.Max(0, playerTeam.Count - resolvedAllyActiveCount);
+
+            resolvedAllyFrontlineSpacing = CalculateAdaptiveVerticalSpacing(
+                playerTeam,
+                0,
+                resolvedAllyActiveCount,
+                allyFrontlineVerticalSpacing,
+                allyVerticalSpacingPadding);
+            resolvedAllyReserveSpacing = CalculateAdaptiveVerticalSpacing(
+                playerTeam,
+                resolvedAllyActiveCount,
+                resolvedAllyReserveCount,
+                allyReserveVerticalSpacing,
+                allyVerticalSpacingPadding);
+        }
+
+        SpawnTeam(playerTeam, activeCharacters, reserveCharacters, GetSpawnPosition, GetReservePosition, faceLeft: false, reservesVisibleOnBattlefield: false);
         BindPlayerRosterEvents();
 
         resolvedEnemyFrontlineSpacing = Mathf.Max(0.1f, enemyFrontlineVerticalSpacing);
@@ -59,8 +90,18 @@ public class BattleManager : MonoBehaviour
             resolvedEnemyActiveCount = Mathf.Min(3, enemyTeam.Count);
             resolvedEnemyReserveCount = Mathf.Max(0, enemyTeam.Count - resolvedEnemyActiveCount);
 
-            resolvedEnemyFrontlineSpacing = CalculateAdaptiveVerticalSpacing(enemyTeam, 0, resolvedEnemyActiveCount, enemyFrontlineVerticalSpacing);
-            resolvedEnemyReserveSpacing = CalculateAdaptiveVerticalSpacing(enemyTeam, resolvedEnemyActiveCount, resolvedEnemyReserveCount, enemyReserveVerticalSpacing);
+            resolvedEnemyFrontlineSpacing = CalculateAdaptiveVerticalSpacing(
+                enemyTeam,
+                0,
+                resolvedEnemyActiveCount,
+                enemyFrontlineVerticalSpacing,
+                enemyVerticalSpacingPadding);
+            resolvedEnemyReserveSpacing = CalculateAdaptiveVerticalSpacing(
+                enemyTeam,
+                resolvedEnemyActiveCount,
+                resolvedEnemyReserveCount,
+                enemyReserveVerticalSpacing,
+                enemyVerticalSpacingPadding);
 
             SpawnTeam(enemyTeam, activeEnemyCharacters, reserveEnemyCharacters, GetEnemySpawnPosition, GetEnemyReservePosition, faceLeft: true);
         }
@@ -72,7 +113,8 @@ public class BattleManager : MonoBehaviour
         List<CharacterInstance> reserveList,
         Func<int, Vector3> activePositionResolver,
         Func<int, Vector3> reservePositionResolver,
-        bool faceLeft)
+        bool faceLeft,
+        bool reservesVisibleOnBattlefield = true)
     {
         if (team == null || team.Count == 0)
         {
@@ -85,12 +127,14 @@ public class BattleManager : MonoBehaviour
         for (int i = 0; i < activeCount; i++)
         {
             CharacterInstance instance = SpawnCharacter(team[i], activePositionResolver(i), faceLeft);
+            SetCharacterBattlefieldActive(instance, true);
             activeList.Add(instance);
         }
 
         for (int i = 0; i < reserveCount; i++)
         {
             CharacterInstance instance = SpawnCharacter(team[activeCount + i], reservePositionResolver(i), faceLeft);
+            SetCharacterBattlefieldActive(instance, reservesVisibleOnBattlefield);
             reserveList.Add(instance);
         }
     }
@@ -193,39 +237,52 @@ public class BattleManager : MonoBehaviour
         if (laneIndex < 0 || laneIndex >= activeCharacters.Count || incomingReserve == null)
             return;
 
+        Vector3 activeLaneWorldPosition = outgoingActive != null
+            ? outgoingActive.transform.position
+            : GetSpawnPosition(laneIndex);
+
         activeCharacters[laneIndex] = incomingReserve;
         if (laneIndex < reserveCharacters.Count)
             reserveCharacters[laneIndex] = outgoingActive;
 
-        PositionCharacterAtLane(incomingReserve, laneIndex, true, faceLeft: false);
+        SetCharacterBattlefieldActive(incomingReserve, true);
+        PositionCharacterAtLane(incomingReserve, laneIndex, true, faceLeft: false, worldPositionOverride: activeLaneWorldPosition);
         if (outgoingActive != null)
+        {
             PositionCharacterAtLane(outgoingActive, laneIndex, false, faceLeft: false);
+            SetCharacterBattlefieldActive(outgoingActive, false);
+        }
 
         OnPlayerFormationChanged?.Invoke(laneIndex, outgoingActive, incomingReserve);
     }
 
-    private void PositionCharacterAtLane(CharacterInstance instance, int laneIndex, bool activeLane, bool faceLeft)
+    private void PositionCharacterAtLane(CharacterInstance instance, int laneIndex, bool activeLane, bool faceLeft, Vector3? worldPositionOverride = null)
     {
         if (instance == null)
             return;
 
-        Vector3 worldPosition = activeLane ? GetSpawnPosition(laneIndex) : GetReservePosition(laneIndex);
+        Vector3 worldPosition = worldPositionOverride ?? (activeLane ? GetSpawnPosition(laneIndex) : GetReservePosition(laneIndex));
         instance.transform.position = worldPosition;
         ApplyFacing(instance, faceLeft);
+        SetCharacterBattlefieldActive(instance, activeLane);
 
         Animator animator = instance.GetComponentInChildren<Animator>();
         if (animator != null)
+        {
+            animator.Rebind();
+            animator.Update(0f);
             animator.SetBool("isRunning", false);
+        }
     }
 
     private Vector3 GetSpawnPosition(int index)
     {
-        return GetLanePosition(GetBattleCenter(), allyFrontlineOrigin, frontlineLaneSpacing, index);
+        return GetCenteredVerticalLanePosition(GetBattleCenter(), allyFrontlineOrigin, resolvedAllyFrontlineSpacing, index, resolvedAllyActiveCount);
     }
 
     private Vector3 GetReservePosition(int index)
     {
-        return GetLanePosition(GetBattleCenter(), allyReserveOrigin, reserveLaneSpacing, index);
+        return GetCenteredVerticalLanePosition(GetBattleCenter(), allyReserveOrigin, resolvedAllyReserveSpacing, index, resolvedAllyReserveCount);
     }
 
     private Vector3 GetEnemySpawnPosition(int index)
@@ -238,7 +295,7 @@ public class BattleManager : MonoBehaviour
         return GetCenteredVerticalLanePosition(GetBattleCenter(), enemyReserveOrigin, resolvedEnemyReserveSpacing, index, resolvedEnemyReserveCount);
     }
 
-    private float CalculateAdaptiveVerticalSpacing(List<CharacterDefinition> team, int startIndex, int count, float minimumSpacing)
+    private float CalculateAdaptiveVerticalSpacing(List<CharacterDefinition> team, int startIndex, int count, float minimumSpacing, float padding)
     {
         float fallback = Mathf.Max(0.1f, minimumSpacing);
         if (team == null || count <= 0)
@@ -267,7 +324,7 @@ public class BattleManager : MonoBehaviour
         if (maxEstimatedHeight <= 0f)
             return fallback;
 
-        return Mathf.Max(fallback, maxEstimatedHeight + Mathf.Max(0f, enemyVerticalSpacingPadding));
+        return Mathf.Max(fallback, maxEstimatedHeight + Mathf.Max(0f, padding));
     }
 
     private Vector3 GetBattleCenter()
@@ -292,6 +349,15 @@ public class BattleManager : MonoBehaviour
         float middle = (count - 1) * 0.5f;
         float yOffset = (middle - index) * spacing;
         return center + originOffset + new Vector3(0f, yOffset, 0f);
+    }
+
+    private static void SetCharacterBattlefieldActive(CharacterInstance instance, bool isActiveOnBattlefield)
+    {
+        if (instance == null)
+            return;
+
+        if (instance.gameObject.activeSelf != isActiveOnBattlefield)
+            instance.gameObject.SetActive(isActiveOnBattlefield);
     }
 
     public int GetPlayerLaneCount()

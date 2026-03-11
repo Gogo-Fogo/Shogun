@@ -20,7 +20,9 @@ namespace Shogun.Features.Combat
         private const float BadgeOutlineScale = 1.2f;
         private const float BadgeGapFromBar = 0.11f;
         private const float TurnGapFromBar = 0.26f;
+        private const float EnemyTurnGapBoost = 0.72f;
         private const float TurnTextScale = 0.0175f;
+        private const float EnemyTurnTextScaleMultiplier = 4f;
         private const float BadgeTextScale = 0.0135f;
         private const int TurnFontSize = 128;
         private const int BadgeFontSize = 110;
@@ -48,6 +50,7 @@ namespace Shogun.Features.Combat
         private static Sprite circleSprite;
 
         private CharacterInstance target;
+        private bool enemyUnit;
         private int turnsUntilTurn = -1;
         private bool isCurrentTurn;
         private bool isVisible;
@@ -70,9 +73,10 @@ namespace Shogun.Features.Combat
             SetVisible(false);
         }
 
-        public void Initialize(CharacterInstance targetInstance, bool enemyUnit)
+        public void Initialize(CharacterInstance targetInstance, bool isEnemyUnit)
         {
             target = targetInstance;
+            enemyUnit = isEnemyUnit;
             UpdateWorldPlacement();
             ApplyIdentityVisuals();
             ApplySortingFromTarget();
@@ -146,7 +150,8 @@ namespace Shogun.Features.Combat
             Vector3 groundAnchor = ResolveGroundAnchor(target, groundBounds);
             float barWidth = ResolveBarWidth(target, groundBounds);
             float badgeCenterX = -barWidth * 0.5f - BadgeGapFromBar - BadgeSize * 0.5f;
-            float turnX = barWidth * 0.5f + TurnGapFromBar;
+            float turnGap = TurnGapFromBar + (enemyUnit ? EnemyTurnGapBoost : 0f);
+            float turnX = barWidth * 0.5f + turnGap;
             float stripCenterY = groundAnchor.y - ResolveStripGap(groundBounds) - BarHeight * 0.5f;
 
             transform.position = new Vector3(groundAnchor.x, stripCenterY, target.transform.position.z + SortDepthOffset);
@@ -200,11 +205,12 @@ namespace Shogun.Features.Combat
             float blink01 = 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * TurnBlinkSpeed);
             float alpha = blinkNextTurn ? Mathf.Lerp(0.5f, 1f, blink01) : 1f;
             float scale = blinkNextTurn ? Mathf.Lerp(1f, 1.08f, blink01) : 1f;
+            float baseTurnScale = TurnTextScale * (enemyUnit ? EnemyTurnTextScaleMultiplier : 1f);
 
             Color turnColor = blinkNextTurn ? NextTurnTextColor : TurnTextColor;
             turnColor.a *= alpha;
             turnText.color = turnColor;
-            turnText.transform.localScale = Vector3.one * (TurnTextScale * scale);
+            turnText.transform.localScale = Vector3.one * (baseTurnScale * scale);
 
             Color outlineColor = TextOutlineColor;
             outlineColor.a *= blinkNextTurn ? Mathf.Lerp(0.76f, 1f, blink01) : 1f;

@@ -59,26 +59,27 @@ namespace Shogun.Features.Combat
             if (!turnManager.IsBattleActive) return;
             if (!TryNormalizeScreenPosition(screenPos, out Vector2 normalizedScreenPos)) return;
 
-            var current = turnManager.GetCurrentCombatant();
+            CharacterInstance current = turnManager.GetCurrentCombatant();
             if (current == null || !current.CanAttack) return;
             if (!turnManager.IsPlayerUnit(current)) return; // not the player's turn
 
-            // Convert screen position to world position
-            Vector2 worldPos = Camera.main.ScreenToWorldPoint(
+            Camera cameraRef = Camera.main;
+            if (cameraRef == null) return;
+
+            Vector2 worldPos = cameraRef.ScreenToWorldPoint(
                 new Vector3(normalizedScreenPos.x, normalizedScreenPos.y, 0f));
 
-            // Find a character near the tap (0.5 world-unit radius for mobile tolerance)
-            var hit = Physics2D.OverlapCircle(worldPos, 0.5f);
+            Collider2D hit = Physics2D.OverlapCircle(worldPos, 0.5f);
             if (hit == null) return;
 
-            var target = hit.GetComponent<CharacterInstance>();
+            CharacterInstance target = hit.GetComponent<CharacterInstance>();
             if (target == null || !target.IsAlive) return;
             if (turnManager.IsPlayerUnit(target)) return; // can't attack own team
+            if (!CombatMovementUtility.IsTargetWithinAttackRange(current, target)) return;
 
-            // Trigger attack animation
+            CombatMovementUtility.FaceCharacterTowards(current, target);
             current.PerformBasicAttack();
 
-            // Calculate and apply damage
             float damage = current.CalculateDamageAgainst(target);
             target.TakeDamage(damage);
 

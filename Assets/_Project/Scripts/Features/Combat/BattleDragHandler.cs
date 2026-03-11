@@ -104,7 +104,9 @@ namespace Shogun.Features.Combat
 
             if (!isDragging && heldTime < tapTimeThreshold && movedDist < tapMoveThreshold)
             {
-                StartTapMove(releasePos);
+                if (!IsTapOnEnemy(releasePos))
+                    StartTapMove(releasePos);
+
                 ClearDragState();
                 return;
             }
@@ -125,18 +127,8 @@ namespace Shogun.Features.Combat
                     releasedAnimator.SetBool("isRunning", false);
 
                 RestoreDragOpacity();
-
-                List<CharacterInstance> releaseTargets = GetReleaseAttackTargets(releasedCharacter);
                 ClearDragState();
-
-                if (releaseTargets.Count > 0)
-                {
-                    if (attackResolutionCoroutine != null)
-                        StopCoroutine(attackResolutionCoroutine);
-
-                    attackResolutionCoroutine = StartCoroutine(ResolveReleaseAttackSequence(releasedCharacter, releaseWorldPos, releaseTargets));
-                    return;
-                }
+                return;
             }
 
             ClearDragState();
@@ -280,7 +272,8 @@ namespace Shogun.Features.Combat
                     enemiesShowingRange.Remove(enemy);
                 }
 
-                // Attack-ready or ally-combo indicator on the enemy.
+                // Attack-ready indicator on the enemy. Combo counts are shown only
+                // after confirmed combo resolution, not during drag prediction.
                 float enemyBodyRadius = GetColliderHalfWidth(enemy);
                 float attackThreshold = playerAttackRange + enemyBodyRadius;
                 bool canAttack = distSqr <= attackThreshold * attackThreshold;
@@ -292,12 +285,7 @@ namespace Shogun.Features.Combat
 
                     var indicator = enemy.GetComponent<AttackTargetIndicator>()
                                     ?? enemy.gameObject.AddComponent<AttackTargetIndicator>();
-
-                    int comboPartners = CountComboPartners(enemy, enemyCenter);
-                    if (comboPartners > 0)
-                        indicator.ShowComboReady(comboPartners + 1);
-                    else
-                        indicator.ShowAttackReady();
+                    indicator.ShowAttackReady();
 
                     if (!wasShowingIndicator)
                         enemiesShowingAttackIndicator.Add(enemy);
@@ -318,25 +306,6 @@ namespace Shogun.Features.Combat
                 else
                     dragMultiTargetIndicator.Hide();
             }
-        }
-
-        // Returns how many OTHER alive player units (not the one being dragged)
-        // can also reach this enemy from their current position.
-        // 0 = no combo; 1 = ×2 combo; 2 = ×3 combo, etc.
-        private int CountComboPartners(CharacterInstance enemy, Vector3 enemyCenter)
-        {
-            int count = 0;
-            var players = turnManager.GetPlayerCombatants();
-            foreach (var ally in players)
-            {
-                if (ally == draggingCharacter) continue;
-                if (!ally.IsAlive) continue;
-                float allyRange = ally.GetAttackRangeRadius() + GetColliderHalfWidth(enemy);
-                float allyDistSqr = (GetColliderWorldCenter(ally) - enemyCenter).sqrMagnitude;
-                if (allyDistSqr <= allyRange * allyRange)
-                    count++;
-            }
-            return count;
         }
 
         private List<CharacterInstance> GetReleaseAttackTargets(CharacterInstance attacker)
@@ -382,6 +351,9 @@ namespace Shogun.Features.Combat
                     yield break;
 
                 Animator attackerAnimator = attacker.GetComponentInChildren<Animator>();
+                CharacterInstance finalResolvedTarget = null;
+                int resolvedHitCount = 0;
+
                 for (int i = 0; i < targets.Count; i++)
                 {
                     CharacterInstance target = targets[i];
@@ -405,15 +377,17 @@ namespace Shogun.Features.Combat
                     float damage = attacker.CalculateDamageAgainst(target);
                     target.TakeDamage(damage);
                     BattleFloatingText.SpawnDamage(target, damage);
-
-                    if (i > 0)
-                    {
-                        AttackTargetIndicator indicator = target.GetComponent<AttackTargetIndicator>()
-                            ?? target.gameObject.AddComponent<AttackTargetIndicator>();
-                        indicator.PlayComboBurst(i + 1);
-                    }
+                    finalResolvedTarget = target;
+                    resolvedHitCount++;
 
                     yield return new WaitForSeconds(chainedAttackRecoverTime);
+                }
+
+                if (resolvedHitCount >= 2 && finalResolvedTarget != null)
+                {
+                    AttackTargetIndicator indicator = finalResolvedTarget.GetComponent<AttackTargetIndicator>()
+                        ?? finalResolvedTarget.gameObject.AddComponent<AttackTargetIndicator>();
+                    indicator.PlayComboBurst(resolvedHitCount);
                 }
 
                 if (attacker != null && attacker.IsAlive)
@@ -488,6 +462,26 @@ namespace Shogun.Features.Combat
                 if (indicator != null) indicator.Hide();
             }
             enemiesShowingAttackIndicator.Clear();
+        }
+
+        private bool IsTapOnEnemy(Vector2 screenPosition)
+        {
+            if (turnManager == null)
+                return false;
+
+            CharacterInstance currentCharacter = turnManager.GetCurrentCharacter();
+            if (currentCharacter == null || !turnManager.IsPlayerUnit(currentCharacter))
+                return false;
+
+            if (!TryGetPointerWorld(screenPosition, currentCharacter.transform, out Vector3 worldPos))
+                return false;
+
+            Collider2D hit = Physics2D.OverlapCircle(worldPos, 0.5f);
+            if (hit == null)
+                return false;
+
+            CharacterInstance target = hit.GetComponent<CharacterInstance>();
+            return target != null && target.IsAlive && turnManager.IsEnemyUnit(target);
         }
 
         private void StartTapMove(Vector2 screenPosition)
@@ -734,10 +728,3 @@ namespace Shogun.Features.Combat
         }
     }
 }
-
-
-
-
-
-
-
