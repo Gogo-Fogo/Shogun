@@ -36,6 +36,13 @@ namespace Shogun.Features.Combat
         private const float ComboTrackerFinishHoldSeconds = 1.2f;
         private const float ComboTrackerBasePulseSeconds = 0.18f;
         private const float ComboTrackerFinishPulseSeconds = 0.34f;
+        private const int MaxPortraitChargeDividers = 20;
+        private const float ComboCutInIntroSeconds = 0.16f;
+        private const float ComboCutInHoldSeconds = 0.18f;
+        private const float ComboCutInOutroSeconds = 0.16f;
+        private const float ComboCutInStripeWidth = 980f;
+        private const float ComboCutInStripeHeight = 124f;
+        private const float ComboCutInRotation = -13f;
 
         [Header("Dependencies (auto-resolved if left empty)")]
         [SerializeField] private TurnManager turnManager;
@@ -75,6 +82,8 @@ namespace Shogun.Features.Combat
         private static Sprite s_CircleSprite;
         private static Sprite s_RingSprite;
         private static Sprite s_EdgeVignetteSprite;
+        private static Sprite s_WhiteSprite;
+        private static Sprite s_ComboCutInStripeSprite;
         private static readonly Color TurnVignetteColor = new Color(0.05f, 0.03f, 0.02f, 1f);
         private static readonly ElementalType[] ElementLegendOrder =
         {
@@ -117,6 +126,10 @@ namespace Shogun.Features.Combat
         private float comboTrackerHideAt = float.NegativeInfinity;
         private float comboTrackerPulseTimer;
         private float comboTrackerPulseDuration = ComboTrackerBasePulseSeconds;
+        private RectTransform comboCutInRoot;
+        private CanvasGroup comboCutInCanvasGroup;
+        private Coroutine comboCutInCoroutine;
+        private readonly List<ComboCutInSlotView> comboCutInSlots = new List<ComboCutInSlotView>();
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void EnsureHudControllerExists()
@@ -155,6 +168,9 @@ namespace Shogun.Features.Combat
 
             if (autoTurnCoroutine != null)
                 StopCoroutine(autoTurnCoroutine);
+
+            if (comboCutInCoroutine != null)
+                StopCoroutine(comboCutInCoroutine);
 
             UnbindEvents();
             UnbindCharacterEvents();
@@ -226,6 +242,7 @@ namespace Shogun.Features.Combat
             if (battleManager != null)
                 battleManager.OnPlayerFormationChanged += HandlePlayerFormationChanged;
 
+            CombatComboPresentationBus.ComboStarted += HandleComboStarted;
             CombatComboPresentationBus.ComboHitRegistered += HandleComboHitRegistered;
             CombatComboPresentationBus.ComboSequenceFinished += HandleComboSequenceFinished;
             CombatComboPresentationBus.ComboPresentationReset += HandleComboPresentationReset;
@@ -244,6 +261,7 @@ namespace Shogun.Features.Combat
             if (battleManager != null)
                 battleManager.OnPlayerFormationChanged -= HandlePlayerFormationChanged;
 
+            CombatComboPresentationBus.ComboStarted -= HandleComboStarted;
             CombatComboPresentationBus.ComboHitRegistered -= HandleComboHitRegistered;
             CombatComboPresentationBus.ComboSequenceFinished -= HandleComboSequenceFinished;
             CombatComboPresentationBus.ComboPresentationReset -= HandleComboPresentationReset;
@@ -285,7 +303,13 @@ namespace Shogun.Features.Combat
             ClearTurnIndicators();
             RefreshHud();
             HideComboTrackerImmediate();
+            HideComboCutInImmediate();
             UpdateUtilityLabels();
+        }
+
+        private void HandleComboStarted(CharacterInstance[] participants)
+        {
+            PlayComboCutIn(participants);
         }
 
         private void HandleComboHitRegistered(int hitCount)
@@ -301,6 +325,7 @@ namespace Shogun.Features.Combat
         private void HandleComboPresentationReset()
         {
             HideComboTrackerImmediate();
+            HideComboCutInImmediate();
         }
 
         private void BuildHud()
@@ -316,6 +341,7 @@ namespace Shogun.Features.Combat
             BuildTurnVignette();
             BuildTopBar();
             BuildComboTracker();
+            BuildComboCutIn();
             BuildBottomRail();
             BuildPauseMenu();
             UpdateUtilityLabels();
@@ -461,6 +487,92 @@ namespace Shogun.Features.Combat
 
             HideComboTrackerImmediate();
         }
+        private void BuildComboCutIn()
+        {
+            if (hudRoot == null)
+                return;
+
+            RectTransform existing = hudRoot.Find("ComboCutInOverlay") as RectTransform;
+            if (existing != null)
+                Destroy(existing.gameObject);
+
+            comboCutInSlots.Clear();
+
+            RectTransform overlay = CreateRect("ComboCutInOverlay", hudRoot, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+            comboCutInRoot = overlay;
+            comboCutInCanvasGroup = overlay.gameObject.AddComponent<CanvasGroup>();
+            comboCutInCanvasGroup.alpha = 0f;
+            comboCutInCanvasGroup.interactable = false;
+            comboCutInCanvasGroup.blocksRaycasts = false;
+
+            for (int i = 0; i < 3; i++)
+                comboCutInSlots.Add(BuildComboCutInSlot(overlay, i));
+
+            HideComboCutInImmediate();
+        }
+
+        private ComboCutInSlotView BuildComboCutInSlot(Transform parent, int index)
+        {
+            RectTransform slotRoot = CreateRect($"Slot{index}", parent, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+            slotRoot.pivot = new Vector2(0.5f, 0.5f);
+            slotRoot.sizeDelta = new Vector2(ComboCutInStripeWidth, ComboCutInStripeHeight);
+            slotRoot.localRotation = Quaternion.Euler(0f, 0f, ComboCutInRotation);
+            slotRoot.gameObject.SetActive(false);
+
+            Image stripe = slotRoot.gameObject.AddComponent<Image>();
+            stripe.sprite = GetComboCutInStripeSprite();
+            stripe.type = Image.Type.Sliced;
+            stripe.color = Color.white;
+            stripe.raycastTarget = false;
+            Outline stripeOutline = slotRoot.gameObject.AddComponent<Outline>();
+            stripeOutline.effectColor = new Color(0f, 0f, 0f, 0.64f);
+            stripeOutline.effectDistance = new Vector2(3f, -3f);
+
+            RectTransform topSlash = CreateRect("TopSlash", slotRoot, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(34f, -10f), new Vector2(-34f, -2f));
+            Image topSlashImage = topSlash.gameObject.AddComponent<Image>();
+            topSlashImage.sprite = GetWhiteSprite();
+            topSlashImage.color = new Color(0f, 0f, 0f, 0.9f);
+            topSlashImage.raycastTarget = false;
+            topSlash.localRotation = Quaternion.Euler(0f, 0f, -1.8f);
+
+            RectTransform bottomSlash = CreateRect("BottomSlash", slotRoot, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(34f, 2f), new Vector2(-34f, 10f));
+            Image bottomSlashImage = bottomSlash.gameObject.AddComponent<Image>();
+            bottomSlashImage.sprite = GetWhiteSprite();
+            bottomSlashImage.color = new Color(0f, 0f, 0f, 0.9f);
+            bottomSlashImage.raycastTarget = false;
+            bottomSlash.localRotation = Quaternion.Euler(0f, 0f, 1.8f);
+
+            RectTransform portraitMask = CreateRect("PortraitMask", slotRoot, new Vector2(0.15f, 0.1f), new Vector2(0.85f, 0.9f), Vector2.zero, Vector2.zero);
+            portraitMask.gameObject.AddComponent<RectMask2D>();
+
+            RectTransform portraitRect = CreateRect("Portrait", portraitMask, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(-48f, -20f), new Vector2(48f, 20f));
+            Image portrait = portraitRect.gameObject.AddComponent<Image>();
+            portrait.preserveAspect = true;
+            portrait.raycastTarget = false;
+
+            RectTransform tint = CreateRect("Tint", slotRoot, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+            Image tintImage = tint.gameObject.AddComponent<Image>();
+            tintImage.sprite = GetWhiteSprite();
+            tintImage.color = new Color(1f, 0.58f, 0.08f, 0.1f);
+            tintImage.raycastTarget = false;
+
+            RectTransform shine = CreateRect("Shine", slotRoot, new Vector2(0.06f, 0.14f), new Vector2(0.44f, 0.86f), Vector2.zero, Vector2.zero);
+            Image shineImage = shine.gameObject.AddComponent<Image>();
+            shineImage.sprite = GetWhiteSprite();
+            shineImage.color = new Color(1f, 0.98f, 0.88f, 0.18f);
+            shineImage.raycastTarget = false;
+            shine.localRotation = Quaternion.Euler(0f, 0f, 9f);
+
+            return new ComboCutInSlotView
+            {
+                Root = slotRoot,
+                Stripe = stripe,
+                Portrait = portrait,
+                PortraitRect = portraitRect,
+                Shine = shineImage
+            };
+        }
+
         private void BuildTurnContextModule(Transform parent)
         {
             RectTransform contextRoot = CreateTopBarModule(parent, "TurnContextPill", 246f, 88f, out turnPanelBackground);
@@ -807,7 +919,7 @@ namespace Shogun.Features.Combat
                 new Vector2(0f, 1f), new Vector2(0f, 1f),
                 new Vector2(circleX, -ringSize), new Vector2(circleX + ringSize, 0f));
 
-            // 1. Arc background ring — always visible, dim gray.
+                        // 1. Arc background ring — always visible, dim gray.
             Image arcBg = circleArea.gameObject.AddComponent<Image>();
             arcBg.sprite        = ringSpr;
             arcBg.color         = new Color(0.28f, 0.28f, 0.28f, 0.5f);
@@ -822,8 +934,39 @@ namespace Shogun.Features.Combat
             arcFill.fillMethod    = Image.FillMethod.Radial360;
             arcFill.fillOrigin    = (int)Image.Origin360.Top;
             arcFill.fillAmount    = 0f;
-            arcFill.color         = new Color(0.96f, 0.82f, 0.28f, 1f);
+            arcFill.color         = new Color(0.42f, 0.7f, 0.94f, 0.92f);
             arcFill.raycastTarget = false;
+
+            RectTransform dividerRoot = CreateRect("AbilityDividerRoot", circleArea,
+                new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+            List<RectTransform> abilityDividerPivots = new List<RectTransform>(MaxPortraitChargeDividers);
+            for (int dividerIndex = 0; dividerIndex < MaxPortraitChargeDividers; dividerIndex++)
+            {
+                RectTransform dividerPivot = CreateRect($"DividerPivot_{dividerIndex}", dividerRoot,
+                    new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+                dividerPivot.sizeDelta = new Vector2(ringSize, ringSize);
+                RectTransform dividerBar = CreateRect("Bar", dividerPivot,
+                    new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
+                    new Vector2(-1.2f, -12f), new Vector2(1.2f, -1f));
+                Image dividerImage = dividerBar.gameObject.AddComponent<Image>();
+                dividerImage.sprite = GetWhiteSprite();
+                dividerImage.color = new Color(0.08f, 0.06f, 0.05f, 0.92f);
+                dividerImage.raycastTarget = false;
+                dividerPivot.gameObject.SetActive(false);
+                abilityDividerPivots.Add(dividerPivot);
+            }
+
+            RectTransform thresholdMarkerRoot = CreateRect("AbilityThresholdMarker", circleArea,
+                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+            thresholdMarkerRoot.sizeDelta = new Vector2(ringSize, ringSize);
+            RectTransform thresholdMarkerRect = CreateRect("Marker", thresholdMarkerRoot,
+                new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
+                new Vector2(-2.4f, -14f), new Vector2(2.4f, -1f));
+            Image thresholdMarker = thresholdMarkerRect.gameObject.AddComponent<Image>();
+            thresholdMarker.sprite = GetWhiteSprite();
+            thresholdMarker.color = new Color(0.9f, 0.84f, 0.42f, 0.95f);
+            thresholdMarker.raycastTarget = false;
+            thresholdMarkerRoot.gameObject.SetActive(false);
 
             // 3. Portrait mask — clips the battle sprite to a circle.
             float inset = (ringSize - diameter) * 0.5f;   // 6px
@@ -899,16 +1042,19 @@ namespace Shogun.Features.Combat
 
             return new PlayerSlotView
             {
-                LaneIndex              = laneIndex,
-                Root                   = slotRoot,
-                FrontPortrait          = portraitImage,
-                FrontHpFill            = hpFill,
-                ActiveRing             = activeRing,
-                AbilityArcFill         = arcFill,
-                DeadOverlay            = deadOverlay,
-                ReserveButton          = swapButton,
+                LaneIndex               = laneIndex,
+                Root                    = slotRoot,
+                FrontPortrait           = portraitImage,
+                FrontHpFill             = hpFill,
+                ActiveRing              = activeRing,
+                AbilityArcFill          = arcFill,
+                AbilityDividerPivots    = abilityDividerPivots,
+                AbilityThresholdMarkerRoot = thresholdMarkerRoot,
+                AbilityThresholdMarker  = thresholdMarker,
+                DeadOverlay             = deadOverlay,
+                ReserveButton           = swapButton,
                 ReserveButtonBackground = swapBg,
-                ReservePortrait        = swapPortrait,
+                ReservePortrait         = swapPortrait,
             };
         }
 
@@ -978,6 +1124,52 @@ namespace Shogun.Features.Combat
             tex.Apply();
             s_EdgeVignetteSprite = Sprite.Create(tex, new Rect(0, 0, width, height), new Vector2(0.5f, 0.5f));
             return s_EdgeVignetteSprite;
+        }
+
+        private static Sprite GetWhiteSprite()
+        {
+            if (s_WhiteSprite != null)
+                return s_WhiteSprite;
+
+            Texture2D tex = new Texture2D(2, 2, TextureFormat.RGBA32, false) { filterMode = FilterMode.Bilinear };
+            tex.SetPixels(new[] { Color.white, Color.white, Color.white, Color.white });
+            tex.Apply();
+            s_WhiteSprite = Sprite.Create(tex, new Rect(0, 0, 2, 2), new Vector2(0.5f, 0.5f));
+            return s_WhiteSprite;
+        }
+
+        private static Sprite GetComboCutInStripeSprite()
+        {
+            if (s_ComboCutInStripeSprite != null)
+                return s_ComboCutInStripeSprite;
+
+            const int width = 256;
+            const int height = 40;
+            Texture2D tex = new Texture2D(width, height, TextureFormat.RGBA32, false) { filterMode = FilterMode.Bilinear };
+            tex.wrapMode = TextureWrapMode.Clamp;
+
+            Color outer = new Color(0.96f, 0.36f, 0.04f, 1f);
+            Color inner = new Color(1f, 0.86f, 0.2f, 1f);
+            Color flare = new Color(1f, 0.97f, 0.72f, 1f);
+
+            for (int y = 0; y < height; y++)
+            {
+                float vertical = 1f - Mathf.Abs(((y / (float)(height - 1)) * 2f) - 1f);
+                vertical = Mathf.Pow(Mathf.Clamp01(vertical), 0.55f);
+
+                for (int x = 0; x < width; x++)
+                {
+                    float horizontal = x / (float)(width - 1);
+                    float flareBand = Mathf.Clamp01(1f - Mathf.Abs((horizontal - 0.5f) * 2.4f));
+                    Color pixel = Color.Lerp(outer, inner, vertical);
+                    pixel = Color.Lerp(pixel, flare, flareBand * 0.22f);
+                    tex.SetPixel(x, y, pixel);
+                }
+            }
+
+            tex.Apply();
+            s_ComboCutInStripeSprite = Sprite.Create(tex, new Rect(0, 0, width, height), new Vector2(0.5f, 0.5f), 100f, 0u, SpriteMeshType.FullRect, Vector4.zero, false);
+            return s_ComboCutInStripeSprite;
         }
 
         private static Text CreateText(string name, Transform parent, TextAnchor alignment, int fontSize, FontStyle style)
@@ -1179,6 +1371,208 @@ namespace Shogun.Features.Combat
                 comboTrackerRoot.localScale = Vector3.one;
                 comboTrackerRoot.anchoredPosition = comboTrackerBaseAnchoredPosition;
             }
+        }
+
+        private void PlayComboCutIn(CharacterInstance[] participants)
+        {
+            if (comboCutInRoot == null || comboCutInCanvasGroup == null || participants == null)
+                return;
+
+            List<CharacterInstance> orderedParticipants = OrderComboCutInParticipants(participants);
+            int displayCount = ConfigureComboCutInSlots(orderedParticipants);
+            if (displayCount < 2)
+            {
+                HideComboCutInImmediate();
+                return;
+            }
+
+            if (comboCutInCoroutine != null)
+                StopCoroutine(comboCutInCoroutine);
+
+            comboCutInCoroutine = StartCoroutine(AnimateComboCutIn(displayCount));
+        }
+
+        private int ConfigureComboCutInSlots(List<CharacterInstance> orderedParticipants)
+        {
+            if (orderedParticipants == null)
+                return 0;
+
+            int displayCount = Mathf.Min(3, orderedParticipants.Count);
+            float[] yPositions = displayCount >= 3
+                ? new[] { 116f, 0f, -116f }
+                : new[] { 58f, -58f };
+
+            for (int i = 0; i < comboCutInSlots.Count; i++)
+            {
+                ComboCutInSlotView slot = comboCutInSlots[i];
+                if (slot == null || slot.Root == null)
+                    continue;
+
+                bool active = i < displayCount;
+                slot.Root.gameObject.SetActive(active);
+                if (!active)
+                    continue;
+
+                CharacterInstance participant = orderedParticipants[i];
+                Sprite portrait = ResolveComboCutInPortrait(participant);
+                Color accent = ResolveComboCutInAccent(participant);
+
+                slot.Root.localRotation = Quaternion.Euler(0f, 0f, ComboCutInRotation);
+                slot.Root.anchoredPosition = new Vector2(-1280f, yPositions[i]);
+
+                if (slot.Stripe != null)
+                    slot.Stripe.color = Color.Lerp(Color.white, accent, 0.24f);
+
+                if (slot.Shine != null)
+                    slot.Shine.color = Color.Lerp(new Color(1f, 0.98f, 0.88f, 0.16f), Color.white, 0.18f + (0.06f * i));
+
+                if (slot.Portrait != null)
+                {
+                    slot.Portrait.sprite = portrait;
+                    slot.Portrait.enabled = portrait != null;
+                    slot.Portrait.color = Color.white;
+                }
+
+                if (slot.PortraitRect != null)
+                    slot.PortraitRect.anchoredPosition = new Vector2(0f, 0f);
+            }
+
+            return displayCount;
+        }
+
+        private IEnumerator AnimateComboCutIn(int displayCount)
+        {
+            float[] yPositions = displayCount >= 3
+                ? new[] { 116f, 0f, -116f }
+                : new[] { 58f, -58f };
+            float[] startX = displayCount >= 3
+                ? new[] { -1320f, -1220f, -1120f }
+                : new[] { -1280f, -1180f };
+            float[] holdX = displayCount >= 3
+                ? new[] { -28f, 0f, 28f }
+                : new[] { -18f, 18f };
+            float[] settleX = displayCount >= 3
+                ? new[] { 6f, 34f, 62f }
+                : new[] { 14f, 50f };
+            float[] endX = displayCount >= 3
+                ? new[] { 1240f, 1340f, 1440f }
+                : new[] { 1300f, 1400f };
+
+            yield return AnimateComboCutInPhase(displayCount, startX, holdX, yPositions, 0f, 1f, ComboCutInIntroSeconds);
+            yield return AnimateComboCutInPhase(displayCount, holdX, settleX, yPositions, 1f, 1f, ComboCutInHoldSeconds);
+            yield return AnimateComboCutInPhase(displayCount, settleX, endX, yPositions, 1f, 0f, ComboCutInOutroSeconds);
+
+            comboCutInCoroutine = null;
+            if (comboCutInCanvasGroup != null)
+                comboCutInCanvasGroup.alpha = 0f;
+
+            for (int i = 0; i < comboCutInSlots.Count; i++)
+            {
+                ComboCutInSlotView slot = comboCutInSlots[i];
+                if (slot != null && slot.Root != null)
+                    slot.Root.gameObject.SetActive(false);
+            }
+        }
+
+        private IEnumerator AnimateComboCutInPhase(int displayCount, float[] fromX, float[] toX, float[] yPositions, float startAlpha, float endAlpha, float duration)
+        {
+            if (comboCutInCanvasGroup == null)
+                yield break;
+
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = duration <= 0.0001f ? 1f : Mathf.Clamp01(elapsed / duration);
+                float eased = Mathf.SmoothStep(0f, 1f, t);
+
+                comboCutInCanvasGroup.alpha = Mathf.Lerp(startAlpha, endAlpha, eased);
+                for (int i = 0; i < displayCount && i < comboCutInSlots.Count; i++)
+                {
+                    ComboCutInSlotView slot = comboCutInSlots[i];
+                    if (slot == null || slot.Root == null)
+                        continue;
+
+                    slot.Root.anchoredPosition = new Vector2(Mathf.Lerp(fromX[i], toX[i], eased), yPositions[i]);
+                }
+
+                yield return null;
+            }
+
+            comboCutInCanvasGroup.alpha = endAlpha;
+            for (int i = 0; i < displayCount && i < comboCutInSlots.Count; i++)
+            {
+                ComboCutInSlotView slot = comboCutInSlots[i];
+                if (slot == null || slot.Root == null)
+                    continue;
+
+                slot.Root.anchoredPosition = new Vector2(toX[i], yPositions[i]);
+            }
+        }
+
+        private void HideComboCutInImmediate()
+        {
+            if (comboCutInCoroutine != null)
+            {
+                StopCoroutine(comboCutInCoroutine);
+                comboCutInCoroutine = null;
+            }
+
+            if (comboCutInCanvasGroup != null)
+                comboCutInCanvasGroup.alpha = 0f;
+
+            for (int i = 0; i < comboCutInSlots.Count; i++)
+            {
+                ComboCutInSlotView slot = comboCutInSlots[i];
+                if (slot == null || slot.Root == null)
+                    continue;
+
+                slot.Root.gameObject.SetActive(false);
+                slot.Root.anchoredPosition = new Vector2(-1280f, 0f);
+            }
+        }
+
+        private static List<CharacterInstance> OrderComboCutInParticipants(CharacterInstance[] participants)
+        {
+            List<CharacterInstance> ordered = new List<CharacterInstance>();
+            if (participants == null)
+                return ordered;
+
+            for (int i = 0; i < participants.Length; i++)
+            {
+                CharacterInstance participant = participants[i];
+                if (participant != null)
+                    ordered.Add(participant);
+            }
+
+            if (ordered.Count == 3)
+                return new List<CharacterInstance> { ordered[1], ordered[0], ordered[2] };
+
+            if (ordered.Count == 2)
+                return new List<CharacterInstance> { ordered[1], ordered[0] };
+
+            return ordered;
+        }
+
+        private static Sprite ResolveComboCutInPortrait(CharacterInstance participant)
+        {
+            Sprite portrait = ResolvePortrait(participant);
+            if (portrait != null)
+                return portrait;
+
+            SpriteRenderer spriteRenderer = participant != null ? participant.GetComponentInChildren<SpriteRenderer>() : null;
+            return spriteRenderer != null ? spriteRenderer.sprite : null;
+        }
+
+        private static Color ResolveComboCutInAccent(CharacterInstance participant)
+        {
+            Color baseAccent = new Color(1f, 0.72f, 0.16f, 1f);
+            if (participant == null || participant.Definition == null)
+                return baseAccent;
+
+            Color accent = participant.Definition.PaletteAccentColor;
+            accent.a = 1f;
+            return Color.Lerp(baseAccent, accent, 0.28f);
         }
 
         private static string ResolveComboTierLabel(int hitCount)
@@ -1545,82 +1939,81 @@ namespace Shogun.Features.Combat
                 RefreshSlot(playerSlots[i]);
         }
 
-        private void RefreshSlot(PlayerSlotView slot)
+                private void RefreshSlot(PlayerSlotView slot)
         {
             if (slot == null)
                 return;
 
-            CharacterInstance front   = battleManager != null ? battleManager.GetActivePlayerAtLane(slot.LaneIndex) : null;
+            CharacterInstance front = battleManager != null ? battleManager.GetActivePlayerAtLane(slot.LaneIndex) : null;
             CharacterInstance reserve = battleManager != null ? battleManager.GetReservePlayerAtLane(slot.LaneIndex) : null;
-            CharacterInstance current = turnManager   != null ? turnManager.GetCurrentCombatant() : null;
+            CharacterInstance current = turnManager != null ? turnManager.GetCurrentCombatant() : null;
 
             bool currentPlayerTurn = current != null && turnManager != null && turnManager.IsPlayerUnit(current);
-            bool isCurrentLane     = currentPlayerTurn && battleManager != null &&
-                                     battleManager.GetPlayerLaneForCharacter(current) == slot.LaneIndex;
-            bool canSwap           = currentPlayerTurn && !isPaused && !autoModeEnabled &&
-                                     reserve != null && reserve.IsAlive && battleManager != null;
+            bool isCurrentLane = currentPlayerTurn
+                && battleManager != null
+                && battleManager.GetPlayerLaneForCharacter(current) == slot.LaneIndex;
+            bool canSwap = currentPlayerTurn
+                && !isPaused
+                && !autoModeEnabled
+                && reserve != null
+                && reserve.IsAlive
+                && battleManager != null;
 
             if (front == null)
             {
-                slot.FrontPortrait.sprite      = null;
-                slot.FrontPortrait.color       = new Color(1f, 1f, 1f, 0f);
-                slot.FrontHpFill.fillAmount    = 0f;
-                slot.ActiveRing.color          = new Color(1f, 1f, 1f, 0f);
+                slot.FrontPortrait.sprite = null;
+                slot.FrontPortrait.color = new Color(1f, 1f, 1f, 0f);
+                slot.FrontHpFill.fillAmount = 0f;
+                slot.ActiveRing.color = new Color(1f, 1f, 1f, 0f);
                 slot.AbilityArcFill.fillAmount = 0f;
-                slot.DeadOverlay.color         = new Color(0.08f, 0.05f, 0.05f, 0.5f);
-                slot.Root.localScale           = Vector3.one;
+                slot.AbilityArcFill.color = new Color(0.42f, 0.7f, 0.94f, 0.24f);
+                HideAbilityChargeDividers(slot);
+                slot.DeadOverlay.color = new Color(0.08f, 0.05f, 0.05f, 0.5f);
+                slot.Root.localScale = Vector3.one;
             }
             else
             {
-                float maxHealth        = Mathf.Max(1f, front.MaxHealth);
+                float maxHealth = Mathf.Max(1f, front.MaxHealth);
                 float healthNormalized = Mathf.Clamp01(front.CurrentHealth / maxHealth);
-                Color accent           = front.Definition != null
+                Color accent = front.Definition != null
                     ? front.Definition.PaletteAccentColor
                     : new Color(0.45f, 0.82f, 0.96f, 1f);
                 accent.a = 1f;
-                float pulse01    = 0.5f + (0.5f * Mathf.Sin(Time.unscaledTime * 5.5f));
+
+                float pulse01 = 0.5f + (0.5f * Mathf.Sin(Time.unscaledTime * 5.5f));
                 bool specialReady = front.IsAlive && front.CanUseSpecialAbility;
+                bool ultimateReady = front.IsAlive && front.CanUseUltimateAbility;
 
-                // Portrait.
                 slot.FrontPortrait.sprite = ResolvePortrait(front);
-                slot.FrontPortrait.color  = front.IsAlive ? Color.white : new Color(0.55f, 0.55f, 0.55f, 0.9f);
+                slot.FrontPortrait.color = front.IsAlive ? Color.white : new Color(0.55f, 0.55f, 0.55f, 0.9f);
 
-                // HP bar.
                 slot.FrontHpFill.fillAmount = healthNormalized;
-                slot.FrontHpFill.color      = Color.Lerp(
+                slot.FrontHpFill.color = Color.Lerp(
                     new Color(0.88f, 0.25f, 0.22f, 1f),
                     new Color(0.2f, 0.92f, 0.38f, 1f),
                     healthNormalized);
 
-                // Ability charge arc — gold when ready, dim blue while charging.
-                slot.AbilityArcFill.fillAmount = front.IsAlive ? (specialReady ? 1f : 0.35f) : 0f;
-                slot.AbilityArcFill.color      = specialReady
-                    ? new Color(0.96f, 0.82f, 0.28f, 1f)
-                    : new Color(0.4f, 0.5f, 0.62f, 0.5f);
+                UpdateAbilityChargeMeter(slot, front, accent, specialReady, ultimateReady, pulse01);
 
-                // Active highlight ring — glows with character accent on their turn.
                 slot.ActiveRing.color = isCurrentLane
                     ? new Color(accent.r, accent.g, accent.b, Mathf.Lerp(0.65f, 0.9f, pulse01))
                     : new Color(1f, 1f, 1f, 0f);
 
-                // Dead overlay — dims portrait for KO'd units.
                 slot.DeadOverlay.color = front.IsAlive
                     ? new Color(0.08f, 0.05f, 0.05f, 0f)
                     : new Color(0.08f, 0.05f, 0.05f, 0.52f);
 
-                // Scale pulse when it's this lane's turn.
                 slot.Root.localScale = isCurrentLane
                     ? new Vector3(1.08f + (0.02f * pulse01), 1.08f + (0.02f * pulse01), 1f)
                     : Vector3.one;
             }
 
-            // Reserve swap badge.
             if (reserve != null)
             {
                 slot.ReserveButton.gameObject.SetActive(true);
                 slot.ReserveButton.interactable = canSwap;
-                slot.ReservePortrait.sprite     = ResolvePortrait(reserve);
-                slot.ReservePortrait.color      = reserve.IsAlive ? Color.white : new Color(0.55f, 0.55f, 0.55f, 0.75f);
+                slot.ReservePortrait.sprite = ResolvePortrait(reserve);
+                slot.ReservePortrait.color = reserve.IsAlive ? Color.white : new Color(0.55f, 0.55f, 0.55f, 0.75f);
                 if (slot.ReserveButtonBackground != null)
                 {
                     slot.ReserveButtonBackground.color = !reserve.IsAlive
@@ -1634,6 +2027,86 @@ namespace Shogun.Features.Combat
             {
                 slot.ReserveButton.gameObject.SetActive(false);
             }
+        }
+
+        private void UpdateAbilityChargeMeter(PlayerSlotView slot, CharacterInstance front, Color accent, bool specialReady, bool ultimateReady, float pulse01)
+        {
+            if (slot == null || slot.AbilityArcFill == null)
+                return;
+
+            if (front == null || !front.IsAlive)
+            {
+                slot.AbilityArcFill.fillAmount = 0f;
+                slot.AbilityArcFill.color = new Color(0.42f, 0.7f, 0.94f, 0.24f);
+                HideAbilityChargeDividers(slot);
+                return;
+            }
+
+            int maxDividerCount = slot.AbilityDividerPivots != null ? slot.AbilityDividerPivots.Count : 0;
+            int totalSegments = Mathf.Clamp(front.UltimateChargeRequirement, 0, maxDividerCount);
+            int currentCharge = Mathf.Clamp(front.SpecialCharge, 0, totalSegments);
+            int specialThreshold = Mathf.Clamp(front.SpecialChargeRequirement, 0, totalSegments);
+
+            slot.AbilityArcFill.fillAmount = totalSegments > 0 ? currentCharge / (float)totalSegments : 0f;
+            slot.AbilityArcFill.color = ultimateReady
+                ? Color.Lerp(new Color(1f, 0.68f, 0.18f, 1f), Color.white, 0.18f + (0.22f * pulse01))
+                : specialReady
+                    ? Color.Lerp(new Color(0.96f, 0.82f, 0.28f, 1f), accent, 0.18f)
+                    : new Color(0.42f, 0.7f, 0.94f, 0.92f);
+
+            UpdateAbilityChargeDividers(slot, totalSegments, specialThreshold, specialReady, ultimateReady, pulse01);
+        }
+
+        private void UpdateAbilityChargeDividers(PlayerSlotView slot, int totalSegments, int specialThreshold, bool specialReady, bool ultimateReady, float pulse01)
+        {
+            if (slot == null || slot.AbilityDividerPivots == null)
+                return;
+
+            float step = totalSegments > 0 ? 360f / totalSegments : 0f;
+            for (int i = 0; i < slot.AbilityDividerPivots.Count; i++)
+            {
+                RectTransform dividerPivot = slot.AbilityDividerPivots[i];
+                if (dividerPivot == null)
+                    continue;
+
+                bool active = i < totalSegments;
+                dividerPivot.gameObject.SetActive(active);
+                if (active)
+                    dividerPivot.localRotation = Quaternion.Euler(0f, 0f, -(step * i));
+            }
+
+            if (slot.AbilityThresholdMarkerRoot != null)
+            {
+                bool showThreshold = specialThreshold > 0 && specialThreshold < totalSegments;
+                slot.AbilityThresholdMarkerRoot.gameObject.SetActive(showThreshold);
+                if (showThreshold)
+                    slot.AbilityThresholdMarkerRoot.localRotation = Quaternion.Euler(0f, 0f, -(step * specialThreshold));
+            }
+
+            if (slot.AbilityThresholdMarker != null)
+            {
+                slot.AbilityThresholdMarker.color = ultimateReady
+                    ? Color.Lerp(new Color(1f, 0.94f, 0.72f, 1f), Color.white, 0.18f + (0.2f * pulse01))
+                    : specialReady
+                        ? new Color(0.96f, 0.86f, 0.44f, 0.98f)
+                        : new Color(0.78f, 0.76f, 0.62f, 0.9f);
+            }
+        }
+
+        private void HideAbilityChargeDividers(PlayerSlotView slot)
+        {
+            if (slot == null || slot.AbilityDividerPivots == null)
+                return;
+
+            for (int i = 0; i < slot.AbilityDividerPivots.Count; i++)
+            {
+                RectTransform dividerPivot = slot.AbilityDividerPivots[i];
+                if (dividerPivot != null)
+                    dividerPivot.gameObject.SetActive(false);
+            }
+
+            if (slot.AbilityThresholdMarkerRoot != null)
+                slot.AbilityThresholdMarkerRoot.gameObject.SetActive(false);
         }
 
         private void OnReserveButtonPressed(int laneIndex)
@@ -1758,6 +2231,7 @@ namespace Shogun.Features.Combat
             Animator attackerAnimator = attacker.GetComponentInChildren<Animator>();
             CharacterInstance finalResolvedTarget = null;
             int resolvedHitCount = 0;
+            bool comboCutInShown = false;
             CombatComboPresentationBus.Reset();
 
             attacker.StopMovement();
@@ -1797,6 +2271,11 @@ namespace Shogun.Features.Combat
             if (attacker.CanAttack && CombatMovementUtility.IsTargetWithinAttackRange(attacker, target))
             {
                 List<CharacterInstance> comboParticipants = CombatComboUtility.GetPlayerComboParticipants(turnManager, attacker, target);
+                if (!comboCutInShown && comboParticipants.Count >= 2)
+                {
+                    CombatComboPresentationBus.ReportStarted(comboParticipants);
+                    comboCutInShown = true;
+                }
 
                 attacker.PerformBasicAttack();
                 yield return new WaitForSeconds(AutoTurnHitPause);
@@ -2079,22 +2558,35 @@ namespace Shogun.Features.Combat
 
         private sealed class PlayerSlotView
         {
-            public int           LaneIndex;
+            public int               LaneIndex;
+            public RectTransform     Root;
+            public Image             FrontPortrait;
+            public Image             FrontHpFill;
+            public Image             ActiveRing;
+            public Image             AbilityArcFill;
+            public List<RectTransform> AbilityDividerPivots;
+            public RectTransform     AbilityThresholdMarkerRoot;
+            public Image             AbilityThresholdMarker;
+            public Image             DeadOverlay;
+            public Button            ReserveButton;
+            public Image             ReserveButtonBackground;
+            public Image             ReservePortrait;
+        }
+
+        private sealed class ComboCutInSlotView
+        {
             public RectTransform Root;
-            public Image         FrontPortrait;
-            public Image         FrontHpFill;
-            public Image         ActiveRing;
-            public Image         AbilityArcFill;
-            public Image         DeadOverlay;
-            public Button        ReserveButton;
-            public Image         ReserveButtonBackground;
-            public Image         ReservePortrait;
+            public Image Stripe;
+            public Image Portrait;
+            public RectTransform PortraitRect;
+            public Image Shine;
         }
 
     }
 
     internal static class CombatComboPresentationBus
     {
+        public static event Action<CharacterInstance[]> ComboStarted;
         public static event Action<int> ComboHitRegistered;
         public static event Action<int> ComboSequenceFinished;
         public static event Action ComboPresentationReset;
@@ -2104,6 +2596,21 @@ namespace Shogun.Features.Combat
             Action handler = ComboPresentationReset;
             if (handler != null)
                 handler();
+        }
+
+        public static void ReportStarted(IReadOnlyList<CharacterInstance> participants)
+        {
+            if (participants == null || participants.Count < 2)
+                return;
+
+            int participantCount = Mathf.Min(3, participants.Count);
+            CharacterInstance[] snapshot = new CharacterInstance[participantCount];
+            for (int i = 0; i < participantCount; i++)
+                snapshot[i] = participants[i];
+
+            Action<CharacterInstance[]> handler = ComboStarted;
+            if (handler != null)
+                handler(snapshot);
         }
 
         public static void ReportHit(int hitCount)

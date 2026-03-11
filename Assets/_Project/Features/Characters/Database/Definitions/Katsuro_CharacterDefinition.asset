@@ -40,6 +40,8 @@ MonoBehaviour:
   specialAbilityName: Flashstep Cut
   specialAbilityDescription: He crashes through the lane with a dash attack.
   specialAbilityCooldown: 3
+  specialAbilityChargeRequirement: 3
+  ultimateAbilityChargeRequirement: 6
   specialAbilityDamage: 154
   baseStealthEffectiveness: 12
   stealthDecayRate: 20

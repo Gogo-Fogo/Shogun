@@ -112,7 +112,7 @@ namespace Shogun.Features.Combat
             if (display == null)
                 display = activePlayerCharacter.gameObject.AddComponent<RangeCircleDisplay>();
 
-            display.Show(activePlayerCharacter.GetAttackRangeRadius(), ResolveRangeColor(activePlayerCharacter));
+            display.Show(activePlayerCharacter.GetAttackRangeRadius(), ResolveRangeColor());
         }
 
         private void HideActiveRangeCircle()
@@ -134,16 +134,7 @@ namespace Shogun.Features.Combat
                 display.Hide();
         }
 
-        private static Color ResolveRangeColor(CharacterInstance character)
-        {
-            if (character != null && character.Definition != null)
-            {
-                Color color = character.Definition.PaletteAccentColor;
-                color.a = 0.85f;
-                return color;
-            }
-
-            return new Color(0.2f, 0.9f, 1f, 0.85f);
-        }
+        private static Color ResolveRangeColor()
+            => RangeCircleDisplay.DefaultPlayerRangeColor;
     }
 }

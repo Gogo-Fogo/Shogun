@@ -41,6 +41,8 @@ MonoBehaviour:
   specialAbilityDescription: Unleash a lightning-fast sword draw, dealing heavy damage
     and stunning the enemy for 1 turn.
   specialAbilityCooldown: 3
+  specialAbilityChargeRequirement: 5
+  ultimateAbilityChargeRequirement: 10
   specialAbilityDamage: 180
   baseStealthEffectiveness: 30
   stealthDecayRate: 15

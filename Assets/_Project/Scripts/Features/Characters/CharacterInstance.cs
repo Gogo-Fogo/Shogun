@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Shogun.Core.Architecture;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,7 +28,8 @@ namespace Shogun.Features.Characters
         [SerializeField] private Vector2Int position = Vector2Int.zero;
         [SerializeField] private bool hasMovedThisTurn = false;
         [SerializeField] private bool hasAttackedThisTurn = false;
-        [SerializeField] private int specialAbilityCooldown = 0;
+        [FormerlySerializedAs("specialAbilityCooldown")]
+        [SerializeField] private int specialCharge = 0;
         
         [Header("Stealth State")]
         [SerializeField] private bool isHidden = false;
@@ -56,6 +58,7 @@ namespace Shogun.Features.Characters
         public event Action<StatusEffect> OnStatusEffectRemoved;
         public event Action<bool> OnStealthChanged;
         public event Action<float> OnCounterAttack;
+        public event Action<int> OnSpecialChargeChanged;
         
         // Public properties
         public CharacterDefinition Definition => definition;
@@ -69,8 +72,14 @@ namespace Shogun.Features.Characters
         public bool HasAttackedThisTurn => hasAttackedThisTurn;
         public bool CanMove => isAlive && !hasMovedThisTurn;
         public bool CanAttack => isAlive && !hasAttackedThisTurn;
-        public bool CanUseSpecialAbility => isAlive && specialAbilityCooldown <= 0;
-        public int SpecialAbilityCooldown => specialAbilityCooldown;
+        public int SpecialCharge => specialCharge;
+        public int SpecialChargeRequirement => definition != null ? definition.SpecialAbilityChargeRequirement : 0;
+        public int UltimateChargeRequirement => definition != null ? definition.UltimateAbilityChargeRequirement : SpecialChargeRequirement;
+        public bool CanUseSpecialAbility => isAlive && specialCharge >= SpecialChargeRequirement;
+        public bool CanUseUltimateAbility => isAlive && specialCharge >= UltimateChargeRequirement;
+        public float SpecialChargeRatio => UltimateChargeRequirement > 0 ? Mathf.Clamp01(specialCharge / (float)UltimateChargeRequirement) : 0f;
+        public float JutsuChargeRatio => SpecialChargeRequirement > 0 ? Mathf.Clamp01(specialCharge / (float)SpecialChargeRequirement) : 0f;
+        public int SpecialAbilityCooldown => Mathf.Max(0, SpecialChargeRequirement - specialCharge);
         public StatusEffect[] ActiveStatusEffects => activeStatusEffects;
         
         // Stealth properties
@@ -382,7 +391,7 @@ namespace Shogun.Features.Characters
         public void PerformJutsu()
         {
             if (!CanUseSpecialAbility) return;
-            specialAbilityCooldown = definition.SpecialAbilityCooldown;
+            SpendSpecialCharge(SpecialChargeRequirement);
             var anim = GetComponent<Animator>();
             if (anim != null)
                 anim.SetTrigger("isHealing");
@@ -394,12 +403,39 @@ namespace Shogun.Features.Characters
         /// </summary>
         public void PerformUltimate()
         {
-            if (!CanUseSpecialAbility) return;
-            specialAbilityCooldown = definition.SpecialAbilityCooldown * 2; // Example: ult has longer cooldown
+            if (!CanUseUltimateAbility) return;
+            SpendSpecialCharge(UltimateChargeRequirement);
             var anim = GetComponent<Animator>();
             if (anim != null)
                 anim.SetTrigger("SpecialTrigger");
             // TODO: Apply ultimate logic/effects here
+        }
+
+        public void GainSpecialCharge(int amount = 1)
+        {
+            if (!isAlive || amount <= 0)
+                return;
+
+            SetSpecialCharge(specialCharge + amount);
+        }
+
+        public void SpendSpecialCharge(int amount)
+        {
+            if (amount <= 0)
+                return;
+
+            SetSpecialCharge(specialCharge - amount);
+        }
+
+        private void SetSpecialCharge(int value)
+        {
+            int maxCharge = Mathf.Max(SpecialChargeRequirement, UltimateChargeRequirement);
+            int clamped = Mathf.Clamp(value, 0, maxCharge);
+            if (clamped == specialCharge)
+                return;
+
+            specialCharge = clamped;
+            OnSpecialChargeChanged?.Invoke(specialCharge);
         }
 
         /// <summary>
@@ -430,12 +466,7 @@ namespace Shogun.Features.Characters
             hasMovedThisTurn = false;
             hasAttackedThisTurn = false;
             canCounterAttack = true;
-            
-            // Reduce cooldowns
-            if (specialAbilityCooldown > 0)
-            {
-                specialAbilityCooldown--;
-            }
+            GainSpecialCharge(1);
             
             // Process status effects
             ProcessStatusEffects();
@@ -596,7 +627,7 @@ namespace Shogun.Features.Characters
             isAlive = true;
             hasMovedThisTurn = false;
             hasAttackedThisTurn = false;
-            specialAbilityCooldown = 0;
+            specialCharge = 0;
             isHidden = false;
             turnsInBush = 0;
             isInBush = false;

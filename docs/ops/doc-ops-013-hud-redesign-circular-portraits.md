@@ -22,16 +22,19 @@ one-thumb-friendly.
 The arc rings around each circular portrait in Blazing are **ability charge gauges,
 not HP**:
 
-- Arc fills gradually as the character takes turns / performs actions.
-- **One full arc lap** → character can activate their **special ability** (single tap portrait).
-- **Two full arc laps** → character can activate their **ultimate ability** (double-tap portrait).
+- Each unit has a variable chakra requirement, so some portraits show `3`, `4`, `5`, or many more dividers.
+- The ring acts like a segmented chakra meter, not a generic cooldown sweep.
+- Units normally recover +1 charge on their own turn; Blazing also has extra combo-based charge sources, but that is secondary.
+- First-pass Shogun slice tuning uses 3/6, 4/8, and 5/10 charge bands across the playable roster so the portrait rings visibly differ by unit.
+- The first threshold unlocks the basic special/jutsu.
+- The full meter unlocks the stronger ultimate/secret-technique state.
 
 HP is tracked separately (small bar either below the portrait or as an outer ring
 in a distinct colour).
 
-This is the mechanic the redesign must support visually, even if the underlying
-game logic isn't wired yet — the slots should be built to receive it.
-
+This is the mechanic the redesign must support visually and logically in the slice:
+segmented charge, per-unit thresholds, and turn-based gain rather than a flat binary
+ready/not-ready cooldown.
 ---
 
 ## Design Specification (from design-010 + user direction)
@@ -53,8 +56,8 @@ game logic isn't wired yet — the slots should be built to receive it.
 |---|---|
 | **Active (current turn)** | Scale ×1.2, bright highlight ring |
 | **Ready (player's idle)** | Normal scale, neutral frame |
-| **Ability ready** | Ability arc complete (1 lap) — glow pulse |
-| **Ultimate ready** | Ability arc complete (2 laps) — distinct colour/pulse |
+| **Ability ready** | Charge reaches the jutsu threshold marker — glow pulse |
+| **Ultimate ready** | Full segmented ring — distinct colour/pulse |
 | **Dead** | Desaturate, cross or dim overlay |
 | **Unavailable / enemy turn** | Slight dim, no tap feedback |
 
@@ -63,8 +66,7 @@ game logic isn't wired yet — the slots should be built to receive it.
 1. **HP bar** — slim horizontal bar directly below the circle (not inside the arc ring)
 2. **Portrait circle** — character face/sprite clipped to circle mask
 3. **Frame ring** — thin decorative ring (lacquer/ink aesthetic, not gold chrome)
-4. **Ability charge arc** — starts empty, fills clockwise; two distinct fill colours for
-   ability vs. ultimate threshold
+4. **Ability charge arc** — segmented by chakra dividers, fills clockwise, and marks the jutsu threshold inside the full ultimate ring
 5. **State overlay** — active highlight or dead desaturation on top
 
 ### Top Bar (unchanged from design-010)
@@ -93,10 +95,11 @@ game logic isn't wired yet — the slots should be built to receive it.
 
 ### Phase 3 — Ability charge arc
 
-- [ ] Add radial-fill `Image` (fill type = Filled, Radial 360) behind portrait for ability charge
-- [ ] Drive fill amount from `CharacterInstance` ability charge value (add field if needed)
-- [ ] Switch fill colour / start second lap effect at 1.0 fill for ultimate threshold
-- [ ] Wire double-tap recognition on portrait for ultimate activation
+- [x] Add radial-fill `Image` (fill type = Filled, Radial 360) behind portrait for ability charge
+- [x] Drive fill amount from `CharacterInstance` segmented charge value
+- [x] Add divider ticks and a jutsu-threshold marker tied to per-unit charge cost
+- [x] Gain `+1` charge at the start of that unit's turn
+- [ ] Wire portrait tap/double-tap ability activation when slice specials are exposed to input
 
 ---
 
@@ -140,5 +143,5 @@ Enter Play mode in Dev_Sandbox:
 3. HP bar below each portrait reflects live HP.
 4. Active unit portrait is visibly larger / highlighted.
 5. Dead unit portrait desaturates.
-6. Ability arc ring is present and ready to be driven by game logic (can be static/empty for now).
+6. Ability arc ring shows live segmented charge with the correct divider count and jutsu threshold marker.
 7. Battlefield is clearly visible above the rail — no bottom-wall syndrome.

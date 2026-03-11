@@ -40,6 +40,8 @@ MonoBehaviour:
   specialAbilityName: Storm of Arrows
   specialAbilityDescription: He draws, steps, and fills the lane with a rapid shot.
   specialAbilityCooldown: 3
+  specialAbilityChargeRequirement: 4
+  ultimateAbilityChargeRequirement: 8
   specialAbilityDamage: 156
   baseStealthEffectiveness: 14
   stealthDecayRate: 20

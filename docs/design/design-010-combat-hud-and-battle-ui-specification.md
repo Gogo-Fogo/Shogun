@@ -191,6 +191,8 @@ Rules:
 - avoid constantly animating UI elements over the battlefield
 - range, target, and danger overlays should be crisp and legible against busy backgrounds
 - player-controlled range auras can carry the richer fill, glow, and marker treatment; enemy threat circles should stay simpler to avoid overlap clutter
+- active ally attack circles should use one shared blue battlefield grammar; precision should come from the consistent outer rim, not per-character palette variation
+- ally-circle interior fill should stay airy near the center and bias its opacity toward the edge so the boundary line remains the clearest collision read
 
 ### Bottom squad rail
 
@@ -216,6 +218,7 @@ It should contain:
 - readable medallions or frames with `Shogun` flavor, but less ornamental noise than `Blazing`
 - HP arcs or bars that read instantly at small size
 - skill-charge indicators that do not overpower the portrait itself
+- segmented charge dividers with a visible first-threshold marker when the unit's special comes online
 
 #### Safe-area rule
 
@@ -257,14 +260,16 @@ This is the main improvement opportunity over `Blazing`.
 5. The released-on unit attacks that enemy first.
 6. Any active frontline allies whose attack circles already cover that same enemy join as follow-up hits without spending their own turns.
 7. Damage text appears above the enemy for each confirmed hit, with crit results using the boosted per-unit rate.
-8. A top-right combo tracker updates live on each confirmed hit and escalates its tier text as the chain grows.
-9. If more valid enemies remain inside the acting unit's release range, the lead unit follows through to them and eligible allies can join again.
-10. After the combo sequence finishes, the tracker gets its strongest pulse before fading.
-11. The acting unit returns to the release position.
+8. A brief slanted team cut-in can flash on confirmed `2-unit` and `3-unit` combos before the live hit-count tracker takes over.
+9. A top-right combo tracker updates live on each confirmed hit and escalates its tier text as the chain grows.
+10. If more valid enemies remain inside the acting unit's release range, the lead unit follows through to them and eligible allies can join again.
+11. After the combo sequence finishes, the tracker gets its strongest pulse before fading.
+12. The acting unit returns to the release position.
 
 ### Presentation rules
 
 - first hit should feel clean and readable, not overloaded
+- confirmed `2-unit` and `3-unit` combos can use a brief portrait cut-in, but solo hits should never trigger it
 - second and later hits are where combo spectacle should peak
 - damage text must appear above the impacted enemy and clear quickly
 - combo celebration should not hide the target that was actually hit

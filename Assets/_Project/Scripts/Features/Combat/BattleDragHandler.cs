@@ -211,7 +211,7 @@ namespace Shogun.Features.Combat
                     if (dragRangeCircle == null)
                         dragRangeCircle = draggingCharacter.gameObject.AddComponent<RangeCircleDisplay>();
 
-                    dragRangeCircle.Show(draggingCharacter.GetAttackRangeRadius(), GetPlayerRangeColor(draggingCharacter));
+                    dragRangeCircle.Show(draggingCharacter.GetAttackRangeRadius(), GetPlayerRangeColor());
 
                     dragMultiTargetIndicator = draggingCharacter.GetComponent<DragMultiTargetIndicator>();
                     if (dragMultiTargetIndicator == null)
@@ -500,6 +500,7 @@ namespace Shogun.Features.Combat
                 CharacterInstance finalResolvedTarget = null;
                 int resolvedHitCount = 0;
                 bool consumedAttackAction = false;
+                bool comboCutInShown = false;
                 CombatComboPresentationBus.Reset();
 
                 for (int i = 0; i < targets.Count; i++)
@@ -526,6 +527,12 @@ namespace Shogun.Features.Combat
                         continue;
 
                     List<CharacterInstance> comboParticipants = CombatComboUtility.GetPlayerComboParticipants(turnManager, attacker, target);
+                    if (!comboCutInShown && comboParticipants.Count >= 2)
+                    {
+                        CombatComboPresentationBus.ReportStarted(comboParticipants);
+                        comboCutInShown = true;
+                    }
+
                     bool consumeAttackAction = !consumedAttackAction;
                     if (consumeAttackAction && !attacker.CanAttack)
                         continue;
@@ -633,20 +640,10 @@ namespace Shogun.Features.Combat
         private static void FaceCharacterTowards(CharacterInstance attacker, CharacterInstance target)
             => CombatMovementUtility.FaceCharacterTowards(attacker, target);
 
-        // Returns the range-circle colour for a player unit: reads the character's
-        // paletteAccentColor at 0.85 opacity so every fighter has a distinct glow.
-        // Falls back to teal when the definition is unavailable.
-        private static Color GetPlayerRangeColor(CharacterInstance character)
-        {
-            if (character != null && character.Definition != null)
-            {
-                Color c = character.Definition.PaletteAccentColor;
-                c.a = 0.85f;
-                return c;
-            }
-            return new Color(0.2f, 0.9f, 1f, 0.85f); // fallback teal
-        }
-
+        // Player range circles use one shared blue grammar. Character accent colours stay
+        // on portraits and identity surfaces instead of overloading the combat boundary.
+        private static Color GetPlayerRangeColor()
+            => RangeCircleDisplay.DefaultPlayerRangeColor;
         // Collider query forwarding — shared with the rest of the combat pipeline.
         private static Vector3 GetColliderWorldCenter(CharacterInstance character)
             => CombatMovementUtility.GetColliderWorldCenter(character);

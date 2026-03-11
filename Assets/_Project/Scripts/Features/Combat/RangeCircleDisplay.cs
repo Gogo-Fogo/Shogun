@@ -1,5 +1,6 @@
 // RangeCircleDisplay.cs
-// Renders a softer combat aura with fill, glow, rim, and optional markers.
+// Renders a Blazing-style combat aura with a light center field, stronger edge fill,
+// and a fixed precision rim that pulses in alpha instead of scale.
 
 using UnityEngine;
 
@@ -8,18 +9,14 @@ namespace Shogun.Features.Combat
     public class RangeCircleDisplay : MonoBehaviour
     {
         private const float BreathHz = 0.58f;
-        private const float FillAlphaMin = 0.18f;
-        private const float FillAlphaMax = 0.28f;
-        private const float HaloAlphaMin = 0.14f;
-        private const float HaloAlphaMax = 0.24f;
-        private const float RimAlphaMin = 0.8f;
-        private const float RimAlphaMax = 0.98f;
+        private const float FillAlphaMin = 0.08f;
+        private const float FillAlphaMax = 0.14f;
+        private const float HaloAlphaMin = 0.42f;
+        private const float HaloAlphaMax = 0.58f;
+        private const float RimAlphaMin = 0.86f;
+        private const float RimAlphaMax = 1f;
         private const float MarkerAlphaMin = 0.72f;
         private const float MarkerAlphaMax = 0.95f;
-        private const float HaloScaleMin = 1.06f;
-        private const float HaloScaleMax = 1.12f;
-        private const float RimScaleMin = 1f;
-        private const float RimScaleMax = 1.015f;
         private const float MarkerWorldSize = 0.24f;
         private const float MarkerGapWorld = 0.18f;
         private const int SoftDiscResolution = 128;
@@ -31,6 +28,7 @@ namespace Shogun.Features.Combat
         private const int MarkerSortingOffset = -1;
 
         private static Sprite softDiscSprite;
+        private static Sprite haloRingSprite;
         private static Sprite rimSprite;
         private static Sprite markerSprite;
 
@@ -45,13 +43,15 @@ namespace Shogun.Features.Combat
         private bool showDecorativeMarkers;
         private bool isShowing;
 
-        void Awake()
+        public static Color DefaultPlayerRangeColor => new Color(0.42f, 0.82f, 1f, 0.88f);
+
+        private void Awake()
         {
             BuildVisuals();
             SetVisible(false);
         }
 
-        void Update()
+        private void Update()
         {
             if (!isShowing || visualRoot == null)
                 return;
@@ -92,7 +92,7 @@ namespace Shogun.Features.Combat
             visualRoot.localPosition = Vector3.zero;
             visualRoot.localScale = Vector3.one;
 
-            haloRenderer = CreateSpriteRenderer("Halo", GetSoftDiscSprite());
+            haloRenderer = CreateSpriteRenderer("Halo", GetHaloRingSprite());
             fillRenderer = CreateSpriteRenderer("Fill", GetSoftDiscSprite());
             rimRenderer = CreateSpriteRenderer("Rim", GetRimSprite());
 
@@ -127,17 +127,15 @@ namespace Shogun.Features.Combat
             float sy = Mathf.Abs(lossScale.y) > 0.0001f ? Mathf.Abs(lossScale.y) : 1f;
             float diameterX = (worldRadius * 2f) / sx;
             float diameterY = (worldRadius * 2f) / sy;
-            float haloScale = Mathf.Lerp(HaloScaleMin, HaloScaleMax, pulse);
-            float rimScale = Mathf.Lerp(RimScaleMin, RimScaleMax, pulse);
 
-            fillRenderer.transform.localPosition = new Vector3(0f, 0f, 0f);
+            fillRenderer.transform.localPosition = Vector3.zero;
             fillRenderer.transform.localScale = new Vector3(diameterX, diameterY, 1f);
 
             haloRenderer.transform.localPosition = new Vector3(0f, 0f, 0.01f);
-            haloRenderer.transform.localScale = new Vector3(diameterX * haloScale, diameterY * haloScale, 1f);
+            haloRenderer.transform.localScale = new Vector3(diameterX, diameterY, 1f);
 
             rimRenderer.transform.localPosition = new Vector3(0f, 0f, 0.02f);
-            rimRenderer.transform.localScale = new Vector3(diameterX * rimScale, diameterY * rimScale, 1f);
+            rimRenderer.transform.localScale = new Vector3(diameterX, diameterY, 1f);
 
             float markerScaleX = MarkerWorldSize / sx;
             float markerScaleY = MarkerWorldSize / sy;
@@ -165,20 +163,20 @@ namespace Shogun.Features.Combat
 
         private void UpdateColors(float pulse)
         {
-            Color fillColor = baseColor;
+            Color fillColor = Color.Lerp(baseColor, Color.white, 0.1f);
             fillColor.a = baseColor.a * Mathf.Lerp(FillAlphaMin, FillAlphaMax, pulse);
             fillRenderer.color = fillColor;
 
-            Color haloColor = Color.Lerp(baseColor, Color.white, 0.2f);
+            Color haloColor = Color.Lerp(baseColor, Color.white, 0.5f);
             haloColor.a = baseColor.a * Mathf.Lerp(HaloAlphaMin, HaloAlphaMax, pulse);
             haloRenderer.color = haloColor;
 
-            Color rimColor = Color.Lerp(baseColor, Color.white, 0.72f);
-            rimColor.a = Mathf.Lerp(RimAlphaMin, RimAlphaMax, pulse);
+            Color rimColor = Color.Lerp(baseColor, Color.white, 0.74f);
+            rimColor.a = baseColor.a * Mathf.Lerp(RimAlphaMin, RimAlphaMax, pulse);
             rimRenderer.color = rimColor;
 
             Color markerColor = Color.Lerp(baseColor, Color.white, 0.8f);
-            markerColor.a = Mathf.Lerp(MarkerAlphaMin, MarkerAlphaMax, pulse);
+            markerColor.a = baseColor.a * Mathf.Lerp(MarkerAlphaMin, MarkerAlphaMax, pulse);
             for (int i = 0; i < markerRenderers.Length; i++)
                 markerRenderers[i].color = markerColor;
         }
@@ -272,8 +270,10 @@ namespace Shogun.Features.Combat
                         continue;
                     }
 
-                    float edgeBias = Mathf.SmoothStep(0f, 1f, distance);
-                    float alpha = Mathf.Lerp(0.12f, 0.36f, edgeBias);
+                    float edgeBias = Mathf.SmoothStep(0.18f, 0.9f, distance);
+                    float centerSuppression = Mathf.Lerp(0.28f, 1f, edgeBias);
+                    float outerFade = 1f - Mathf.SmoothStep(0.92f, 1f, distance);
+                    float alpha = Mathf.Lerp(0.03f, 0.18f, edgeBias) * centerSuppression * outerFade;
                     texture.SetPixel(x, y, new Color(1f, 1f, 1f, alpha));
                 }
             }
@@ -285,6 +285,48 @@ namespace Shogun.Features.Combat
                 new Vector2(0.5f, 0.5f),
                 SoftDiscResolution);
             return softDiscSprite;
+        }
+
+        private static Sprite GetHaloRingSprite()
+        {
+            if (haloRingSprite != null)
+                return haloRingSprite;
+
+            Texture2D texture = new Texture2D(RingResolution, RingResolution, TextureFormat.RGBA32, false)
+            {
+                filterMode = FilterMode.Bilinear,
+                wrapMode = TextureWrapMode.Clamp
+            };
+
+            float center = (RingResolution - 1) * 0.5f;
+            float radius = center;
+            for (int y = 0; y < RingResolution; y++)
+            {
+                for (int x = 0; x < RingResolution; x++)
+                {
+                    float dx = (x - center) / radius;
+                    float dy = (y - center) / radius;
+                    float distance = Mathf.Sqrt((dx * dx) + (dy * dy));
+                    if (distance > 1f)
+                    {
+                        texture.SetPixel(x, y, Color.clear);
+                        continue;
+                    }
+
+                    float innerFade = Mathf.SmoothStep(0.8f, 0.91f, distance);
+                    float outerFade = 1f - Mathf.SmoothStep(0.985f, 1f, distance);
+                    float alpha = innerFade * outerFade;
+                    texture.SetPixel(x, y, new Color(1f, 1f, 1f, alpha));
+                }
+            }
+
+            texture.Apply();
+            haloRingSprite = Sprite.Create(
+                texture,
+                new Rect(0f, 0f, RingResolution, RingResolution),
+                new Vector2(0.5f, 0.5f),
+                RingResolution);
+            return haloRingSprite;
         }
 
         private static Sprite GetRimSprite()
@@ -313,9 +355,9 @@ namespace Shogun.Features.Combat
                         continue;
                     }
 
-                    float innerFade = Mathf.SmoothStep(0.86f, 0.93f, distance);
-                    float outerFade = 1f - Mathf.SmoothStep(0.985f, 1f, distance);
-                    float alpha = innerFade * outerFade;
+                    float innerFade = Mathf.SmoothStep(0.95f, 0.972f, distance);
+                    float outerFade = 1f - Mathf.SmoothStep(0.992f, 1f, distance);
+                    float alpha = Mathf.Pow(innerFade * outerFade, 0.55f);
                     texture.SetPixel(x, y, new Color(1f, 1f, 1f, alpha));
                 }
             }

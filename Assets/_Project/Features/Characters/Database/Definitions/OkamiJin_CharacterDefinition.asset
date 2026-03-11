@@ -40,6 +40,8 @@ MonoBehaviour:
   specialAbilityName: Frostfang Rush
   specialAbilityDescription: He bursts through the lane with a savage dash attack.
   specialAbilityCooldown: 3
+  specialAbilityChargeRequirement: 5
+  ultimateAbilityChargeRequirement: 10
   specialAbilityDamage: 168
   baseStealthEffectiveness: 10
   stealthDecayRate: 20

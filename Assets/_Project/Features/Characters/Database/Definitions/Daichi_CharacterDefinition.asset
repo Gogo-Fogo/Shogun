@@ -40,6 +40,8 @@ MonoBehaviour:
   specialAbilityName: Stonebreaker Throw
   specialAbilityDescription: He breaks formation with a heavy thrown follow-up.
   specialAbilityCooldown: 3
+  specialAbilityChargeRequirement: 4
+  ultimateAbilityChargeRequirement: 8
   specialAbilityDamage: 148
   baseStealthEffectiveness: 8
   stealthDecayRate: 20

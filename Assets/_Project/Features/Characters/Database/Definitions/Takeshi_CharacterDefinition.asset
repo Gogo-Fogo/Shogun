@@ -40,6 +40,8 @@ MonoBehaviour:
   specialAbilityName: Storm Pike
   specialAbilityDescription: A driving multi-hit thrust that lands like lightning.
   specialAbilityCooldown: 3
+  specialAbilityChargeRequirement: 4
+  ultimateAbilityChargeRequirement: 8
   specialAbilityDamage: 150
   baseStealthEffectiveness: 6
   stealthDecayRate: 20

@@ -34,7 +34,7 @@ namespace Shogun.Features.Characters
         [SerializeField] private bool invertFacingX = false;
 
         [Header("Visual Identity")]
-        [Tooltip("Palette signature used for cursor hover highlight, selection outline, and range circle colour. One controlled accent per character — see DESIGN-001 and DESIGN-002.")]
+        [Tooltip("Palette signature used for cursor hover highlight, selection outline, portrait accents, and identity surfaces. One controlled accent per character — see DESIGN-001 and DESIGN-002.")]
         [SerializeField] private Color paletteAccentColor = Color.white;
         
         [Header("Character Type")]
@@ -54,6 +54,8 @@ namespace Shogun.Features.Characters
         [SerializeField] private string specialAbilityName = "";
         [SerializeField] private string specialAbilityDescription = "";
         [SerializeField] private int specialAbilityCooldown = 3;
+        [SerializeField] private int specialAbilityChargeRequirement = 0;
+        [SerializeField] private int ultimateAbilityChargeRequirement = 0;
         [SerializeField] private float specialAbilityDamage = 100f;
         
         [Header("Stealth Properties")]
@@ -116,7 +118,9 @@ namespace Shogun.Features.Characters
         public float BaseSpeed => baseSpeed;
         public string SpecialAbilityName => specialAbilityName;
         public string SpecialAbilityDescription => specialAbilityDescription;
-        public int SpecialAbilityCooldown => specialAbilityCooldown;
+        public int SpecialAbilityChargeRequirement => Mathf.Max(1, specialAbilityChargeRequirement > 0 ? specialAbilityChargeRequirement : specialAbilityCooldown);
+        public int UltimateAbilityChargeRequirement => Mathf.Max(SpecialAbilityChargeRequirement, ultimateAbilityChargeRequirement > 0 ? ultimateAbilityChargeRequirement : (SpecialAbilityChargeRequirement * 2));
+        public int SpecialAbilityCooldown => SpecialAbilityChargeRequirement;
         public float SpecialAbilityDamage => specialAbilityDamage;
         public float BaseStealthEffectiveness => baseStealthEffectiveness;
         public float StealthDecayRate => stealthDecayRate;
@@ -192,6 +196,11 @@ namespace Shogun.Features.Characters
         {
             characterId = CharacterKeyUtility.NormalizeCharacterId(string.IsNullOrWhiteSpace(characterId) ? GetIdentitySeed() : characterId);
             aliases = CharacterKeyUtility.NormalizeAliases(aliases);
+            specialAbilityCooldown = Mathf.Max(1, specialAbilityCooldown);
+            if (specialAbilityChargeRequirement > 0)
+                specialAbilityChargeRequirement = Mathf.Max(1, specialAbilityChargeRequirement);
+            if (ultimateAbilityChargeRequirement > 0)
+                ultimateAbilityChargeRequirement = Mathf.Max(SpecialAbilityChargeRequirement, ultimateAbilityChargeRequirement);
         }
 #endif
     }
