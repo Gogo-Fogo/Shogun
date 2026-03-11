@@ -37,6 +37,8 @@ MonoBehaviour:
   baseAttack: 65
   baseDefense: 40
   baseSpeed: 12
+  specialAbilityDefinition: {fileID: 11400000, guid: a7017d664c2b48fb92b317f9b9dfdb5b, type: 2}
+  ultimateAbilityDefinition: {fileID: 11400000, guid: fb8856e09a9e450d95fa9f5918d3a1d6, type: 2}
   specialAbilityName: Iaido Strike
   specialAbilityDescription: Unleash a lightning-fast sword draw, dealing heavy damage
     and stunning the enemy for 1 turn.

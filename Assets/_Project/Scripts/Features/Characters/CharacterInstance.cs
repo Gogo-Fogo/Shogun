@@ -49,6 +49,8 @@ namespace Shogun.Features.Characters
         private const float AttackStateDetectTimeoutSeconds = 0.15f;
         private const float AttackRecoveryFallbackSeconds = 0.32f;
         private const float AttackRecoveryMaxSeconds = 1.10f;
+        private const float DefaultDeathAnimationSeconds = 0.52f;
+        private const float DeathAnimationCleanupPaddingSeconds = 0.08f;
         
         // Events
         public event Action<float> OnHealthChanged;
@@ -150,8 +152,110 @@ namespace Shogun.Features.Characters
         private void Die()
         {
             isAlive = false;
-            isHidden = false; // Reveal on death
+            hasMovedThisTurn = true;
+            hasAttackedThisTurn = true;
+            canCounterAttack = false;
+
+            if (isHidden)
+            {
+                isHidden = false;
+                OnStealthChanged?.Invoke(false);
+            }
+
+            StopMovement();
+            StopAttackRecovery();
+            DisableBattleInteraction();
+            PlayDeathAnimation();
             OnDeath?.Invoke();
+        }
+
+        public float GetDeathAnimationDuration()
+        {
+            if (definition != null && definition.animationMappings != null)
+            {
+                foreach (AnimationMapping mapping in definition.animationMappings)
+                {
+                    if (mapping == null || mapping.clip == null || string.IsNullOrWhiteSpace(mapping.logicalName))
+                        continue;
+
+                    if (NormalizeAnimationKey(mapping.logicalName) == "DEATH")
+                        return Mathf.Max(DefaultDeathAnimationSeconds, mapping.clip.length);
+                }
+            }
+
+            return DefaultDeathAnimationSeconds;
+        }
+
+        public void SpawnDeathAnimationProxy()
+        {
+            SpriteRenderer sourceRenderer = ResolveSpriteRenderer();
+            Animator sourceAnimator = ResolveAnimator();
+            if (sourceRenderer == null && sourceAnimator == null)
+                return;
+
+            GameObject proxyObject = new GameObject($"{gameObject.name}_DeathProxy");
+            Transform proxyTransform = proxyObject.transform;
+            proxyTransform.SetPositionAndRotation(transform.position, transform.rotation);
+            proxyTransform.localScale = transform.localScale;
+
+            if (sourceRenderer != null)
+            {
+                SpriteRenderer proxyRenderer = proxyObject.AddComponent<SpriteRenderer>();
+                proxyRenderer.sprite = sourceRenderer.sprite;
+                proxyRenderer.color = sourceRenderer.color;
+                proxyRenderer.flipX = sourceRenderer.flipX;
+                proxyRenderer.flipY = sourceRenderer.flipY;
+                proxyRenderer.sortingLayerID = sourceRenderer.sortingLayerID;
+                proxyRenderer.sortingOrder = sourceRenderer.sortingOrder;
+                proxyRenderer.sharedMaterial = sourceRenderer.sharedMaterial;
+                proxyRenderer.maskInteraction = sourceRenderer.maskInteraction;
+                proxyRenderer.drawMode = sourceRenderer.drawMode;
+                proxyRenderer.size = sourceRenderer.size;
+            }
+
+            if (sourceAnimator != null && sourceAnimator.runtimeAnimatorController != null)
+            {
+                Animator proxyAnimator = proxyObject.AddComponent<Animator>();
+                proxyAnimator.runtimeAnimatorController = sourceAnimator.runtimeAnimatorController;
+                proxyAnimator.updateMode = sourceAnimator.updateMode;
+                proxyAnimator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+                proxyAnimator.applyRootMotion = false;
+                proxyAnimator.Rebind();
+                proxyAnimator.Update(0f);
+                TrySetAnimatorBool(proxyAnimator, "isRunning", false);
+                TrySetAnimatorBool(proxyAnimator, "isDead", true);
+                TryPlayState(proxyAnimator, "DEATH");
+            }
+
+            Destroy(proxyObject, GetDeathAnimationDuration() + DeathAnimationCleanupPaddingSeconds);
+        }
+
+        private void StopAttackRecovery()
+        {
+            if (attackRecoveryCoroutine == null)
+                return;
+
+            StopCoroutine(attackRecoveryCoroutine);
+            attackRecoveryCoroutine = null;
+        }
+
+        private void DisableBattleInteraction()
+        {
+            Collider2D[] colliders = GetComponentsInChildren<Collider2D>(true);
+            for (int i = 0; i < colliders.Length; i++)
+                colliders[i].enabled = false;
+        }
+
+        private void PlayDeathAnimation()
+        {
+            Animator anim = ResolveAnimator();
+            if (anim == null)
+                return;
+
+            anim.SetBool("isRunning", false);
+            TrySetAnimatorBool(anim, "isHealing", false);
+            TrySetAnimatorBool(anim, "isDead", true);
+            TryPlayState(anim, "DEATH");
         }
         
         /// <summary>
@@ -380,9 +484,13 @@ namespace Shogun.Features.Characters
             return state.IsName("ATTACK 1")
                    || state.IsName("ATTACK 2")
                    || state.IsName("ATTACK 3")
+                   || state.IsName("SPECIAL ATTACK")
+                   || state.IsName("HEALING")
                    || state.IsName("Base Layer.ATTACK 1")
                    || state.IsName("Base Layer.ATTACK 2")
-                   || state.IsName("Base Layer.ATTACK 3");
+                   || state.IsName("Base Layer.ATTACK 3")
+                   || state.IsName("Base Layer.SPECIAL ATTACK")
+                   || state.IsName("Base Layer.HEALING");
         }
 
         /// <summary>
@@ -390,12 +498,10 @@ namespace Shogun.Features.Characters
         /// </summary>
         public void PerformJutsu()
         {
-            if (!CanUseSpecialAbility) return;
-            SpendSpecialCharge(SpecialChargeRequirement);
-            var anim = GetComponent<Animator>();
-            if (anim != null)
-                anim.SetTrigger("isHealing");
-            // TODO: Apply healing logic/effects here
+            if (!CanUseSpecialAbility)
+                return;
+
+            ExecuteAbility(definition != null ? definition.SpecialAbilityDefinition : null, SpecialChargeRequirement, ResolveLegacyAbilityTrigger());
         }
 
         /// <summary>
@@ -403,12 +509,168 @@ namespace Shogun.Features.Characters
         /// </summary>
         public void PerformUltimate()
         {
-            if (!CanUseUltimateAbility) return;
-            SpendSpecialCharge(UltimateChargeRequirement);
-            var anim = GetComponent<Animator>();
+            if (!CanUseUltimateAbility)
+                return;
+
+            ExecuteAbility(definition != null ? definition.UltimateAbilityDefinition : null, UltimateChargeRequirement, "SpecialTrigger");
+        }
+
+        private void ExecuteAbility(AbilityDefinition ability, int chargeCost, string fallbackTrigger)
+        {
+            SpendSpecialCharge(chargeCost);
+
+            Animator anim = GetComponent<Animator>();
             if (anim != null)
-                anim.SetTrigger("SpecialTrigger");
-            // TODO: Apply ultimate logic/effects here
+            {
+                string animationInstruction = ability != null && !string.IsNullOrWhiteSpace(ability.AnimationTrigger)
+                    ? ability.AnimationTrigger
+                    : fallbackTrigger;
+                TryExecuteAbilityAnimation(anim, animationInstruction);
+            }
+
+            ApplyUntargetedAbilityEffects(ability);
+        }
+
+        private void TryExecuteAbilityAnimation(Animator anim, string animationInstruction)
+        {
+            if (anim == null)
+                return;
+
+            string instruction = string.IsNullOrWhiteSpace(animationInstruction)
+                ? "SpecialTrigger"
+                : animationInstruction.Trim();
+
+            anim.SetBool("isRunning", false);
+
+            if (instruction.StartsWith("PlayState:", StringComparison.OrdinalIgnoreCase))
+            {
+                string stateName = instruction.Substring("PlayState:".Length).Trim();
+                if (!string.IsNullOrWhiteSpace(stateName) && TryPlayState(anim, stateName))
+                {
+                    StartAttackRecovery(anim);
+                    return;
+                }
+
+                instruction = "SpecialTrigger";
+            }
+
+            if (TrySetAnimatorParameter(anim, instruction))
+            {
+                StartAttackRecovery(anim);
+                return;
+            }
+
+            anim.SetTrigger("SpecialTrigger");
+            StartAttackRecovery(anim);
+        }
+
+        private void StartAttackRecovery(Animator anim)
+        {
+            if (attackRecoveryCoroutine != null)
+                StopCoroutine(attackRecoveryCoroutine);
+
+            attackRecoveryCoroutine = StartCoroutine(RecoverToIdleAfterAttack(anim));
+        }
+
+        private static bool TrySetAnimatorBool(Animator anim, string parameterName, bool value)
+        {
+            if (anim == null || string.IsNullOrWhiteSpace(parameterName))
+                return false;
+
+            foreach (AnimatorControllerParameter parameter in anim.parameters)
+            {
+                if (!string.Equals(parameter.name, parameterName, StringComparison.Ordinal)
+                    || parameter.type != AnimatorControllerParameterType.Bool)
+                {
+                    continue;
+                }
+
+                anim.SetBool(parameterName, value);
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool TrySetAnimatorParameter(Animator anim, string parameterName)
+        {
+            if (anim == null || string.IsNullOrWhiteSpace(parameterName))
+                return false;
+
+            foreach (AnimatorControllerParameter parameter in anim.parameters)
+            {
+                if (!string.Equals(parameter.name, parameterName, StringComparison.Ordinal))
+                    continue;
+
+                switch (parameter.type)
+                {
+                    case AnimatorControllerParameterType.Trigger:
+                        anim.ResetTrigger(parameterName);
+                        anim.SetTrigger(parameterName);
+                        return true;
+                    case AnimatorControllerParameterType.Bool:
+                        anim.SetBool(parameterName, true);
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        private void ApplyUntargetedAbilityEffects(AbilityDefinition ability)
+        {
+            if (ability == null || ability.Targeting != AbilityTargetingType.Self)
+                return;
+
+            switch (ability.EffectType)
+            {
+                case AbilityEffectType.Heal:
+                    Heal(Mathf.Max(0f, ability.PowerValue));
+                    break;
+                case AbilityEffectType.ApplyStatus:
+                    if (ability.AppliesStatus)
+                    {
+                        AddStatusEffect(new StatusEffect(
+                            ability.AppliedStatusEffect,
+                            ability.AppliedStatusValue,
+                            ability.AppliedStatusDuration,
+                            ability.DisplayName));
+                    }
+                    break;
+                case AbilityEffectType.Cleanse:
+                    RemoveNegativeStatusEffects();
+                    break;
+            }
+        }
+
+        private void RemoveNegativeStatusEffects()
+        {
+            for (int i = activeStatusEffects.Length - 1; i >= 0; i--)
+            {
+                StatusEffect effect = activeStatusEffects[i];
+                if (effect == null)
+                    continue;
+
+                switch (effect.Type)
+                {
+                    case StatusEffectType.Poison:
+                    case StatusEffectType.Stun:
+                    case StatusEffectType.Silence:
+                    case StatusEffectType.Burn:
+                    case StatusEffectType.Freeze:
+                    case StatusEffectType.Bleed:
+                        RemoveStatusEffect(effect);
+                        break;
+                }
+            }
+        }
+
+        private string ResolveLegacyAbilityTrigger()
+        {
+            string combined = $"{definition?.SpecialAbilityName} {definition?.SpecialAbilityDescription}".ToLowerInvariant();
+            return combined.Contains("heal") || combined.Contains("recover") || combined.Contains("restore")
+                ? "isHealing"
+                : "SpecialTrigger";
         }
 
         public void GainSpecialCharge(int amount = 1)
@@ -622,6 +884,9 @@ namespace Shogun.Features.Characters
                 stats = new CharacterStats();
             }
 
+            StopMovement();
+            StopAttackRecovery();
+
             stats.Initialize(def);
             currentHealth = stats.Health;
             isAlive = true;
@@ -641,6 +906,7 @@ namespace Shogun.Features.Characters
             if (sr != null)
             {
                 sr.sprite = def.BattleSprite;
+                sr.color = Color.white;
             }
 
             Animator anim = ResolveAnimator();
@@ -648,7 +914,15 @@ namespace Shogun.Features.Characters
             {
                 anim.runtimeAnimatorController = def.AnimatorController;
                 SetupAnimatorOverrides(anim);
+                TrySetAnimatorBool(anim, "isDead", false);
+                TrySetAnimatorBool(anim, "isHealing", false);
+                anim.SetBool("isRunning", false);
+                ForceLocomotionState(anim);
             }
+
+            Collider2D[] colliders = GetComponentsInChildren<Collider2D>(true);
+            for (int i = 0; i < colliders.Length; i++)
+                colliders[i].enabled = true;
 
             CapsuleCollider2D col = ResolveCapsuleCollider();
             if (col != null)

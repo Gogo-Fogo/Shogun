@@ -113,3 +113,9 @@ Escalate above the default standard only when the asset category needs it:
 
 Do not let rare exceptions quietly become the default standard for all characters.
 
+
+## Runtime defeat rule
+
+If a production character has a mapped `DEATH` clip, runtime defeat should visibly trigger that clip before the unit is removed, hidden, or replaced on the battlefield.
+
+For immediate ally reserve substitution, preserve the death beat with a short-lived visual proxy instead of skipping straight to the replacement.

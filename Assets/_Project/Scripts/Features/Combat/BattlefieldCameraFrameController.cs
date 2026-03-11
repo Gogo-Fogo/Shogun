@@ -19,20 +19,65 @@ namespace Shogun.Features.Combat
         private SpriteRenderer battlefieldRenderer;
         private Vector2Int lastResolution = Vector2Int.zero;
 
+        private static bool s_BootstrapRegistered;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetBootstrap()
+        {
+            SceneManager.sceneLoaded -= HandleSceneLoadedBootstrap;
+            s_BootstrapRegistered = false;
+        }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void RegisterBootstrap()
+        {
+            if (s_BootstrapRegistered)
+                return;
+
+            SceneManager.sceneLoaded += HandleSceneLoadedBootstrap;
+            s_BootstrapRegistered = true;
+        }
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void EnsureExists()
         {
-            if (FindFirstObjectByType<TurnManager>() == null)
+            EnsureExists(SceneManager.GetActiveScene());
+        }
+
+        private static void HandleSceneLoadedBootstrap(Scene scene, LoadSceneMode _)
+        {
+            EnsureExists(scene);
+        }
+
+        private static void EnsureExists(Scene scene)
+        {
+            if (!scene.IsValid() || !TryFindTurnManager(scene))
                 return;
 
-            Camera cameraRef = Camera.main;
-            if (cameraRef == null)
-                return;
+            Camera[] cameras = FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < cameras.Length; i++)
+            {
+                Camera cameraRef = cameras[i];
+                if (cameraRef == null || cameraRef.gameObject.scene != scene || !cameraRef.CompareTag("MainCamera"))
+                    continue;
 
-            if (cameraRef.GetComponent<BattlefieldCameraFrameController>() != null)
+                if (cameraRef.GetComponent<BattlefieldCameraFrameController>() == null)
+                    cameraRef.gameObject.AddComponent<BattlefieldCameraFrameController>();
                 return;
+            }
+        }
 
-            cameraRef.gameObject.AddComponent<BattlefieldCameraFrameController>();
+        private static bool TryFindTurnManager(Scene scene)
+        {
+            TurnManager[] managers = FindObjectsByType<TurnManager>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < managers.Length; i++)
+            {
+                TurnManager manager = managers[i];
+                if (manager != null && manager.gameObject.scene == scene)
+                    return true;
+            }
+
+            return false;
         }
 
         private void Awake()

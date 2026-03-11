@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b3aab6fd9494fd1a146cd8c4b4a71a0, type: 3}
+  m_Name: Katsuro_SpecialAbility
+  m_EditorClassIdentifier: 
+  abilityId: katsuro-special
+  authorCharacterId: katsuro
+  displayName: "Flashstep Cut"
+  description: "He surges through the lane in a fire-bright dash slash."
+  slot: 0
+  targeting: 1
+  effectType: 0
+  chargeRequirement: 3
+  powerValue: 154
+  appliedStatusEffect: 3
+  appliedStatusDuration: 0
+  appliedStatusValue: 0
+  animationTrigger: PlayState:ATTACK 3
+  accentColor: {r: 0.82, g: 0.24, b: 0.18, a: 1}

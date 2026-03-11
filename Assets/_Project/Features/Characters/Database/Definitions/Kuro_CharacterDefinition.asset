@@ -36,6 +36,8 @@ MonoBehaviour:
   baseAttack: 72
   baseDefense: 26
   baseSpeed: 18
+  specialAbilityDefinition: {fileID: 11400000, guid: 2ce1536e62ef45848a8107726a9173b4, type: 2}
+  ultimateAbilityDefinition: {fileID: 11400000, guid: 84a76e7a9c61481d8a8c39ca907ee0d4, type: 2}
   specialAbilityName: Shadow Fang
   specialAbilityDescription: Dashes through the target line, dealing damage and repositioning behind the enemy.
   specialAbilityCooldown: 3

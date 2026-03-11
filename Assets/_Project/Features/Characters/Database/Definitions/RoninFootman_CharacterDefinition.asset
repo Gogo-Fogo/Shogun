@@ -36,6 +36,8 @@ MonoBehaviour:
   baseAttack: 44
   baseDefense: 26
   baseSpeed: 10
+  specialAbilityDefinition: {fileID: 11400000, guid: 6bd6fe0e0d1540dc8b381e165d46d5e6, type: 2}
+  ultimateAbilityDefinition: {fileID: 11400000, guid: 52073e7de12c40d6b8c89bd4ca53d5c3, type: 2}
   specialAbilityName: Guard Break
   specialAbilityDescription: A blunt rushing cut meant to break formation and buy the next killer room.
   specialAbilityCooldown: 3

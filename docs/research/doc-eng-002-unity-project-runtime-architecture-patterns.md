@@ -104,9 +104,10 @@ Treat authored game content as immutable definitions and runtime gameplay state 
 
 Pattern:
 
-- `CharacterDefinition` ScriptableObject: static identity, authored stats, visuals, skill references, tags
+- CharacterDefinition ScriptableObject: static identity, authored stats, visuals, ability references, tags
 - `CharacterInstance` runtime object: current HP, cooldowns, status effects, turn flags, temporary modifiers
-- `SkillDefinition` ScriptableObject: targeting rules, authored effect list, UI metadata, gesture requirements
+- AbilityDefinition ScriptableObject: targeting rules, authored effect list, UI metadata, charge requirements, animation hooks
+- AbilityCatalog ScriptableObject: lookup and validation index of authored ability assets for tooling and runtime discovery
 - `EncounterDefinition` ScriptableObject: spawn data, hazards, scripted encounter parameters
 
 This separation keeps balancing data editable in the Inspector while preventing authored assets from becoming mutable runtime state containers.
@@ -217,3 +218,8 @@ When engineering docs disagree:
 2. `DOC-ENG-001` defines platform, backend, and delivery constraints.
 3. This document defines Unity-side runtime architecture patterns for implementing that intent.
 4. Reference docs inform inspiration only.
+
+## Implementation note: current Shogun terminology
+
+- Current production code uses AbilityDefinition rather than SkillDefinition for authored combat moves.
+- AbilityCatalog is the lookup/index asset for authored ability definitions.

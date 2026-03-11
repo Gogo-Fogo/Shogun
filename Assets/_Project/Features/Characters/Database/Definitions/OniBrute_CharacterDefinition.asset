@@ -36,6 +36,8 @@ MonoBehaviour:
   baseAttack: 58
   baseDefense: 34
   baseSpeed: 7
+  specialAbilityDefinition: {fileID: 11400000, guid: 0f1e3a887e594280be0c18506ea85593, type: 2}
+  ultimateAbilityDefinition: {fileID: 11400000, guid: 3c72802f3ca546c79c417d4ccbf9d58f, type: 2}
   specialAbilityName: Hellbreaker Slam
   specialAbilityDescription: A crushing overhead attack that threatens clustered allies in the front line.
   specialAbilityCooldown: 4

@@ -37,6 +37,8 @@ MonoBehaviour:
   baseAttack: 54
   baseDefense: 30
   baseSpeed: 13
+  specialAbilityDefinition: {fileID: 11400000, guid: 9fcff9ed1d044e3bad1a8f903b8e3135, type: 2}
+  ultimateAbilityDefinition: {fileID: 11400000, guid: 5a5d2d73f4e2438d8f0f5d1f5fd2b210, type: 2}
   specialAbilityName: Midnight Slash
   specialAbilityDescription: A shadow-laced sword combo that punishes anyone who stands in front of him too long.
   specialAbilityCooldown: 3

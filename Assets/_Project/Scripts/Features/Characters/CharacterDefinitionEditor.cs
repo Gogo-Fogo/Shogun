@@ -205,6 +205,25 @@ namespace Shogun.Features.Characters
                 EditorGUILayout.HelpBox("✓ Animator Controller assigned", MessageType.Info);
             }
 
+            if (characterDef.SpecialAbilityDefinition == null && !string.IsNullOrWhiteSpace(characterDef.SpecialAbilityName))
+            {
+                EditorGUILayout.HelpBox("Special ability data is still stored in legacy CharacterDefinition fields. Use Character Database > Sync Character Abilities To Ability Definitions to promote it into the new ability database.", MessageType.Warning);
+            }
+            else if (characterDef.SpecialAbilityDefinition != null)
+            {
+                EditorGUILayout.HelpBox($"✓ Special ability definition linked: {characterDef.SpecialAbilityDefinition.DisplayName}", MessageType.Info);
+            }
+
+            bool hasSpecialAttackClip = characterDef.animationMappings.Any(mapping => mapping != null && mapping.clip != null && mapping.logicalName == "SPECIAL ATTACK");
+            if (characterDef.UltimateAbilityDefinition != null)
+            {
+                EditorGUILayout.HelpBox($"✓ Ultimate ability definition linked: {characterDef.UltimateAbilityDefinition.DisplayName}", MessageType.Info);
+            }
+            else if (hasSpecialAttackClip)
+            {
+                EditorGUILayout.HelpBox("SPECIAL ATTACK animation exists but no ultimate ability definition is linked. Use Character Database > Sync Character Abilities To Ability Definitions.", MessageType.Warning);
+            }
+
             ValidateProductionReference(characterDef.BattleSprite, "Battle Sprite");
             ValidateProductionReference(characterDef.Portrait, "Portrait");
             ValidateProductionReference(characterDef.BannerSprite, "Banner");

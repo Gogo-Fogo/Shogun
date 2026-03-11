@@ -37,6 +37,8 @@ MonoBehaviour:
   baseAttack: 70
   baseDefense: 36
   baseSpeed: 13
+  specialAbilityDefinition: {fileID: 11400000, guid: 2841ac9ea5b14040a87c09e82ea00f61, type: 2}
+  ultimateAbilityDefinition: {fileID: 11400000, guid: 251937d87898485facb0419cf313b468, type: 2}
   specialAbilityName: Frostfang Rush
   specialAbilityDescription: He bursts through the lane with a savage dash attack.
   specialAbilityCooldown: 3

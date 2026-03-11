@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b3aab6fd9494fd1a146cd8c4b4a71a0, type: 3}
+  m_Name: YureiCaster_UltimateAbility
+  m_EditorClassIdentifier: 
+  abilityId: yurei-caster-ultimate
+  authorCharacterId: yurei-caster
+  displayName: "Lantern Funeral Dirge"
+  description: "The Yurei Caster lets a grave-cold lament roll across the lane, drowning the target in cursed spirit pressure."
+  slot: 1
+  targeting: 1
+  effectType: 2
+  chargeRequirement: 8
+  powerValue: 223
+  appliedStatusEffect: 4
+  appliedStatusDuration: 2
+  appliedStatusValue: 0
+  animationTrigger: SpecialTrigger
+  accentColor: {r: 0.55, g: 0.85, b: 0.7, a: 1}

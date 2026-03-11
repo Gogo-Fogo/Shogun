@@ -230,7 +230,8 @@ It should contain:
 - readable medallions or frames with `Shogun` flavor, but less ornamental noise than `Blazing`
 - HP arcs or bars that read instantly at small size
 - skill-charge indicators that do not overpower the portrait itself
-- segmented charge dividers with a visible first-threshold marker when the unit's special comes online
+- segmented charge dividers with a visible first-threshold marker when the unit's regular ability comes online
+- full charge should read as a separate authored ultimate state, not just more of the same meter
 
 #### Safe-area rule
 

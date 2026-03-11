@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b3aab6fd9494fd1a146cd8c4b4a71a0, type: 3}
+  m_Name: Ryoma_UltimateAbility
+  m_EditorClassIdentifier: 
+  abilityId: ryoma-ultimate
+  authorCharacterId: ryoma
+  displayName: "Heavensplit Iai"
+  description: "Ryoma vanishes into a single sky-cleaving draw that punishes the target with overwhelming finishing force."
+  slot: 1
+  targeting: 1
+  effectType: 2
+  chargeRequirement: 10
+  powerValue: 297
+  appliedStatusEffect: 3
+  appliedStatusDuration: 2
+  appliedStatusValue: 0
+  animationTrigger: SpecialTrigger
+  accentColor: {r: 0.4, g: 0.55, b: 0.8, a: 1}

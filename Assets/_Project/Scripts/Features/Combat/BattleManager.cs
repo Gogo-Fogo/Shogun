@@ -203,18 +203,42 @@ public class BattleManager : MonoBehaviour
             return;
 
         int activeLaneIndex = activeCharacters.IndexOf(character);
-        if (activeLaneIndex >= 0)
-        {
-            CharacterInstance reserve = GetReservePlayerAtLane(activeLaneIndex);
-            if (reserve != null && reserve.IsAlive)
-            {
-                SwapPlayerLaneInternal(activeLaneIndex, character, reserve);
-                return;
-            }
+        if (activeLaneIndex < 0)
+            return;
 
-            PositionCharacterAtLane(character, activeLaneIndex, false, faceLeft: false);
-            OnPlayerFormationChanged?.Invoke(activeLaneIndex, character, null);
+        CharacterInstance reserve = GetReservePlayerAtLane(activeLaneIndex);
+        if (reserve != null && reserve.IsAlive)
+        {
+            ReplaceDeadPlayerWithReserve(activeLaneIndex, character, reserve);
+            return;
         }
+
+        activeCharacters[activeLaneIndex] = null;
+        OnPlayerFormationChanged?.Invoke(activeLaneIndex, character, null);
+    }
+
+    private void ReplaceDeadPlayerWithReserve(int laneIndex, CharacterInstance outgoingDeadCharacter, CharacterInstance incomingReserve)
+    {
+        if (laneIndex < 0 || laneIndex >= activeCharacters.Count || incomingReserve == null)
+            return;
+
+        Vector3 activeLaneWorldPosition = outgoingDeadCharacter != null
+            ? outgoingDeadCharacter.transform.position
+            : GetSpawnPosition(laneIndex);
+
+        activeCharacters[laneIndex] = incomingReserve;
+        if (laneIndex < reserveCharacters.Count)
+            reserveCharacters[laneIndex] = null;
+
+        if (outgoingDeadCharacter != null)
+        {
+            outgoingDeadCharacter.SpawnDeathAnimationProxy();
+            SetCharacterBattlefieldActive(outgoingDeadCharacter, false);
+        }
+
+        SetCharacterBattlefieldActive(incomingReserve, true);
+        PositionCharacterAtLane(incomingReserve, laneIndex, true, faceLeft: false, worldPositionOverride: activeLaneWorldPosition);
+        OnPlayerFormationChanged?.Invoke(laneIndex, outgoingDeadCharacter, incomingReserve);
     }
 
     public bool TrySwapPlayerLane(int laneIndex, out CharacterInstance outgoingActive, out CharacterInstance incomingReserve)

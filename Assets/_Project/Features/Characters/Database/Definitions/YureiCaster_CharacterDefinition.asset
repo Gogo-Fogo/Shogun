@@ -36,6 +36,8 @@ MonoBehaviour:
   baseAttack: 52
   baseDefense: 18
   baseSpeed: 13
+  specialAbilityDefinition: {fileID: 11400000, guid: 4552e63e2c65430aabdb8bda580a7ad3, type: 2}
+  ultimateAbilityDefinition: {fileID: 11400000, guid: 91f78f9e42684d3ea32f83912608d1d5, type: 2}
   specialAbilityName: Hollow Wail
   specialAbilityDescription: A curse-laced shriek that strikes from afar and softens targets for the front line.
   specialAbilityCooldown: 4

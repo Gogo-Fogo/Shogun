@@ -93,6 +93,7 @@ namespace Shogun.Features.Combat
         private static Sprite s_EdgeVignetteSprite;
         private static Sprite s_WhiteSprite;
         private static Sprite s_ComboCutInStripeSprite;
+        private static bool s_HudBootstrapRegistered;
         private static readonly Color TurnVignetteColor = new Color(0.05f, 0.03f, 0.02f, 1f);
         private static readonly ElementalType[] ElementLegendOrder =
         {
@@ -143,17 +144,75 @@ namespace Shogun.Features.Combat
         private Vector2Int lastResponsiveScreenSize = new Vector2Int(-1, -1);
         private Rect lastResponsiveSafeArea = new Rect(-1f, -1f, -1f, -1f);
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetHudBootstrap()
+        {
+            SceneManager.sceneLoaded -= HandleSceneLoaded;
+            s_HudBootstrapRegistered = false;
+        }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void RegisterHudBootstrap()
+        {
+            if (s_HudBootstrapRegistered)
+                return;
+
+            SceneManager.sceneLoaded += HandleSceneLoaded;
+            s_HudBootstrapRegistered = true;
+        }
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void EnsureHudControllerExists()
         {
-            if (FindFirstObjectByType<TurnManager>() == null)
+            EnsureHudControllerExists(SceneManager.GetActiveScene());
+        }
+
+        private static void HandleSceneLoaded(Scene scene, LoadSceneMode _)
+        {
+            EnsureHudControllerExists(scene);
+        }
+
+        private static void EnsureHudControllerExists(Scene scene)
+        {
+            if (!scene.IsValid() || !TryFindTurnManager(scene, out _))
                 return;
 
-            if (FindFirstObjectByType<BattleHudController>() != null)
+            if (HasHudController(scene))
                 return;
 
             GameObject go = new GameObject("BattleHudController");
+            SceneManager.MoveGameObjectToScene(go, scene);
             go.AddComponent<BattleHudController>();
+        }
+
+        private static bool TryFindTurnManager(Scene scene, out TurnManager resolvedTurnManager)
+        {
+            TurnManager[] managers = FindObjectsByType<TurnManager>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < managers.Length; i++)
+            {
+                TurnManager manager = managers[i];
+                if (manager != null && manager.gameObject.scene == scene)
+                {
+                    resolvedTurnManager = manager;
+                    return true;
+                }
+            }
+
+            resolvedTurnManager = null;
+            return false;
+        }
+
+        private static bool HasHudController(Scene scene)
+        {
+            BattleHudController[] controllers = FindObjectsByType<BattleHudController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < controllers.Length; i++)
+            {
+                BattleHudController controller = controllers[i];
+                if (controller != null && controller.gameObject.scene == scene)
+                    return true;
+            }
+
+            return false;
         }
 
         private IEnumerator Start()

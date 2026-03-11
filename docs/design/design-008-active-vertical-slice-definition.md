@@ -98,7 +98,8 @@ This slice should prove the following loop:
 - units should prove:
   - element identity
   - weapon/range identity
-  - at least one special ability path
+  - one authored ability path at the first charge threshold
+  - one authored ultimate path at full charge when ATTACK 3 and SPECIAL ATTACK production clips exist
 
 #### Presentation
 

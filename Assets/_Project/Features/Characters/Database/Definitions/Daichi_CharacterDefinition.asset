@@ -37,6 +37,8 @@ MonoBehaviour:
   baseAttack: 64
   baseDefense: 42
   baseSpeed: 10
+  specialAbilityDefinition: {fileID: 11400000, guid: ef7ce7af91fe4b89ad2a90e95a8891ec, type: 2}
+  ultimateAbilityDefinition: {fileID: 11400000, guid: 254771f0eca145b596682e9941e927c5, type: 2}
   specialAbilityName: Stonebreaker Throw
   specialAbilityDescription: A crushing guard-break follow-up that knocks stubborn enemies off balance.
   specialAbilityCooldown: 3

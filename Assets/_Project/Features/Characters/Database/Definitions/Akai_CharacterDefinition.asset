@@ -37,6 +37,8 @@ MonoBehaviour:
   baseAttack: 56
   baseDefense: 34
   baseSpeed: 12
+  specialAbilityDefinition: {fileID: 11400000, guid: 24e643fccd664b5786f6955eef7b2186, type: 2}
+  ultimateAbilityDefinition: {fileID: 11400000, guid: e7e490f9342a4669b26607b6be3dadf0, type: 2}
   specialAbilityName: Crimson Counter
   specialAbilityDescription: A red-lined sword flurry that punishes anyone trapped in his guard.
   specialAbilityCooldown: 3

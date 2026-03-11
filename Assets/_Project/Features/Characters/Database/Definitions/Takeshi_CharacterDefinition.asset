@@ -37,6 +37,8 @@ MonoBehaviour:
   baseAttack: 61
   baseDefense: 38
   baseSpeed: 12
+  specialAbilityDefinition: {fileID: 11400000, guid: 0c57a69c5e9b44d4970c3d5e653be5e1, type: 2}
+  ultimateAbilityDefinition: {fileID: 11400000, guid: cf15e51082b24262ab45262ef54112a8, type: 2}
   specialAbilityName: Storm Pike
   specialAbilityDescription: A driving multi-hit thrust that lands like lightning.
   specialAbilityCooldown: 3

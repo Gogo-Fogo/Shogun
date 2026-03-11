@@ -38,6 +38,8 @@ MonoBehaviour:
   baseAttack: 49
   baseDefense: 38
   baseSpeed: 8
+  specialAbilityDefinition: {fileID: 11400000, guid: 1666350cf9ca41f5afa82d37a54969d1, type: 2}
+  ultimateAbilityDefinition: {fileID: 11400000, guid: 9ab70a98ce0647b98c584b70fe704412, type: 2}
   specialAbilityName: Iron Panda Rush
   specialAbilityDescription: A grounded rushing strike that bowls through anyone slow enough to hold the lane.
   specialAbilityCooldown: 4

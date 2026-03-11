@@ -37,6 +37,8 @@ MonoBehaviour:
   baseAttack: 68
   baseDefense: 34
   baseSpeed: 13
+  specialAbilityDefinition: {fileID: 11400000, guid: a66806923cb9403fa97da2442b8da825, type: 2}
+  ultimateAbilityDefinition: {fileID: 11400000, guid: c259e83a9bb14fbf9e99c18d3da1ef2f, type: 2}
   specialAbilityName: Flashstep Cut
   specialAbilityDescription: He surges through the lane in a fire-bright dash slash.
   specialAbilityCooldown: 3

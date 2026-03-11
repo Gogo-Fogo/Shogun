@@ -36,6 +36,8 @@ MonoBehaviour:
   baseAttack: 68
   baseDefense: 24
   baseSpeed: 14
+  specialAbilityDefinition: {fileID: 11400000, guid: a835d70c5aa64323a6738a537d6b089b, type: 2}
+  ultimateAbilityDefinition: {fileID: 11400000, guid: f10b203911834360b8a0f9515a089839, type: 2}
   specialAbilityName: Moonlit Lament
   specialAbilityDescription: Summons a chilling wave of spirit energy that damages and slows enemies in a wide area.
   specialAbilityCooldown: 4

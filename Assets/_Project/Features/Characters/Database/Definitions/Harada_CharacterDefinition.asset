@@ -37,6 +37,8 @@ MonoBehaviour:
   baseAttack: 58
   baseDefense: 28
   baseSpeed: 15
+  specialAbilityDefinition: {fileID: 11400000, guid: 2e4393b7263344ac9640945beddc9467, type: 2}
+  ultimateAbilityDefinition: {fileID: 11400000, guid: 1a5357b995ea4b1593cb1942f1e1a034, type: 2}
   specialAbilityName: Storm of Arrows
   specialAbilityDescription: He draws, steps, and fills the lane with a disciplined volley.
   specialAbilityCooldown: 3

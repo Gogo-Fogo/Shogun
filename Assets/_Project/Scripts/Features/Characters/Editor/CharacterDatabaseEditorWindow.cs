@@ -22,7 +22,7 @@ namespace Shogun.Features.Characters
         private void OnGUI()
         {
             EditorGUILayout.LabelField("Character Database", EditorStyles.boldLabel);
-            EditorGUILayout.HelpBox("Use this window to scaffold character folders/assets, sync the production roster into CharacterDefinition assets, rebuild the runtime catalog, validate production asset placement, and enforce crisp sprite import quality.", MessageType.Info);
+            EditorGUILayout.HelpBox("Use this window to scaffold character folders/assets, sync the production roster into CharacterDefinition assets, migrate authored specials and ultimates into AbilityDefinition assets, rebuild the runtime catalogs, validate database state, and enforce crisp sprite import quality.", MessageType.Info);
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("New Character Scaffold", EditorStyles.boldLabel);
@@ -41,7 +41,7 @@ namespace Shogun.Features.Characters
             }
 
             EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Catalog", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Catalogs", EditorStyles.boldLabel);
 
             if (GUILayout.Button("Sync Production Assets To Definitions"))
             {
@@ -54,12 +54,31 @@ namespace Shogun.Features.Characters
                 CharacterCatalogEditorUtility.RebuildCatalog();
             }
 
+            if (GUILayout.Button("Sync Character Abilities To Ability Definitions"))
+            {
+                AbilityCatalogEditorUtility.SyncReport report = AbilityCatalogEditorUtility.SyncAbilitiesFromCharacterDefinitions();
+                _lastValidationReport = FormatAbilitySyncReport(report);
+            }
+
+            if (GUILayout.Button("Rebuild Ability Catalog"))
+            {
+                AbilityCatalogEditorUtility.RebuildCatalog();
+            }
+
             if (GUILayout.Button("Validate Character Database"))
             {
                 CharacterCatalogEditorUtility.ValidationReport report = CharacterCatalogEditorUtility.ValidateDatabase();
                 _lastValidationReport = string.Join("\n", report.Messages);
                 if (string.IsNullOrWhiteSpace(_lastValidationReport))
                     _lastValidationReport = "No validation issues found.";
+            }
+
+            if (GUILayout.Button("Validate Ability Database"))
+            {
+                AbilityCatalogEditorUtility.ValidationReport report = AbilityCatalogEditorUtility.ValidateDatabase();
+                _lastValidationReport = string.Join("\n", report.Messages);
+                if (string.IsNullOrWhiteSpace(_lastValidationReport))
+                    _lastValidationReport = "No ability validation issues found.";
             }
 
             if (GUILayout.Button("Fix Production Sprite Import Settings"))
@@ -82,6 +101,26 @@ namespace Shogun.Features.Characters
             StringBuilder builder = new StringBuilder();
             builder.AppendLine($"Created definitions: {report.CreatedDefinitions}");
             builder.AppendLine($"Updated definitions: {report.UpdatedDefinitions}");
+            builder.AppendLine($"Catalog rebuilt: {report.CatalogRebuilt}");
+            builder.AppendLine($"Warnings: {report.WarningCount}");
+            builder.AppendLine($"Errors: {report.ErrorCount}");
+
+            if (report.Messages != null && report.Messages.Count > 0)
+            {
+                builder.AppendLine();
+                foreach (string message in report.Messages)
+                    builder.AppendLine(message);
+            }
+
+            return builder.ToString().TrimEnd();
+        }
+
+        private static string FormatAbilitySyncReport(AbilityCatalogEditorUtility.SyncReport report)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine($"Created abilities: {report.CreatedAbilities}");
+            builder.AppendLine($"Updated abilities: {report.UpdatedAbilities}");
+            builder.AppendLine($"Linked definitions: {report.LinkedDefinitions}");
             builder.AppendLine($"Catalog rebuilt: {report.CatalogRebuilt}");
             builder.AppendLine($"Warnings: {report.WarningCount}");
             builder.AppendLine($"Errors: {report.ErrorCount}");

@@ -51,6 +51,8 @@ namespace Shogun.Features.Characters
         [SerializeField] private float baseSpeed = 10f;
         
         [Header("Special Abilities")]
+        [SerializeField] private AbilityDefinition specialAbilityDefinition;
+        [SerializeField] private AbilityDefinition ultimateAbilityDefinition;
         [SerializeField] private string specialAbilityName = "";
         [SerializeField] private string specialAbilityDescription = "";
         [SerializeField] private int specialAbilityCooldown = 3;
@@ -116,12 +118,17 @@ namespace Shogun.Features.Characters
         public float BaseAttack => baseAttack;
         public float BaseDefense => baseDefense;
         public float BaseSpeed => baseSpeed;
-        public string SpecialAbilityName => specialAbilityName;
-        public string SpecialAbilityDescription => specialAbilityDescription;
-        public int SpecialAbilityChargeRequirement => Mathf.Max(1, specialAbilityChargeRequirement > 0 ? specialAbilityChargeRequirement : specialAbilityCooldown);
-        public int UltimateAbilityChargeRequirement => Mathf.Max(SpecialAbilityChargeRequirement, ultimateAbilityChargeRequirement > 0 ? ultimateAbilityChargeRequirement : (SpecialAbilityChargeRequirement * 2));
+        public AbilityDefinition SpecialAbilityDefinition => specialAbilityDefinition;
+        public AbilityDefinition UltimateAbilityDefinition => ultimateAbilityDefinition;
+        public string SpecialAbilityName => specialAbilityDefinition != null && !string.IsNullOrWhiteSpace(specialAbilityDefinition.DisplayName) ? specialAbilityDefinition.DisplayName : specialAbilityName;
+        public string SpecialAbilityDescription => specialAbilityDefinition != null && !string.IsNullOrWhiteSpace(specialAbilityDefinition.Description) ? specialAbilityDefinition.Description : specialAbilityDescription;
+        public string UltimateAbilityName => ultimateAbilityDefinition != null && !string.IsNullOrWhiteSpace(ultimateAbilityDefinition.DisplayName) ? ultimateAbilityDefinition.DisplayName : SpecialAbilityName;
+        public string UltimateAbilityDescription => ultimateAbilityDefinition != null && !string.IsNullOrWhiteSpace(ultimateAbilityDefinition.Description) ? ultimateAbilityDefinition.Description : SpecialAbilityDescription;
+        public int SpecialAbilityChargeRequirement => specialAbilityDefinition != null ? Mathf.Max(1, specialAbilityDefinition.ChargeRequirement) : Mathf.Max(1, specialAbilityChargeRequirement > 0 ? specialAbilityChargeRequirement : specialAbilityCooldown);
+        public int UltimateAbilityChargeRequirement => ultimateAbilityDefinition != null ? Mathf.Max(SpecialAbilityChargeRequirement, ultimateAbilityDefinition.ChargeRequirement) : Mathf.Max(SpecialAbilityChargeRequirement, ultimateAbilityChargeRequirement > 0 ? ultimateAbilityChargeRequirement : (SpecialAbilityChargeRequirement * 2));
         public int SpecialAbilityCooldown => SpecialAbilityChargeRequirement;
-        public float SpecialAbilityDamage => specialAbilityDamage;
+        public float SpecialAbilityDamage => specialAbilityDefinition != null && specialAbilityDefinition.PowerValue > 0f ? specialAbilityDefinition.PowerValue : specialAbilityDamage;
+        public float UltimateAbilityDamage => ultimateAbilityDefinition != null && ultimateAbilityDefinition.PowerValue > 0f ? ultimateAbilityDefinition.PowerValue : SpecialAbilityDamage;
         public float BaseStealthEffectiveness => baseStealthEffectiveness;
         public float StealthDecayRate => stealthDecayRate;
         public float BaseCounterChance => baseCounterChance;
@@ -200,7 +207,7 @@ namespace Shogun.Features.Characters
             if (specialAbilityChargeRequirement > 0)
                 specialAbilityChargeRequirement = Mathf.Max(1, specialAbilityChargeRequirement);
             if (ultimateAbilityChargeRequirement > 0)
-                ultimateAbilityChargeRequirement = Mathf.Max(SpecialAbilityChargeRequirement, ultimateAbilityChargeRequirement);
+                ultimateAbilityChargeRequirement = Mathf.Max(specialAbilityChargeRequirement > 0 ? specialAbilityChargeRequirement : specialAbilityCooldown, ultimateAbilityChargeRequirement);
         }
 #endif
     }

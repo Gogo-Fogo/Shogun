@@ -71,3 +71,9 @@ These do not belong in the short-term slice backlog unless they become true bloc
 
 
 
+
+
+## Implementation note: authored ability data
+
+- Authored specials may now live in AbilityDefinition assets plus an AbilityCatalog.
+- This is a data-separation and validation move for the active slice, not a commitment to Fire Emblem Heroes-style inheritance or freeform loadouts.

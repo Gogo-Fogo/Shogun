@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b3aab6fd9494fd1a146cd8c4b4a71a0, type: 3}
+  m_Name: OniBrute_UltimateAbility
+  m_EditorClassIdentifier: 
+  abilityId: oni-brute-ultimate
+  authorCharacterId: oni-brute
+  displayName: "Nine-Hell Breaker"
+  description: "The Oni Brute hammers forward in a demon-heavy execution slam that crushes anything left in his reach."
+  slot: 1
+  targeting: 1
+  effectType: 0
+  chargeRequirement: 8
+  powerValue: 248
+  appliedStatusEffect: 3
+  appliedStatusDuration: 0
+  appliedStatusValue: 0
+  animationTrigger: SpecialTrigger
+  accentColor: {r: 0.9, g: 0.25, b: 0.05, a: 1}

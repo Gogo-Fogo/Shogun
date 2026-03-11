@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b3aab6fd9494fd1a146cd8c4b4a71a0, type: 3}
+  m_Name: RoninFootman_UltimateAbility
+  m_EditorClassIdentifier: 
+  abilityId: ronin-footman-ultimate
+  authorCharacterId: ronin-footman
+  displayName: "Ashen Linebreaker"
+  description: "The ronin footman commits to a desperate finishing rush that shatters guard and opens the line for the kill."
+  slot: 1
+  targeting: 1
+  effectType: 0
+  chargeRequirement: 6
+  powerValue: 157
+  appliedStatusEffect: 3
+  appliedStatusDuration: 0
+  appliedStatusValue: 0
+  animationTrigger: SpecialTrigger
+  accentColor: {r: 0.55, g: 0.4, b: 0.2, a: 1}

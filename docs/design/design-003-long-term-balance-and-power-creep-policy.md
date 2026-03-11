@@ -556,3 +556,11 @@ prefer the second.
 - [`design-005-co-op-pvp-and-social-systems-roadmap.md`](./design-005-co-op-pvp-and-social-systems-roadmap.md)
 - [`../research/doc-ref-002-naruto-ninja-blazing-success-failure-and-shutdown-analysis.md`](../research/doc-ref-002-naruto-ninja-blazing-success-failure-and-shutdown-analysis.md)
 - [`../research/doc-ref-004-fire-emblem-heroes-success-and-drawbacks.md`](../research/doc-ref-004-fire-emblem-heroes-success-and-drawbacks.md)
+
+## Implementation note: ability database policy
+
+Use authored AbilityDefinition-style assets to separate move data from CharacterDefinition.
+That helps balancing, validation, and content reuse.
+Do not treat that modularity as permission to build a freeform passive and inheritance matrix unless the product intentionally accepts that complexity and monetization cost.
+For the current Shogun slice, each unit should own a small authored ability set rather than a giant combinatorial skill-loadout puzzle.
+Default authored target: one regular ability plus one stronger ultimate, not a Fire Emblem Heroes-style stack of interchangeable passives.
