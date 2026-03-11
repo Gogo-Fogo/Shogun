@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Shogun.Core;
 using Shogun.Features.Characters;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -22,16 +23,9 @@ namespace Shogun.Features.UI
         private const float TabletBreakpoint = 1280f;
         private const float ExpandedBreakpoint = 1680f;
         private const int ActionCount = 5;
-        private const int DeferredModuleCount = 4;
+        private const int StatusCardCount = 4;
 
         private static readonly string[] FeaturedCharacterIds = { "ryoma", "kuro", "tsukiko" };
-        private static readonly MenuModule[] DeferredModules =
-        {
-            new MenuModule("EVENTS", "Seasonal event shells stay deferred until the slice earns broader progression scope."),
-            new MenuModule("MISSIONS", "Story and multi-encounter progression belong after Courtyard Ambush is trustworthy."),
-            new MenuModule("SHRINE", "Economy, upgrades, and account-facing layers are still later-roadmap work."),
-            new MenuModule("DOJO", "Broader challenge modes and meta systems stay out until the core loop is proven.")
-        };
 
         private static readonly Color BackgroundColor = new Color(0.05f, 0.04f, 0.05f, 1f);
         private static readonly Color CrimsonGlowColor = new Color(0.49f, 0.14f, 0.12f, 0.16f);
@@ -48,7 +42,7 @@ namespace Shogun.Features.UI
         private static readonly Color ActionPrimaryColor = new Color(0.46f, 0.31f, 0.12f, 0.98f);
         private static readonly Color ActionSecondaryColor = new Color(0.18f, 0.27f, 0.34f, 0.98f);
         private static readonly Color ActionTertiaryColor = new Color(0.25f, 0.17f, 0.18f, 0.98f);
-        private static readonly Color DisabledCardColor = new Color(0.14f, 0.12f, 0.12f, 0.94f);
+
         private static readonly Color PlaceholderPortraitColor = new Color(0.16f, 0.14f, 0.14f, 1f);
         private static Sprite s_WhiteSprite;
         private static Font s_RuntimeFont;
@@ -70,18 +64,6 @@ namespace Shogun.Features.UI
         private Vector2Int lastScreenSize = new Vector2Int(-1, -1);
         private Rect lastSafeArea = new Rect(-1f, -1f, -1f, -1f);
         private float lastParentWidth = -1f;
-
-        private readonly struct MenuModule
-        {
-            public MenuModule(string title, string summary)
-            {
-                Title = title;
-                Summary = summary;
-            }
-
-            public string Title { get; }
-            public string Summary { get; }
-        }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void EnsureControllerExists()
@@ -189,7 +171,7 @@ namespace Shogun.Features.UI
             BuildHeroPanel();
             BuildActionPanel();
             BuildFeaturedPanel();
-            BuildDeferredPanel();
+            BuildOverviewPanel();
             BuildFooterPanel();
         }
 
@@ -212,7 +194,7 @@ namespace Shogun.Features.UI
             RectTransform titleBlock = CreateRect("TitleBlock", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             titleBlock.gameObject.AddComponent<LayoutElement>().preferredHeight = 168f;
             Text eyebrow = CreateText("Eyebrow", titleBlock, TextAnchor.UpperLeft, 16, FontStyle.Bold);
-            eyebrow.text = "ACTIVE SLICE FRONT DOOR";
+            eyebrow.text = "THEATER OF WAR";
             eyebrow.color = new Color(0.91f, 0.8f, 0.48f, 1f);
             eyebrow.rectTransform.offsetMin = new Vector2(0f, 132f);
             Text title = CreateText("Title", titleBlock, TextAnchor.MiddleLeft, 58, FontStyle.Bold);
@@ -225,7 +207,7 @@ namespace Shogun.Features.UI
             subtitle.color = new Color(0.94f, 0.82f, 0.58f, 1f);
             subtitle.rectTransform.offsetMax = new Vector2(0f, -84f);
             Text summary = CreateText("Summary", titleBlock, TextAnchor.LowerLeft, 17, FontStyle.Normal);
-            summary.text = "A lean support menu that feeds directly into Courtyard Ambush testing, the local summon sandbox, the owned-roster placeholder, and a real settings surface without pretending the full home hub already exists.";
+            summary.text = "Enter Courtyard Ambush, review the current roster, spend test Spirit Seals, and tune runtime settings from one lacquer-and-gold front door.";
             summary.color = BodyColor;
             summary.horizontalOverflow = HorizontalWrapMode.Wrap;
             summary.verticalOverflow = VerticalWrapMode.Overflow;
@@ -239,7 +221,7 @@ namespace Shogun.Features.UI
             chipLayout.childForceExpandWidth = false;
             CreateChip(chipRow, "COURTYARD AMBUSH", new Color(0.36f, 0.25f, 0.11f, 1f));
             CreateChip(chipRow, "3v3 SLICE", new Color(0.2f, 0.26f, 0.33f, 1f));
-            CreateChip(chipRow, "SUPPORT SCENE", new Color(0.22f, 0.16f, 0.18f, 1f));
+            CreateChip(chipRow, "LOCAL COLLECTION", new Color(0.22f, 0.16f, 0.18f, 1f));
 
             RectTransform heroRow = CreateRect("HeroRoster", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             heroRow.gameObject.AddComponent<LayoutElement>().preferredHeight = 118f;
@@ -251,7 +233,7 @@ namespace Shogun.Features.UI
             heroRosterLayout.childForceExpandHeight = false;
             if (featuredCharacters.Count == 0)
             {
-                CreateEmptyMessageCard(heroRow, "Featured slice trio definitions did not resolve. Check CharacterCatalog and ids.");
+                CreateEmptyMessageCard(heroRow, "Featured slice warriors could not be resolved from the character catalog.");
             }
             else
             {
@@ -262,7 +244,7 @@ namespace Shogun.Features.UI
             RectTransform note = CreateRect("Note", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             note.gameObject.AddComponent<LayoutElement>().preferredHeight = 28f;
             Text noteLabel = CreateText("NoteLabel", note, TextAnchor.LowerLeft, 14, FontStyle.Normal);
-            noteLabel.text = "Gameplay truth remains Dev_Sandbox. This menu is a launcher, not the final live-service home screen.";
+            noteLabel.text = "Courtyard Ambush remains the active combat slice, with Barracks, Summon, and Settings feeding the same local runtime state.";
             noteLabel.color = MutedColor;
         }
         private void BuildActionPanel()
@@ -278,7 +260,7 @@ namespace Shogun.Features.UI
             stack.childForceExpandWidth = true;
             stack.childForceExpandHeight = false;
 
-            CreateSectionHeader(content, "DEPLOY", "Use the current support-scene links. The battle slice, local summon sandbox, barracks, and the new settings surface are the real destinations right now.");
+            CreateSectionHeader(content, "DEPLOY", "Launch directly into the current battle, roster, summon, and settings surfaces from here.");
             CreateDivider(content);
             RectTransform gridRoot = CreateRect("ActionGridRoot", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             actionGridLayout = gridRoot.gameObject.AddComponent<LayoutElement>();
@@ -289,8 +271,8 @@ namespace Shogun.Features.UI
             actionGrid.constraintCount = 1;
             actionGrid.cellSize = new Vector2(280f, 96f);
             CreateActionCard(gridRoot, "Battle", "ENTER COURTYARD AMBUSH", "Load Dev_Sandbox and run the current authored battle slice.", ActionPrimaryColor, () => LoadSceneIfAvailable(BattleSceneName));
-            CreateActionCard(gridRoot, "Summon", "OPEN SUMMON GATE", "Run the local two-banner summon sandbox and feed the shared test collection.", ActionSecondaryColor, () => LoadSceneIfAvailable(SummonSceneName));
-            CreateActionCard(gridRoot, "Barracks", "OPEN BARRACKS", "Review the current owned-character placeholder roster and unit identity surfaces.", new Color(0.23f, 0.24f, 0.16f, 0.98f), () => LoadSceneIfAvailable(BarracksSceneName));
+            CreateActionCard(gridRoot, "Summon", "OPEN SUMMON GATE", "Reveal characters from the two live test banners and send pulls straight into your Barracks.", ActionSecondaryColor, () => LoadSceneIfAvailable(SummonSceneName));
+            CreateActionCard(gridRoot, "Barracks", "OPEN BARRACKS", "Review owned warriors, authored identities, ability text, and collection depth.", new Color(0.23f, 0.24f, 0.16f, 0.98f), () => LoadSceneIfAvailable(BarracksSceneName));
             CreateActionCard(gridRoot, "Settings", "OPEN SETTINGS", "Adjust frame-rate presets, master volume, and saved feedback preferences.", new Color(0.16f, 0.23f, 0.29f, 0.98f), () => LoadSceneIfAvailable(SettingsSceneName));
             CreateActionCard(gridRoot, "Exit", "EXIT SHOGUN", "Quit the application. In editor this just logs and stays in place.", ActionTertiaryColor, QuitApplication);
         }
@@ -308,7 +290,7 @@ namespace Shogun.Features.UI
             stack.childForceExpandWidth = true;
             stack.childForceExpandHeight = false;
 
-            CreateSectionHeader(content, "SLICE ROSTER", "Ryoma, Kuro, and Tsukiko remain the recommended front line for the first trustworthy Courtyard Ambush pass.");
+            CreateSectionHeader(content, "SLICE VANGUARD", "Ryoma, Kuro, and Tsukiko remain the recommended front line for the first trustworthy Courtyard Ambush pass.");
             CreateDivider(content);
             RectTransform gridRoot = CreateRect("FeaturedGridRoot", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             featuredGridLayout = gridRoot.gameObject.AddComponent<LayoutElement>();
@@ -320,7 +302,7 @@ namespace Shogun.Features.UI
             featuredGrid.cellSize = new Vector2(260f, 158f);
             if (featuredCharacters.Count == 0)
             {
-                CreateEmptyMessageCard(gridRoot, "No featured character definitions resolved for the slice trio.");
+                CreateEmptyMessageCard(gridRoot, "No featured warriors could be resolved for the current slice trio.");
             }
             else
             {
@@ -329,12 +311,12 @@ namespace Shogun.Features.UI
             }
         }
 
-        private void BuildDeferredPanel()
+        private void BuildOverviewPanel()
         {
-            RectTransform outer = CreatePanel(contentFrame, "DeferredPanel", 328f, PanelOuterColor, PanelInnerColor, out RectTransform inner);
+            RectTransform outer = CreatePanel(contentFrame, "OverviewPanel", 344f, PanelOuterColor, PanelInnerColor, out RectTransform inner);
             modulePanelLayout = outer.GetComponent<LayoutElement>();
 
-            RectTransform content = CreateRect("DeferredContent", inner, Vector2.zero, Vector2.one, new Vector2(24f, 24f), new Vector2(-24f, -24f));
+            RectTransform content = CreateRect("OverviewContent", inner, Vector2.zero, Vector2.one, new Vector2(24f, 24f), new Vector2(-24f, -24f));
             VerticalLayoutGroup stack = content.gameObject.AddComponent<VerticalLayoutGroup>();
             stack.spacing = 12f;
             stack.childControlWidth = true;
@@ -342,18 +324,28 @@ namespace Shogun.Features.UI
             stack.childForceExpandWidth = true;
             stack.childForceExpandHeight = false;
 
-            CreateSectionHeader(content, "DEFERRED MODULES", "These cards stay visible so the scene feels like a front door, but they remain intentionally non-interactive until later roadmap work.");
+            CreateSectionHeader(content, "WAR TABLE", "Current slice state pulled from the local collection, live banners, and saved runtime settings.");
             CreateDivider(content);
-            RectTransform gridRoot = CreateRect("ModuleGridRoot", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            RectTransform gridRoot = CreateRect("OverviewGridRoot", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             moduleGridLayout = gridRoot.gameObject.AddComponent<LayoutElement>();
-            moduleGridLayout.preferredHeight = 220f;
+            moduleGridLayout.preferredHeight = 248f;
             moduleGrid = gridRoot.gameObject.AddComponent<GridLayoutGroup>();
             moduleGrid.spacing = new Vector2(14f, 14f);
             moduleGrid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
             moduleGrid.constraintCount = 2;
-            moduleGrid.cellSize = new Vector2(260f, 104f);
-            for (int i = 0; i < DeferredModules.Length; i++)
-                CreateDeferredModuleCard(gridRoot, DeferredModules[i]);
+            moduleGrid.cellSize = new Vector2(260f, 118f);
+
+            IReadOnlyList<CharacterDefinition> ownedDefinitions = TestCollectionService.GetOwnedCharacterDefinitions();
+            IReadOnlyList<TestSummonService.TestSummonBanner> liveBanners = TestSummonService.GetBanners();
+            GameSettingsSnapshot settings = GameSettingsService.GetSnapshot();
+            int featuredSlots = 0;
+            for (int i = 0; i < liveBanners.Count; i++)
+                featuredSlots += liveBanners[i].FeaturedCharacterIds.Count;
+
+            CreateStatusCard(gridRoot, "ROSTER", $"{ownedDefinitions.Count} OWNED", $"{CountOwnedElements(ownedDefinitions)} elements represented • {TestCollectionService.GetDuplicateCopies()} duplicate pulls banked.", new Color(0.3f, 0.24f, 0.13f, 0.98f));
+            CreateStatusCard(gridRoot, "SPIRIT SEALS", $"{TestCollectionService.GetSpiritSeals()} READY", "Enough currency is loaded to stress-test both banners and barracks updates.", new Color(0.17f, 0.27f, 0.35f, 0.98f));
+            CreateStatusCard(gridRoot, "SUMMON GATE", $"{liveBanners.Count} ACTIVE", $"{featuredSlots} featured rate-up slots across the current local banners.", new Color(0.25f, 0.18f, 0.2f, 0.98f));
+            CreateStatusCard(gridRoot, "RUNTIME", GameSettingsService.GetFrameRateLabel(settings.FrameRateMode), $"VOL {Mathf.RoundToInt(settings.MasterVolume * 100f)} • {(settings.VibrationEnabled ? "HAPTICS ON" : "HAPTICS OFF")} • {(settings.ScreenShakeEnabled ? "SHAKE ON" : "SHAKE OFF")}", new Color(0.16f, 0.22f, 0.28f, 0.98f));
         }
 
         private void BuildFooterPanel()
@@ -361,7 +353,7 @@ namespace Shogun.Features.UI
             CreatePanel(contentFrame, "FooterPanel", 118f, new Color(0.16f, 0.13f, 0.11f, 0.96f), new Color(0.08f, 0.07f, 0.07f, 0.98f), out RectTransform inner);
             RectTransform content = CreateRect("FooterContent", inner, Vector2.zero, Vector2.one, new Vector2(24f, 18f), new Vector2(-24f, -18f));
             Text footer = CreateText("FooterLabel", content, TextAnchor.MiddleLeft, 15, FontStyle.Normal);
-            footer.text = "Support-scene rule: use MainMenu to enter Dev_Sandbox or Barracks quickly, but keep feature truth, authored encounter logic, and combat validation centered on Dev_Sandbox itself.";
+            footer.text = "Use MainMenu as the slice front door: enter combat, review collection state, pull local banners, and adjust runtime settings from one place.";
             footer.color = BodyColor;
             footer.horizontalOverflow = HorizontalWrapMode.Wrap;
             footer.verticalOverflow = VerticalWrapMode.Overflow;
@@ -397,11 +389,18 @@ namespace Shogun.Features.UI
 
             ConfigureGrid(actionGrid, actionGridLayout, actionPanelLayout, ActionCount, contentWidth >= 1160f ? 3 : contentWidth >= 720f ? 2 : 1, sectionWidth, 220f, 96f, 112f, 32f);
             ConfigureGrid(featuredGrid, featuredGridLayout, featuredPanelLayout, Mathf.Max(featuredCharacters.Count, 1), contentWidth >= 980f ? 3 : contentWidth >= 620f ? 2 : 1, sectionWidth, 220f, 158f, 112f, 32f);
-            ConfigureGrid(moduleGrid, moduleGridLayout, modulePanelLayout, DeferredModuleCount, contentWidth >= 980f ? 4 : contentWidth >= 640f ? 2 : 1, sectionWidth, 180f, 104f, 112f, 32f);
+            ConfigureGrid(moduleGrid, moduleGridLayout, modulePanelLayout, StatusCardCount, contentWidth >= 980f ? 4 : contentWidth >= 640f ? 2 : 1, sectionWidth, 180f, 118f, 112f, 32f);
 
             LayoutRebuilder.ForceRebuildLayoutImmediate(contentFrame);
         }
 
+        private static int CountOwnedElements(IReadOnlyList<CharacterDefinition> definitions)
+        {
+            HashSet<ElementalType> elements = new HashSet<ElementalType>();
+            for (int i = 0; i < definitions.Count; i++)
+                elements.Add(definitions[i].ElementalType);
+            return elements.Count;
+        }
         private static void ConfigureGrid(GridLayoutGroup grid, LayoutElement gridLayout, LayoutElement panelLayout, int itemCount, int columns, float availableWidth, float minCellWidth, float cellHeight, float headerHeight, float bottomPadding)
         {
             if (grid == null || gridLayout == null || panelLayout == null)
@@ -573,44 +572,41 @@ namespace Shogun.Features.UI
             summary.rectTransform.offsetMax = new Vector2(0f, -44f);
         }
 
-        private static void CreateDeferredModuleCard(Transform parent, MenuModule module)
+        private static void CreateStatusCard(Transform parent, string eyebrowText, string valueText, string summaryText, Color backgroundColor)
         {
-            RectTransform root = CreateRect(module.Title, parent, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            RectTransform root = CreateRect($"Status_{eyebrowText}", parent, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             Image background = root.gameObject.AddComponent<Image>();
             background.sprite = GetWhiteSprite();
-            background.color = DisabledCardColor;
-            Button button = root.gameObject.AddComponent<Button>();
-            button.targetGraphic = background;
-            button.interactable = false;
+            background.color = backgroundColor;
             Outline outline = root.gameObject.AddComponent<Outline>();
             outline.effectDistance = new Vector2(2f, -2f);
-            outline.effectColor = new Color(0f, 0f, 0f, 0.28f);
+            outline.effectColor = new Color(0f, 0f, 0f, 0.32f);
 
-            RectTransform accent = CreateRect("Accent", root, new Vector2(0f, 0f), new Vector2(0f, 1f), Vector2.zero, new Vector2(6f, 0f));
+            RectTransform accent = CreateRect("Accent", root, new Vector2(0f, 0f), new Vector2(0f, 1f), Vector2.zero, new Vector2(7f, 0f));
             Image accentImage = accent.gameObject.AddComponent<Image>();
             accentImage.sprite = GetWhiteSprite();
-            accentImage.color = new Color(0.57f, 0.49f, 0.25f, 0.76f);
+            accentImage.color = new Color(0.97f, 0.88f, 0.68f, 0.84f);
 
-            RectTransform statusPill = CreateRect("Status", root, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-122f, -30f), new Vector2(-12f, -8f));
-            Image statusBackground = statusPill.gameObject.AddComponent<Image>();
-            statusBackground.sprite = GetWhiteSprite();
-            statusBackground.color = new Color(0.18f, 0.15f, 0.12f, 1f);
-            Text status = CreateText("StatusLabel", statusPill, TextAnchor.MiddleCenter, 12, FontStyle.Bold);
-            status.text = "DEFERRED";
-            status.color = new Color(0.89f, 0.8f, 0.6f, 1f);
+            RectTransform content = CreateRect("Content", root, Vector2.zero, Vector2.one, new Vector2(20f, 12f), new Vector2(-18f, -12f));
+            Text eyebrow = CreateText("Eyebrow", content, TextAnchor.UpperLeft, 12, FontStyle.Bold);
+            eyebrow.text = eyebrowText;
+            eyebrow.color = new Color(0.94f, 0.88f, 0.7f, 1f);
+            eyebrow.rectTransform.offsetMin = new Vector2(0f, 62f);
 
-            RectTransform content = CreateRect("Content", root, Vector2.zero, Vector2.one, new Vector2(20f, 14f), new Vector2(-18f, -14f));
-            Text title = CreateText("Title", content, TextAnchor.UpperLeft, 20, FontStyle.Bold);
-            title.text = module.Title;
-            title.color = HeadingColor;
-            title.rectTransform.offsetMin = new Vector2(0f, 28f);
+            Text value = CreateText("Value", content, TextAnchor.MiddleLeft, 22, FontStyle.Bold);
+            value.text = valueText;
+            value.color = HeadingColor;
+            value.rectTransform.offsetMin = new Vector2(0f, 18f);
+            value.rectTransform.offsetMax = new Vector2(0f, -36f);
+
             Text summary = CreateText("Summary", content, TextAnchor.LowerLeft, 13, FontStyle.Normal);
-            summary.text = module.Summary;
-            summary.color = MutedColor;
+            summary.text = summaryText;
+            summary.color = BodyColor;
             summary.horizontalOverflow = HorizontalWrapMode.Wrap;
             summary.verticalOverflow = VerticalWrapMode.Overflow;
-            summary.rectTransform.offsetMax = new Vector2(0f, -38f);
+            summary.rectTransform.offsetMax = new Vector2(0f, -62f);
         }
+
         private static void CreateEmptyMessageCard(Transform parent, string message)
         {
             RectTransform root = CreateRect("EmptyState", parent, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
@@ -780,5 +776,4 @@ namespace Shogun.Features.UI
         }
     }
 }
-
 

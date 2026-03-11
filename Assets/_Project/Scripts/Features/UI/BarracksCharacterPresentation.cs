@@ -28,7 +28,7 @@ namespace Shogun.Features.UI
                 return definition.VisualHook;
             if (!string.IsNullOrWhiteSpace(definition.Description))
                 return definition.Description;
-            return "Collection package placeholder. Presentation art and owned-state progression still pending.";
+            return "Battle-ready roster entry awaiting dedicated portrait and banner art.";
         }
 
         public static string BuildTagline(CharacterDefinition definition)
@@ -50,7 +50,7 @@ namespace Shogun.Features.UI
         public static string BuildMetadataText(CharacterDefinition definition)
         {
             StringBuilder builder = new StringBuilder();
-            builder.Append("COLLECTION PACKAGE");
+            builder.Append("COLLECTION PROFILE");
             if (!string.IsNullOrWhiteSpace(definition.VisualHook)) builder.AppendLine($"\nVisual Hook: {definition.VisualHook}");
             if (!string.IsNullOrWhiteSpace(definition.EmotionalHook)) builder.AppendLine($"Emotional Hook: {definition.EmotionalHook}");
             if (!string.IsNullOrWhiteSpace(definition.CollectibleTone)) builder.AppendLine($"Tone: {definition.CollectibleTone}");
@@ -64,9 +64,11 @@ namespace Shogun.Features.UI
         public static string BuildSpecialText(CharacterDefinition definition)
         {
             StringBuilder builder = new StringBuilder();
-            builder.Append($"Special Charge {definition.SpecialAbilityChargeRequirement}  |  Ultimate Charge {definition.UltimateAbilityChargeRequirement}");
-            builder.Append(!string.IsNullOrWhiteSpace(definition.SpecialAbilityName) ? $"\n{definition.SpecialAbilityName}: " : "\nAbility: ");
-            builder.Append(!string.IsNullOrWhiteSpace(definition.SpecialAbilityDescription) ? definition.SpecialAbilityDescription : "No authored special text assigned yet.");
+            builder.Append($"Ability Charge {definition.SpecialAbilityChargeRequirement}  |  Ultimate Charge {definition.UltimateAbilityChargeRequirement}");
+            builder.Append(!string.IsNullOrWhiteSpace(definition.SpecialAbilityName) ? $"\nAbility: {definition.SpecialAbilityName}" : "\nAbility: Unnamed Technique");
+            builder.Append(!string.IsNullOrWhiteSpace(definition.SpecialAbilityDescription) ? $"\n{definition.SpecialAbilityDescription}" : "\nAuthored ability text is still pending.");
+            builder.Append(!string.IsNullOrWhiteSpace(definition.UltimateAbilityName) ? $"\nUltimate: {definition.UltimateAbilityName}" : "\nUltimate: Unnamed Finisher");
+            builder.Append(!string.IsNullOrWhiteSpace(definition.UltimateAbilityDescription) ? $"\n{definition.UltimateAbilityDescription}" : "\nAuthored ultimate text is still pending.");
             return builder.ToString();
         }
 
@@ -122,6 +124,7 @@ namespace Shogun.Features.UI
             if (definition == null) return null;
             if (definition.Portrait != null) return definition.Portrait;
             if (definition.BannerSprite != null) return definition.BannerSprite;
+            if (definition.EventVignette != null) return definition.EventVignette;
             if (definition.BattleSprite != null) return definition.BattleSprite;
             return null;
         }
@@ -137,3 +140,4 @@ namespace Shogun.Features.UI
         }
     }
 }
+

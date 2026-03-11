@@ -52,6 +52,8 @@ namespace Shogun.Features.UI
         private LayoutElement resultGridLayout;
         private Image detailAccentBand;
         private Text sealsLabel;
+        private Text collectionLabel;
+        private Text bannerStateLabel;
         private Text bannerTitleLabel;
         private Text bannerSubtitleLabel;
         private Text bannerSummaryLabel;
@@ -185,7 +187,7 @@ namespace Shogun.Features.UI
             RectTransform content = CreateRect("HeaderContent", inner, Vector2.zero, Vector2.one, new Vector2(24f, 22f), new Vector2(-24f, -22f));
             RectTransform titleBlock = CreateRect("TitleBlock", content, new Vector2(0f, 0f), new Vector2(0.72f, 1f), Vector2.zero, Vector2.zero);
             Text eyebrow = CreateText("Eyebrow", titleBlock, TextAnchor.UpperLeft, 16, FontStyle.Bold);
-            eyebrow.text = "LOCAL TEST SUMMON SANDBOX";
+            eyebrow.text = "SPIRIT GATE";
             eyebrow.color = new Color(0.93f, 0.82f, 0.5f, 1f);
             eyebrow.rectTransform.offsetMin = new Vector2(0f, 144f);
             Text title = CreateText("Title", titleBlock, TextAnchor.MiddleLeft, 48, FontStyle.Bold);
@@ -194,7 +196,7 @@ namespace Shogun.Features.UI
             title.rectTransform.offsetMin = new Vector2(0f, 54f);
             title.rectTransform.offsetMax = new Vector2(0f, -28f);
             Text subtitle = CreateText("Subtitle", titleBlock, TextAnchor.LowerLeft, 17, FontStyle.Normal);
-            subtitle.text = "Two offline banners, disclosed rates, local Spirit Seals, and collection updates that feed the current Barracks placeholder.";
+            subtitle.text = "Choose from two active test banners, review disclosed odds, and send newly revealed warriors straight into the Barracks.";
             subtitle.color = BodyColor;
             subtitle.horizontalOverflow = HorizontalWrapMode.Wrap;
             subtitle.verticalOverflow = VerticalWrapMode.Overflow;
@@ -204,10 +206,12 @@ namespace Shogun.Features.UI
             RectTransform sealsPill = CreatePill(statusBlock, "SealsPill", new Vector2(0.08f, 0.45f), new Vector2(1f, 1f), new Color(0.17f, 0.22f, 0.29f, 0.98f));
             sealsLabel = CreateText("SealsLabel", sealsPill, TextAnchor.MiddleCenter, 22, FontStyle.Bold);
             sealsLabel.color = HeadingColor;
-            RectTransform notePill = CreatePill(statusBlock, "NotePill", new Vector2(0.08f, 0f), new Vector2(1f, 0.38f), new Color(0.17f, 0.13f, 0.11f, 0.98f));
-            Text note = CreateText("Note", notePill, TextAnchor.MiddleCenter, 14, FontStyle.Bold);
-            note.text = "NO IAP • LOCAL TEST ONLY";
-            note.color = MutedColor;
+            RectTransform collectionPill = CreatePill(statusBlock, "CollectionPill", new Vector2(0.08f, 0.21f), new Vector2(1f, 0.62f), new Color(0.18f, 0.15f, 0.12f, 0.98f));
+            collectionLabel = CreateText("CollectionLabel", collectionPill, TextAnchor.MiddleCenter, 15, FontStyle.Bold);
+            collectionLabel.color = BodyColor;
+            RectTransform notePill = CreatePill(statusBlock, "NotePill", new Vector2(0.08f, 0f), new Vector2(1f, 0.18f), new Color(0.17f, 0.13f, 0.11f, 0.98f));
+            bannerStateLabel = CreateText("BannerStateLabel", notePill, TextAnchor.MiddleCenter, 13, FontStyle.Bold);
+            bannerStateLabel.color = MutedColor;
             RefreshCurrencyLabel();
         }
 
@@ -222,7 +226,7 @@ namespace Shogun.Features.UI
             stack.childControlHeight = false;
             stack.childForceExpandWidth = true;
             stack.childForceExpandHeight = false;
-            CreateSectionHeader(content, "TEST BANNERS", "Select one of the local banners below. Each has the same disclosed base rates but different featured rate-up units.");
+            CreateSectionHeader(content, "ACTIVE BANNERS", "Select one of the current banners below. Each uses disclosed rates and its own featured rate-up trio.");
             CreateDivider(content);
             RectTransform gridRoot = CreateRect("BannerGridRoot", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             bannerGridLayout = gridRoot.gameObject.AddComponent<LayoutElement>();
@@ -287,7 +291,7 @@ namespace Shogun.Features.UI
             CreateActionButton(actions, "Barracks", "BARRACKS", ButtonNeutralColor, () => LoadSceneIfAvailable(BarracksSceneName));
             CreateActionButton(actions, "MainMenu", "MAIN MENU", ButtonTertiaryColor, () => LoadSceneIfAvailable(MainMenuSceneName));
 
-            RectTransform featuredHeader = CreateSectionHeader(content, "FEATURED UNITS", "These are the rate-up characters for the selected banner. The local pool stays small and explicit for testing.");
+            RectTransform featuredHeader = CreateSectionHeader(content, "FEATURED UNITS", "These are the rate-up warriors for the selected banner, shown with the current art fallbacks and authored identity text.");
             featuredHeader.GetComponent<LayoutElement>().preferredHeight = 68f;
             CreateDivider(content);
             featuredGridRoot = CreateRect("FeaturedGridRoot", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
@@ -326,7 +330,7 @@ namespace Shogun.Features.UI
             resultSummaryLabel.rectTransform.offsetMax = new Vector2(0f, -38f);
             CreateDivider(content);
 
-            resultEmptyState = CreateEmptyState(content, "No summon performed yet. Pull on a banner to populate the reveal grid.");
+            resultEmptyState = CreateEmptyState(content, "No summon performed yet. Pull on a banner to populate the reveal grid and update your Barracks immediately.");
             resultEmptyState.GetComponent<LayoutElement>().preferredHeight = 88f;
             resultGridRoot = CreateRect("ResultGridRoot", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             resultGridLayout = resultGridRoot.gameObject.AddComponent<LayoutElement>();
@@ -343,7 +347,7 @@ namespace Shogun.Features.UI
             CreatePanel(contentFrame, "FooterPanel", 116f, new Color(0.16f, 0.13f, 0.11f, 0.96f), new Color(0.08f, 0.07f, 0.07f, 0.98f), out RectTransform inner);
             RectTransform content = CreateRect("FooterContent", inner, Vector2.zero, Vector2.one, new Vector2(24f, 18f), new Vector2(-24f, -18f));
             Text footer = CreateText("Footer", content, TextAnchor.MiddleLeft, 14, FontStyle.Normal);
-            footer.text = "Prototype rule: this screen proves local banner flow, rate disclosure, and collection feedback only. Real paid summoning, inventory truth, and backend authority stay deferred.";
+            footer.text = "This gate is local-only, but the roster updates, odds disclosure, currency spend, and Barracks sync are all live inside the current slice.";
             footer.color = BodyColor;
             footer.horizontalOverflow = HorizontalWrapMode.Wrap;
             footer.verticalOverflow = VerticalWrapMode.Overflow;
@@ -368,15 +372,15 @@ namespace Shogun.Features.UI
 
             detailAccentBand.color = banner.AccentColor;
             bannerTitleLabel.text = banner.Title;
-            bannerSubtitleLabel.text = $"{banner.BannerType}  •  Single {banner.SinglePullCost} seals  •  Multi {banner.MultiPullCost} seals";
+            bannerSubtitleLabel.text = $"{banner.BannerType}  •  {banner.FeaturedCharacterIds.Count} featured  •  Single {banner.SinglePullCost} seals  •  Multi {banner.MultiPullCost} seals";
             bannerSummaryLabel.text = banner.Summary;
             bannerOddsLabel.text = banner.GetOddsSummary();
-            bannerDisclosureLabel.text = banner.Disclosure;
+            bannerDisclosureLabel.text = $"Pool {banner.PoolCharacterIds.Count} warriors • {banner.FeaturedCharacterIds.Count} rate-up units • {banner.Disclosure}";
             PopulateFeaturedUnits(banner);
             resultStatusLabel.text = "Ready";
             resultStatusLabel.color = BodyColor;
             if (lastResults.Count == 0)
-                resultSummaryLabel.text = "Pick single or multi pull to run the local banner simulation.";
+                resultSummaryLabel.text = "Pick single or multi pull to reveal warriors and update the Barracks instantly.";
             RefreshCurrencyLabel();
         }
 
@@ -430,8 +434,8 @@ namespace Shogun.Features.UI
             }
 
             resultSummaryLabel.text = newCount > 0
-                ? $"Spent {session.SpentSpiritSeals} seals. {newCount} new character{(newCount > 1 ? "s" : string.Empty)} added to the local collection."
-                : $"Spent {session.SpentSpiritSeals} seals. All pulls were duplicates, so the owned counts were incremented.";
+                ? $"Spent {session.SpentSpiritSeals} seals. {newCount} new character{(newCount > 1 ? "s" : string.Empty)} added. Collection now holds {TestCollectionService.GetOwnedCharacterCount()} units."
+                : $"Spent {session.SpentSpiritSeals} seals. All pulls were duplicates, so total owned copies climbed to {TestCollectionService.GetTotalOwnedCopies()}.";
             PopulateResults();
             RefreshCurrencyLabel();
             ApplyResponsiveLayout(true);
@@ -452,6 +456,10 @@ namespace Shogun.Features.UI
         {
             if (sealsLabel != null)
                 sealsLabel.text = $"SPIRIT SEALS {TestCollectionService.GetSpiritSeals()}";
+            if (collectionLabel != null)
+                collectionLabel.text = $"OWNED {TestCollectionService.GetOwnedCharacterCount()} • DUPES {TestCollectionService.GetDuplicateCopies()}";
+            if (bannerStateLabel != null)
+                bannerStateLabel.text = $"{banners.Count} BANNERS • DISCLOSED RATES";
         }
 
         private void ApplyResponsiveLayout(bool force)
@@ -521,7 +529,7 @@ namespace Shogun.Features.UI
             title.color = HeadingColor;
             title.rectTransform.offsetMin = new Vector2(0f, 30f);
             Text subtitle = CreateText("Subtitle", content, TextAnchor.LowerLeft, 14, FontStyle.Normal);
-            subtitle.text = banner.BannerType;
+            subtitle.text = $"{banner.BannerType.ToUpperInvariant()} • {banner.FeaturedCharacterIds.Count} FEATURED";
             subtitle.color = BodyColor;
             subtitle.rectTransform.offsetMax = new Vector2(0f, -38f);
             return new BannerButtonView { Banner = banner, Background = background, Accent = accent, TitleLabel = title, SubtitleLabel = subtitle };

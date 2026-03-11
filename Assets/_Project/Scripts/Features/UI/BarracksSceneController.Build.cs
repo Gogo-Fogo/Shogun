@@ -49,24 +49,30 @@ namespace Shogun.Features.UI
             title.color = new Color(0.98f, 0.94f, 0.84f, 1f);
             title.rectTransform.offsetMin = new Vector2(0f, 62f);
             Text subtitle = CreateText("Subtitle", titleBlock, TextAnchor.LowerLeft, 18, FontStyle.Normal);
-            subtitle.text = "Owned warriors, collectible identity, and battle-readiness at a glance.";
+            subtitle.text = "Owned warriors, authored identity, and lineup depth at a glance.";
             subtitle.color = MutedTextColor;
             subtitle.rectTransform.offsetMax = new Vector2(0f, -68f);
 
             RectTransform status = CreateRect("StatusBlock", content, new Vector2(0.72f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
-            RectTransform ownedPill = CreatePill(status, "OwnedPill", new Vector2(0.14f, 0.46f), new Vector2(1f, 1f), new Color(0.3f, 0.23f, 0.14f, 0.95f));
+            RectTransform ownedPill = CreatePill(status, "OwnedPill", new Vector2(0.1f, 0.68f), new Vector2(1f, 1f), new Color(0.3f, 0.23f, 0.14f, 0.95f));
             ownedCountLabel = CreateText("OwnedCount", ownedPill, TextAnchor.MiddleCenter, 20, FontStyle.Bold);
             ownedCountLabel.text = $"OWNED {ownedCharacters.Count}";
             ownedCountLabel.color = new Color(0.99f, 0.95f, 0.83f, 1f);
-            RectTransform sourcePill = CreatePill(status, "SourcePill", new Vector2(0.14f, 0f), new Vector2(1f, 0.4f), new Color(0.16f, 0.12f, 0.1f, 0.96f));
-            Text source = CreateText("SourceLabel", sourcePill, TextAnchor.MiddleCenter, 14, FontStyle.Bold);
-            source.text = "DEBUG OWNERSHIP PLACEHOLDER";
-            source.color = SecondaryTextColor;
+
+            RectTransform coveragePill = CreatePill(status, "CoveragePill", new Vector2(0.1f, 0.34f), new Vector2(1f, 0.64f), new Color(0.17f, 0.14f, 0.11f, 0.97f));
+            elementCoverageLabel = CreateText("CoverageLabel", coveragePill, TextAnchor.MiddleCenter, 15, FontStyle.Bold);
+            elementCoverageLabel.text = $"{GetElementCoverageCount()} ELEMENTS • TOP {BarracksCharacterPresentation.GetRarityLabel(GetHighestOwnedRarity())}";
+            elementCoverageLabel.color = MutedTextColor;
+
+            RectTransform depthPill = CreatePill(status, "DepthPill", new Vector2(0.1f, 0f), new Vector2(1f, 0.3f), new Color(0.15f, 0.12f, 0.1f, 0.96f));
+            collectionDepthLabel = CreateText("DepthLabel", depthPill, TextAnchor.MiddleCenter, 14, FontStyle.Bold);
+            collectionDepthLabel.text = $"{TestCollectionService.GetTotalOwnedCopies()} TOTAL COPIES • {TestCollectionService.GetDuplicateCopies()} DUPES";
+            collectionDepthLabel.color = SecondaryTextColor;
         }
 
         private void BuildDetailPanel()
         {
-            RectTransform outer = CreatePanel(contentFrame, "DetailOuter", 544f, PanelOuterColor, PanelInnerColor, out RectTransform inner);
+            RectTransform outer = CreatePanel(contentFrame, "DetailOuter", 604f, PanelOuterColor, PanelInnerColor, out RectTransform inner);
             detailAccentBand = CreateRect("DetailAccentBand", inner, new Vector2(0f, 0f), new Vector2(0f, 1f), Vector2.zero, new Vector2(10f, 0f)).gameObject.AddComponent<Image>();
             detailAccentBand.sprite = GetWhiteSprite();
             RectTransform content = CreateRect("DetailContent", inner, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(28f, 24f), new Vector2(-28f, -24f));
@@ -117,9 +123,9 @@ namespace Shogun.Features.UI
             chipLayout.childForceExpandWidth = false;
             detailChipRow.gameObject.AddComponent<LayoutElement>().preferredHeight = 40f;
             detailLoreLabel = CreateTextBlock(info, "Lore", 18, 158f, MutedTextColor);
-            detailMetadataLabel = CreateTextBlock(info, "Metadata", 16, 134f, SecondaryTextColor);
+            detailMetadataLabel = CreateTextBlock(info, "Metadata", 16, 146f, SecondaryTextColor);
             detailStatsLabel = CreateTextBlock(info, "Stats", 18, 86f, new Color(0.95f, 0.9f, 0.78f, 1f));
-            detailSpecialLabel = CreateTextBlock(info, "Specials", 16, 94f, new Color(0.89f, 0.84f, 0.74f, 1f));
+            detailSpecialLabel = CreateTextBlock(info, "Specials", 15, 128f, new Color(0.89f, 0.84f, 0.74f, 1f));
         }
 
         private void BuildRosterSection()
@@ -131,7 +137,7 @@ namespace Shogun.Features.UI
             title.color = new Color(0.98f, 0.94f, 0.84f, 1f);
             title.rectTransform.offsetMin = new Vector2(0f, 22f);
             Text subtitle = CreateText("Subtitle", titleRow, TextAnchor.LowerLeft, 15, FontStyle.Normal);
-            subtitle.text = "Collection-facing placeholder roster built from the current six-unit debug player pool.";
+            subtitle.text = "Roster synced from the current local collection save, with authored identity and combat data surfaced for each unit.";
             subtitle.color = SecondaryTextColor;
             subtitle.rectTransform.offsetMax = new Vector2(0f, -38f);
             RectTransform divider = CreateRect("Divider", inner, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -96f), new Vector2(-24f, -94f));
@@ -162,10 +168,32 @@ namespace Shogun.Features.UI
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
             cardViews.Clear();
+            if (ownedCharacters.Count == 0)
+            {
+                CreateEmptyRosterCard(content, "No characters are registered yet. Visit the Summon Gate or reset the local collection to repopulate the barracks.");
+                return;
+            }
+
             for (int i = 0; i < ownedCharacters.Count; i++)
                 cardViews.Add(CreateCharacterCard(content, ownedCharacters[i], i));
         }
 
+
+        private void CreateEmptyRosterCard(Transform parent, string message)
+        {
+            RectTransform root = CreateRect("EmptyRosterCard", parent, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            root.gameObject.AddComponent<LayoutElement>().preferredHeight = 172f;
+            Image background = root.gameObject.AddComponent<Image>();
+            background.sprite = GetWhiteSprite();
+            background.color = new Color(0.11f, 0.1f, 0.09f, 0.96f);
+            Text label = CreateText("Message", root, TextAnchor.MiddleCenter, 15, FontStyle.Normal);
+            label.text = message;
+            label.color = SecondaryTextColor;
+            label.horizontalOverflow = HorizontalWrapMode.Wrap;
+            label.verticalOverflow = VerticalWrapMode.Overflow;
+            label.rectTransform.offsetMin = new Vector2(18f, 18f);
+            label.rectTransform.offsetMax = new Vector2(-18f, -18f);
+        }
         private CardView CreateCharacterCard(Transform parent, CharacterDefinition definition, int index)
         {
             RectTransform cardRoot = CreateRect($"Card_{definition.CharacterId}", parent, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
@@ -184,6 +212,16 @@ namespace Shogun.Features.UI
             Image accent = CreateRect("Accent", cardRoot, new Vector2(0f, 0f), new Vector2(0f, 1f), Vector2.zero, new Vector2(8f, 0f)).gameObject.AddComponent<Image>();
             accent.sprite = GetWhiteSprite();
             accent.color = definition.PaletteAccentColor;
+
+            int ownedCopies = TestCollectionService.GetOwnedCount(definition.CharacterId);
+            RectTransform copiesPill = CreateRect("CopiesPill", cardRoot, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-96f, -28f), new Vector2(-12f, -8f));
+            Image copiesBackground = copiesPill.gameObject.AddComponent<Image>();
+            copiesBackground.sprite = GetWhiteSprite();
+            copiesBackground.color = ownedCopies > 1 ? new Color(0.22f, 0.27f, 0.18f, 1f) : new Color(0.16f, 0.14f, 0.12f, 1f);
+            Text copiesLabel = CreateText("CopiesLabel", copiesPill, TextAnchor.MiddleCenter, 12, FontStyle.Bold);
+            copiesLabel.text = ownedCopies > 1 ? $"x{ownedCopies}" : "OWNED";
+            copiesLabel.color = ownedCopies > 1 ? new Color(0.94f, 0.96f, 0.82f, 1f) : MutedTextColor;
+
             RectTransform content = CreateRect("Content", cardRoot, Vector2.zero, Vector2.one, new Vector2(18f, 16f), new Vector2(-16f, -16f));
             RectTransform portraitRect = CreateRect("Portrait", content, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(0f, -62f), new Vector2(110f, 62f));
             Image portraitFrame = portraitRect.gameObject.AddComponent<Image>();
@@ -217,5 +255,4 @@ namespace Shogun.Features.UI
         }
     }
 }
-
 

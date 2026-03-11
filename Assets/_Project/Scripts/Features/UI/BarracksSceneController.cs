@@ -39,6 +39,8 @@ namespace Shogun.Features.UI
         private GridLayoutGroup rosterGrid;
         private RectTransform rosterViewport;
         private Text ownedCountLabel;
+        private Text elementCoverageLabel;
+        private Text collectionDepthLabel;
         private Image detailPortraitImage;
         private GameObject detailPortraitPlaceholder;
         private Text detailPortraitPlaceholderLabel;
@@ -131,7 +133,8 @@ namespace Shogun.Features.UI
             detailSubtitleLabel.text = $"{BarracksCharacterPresentation.GetElementLabel(selected.ElementalType)} / {BarracksCharacterPresentation.GetWeaponLabel(selected.MartialArtsType)} / {BarracksCharacterPresentation.GetRarityLabel(selected.Rarity)}";
             detailTaglineLabel.text = BarracksCharacterPresentation.BuildTagline(selected);
             detailLoreLabel.text = BarracksCharacterPresentation.BuildLoreText(selected);
-            detailMetadataLabel.text = BarracksCharacterPresentation.BuildMetadataText(selected);
+            int ownedCopies = TestCollectionService.GetOwnedCount(selected.CharacterId);
+            detailMetadataLabel.text = $"{BarracksCharacterPresentation.BuildMetadataText(selected)}\nOwned Copies: {ownedCopies}";
             detailStatsLabel.text = BarracksCharacterPresentation.BuildStatsText(selected);
             detailSpecialLabel.text = BarracksCharacterPresentation.BuildSpecialText(selected);
 
@@ -147,17 +150,37 @@ namespace Shogun.Features.UI
         {
             detailAccentBand.color = new Color(0.62f, 0.53f, 0.34f, 1f);
             detailNameLabel.text = "NO OWNED UNITS";
-            detailSubtitleLabel.text = "The barracks placeholder roster did not resolve any character definitions.";
-            detailTaglineLabel.text = "Check CharacterCatalog plus the default debug owned ids.";
-            detailLoreLabel.text = "This screen expects a temporary ownership list until the real player inventory/save layer exists.";
-            detailMetadataLabel.text = "No detail metadata available.";
-            detailStatsLabel.text = "No combat data available.";
-            detailSpecialLabel.text = "No ability data available.";
+            detailSubtitleLabel.text = "No characters are currently registered in the local collection.";
+            detailTaglineLabel.text = "Use the Summon Gate or reset the test collection to repopulate the barracks.";
+            detailLoreLabel.text = "The barracks is ready to display owned warriors as soon as the collection save resolves unit data again.";
+            detailMetadataLabel.text = "Collection profile unavailable.";
+            detailStatsLabel.text = "Combat stats unavailable.";
+            detailSpecialLabel.text = "Ability data unavailable.";
             ClearChildren(detailChipRow);
             detailPortraitImage.sprite = null;
             detailPortraitImage.enabled = false;
             detailPortraitPlaceholder.SetActive(true);
             detailPortraitPlaceholderLabel.text = "--";
+        }
+
+        private int GetElementCoverageCount()
+        {
+            HashSet<ElementalType> elements = new HashSet<ElementalType>();
+            for (int i = 0; i < ownedCharacters.Count; i++)
+                elements.Add(ownedCharacters[i].ElementalType);
+            return elements.Count;
+        }
+
+        private Rarity GetHighestOwnedRarity()
+        {
+            Rarity highest = Rarity.Common;
+            for (int i = 0; i < ownedCharacters.Count; i++)
+            {
+                if (ownedCharacters[i].Rarity > highest)
+                    highest = ownedCharacters[i].Rarity;
+            }
+
+            return highest;
         }
 
         private void ApplyResponsiveLayout(bool force)

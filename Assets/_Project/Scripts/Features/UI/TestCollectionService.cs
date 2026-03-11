@@ -68,6 +68,23 @@ namespace Shogun.Features.UI
             return definitions;
         }
 
+        public static int GetOwnedCharacterCount()
+        {
+            EnsureLoaded();
+            return s_OwnedCharacterIds.Count;
+        }
+
+        public static int GetTotalOwnedCopies()
+        {
+            EnsureLoaded();
+            int totalCopies = 0;
+            foreach (KeyValuePair<string, int> pair in s_PullCounts)
+                totalCopies += Mathf.Max(1, pair.Value);
+            return totalCopies;
+        }
+
+        public static int GetDuplicateCopies() => Mathf.Max(0, GetTotalOwnedCopies() - GetOwnedCharacterCount());
+
         public static int GetSpiritSeals()
         {
             EnsureLoaded();
