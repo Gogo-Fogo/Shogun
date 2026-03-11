@@ -105,21 +105,36 @@ Send each as a **separate Gemini message**.
 ### Portrait Medallion Frame system — charge orb design
 
 The medallion frame uses a **charge-orb-in-hole** system.
-The frame ring has N circular holes punched through it — one per charge slot (= ultimate charge requirement).
-Each turn, the next hole gets a glowing orb sprite placed in it by Unity.
+The frame ring has N circular holes punched through it — one per charge slot.
 
-**Charge state colour logic:**
-- Charging (0 → special): orbs glow **cyan-blue** (RGB 0.24, 0.76, 1.0)
-- Special ready: filled orbs flip to **gold** (RGB 1.0, 0.82, 0.28)
-- Ultimate ready: all orbs **pulse white-gold**
+**Hole count = SPECIAL charge requirement** (not ultimate).
+N holes = how many turns to fill before the special ability is ready.
 
-**Vertical slice — 3 variants needed:**
+**Two-cycle charge system:**
+- **Cycle 1 — blue:** holes fill with cyan-blue orbs one per turn. All blue = special ability ready (tap once).
+- **Cycle 2 — red:** after special fires (or blue cycle completes), holes refill one-by-one with red orbs. All red = ultimate ability ready (double-tap).
+- Using the special ability refunds the red (cycle 2) orbs and resets to the start of the next blue cycle.
 
-| File | Holes | Characters |
-|---|---|---|
-| `medallion_frame_6.png` | 6 | Kuro, RoninFootman (special@3, ult@6) |
-| `medallion_frame_8.png` | 8 | Tsukiko, OniBrute, YureiCaster (special@4, ult@8) |
-| `medallion_frame_10.png` | 10 | Ryoma (special@5, ult@10) |
+The frame itself has no colour. Blue and red orb sprites are placed by Unity at runtime into the hole positions.
+
+**Vertical slice — status:**
+
+| File | Holes | Characters | Status |
+|---|---|---|---|
+| `MedallionFrame_3hole.png` | 3 | RoninFootman, Kuro (special@3) | Pending — or use 4-hole with dead slot (see Option B below) |
+| `MedallionFrame_4hole.png` | 4 | Tsukiko, OniBrute, YureiCaster (special@4) | ✅ Done — confirmed template design |
+| `MedallionFrame_5hole.png` | 5 | Ryoma (special@5) | Pending |
+| `MedallionFrame_8hole.png` | 8 | future character | ✅ Done — bonus |
+
+**Option B for 3-hole:** Use the 4-hole frame for Ronin Footman and Kuro too.
+The 4th socket never lights — permanently dark, a visual cue that slot is unused.
+Simpler asset pipeline (all medallions use the same prefab). Recommended for vertical slice.
+
+**Confirmed template design (chrysanthemum + seigaiha + Greek key):**
+Dark iron with aged ochre-gold accents. Chrysanthemum flowers and seigaiha (wave scale) pattern
+engraved on the ring surface. Greek key (meander) border on the outer rim. Bronze socket collars
+around each hole. This aesthetic must be matched across all variants.
+Source file: `MedallionFrame_4hole_v1.png`
 
 **Post-processing required:** Holes output as white from Gemini — cut to transparent alpha in Aseprite
 (magic wand each hole after background removal). Required for orb sprites to show through.
@@ -129,6 +144,14 @@ Each turn, the next hole gets a glowing orb sprite placed in it by Unity.
 `holeX = centerX + orbRadius * cos(holeAngle)`
 `holeY = centerY + orbRadius * sin(holeAngle)`
 where `orbRadius ≈ 82px` for a 220px frame (hole centres sit ~82px from frame centre).
+
+**Gemini workflow notes (learned from session):**
+- When a reference image is attached, Gemini outputs **1 image** (not 4). This is normal.
+- Specify hole positions as **clock positions**, not a count: Gemini approximates counts but follows explicit positions.
+  - 3-hole: "12, 4, 8 o'clock — triangle, NO fourth hole"
+  - 5-hole: "12, 2, 5, 7, 10 o'clock — pentagon"
+- For 3-hole specifically: **do NOT attach the reference image** — Gemini biases to 4 holes when the 4-hole template is attached. Describe the style from scratch.
+- For all others: attach `MedallionFrame_4hole_v1.png` as reference and change only the socket count + positions.
 
 ---
 
@@ -199,11 +222,13 @@ Sprite 1 — empty socket (uncharged):
 Dark iron-grey circle. Very dim gold ring edge. No glow.
 Nearly invisible — just a dark socket impression.
 
-Sprite 2 — charging orb (blue):
+Sprite 2 — special-charging orb (blue):
 Vivid cyan-blue glow (RGB 0.24, 0.76, 1.0). Bright center, soft glow edge.
+Used during Cycle 1 (charging toward special ability).
 
-Sprite 3 — special-ready orb (gold):
-Warm gold glow (RGB 1.0, 0.82, 0.28). Same shape, threshold reached.
+Sprite 3 — ultimate-charging orb (red):
+Vivid crimson-red glow (RGB 0.89, 0.20, 0.16). Same shape, red instead of blue.
+Used during Cycle 2 (charging toward ultimate). Replaces blue orbs one by one after special fires.
 ```
 
 ---
@@ -458,8 +483,10 @@ Do not generate separate versions for Fire, Water, Earth etc.
 ```
 Assets/_Project/Art/Production/UI/
   HUD/
-    medallion_frame_neutral.png
-    medallion_frame_active.png
+    MedallionFrame_3hole.png     ← pending (or use 4hole with dead slot)
+    MedallionFrame_4hole.png     ← ✅ done — confirmed template
+    MedallionFrame_5hole.png     ← pending
+    MedallionFrame_8hole.png     ← ✅ done — bonus variant
     hp_bar_frame.png
     objective_pill.png
     combo_tracker_bg.png
@@ -474,6 +501,14 @@ Assets/_Project/Art/Production/UI/
 ```
 
 Create this folder structure before importing. Unity's asset database needs the folder to exist.
+
+**Source files (Gemini raw output, pre-alpha-cleanup):**
+```
+Assets/_Project/Art/Source/Gemini/UI/HUD/
+  MedallionFrame_4hole_v1.png     ← confirmed template (chrysanthemum + seigaiha + Greek key)
+  MedallionFrame_8hole_v1.png     ← bonus variant
+```
+Naming convention: `MedallionFrame_Nhole_v1.png` where N = hole count. Drop `_v1` suffix for production-ready files.
 
 ### Unity import settings for UI art
 

@@ -7,6 +7,7 @@ namespace Shogun.Features.Combat
     /// Keeps the portrait battle camera framed tightly to the authored battlefield art.
     /// Safe-area handling remains a UI concern; the world camera should simply fit the arena.
     /// </summary>
+    [ExecuteAlways]
     public sealed class BattlefieldCameraFrameController : MonoBehaviour
     {
         private const float DefaultPaddingWorldUnits = 0.08f;
@@ -100,11 +101,19 @@ namespace Shogun.Features.Combat
         private void OnEnable()
         {
             SceneManager.sceneLoaded += HandleSceneLoaded;
+            ResolveDependencies();
+            ApplyFrame();
         }
 
         private void OnDisable()
         {
             SceneManager.sceneLoaded -= HandleSceneLoaded;
+        }
+
+        private void OnValidate()
+        {
+            ResolveDependencies();
+            ApplyFrame();
         }
 
         private void HandleSceneLoaded(Scene _, LoadSceneMode __)
@@ -151,3 +160,4 @@ namespace Shogun.Features.Combat
         }
     }
 }
+

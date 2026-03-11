@@ -12,8 +12,9 @@ namespace Shogun.Features.Combat
     /// Runtime battle HUD for the active combat slice.
     /// Keeps battlefield readable while exposing turn, objective, shared squad HP, and pair-swap state.
     /// </summary>
+    [ExecuteAlways]
     [DefaultExecutionOrder(25)]
-    public sealed class BattleHudController : MonoBehaviour
+    public sealed partial class BattleHudController : MonoBehaviour
     {
         private const float PollIntervalSeconds = 0.12f;
         private const float SpeedNormal = 1f;
@@ -37,6 +38,8 @@ namespace Shogun.Features.Combat
         private const float ComboTrackerBasePulseSeconds = 0.18f;
         private const float ComboTrackerFinishPulseSeconds = 0.34f;
         private const int MaxPortraitChargeDividers = 20;
+        private const float MedallionOrbRadius = 38f;   // px from circle centre to orb centre
+        private const float MedallionOrbSize   = 9f;    // diameter of each orb dot
         private const float ComboCutInIntroSeconds = 0.16f;
         private const float ComboCutInHoldSeconds = 0.18f;
         private const float ComboCutInOutroSeconds = 0.16f;
@@ -61,6 +64,9 @@ namespace Shogun.Features.Combat
         [Header("Layout")]
         [SerializeField] private float topBarHeight = 124f;
         [SerializeField] private float bottomRailHeight = 116f;
+
+        [Header("Medallion")]
+        [SerializeField] private MedallionFrameCatalog medallionCatalog;
 
         [Header("Boss Detection")]
         [SerializeField] private string[] bossCharacterIds = Array.Empty<string>();
@@ -217,6 +223,9 @@ namespace Shogun.Features.Combat
 
         private IEnumerator Start()
         {
+            if (!Application.isPlaying)
+                yield break;
+
             ResolveDependencies();
             if (turnManager == null)
                 yield break;
@@ -269,6 +278,92 @@ namespace Shogun.Features.Combat
 
             if (targetCanvas == null)
                 targetCanvas = CreateFallbackCanvas();
+
+            RepairCanvasIfNeeded(targetCanvas);
+            EnsureHudCanvasHierarchy(targetCanvas);
+        }
+
+        private static void RepairCanvasIfNeeded(Canvas canvas)
+        {
+            if (canvas == null)
+                return;
+
+            RectTransform canvasRect = canvas.transform as RectTransform;
+            if (canvasRect != null)
+            {
+                StretchRectTransform(canvasRect);
+                canvasRect.localScale = Vector3.one;
+                canvasRect.anchoredPosition = Vector2.zero;
+                LayoutRebuilder.ForceRebuildLayoutImmediate(canvasRect);
+            }
+
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.pixelPerfect = true;
+
+            CanvasScaler scaler = canvas.GetComponent<CanvasScaler>();
+            if (scaler == null)
+                scaler = canvas.gameObject.AddComponent<CanvasScaler>();
+
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1080f, 1920f);
+            scaler.matchWidthOrHeight = 1f;
+
+            if (canvas.GetComponent<GraphicRaycaster>() == null)
+                canvas.gameObject.AddComponent<GraphicRaycaster>();
+        }
+
+        private static void EnsureHudCanvasHierarchy(Canvas canvas)
+        {
+            if (canvas == null)
+                return;
+
+            Transform safeAreaPanel = canvas.transform.Find("UI_SafeAreaPanel");
+            if (safeAreaPanel == null)
+            {
+                RectTransform safeAreaRoot = CreateRect("UI_SafeAreaPanel", canvas.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+                StretchRectTransform(safeAreaRoot);
+                safeAreaRoot.gameObject.AddComponent<SafeAreaHandler>();
+                CreateRect("HUD", safeAreaRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+                CreateRect("Popups", safeAreaRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+                return;
+            }
+
+            if (safeAreaPanel is RectTransform safeAreaRect)
+                StretchRectTransform(safeAreaRect);
+
+            Transform hud = safeAreaPanel.Find("HUD");
+            if (hud == null)
+            {
+                RectTransform hudRoot = CreateRect("HUD", safeAreaPanel, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+                StretchRectTransform(hudRoot);
+            }
+            else if (hud is RectTransform hudRect)
+            {
+                StretchRectTransform(hudRect);
+            }
+
+            Transform popups = safeAreaPanel.Find("Popups");
+            if (popups == null)
+            {
+                RectTransform popupRoot = CreateRect("Popups", safeAreaPanel, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+                StretchRectTransform(popupRoot);
+            }
+            else if (popups is RectTransform popupsRect)
+            {
+                StretchRectTransform(popupsRect);
+            }
+        }
+
+        private static void StretchRectTransform(RectTransform rectTransform)
+        {
+            if (rectTransform == null)
+                return;
+
+            rectTransform.anchorMin = Vector2.zero;
+            rectTransform.anchorMax = Vector2.one;
+            rectTransform.offsetMin = Vector2.zero;
+            rectTransform.offsetMax = Vector2.zero;
+            rectTransform.pivot = new Vector2(0.5f, 0.5f);
         }
 
         private IEnumerator WaitForBattleSetup()
@@ -1201,6 +1296,33 @@ namespace Shogun.Features.Combat
             activeRing.color         = new Color(1f, 1f, 1f, 0f);
             activeRing.raycastTarget = false;
 
+            // 6. Medallion frame — decorative ring overlay showing the N hole positions.
+            //    Sprite is assigned at runtime from MedallionFrameCatalog based on SpecialChargeRequirement.
+            RectTransform medallionFrameRect = CreateRect("MedallionFrame", circleArea,
+                new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+            Image medallionFrame = medallionFrameRect.gameObject.AddComponent<Image>();
+            medallionFrame.raycastTarget  = false;
+            medallionFrame.preserveAspect = false;
+            medallionFrame.enabled        = false; // hidden until catalog sprite is assigned
+
+            // 7. Medallion orbs — small dot per charge hole; pooled up to MaxPortraitChargeDividers.
+            //    Positioned and coloured each poll tick by UpdateMedallionOrbs().
+            RectTransform orbRoot = CreateRect("MedallionOrbRoot", circleArea,
+                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+            List<Image> medallionOrbs = new List<Image>(MaxPortraitChargeDividers);
+            for (int orbIndex = 0; orbIndex < MaxPortraitChargeDividers; orbIndex++)
+            {
+                RectTransform orbRect = CreateRect($"Orb_{orbIndex}", orbRoot,
+                    new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+                orbRect.sizeDelta = new Vector2(MedallionOrbSize, MedallionOrbSize);
+                Image orbImage = orbRect.gameObject.AddComponent<Image>();
+                orbImage.sprite        = circleSpr;
+                orbImage.color         = new Color(0.18f, 0.18f, 0.22f, 0f);
+                orbImage.raycastTarget = false;
+                orbRect.gameObject.SetActive(false);
+                medallionOrbs.Add(orbImage);
+            }
+
             // HP bar — slim bar anchored to the bottom of the slot.
             RectTransform hpBgRect = CreateRect("HpBarBg", slotRoot,
                 new Vector2(0f, 0f), new Vector2(1f, 0f),
@@ -1254,6 +1376,9 @@ namespace Shogun.Features.Combat
                 ReserveButton           = swapButton,
                 ReserveButtonBackground = swapBg,
                 ReservePortrait         = swapPortrait,
+                MedallionFrame          = medallionFrame,
+                MedallionOrbs           = medallionOrbs,
+                LastOrbCount            = -1,
             };
         }
 
@@ -2241,6 +2366,7 @@ namespace Shogun.Features.Combat
                 slot.AbilityArcFill.fillAmount = 0f;
                 slot.AbilityArcFill.color = new Color(0.42f, 0.7f, 0.94f, 0.24f);
                 HideAbilityChargeDividers(slot);
+                UpdateMedallionOrbs(slot, null, false, false, 0f);
                 return;
             }
 
@@ -2732,22 +2858,27 @@ namespace Shogun.Features.Combat
 
         private static Canvas CreateFallbackCanvas()
         {
-            GameObject canvasGo = new GameObject("BattleHudCanvas");
-            Canvas canvas = canvasGo.AddComponent<Canvas>();
+            GameObject canvasGo = new GameObject("BattleHudCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+            RectTransform canvasRect = (RectTransform)canvasGo.transform;
+            StretchRectTransform(canvasRect);
+            canvasRect.localScale = Vector3.one;
+
+            Canvas canvas = canvasGo.GetComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.sortingOrder = 30;
 
-            CanvasScaler scaler = canvasGo.AddComponent<CanvasScaler>();
+            CanvasScaler scaler = canvasGo.GetComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1080f, 1920f);
             scaler.matchWidthOrHeight = 1f;
 
-            canvasGo.AddComponent<GraphicRaycaster>();
-
-            RectTransform safeAreaRoot = CreateRect("UI_SafeAreaPanel", canvasGo.transform, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+            RectTransform safeAreaRoot = CreateRect("UI_SafeAreaPanel", canvasGo.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            StretchRectTransform(safeAreaRoot);
             safeAreaRoot.gameObject.AddComponent<SafeAreaHandler>();
-            CreateRect("HUD", safeAreaRoot, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
-            CreateRect("Popups", safeAreaRoot, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+            RectTransform hudRoot = CreateRect("HUD", safeAreaRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            StretchRectTransform(hudRoot);
+            RectTransform popupRoot = CreateRect("Popups", safeAreaRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            StretchRectTransform(popupRoot);
             return canvas;
         }
 
@@ -2778,6 +2909,10 @@ namespace Shogun.Features.Combat
             public Button            ReserveButton;
             public Image             ReserveButtonBackground;
             public Image             ReservePortrait;
+            // Medallion orb system
+            public Image             MedallionFrame;
+            public List<Image>       MedallionOrbs;
+            public int               LastOrbCount;
         }
 
         private sealed class ComboCutInSlotView
@@ -2924,6 +3059,8 @@ namespace Shogun.Features.Combat
         }
     }
 }
+
+
 
 
 

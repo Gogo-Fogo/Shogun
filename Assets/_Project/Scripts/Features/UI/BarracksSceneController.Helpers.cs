@@ -76,17 +76,25 @@ namespace Shogun.Features.UI
             return chip;
         }
 
-        private static Text CreateTextBlock(Transform parent, string name, int fontSize, float preferredHeight, Color color)
+        private static Text CreateTextBlock(Transform parent, string name, int fontSize, float minHeight, Color color)
         {
             RectTransform root = CreateRect(name, parent, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            root.gameObject.AddComponent<LayoutElement>().preferredHeight = preferredHeight;
-            Text label = CreateText("Label", root, TextAnchor.UpperLeft, fontSize, FontStyle.Normal);
+            LayoutElement layout = root.gameObject.AddComponent<LayoutElement>();
+            layout.minHeight = minHeight;
+            Text label = root.gameObject.AddComponent<Text>();
+            label.font = GetRuntimeFont();
+            label.alignment = TextAnchor.UpperLeft;
+            label.fontStyle = FontStyle.Normal;
+            label.fontSize = fontSize;
+            label.color = color;
+            label.raycastTarget = false;
             label.horizontalOverflow = HorizontalWrapMode.Wrap;
             label.verticalOverflow = VerticalWrapMode.Overflow;
-            label.color = color;
+            Shadow shadow = root.gameObject.AddComponent<Shadow>();
+            shadow.effectColor = new Color(0f, 0f, 0f, 0.62f);
+            shadow.effectDistance = new Vector2(1.2f, -1.2f);
             return label;
         }
-
         private static Text CreateText(string name, Transform parent, TextAnchor alignment, int fontSize, FontStyle style)
         {
             RectTransform rt = CreateRect(name, parent, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
@@ -136,25 +144,52 @@ namespace Shogun.Features.UI
             return rt;
         }
 
+        private static void StretchRectTransform(RectTransform rectTransform)
+        {
+            if (rectTransform == null)
+                return;
+
+            rectTransform.anchorMin = Vector2.zero;
+            rectTransform.anchorMax = Vector2.one;
+            rectTransform.offsetMin = Vector2.zero;
+            rectTransform.offsetMax = Vector2.zero;
+            rectTransform.pivot = new Vector2(0.5f, 0.5f);
+        }
+
         private static void ClearChildren(Transform parent)
         {
             if (parent == null)
                 return;
             for (int i = parent.childCount - 1; i >= 0; i--)
-                Destroy(parent.GetChild(i).gameObject);
+            {
+                GameObject child = parent.GetChild(i).gameObject;
+                if (Application.isPlaying)
+                    Destroy(child);
+                else
+                    DestroyImmediate(child);
+            }
         }
 
         private static Canvas CreateFallbackCanvas()
         {
-            GameObject canvasGo = new GameObject("BarracksCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+            GameObject canvasGo = new GameObject(DedicatedCanvasName, typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+            RectTransform canvasRect = (RectTransform)canvasGo.transform;
+            StretchRectTransform(canvasRect);
+            canvasRect.localScale = Vector3.one;
+
             Canvas canvas = canvasGo.GetComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.pixelPerfect = true;
+            canvas.overrideSorting = true;
+            canvas.sortingOrder = 100;
+
             CanvasScaler scaler = canvasGo.GetComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1080f, 1920f);
+            scaler.referenceResolution = new Vector2(720f, 1280f);
             scaler.matchWidthOrHeight = 1f;
+
             RectTransform safeAreaRoot = CreateRect("UI_SafeAreaPanel", canvasGo.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            StretchRectTransform(safeAreaRoot);
             safeAreaRoot.gameObject.AddComponent<SafeAreaHandler>();
             CreateRect("HUD", safeAreaRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             CreateRect("Menu_Main", safeAreaRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
@@ -163,3 +198,4 @@ namespace Shogun.Features.UI
         }
     }
 }
+

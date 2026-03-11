@@ -7,11 +7,14 @@ using UnityEngine.UI;
 
 namespace Shogun.Features.UI
 {
+    [ExecuteAlways]
     [DefaultExecutionOrder(20)]
     public sealed class SettingsSceneController : MonoBehaviour
     {
         private const string SettingsSceneName = "Settings";
         private const string MainMenuSceneName = "MainMenu";
+        private const string DedicatedCanvasName = "SettingsCanvas";
+        private const bool PreferMinimalSettingsLayout = true;
         private const float ContentHorizontalMargin = 28f;
         private const float PhoneContentMaxWidth = 940f;
         private const float TabletContentMaxWidth = 1140f;
@@ -54,6 +57,7 @@ namespace Shogun.Features.UI
         private Vector2Int lastScreenSize = new Vector2Int(-1, -1);
         private Rect lastSafeArea = new Rect(-1f, -1f, -1f, -1f);
         private float lastParentWidth = -1f;
+        private bool usingEmergencyLayout;
 
         private sealed class FrameRateCardView
         {
@@ -82,7 +86,12 @@ namespace Shogun.Features.UI
             new GameObject("SettingsSceneController").AddComponent<SettingsSceneController>();
         }
 
-        private void OnEnable() => GameSettingsService.SettingsChanged += RefreshFromSettings;
+        private void OnEnable()
+        {
+            GameSettingsService.SettingsChanged += RefreshFromSettings;
+            if (!Application.isPlaying)
+                RebuildEditorPreview();
+        }
         private void OnDisable() => GameSettingsService.SettingsChanged -= RefreshFromSettings;
 
         private void Start()
@@ -92,26 +101,114 @@ namespace Shogun.Features.UI
                 enabled = false;
                 return;
             }
-
-            ResolveCanvas();
-            BuildScreen();
-            RefreshFromSettings();
-            ApplyResponsiveLayout(true);
+            BuildSceneContents();
         }
-
         private void Update() => ApplyResponsiveLayout(false);
+        private void RebuildEditorPreview()
+        {
+            if (!isActiveAndEnabled)
+                return;
+            if (!SceneManager.GetActiveScene().name.Equals(SettingsSceneName, StringComparison.OrdinalIgnoreCase))
+                return;
+            BuildSceneContents();
+        }
+        private void BuildSceneContents()
+        {
+            ResolveCanvas();
+            if (PreferMinimalSettingsLayout)
+            {
+                BuildEmergencyFallback(null);
+                RefreshFromSettings();
+                ApplyResponsiveLayout(true);
+                return;
+            }
+            try
+            {
+                BuildScreen();
+                RefreshFromSettings();
+                ApplyResponsiveLayout(true);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError($"[SettingsSceneController] Failed to build full settings scene. Falling back to minimal layout. {exception}");
+                BuildEmergencyFallback(exception);
+                RefreshFromSettings();
+                ApplyResponsiveLayout(true);
+            }
+        }
 
         private void ResolveCanvas()
         {
-            targetCanvas = FindFirstObjectByType<Canvas>();
+            targetCanvas = FindDedicatedCanvas();
             if (targetCanvas == null)
+            {
+                Debug.LogWarning("[SettingsSceneController] Dedicated settings canvas was not found. Creating one now.");
                 targetCanvas = CreateFallbackCanvas();
+            }
 
-            Transform safeAreaPanel = targetCanvas.transform.Find("UI_SafeAreaPanel") ?? targetCanvas.transform;
+            RepairCanvasIfNeeded(targetCanvas);
+
+            Transform safeAreaPanel = targetCanvas.transform.Find("UI_SafeAreaPanel");
+            if (safeAreaPanel == null)
+            {
+                safeAreaPanel = CreateRect("UI_SafeAreaPanel", targetCanvas.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+                safeAreaPanel.gameObject.AddComponent<SafeAreaHandler>();
+                CreateRect("HUD", safeAreaPanel, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+                CreateRect("Menu_Main", safeAreaPanel, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+                CreateRect("Popups", safeAreaPanel, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            }
+
+            RectTransform safeAreaRect = safeAreaPanel as RectTransform;
+            if (safeAreaRect != null)
+                StretchRectTransform(safeAreaRect);
+
             Transform menuRoot = safeAreaPanel.Find("Menu_Main");
-            hostRoot = (menuRoot as RectTransform) ?? (safeAreaPanel as RectTransform);
+            if (menuRoot == null)
+                menuRoot = CreateRect("Menu_Main", safeAreaPanel, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+
+            RectTransform menuRootRect = menuRoot as RectTransform;
+            if (menuRootRect != null)
+                StretchRectTransform(menuRootRect);
+
+            hostRoot = menuRootRect ?? safeAreaRect;
         }
 
+        private static void RepairCanvasIfNeeded(Canvas canvas)
+        {
+            if (canvas == null)
+                return;
+
+            RectTransform canvasRect = canvas.transform as RectTransform;
+            if (canvasRect != null)
+            {
+                StretchRectTransform(canvasRect);
+                canvasRect.localScale = Vector3.one;
+                canvasRect.anchoredPosition = Vector2.zero;
+                LayoutRebuilder.ForceRebuildLayoutImmediate(canvasRect);
+            }
+
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.pixelPerfect = true;
+            canvas.overrideSorting = true;
+            canvas.sortingOrder = 100;
+
+            CanvasScaler scaler = canvas.GetComponent<CanvasScaler>();
+            if (scaler == null)
+                scaler = canvas.gameObject.AddComponent<CanvasScaler>();
+
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(720f, 1280f);
+            scaler.matchWidthOrHeight = 1f;
+
+            if (canvas.GetComponent<GraphicRaycaster>() == null)
+                canvas.gameObject.AddComponent<GraphicRaycaster>();
+        }
+
+        private static Canvas FindDedicatedCanvas()
+        {
+            GameObject existingCanvas = GameObject.Find(DedicatedCanvasName);
+            return existingCanvas != null ? existingCanvas.GetComponent<Canvas>() : null;
+        }
         private void BuildScreen()
         {
             ClearChildren(hostRoot);
@@ -154,6 +251,202 @@ namespace Shogun.Features.UI
             BuildFeedbackPanel();
             BuildFooterPanel();
         }
+        private void BuildEmergencyFallback(Exception exception)
+        {
+            frameRateCards.Clear();
+            toggleCards.Clear();
+            performanceGrid = null;
+            feedbackGrid = null;
+
+            ClearChildren(hostRoot);
+            RectTransform screen = CreateRect("EmergencySettingsScreen", hostRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            Image background = screen.gameObject.AddComponent<Image>();
+            background.sprite = GetWhiteSprite();
+            background.color = BackgroundColor;
+
+            RectTransform panel = CreateRect("EmergencyPanel", screen, Vector2.zero, Vector2.one, new Vector2(24f, 108f), new Vector2(-24f, -96f));
+            Image panelImage = panel.gameObject.AddComponent<Image>();
+            panelImage.sprite = GetWhiteSprite();
+            panelImage.color = new Color(0.12f, 0.11f, 0.11f, 0.97f);
+            Outline outline = panel.gameObject.AddComponent<Outline>();
+            outline.effectColor = new Color(0f, 0f, 0f, 0.45f);
+            outline.effectDistance = new Vector2(3f, -3f);
+
+            contentFrame = CreateRect("EmergencyContent", panel, Vector2.zero, Vector2.one, new Vector2(28f, 28f), new Vector2(-28f, -28f));
+            VerticalLayoutGroup stack = contentFrame.gameObject.AddComponent<VerticalLayoutGroup>();
+            stack.spacing = 14f;
+            stack.childAlignment = TextAnchor.UpperCenter;
+            stack.childControlWidth = true;
+            stack.childControlHeight = true;
+            stack.childForceExpandWidth = true;
+            stack.childForceExpandHeight = false;
+            contentFrame.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            BuildEmergencyHeader(exception);
+            BuildEmergencyPerformancePanel();
+            BuildEmergencyAudioPanel();
+            BuildEmergencyFeedbackPanel();
+            BuildEmergencyFooterPanel();
+        }
+
+        private void BuildEmergencyHeader(Exception exception)
+        {
+            RectTransform root = CreateRect("EmergencyHeader", contentFrame, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            root.gameObject.AddComponent<LayoutElement>().preferredHeight = exception == null ? 232f : 296f;
+
+            Text title = CreateText("Title", root, TextAnchor.UpperCenter, 44, FontStyle.Bold);
+            title.text = "SETTINGS";
+            title.color = HeadingColor;
+            title.rectTransform.offsetMin = new Vector2(0f, 154f);
+
+            Text subtitle = CreateText("Subtitle", root, TextAnchor.MiddleCenter, 18, FontStyle.Bold);
+            subtitle.text = "Stable local settings menu while the richer settings layout is under repair.";
+            subtitle.color = BodyColor;
+            subtitle.rectTransform.offsetMin = new Vector2(0f, 88f);
+            subtitle.rectTransform.offsetMax = new Vector2(0f, -92f);
+
+            statusFrameRateLabel = CreatePillLabel(root, "FpsPill", new Vector2(0.04f, 0.42f), new Vector2(0.96f, 0.62f), new Color(0.16f, 0.27f, 0.37f, 0.98f), 18);
+            statusVolumeLabel = CreatePillLabel(root, "VolumePill", new Vector2(0.04f, 0.2f), new Vector2(0.96f, 0.4f), new Color(0.25f, 0.19f, 0.11f, 0.98f), 18);
+            statusFeedbackLabel = CreatePillLabel(root, "FeedbackPill", new Vector2(0.04f, 0f), new Vector2(0.96f, 0.18f), new Color(0.16f, 0.15f, 0.14f, 0.98f), 14);
+
+            if (exception == null)
+                return;
+
+            RectTransform errorRoot = CreateRect("ErrorRoot", root, new Vector2(0.04f, 0f), new Vector2(0.96f, 0.32f), Vector2.zero, Vector2.zero);
+            Image errorBackground = errorRoot.gameObject.AddComponent<Image>();
+            errorBackground.sprite = GetWhiteSprite();
+            errorBackground.color = new Color(0.18f, 0.08f, 0.08f, 0.9f);
+            Text errorLabel = CreateText("ErrorLabel", errorRoot, TextAnchor.UpperLeft, 12, FontStyle.Normal);
+            errorLabel.text = $"Fallback active because the rich settings layout failed:`n{exception.GetType().Name}: {exception.Message}";
+            errorLabel.color = new Color(1f, 0.86f, 0.82f, 1f);
+            errorLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
+            errorLabel.verticalOverflow = VerticalWrapMode.Overflow;
+            errorLabel.rectTransform.offsetMin = new Vector2(14f, 12f);
+            errorLabel.rectTransform.offsetMax = new Vector2(-14f, -12f);
+        }
+
+        private void BuildEmergencyPerformancePanel()
+        {
+            CreatePanel(contentFrame, "EmergencyPerformancePanel", 182f, PanelOuterColor, PanelInnerColor, out RectTransform inner);
+            RectTransform content = CreateRect("Content", inner, Vector2.zero, Vector2.one, new Vector2(24f, 20f), new Vector2(-24f, -20f));
+            VerticalLayoutGroup stack = content.gameObject.AddComponent<VerticalLayoutGroup>();
+            stack.spacing = 10f;
+            stack.childControlWidth = true;
+            stack.childControlHeight = true;
+            stack.childForceExpandWidth = true;
+            stack.childForceExpandHeight = false;
+
+            Text heading = CreateText("Heading", content, TextAnchor.UpperLeft, 26, FontStyle.Bold);
+            heading.text = "FRAME RATE";
+            heading.color = HeadingColor;
+            heading.gameObject.AddComponent<LayoutElement>().preferredHeight = 40f;
+
+            Text summary = CreateText("Summary", content, TextAnchor.UpperLeft, 14, FontStyle.Normal);
+            summary.text = "Apply the active frame-rate preset immediately.";
+            summary.color = BodyColor;
+            summary.gameObject.AddComponent<LayoutElement>().preferredHeight = 34f;
+
+            RectTransform buttons = CreateRect("Buttons", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            buttons.gameObject.AddComponent<LayoutElement>().preferredHeight = 52f;
+            HorizontalLayoutGroup buttonLayout = buttons.gameObject.AddComponent<HorizontalLayoutGroup>();
+            buttonLayout.spacing = 10f;
+            buttonLayout.childControlWidth = true;
+            buttonLayout.childControlHeight = true;
+            buttonLayout.childForceExpandWidth = true;
+            buttonLayout.childForceExpandHeight = false;
+            CreateActionButton(buttons, "Mode30", "30 FPS", SecondaryActionColor, () => SetFrameRate(FrameRateMode.BatterySaver));
+            CreateActionButton(buttons, "Mode60", "60 FPS", PrimaryActionColor, () => SetFrameRate(FrameRateMode.Balanced));
+            CreateActionButton(buttons, "Mode120", "120 FPS", NeutralActionColor, () => SetFrameRate(FrameRateMode.HighRefresh));
+        }
+
+        private void BuildEmergencyAudioPanel()
+        {
+            CreatePanel(contentFrame, "EmergencyAudioPanel", 220f, PanelOuterColor, PanelInnerColor, out RectTransform inner);
+            RectTransform content = CreateRect("Content", inner, Vector2.zero, Vector2.one, new Vector2(24f, 20f), new Vector2(-24f, -20f));
+            VerticalLayoutGroup stack = content.gameObject.AddComponent<VerticalLayoutGroup>();
+            stack.spacing = 10f;
+            stack.childControlWidth = true;
+            stack.childControlHeight = true;
+            stack.childForceExpandWidth = true;
+            stack.childForceExpandHeight = false;
+
+            volumeValueLabel = CreateText("VolumeValue", content, TextAnchor.UpperLeft, 24, FontStyle.Bold);
+            volumeValueLabel.color = HeadingColor;
+            volumeValueLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 36f;
+
+            volumeSummaryLabel = CreateText("VolumeSummary", content, TextAnchor.UpperLeft, 14, FontStyle.Normal);
+            volumeSummaryLabel.color = BodyColor;
+            volumeSummaryLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
+            volumeSummaryLabel.verticalOverflow = VerticalWrapMode.Overflow;
+            volumeSummaryLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 42f;
+
+            RectTransform bar = CreateRect("VolumeBar", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            bar.gameObject.AddComponent<LayoutElement>().preferredHeight = 22f;
+            Image barBackground = bar.gameObject.AddComponent<Image>();
+            barBackground.sprite = GetWhiteSprite();
+            barBackground.color = new Color(0.14f, 0.13f, 0.12f, 1f);
+            RectTransform fill = CreateRect("Fill", bar, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            fill.pivot = new Vector2(0f, 0.5f);
+            volumeFillRect = fill;
+            Image fillImage = fill.gameObject.AddComponent<Image>();
+            fillImage.sprite = GetWhiteSprite();
+            fillImage.color = SelectedAccentColor;
+
+            RectTransform buttons = CreateRect("Buttons", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            buttons.gameObject.AddComponent<LayoutElement>().preferredHeight = 48f;
+            HorizontalLayoutGroup buttonLayout = buttons.gameObject.AddComponent<HorizontalLayoutGroup>();
+            buttonLayout.spacing = 10f;
+            buttonLayout.childControlWidth = true;
+            buttonLayout.childControlHeight = true;
+            buttonLayout.childForceExpandWidth = true;
+            buttonLayout.childForceExpandHeight = false;
+            CreateActionButton(buttons, "VolumeDown", "-10%", NeutralActionColor, () => AdjustMasterVolume(-0.1f));
+            CreateActionButton(buttons, "VolumeMute", "MUTE", SecondaryActionColor, () => SetMasterVolume(0f));
+            CreateActionButton(buttons, "VolumeUp", "+10%", PrimaryActionColor, () => AdjustMasterVolume(0.1f));
+        }
+
+        private void BuildEmergencyFeedbackPanel()
+        {
+            CreatePanel(contentFrame, "EmergencyFeedbackPanel", 170f, PanelOuterColor, PanelInnerColor, out RectTransform inner);
+            RectTransform content = CreateRect("Content", inner, Vector2.zero, Vector2.one, new Vector2(24f, 20f), new Vector2(-24f, -20f));
+            VerticalLayoutGroup stack = content.gameObject.AddComponent<VerticalLayoutGroup>();
+            stack.spacing = 10f;
+            stack.childControlWidth = true;
+            stack.childControlHeight = true;
+            stack.childForceExpandWidth = true;
+            stack.childForceExpandHeight = false;
+
+            Text heading = CreateText("Heading", content, TextAnchor.UpperLeft, 26, FontStyle.Bold);
+            heading.text = "FEEDBACK";
+            heading.color = HeadingColor;
+            heading.gameObject.AddComponent<LayoutElement>().preferredHeight = 40f;
+
+            RectTransform buttons = CreateRect("Buttons", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            buttons.gameObject.AddComponent<LayoutElement>().preferredHeight = 48f;
+            HorizontalLayoutGroup buttonLayout = buttons.gameObject.AddComponent<HorizontalLayoutGroup>();
+            buttonLayout.spacing = 10f;
+            buttonLayout.childControlWidth = true;
+            buttonLayout.childControlHeight = true;
+            buttonLayout.childForceExpandWidth = true;
+            buttonLayout.childForceExpandHeight = false;
+            CreateActionButton(buttons, "VibrationToggle", "TOGGLE VIBRATION", NeutralActionColor, ToggleVibration);
+            CreateActionButton(buttons, "ShakeToggle", "TOGGLE SCREEN SHAKE", NeutralActionColor, ToggleScreenShake);
+        }
+
+        private void BuildEmergencyFooterPanel()
+        {
+            CreatePanel(contentFrame, "EmergencyFooterPanel", 112f, new Color(0.16f, 0.13f, 0.11f, 0.96f), new Color(0.08f, 0.08f, 0.09f, 0.98f), out RectTransform inner);
+            RectTransform buttons = CreateRect("Buttons", inner, Vector2.zero, Vector2.one, new Vector2(24f, 20f), new Vector2(-24f, -20f));
+            HorizontalLayoutGroup buttonLayout = buttons.gameObject.AddComponent<HorizontalLayoutGroup>();
+            buttonLayout.spacing = 12f;
+            buttonLayout.childControlWidth = true;
+            buttonLayout.childControlHeight = true;
+            buttonLayout.childForceExpandWidth = true;
+            buttonLayout.childForceExpandHeight = false;
+            CreateActionButton(buttons, "ResetButton", "RESET DEFAULTS", SecondaryActionColor, ResetToDefaults);
+            CreateActionButton(buttons, "MainMenuButton", "MAIN MENU", NeutralActionColor, () => LoadSceneIfAvailable(MainMenuSceneName));
+        }
+
         private void BuildHeader()
         {
             CreatePanel(contentFrame, "HeaderPanel", 212f, HeaderOuterColor, HeaderInnerColor, out RectTransform inner);
@@ -339,7 +632,7 @@ namespace Shogun.Features.UI
             if (contentFrame == null)
                 return;
 
-            Vector2Int currentScreenSize = new Vector2Int(Screen.width, Screen.height);
+            Vector2Int currentScreenSize = GetLayoutSize();
             Rect safeArea = Screen.safeArea;
             float parentWidth = ((RectTransform)contentFrame.parent).rect.width;
             if (!force && currentScreenSize == lastScreenSize && safeArea == lastSafeArea && Mathf.Approximately(parentWidth, lastParentWidth))
@@ -357,12 +650,31 @@ namespace Shogun.Features.UI
 
             float contentWidth = Mathf.Max(320f, Mathf.Min(maxWidth, parentWidth - (ContentHorizontalMargin * 2f)));
             contentFrame.sizeDelta = new Vector2(contentWidth, 0f);
+            if (performanceGrid == null || feedbackGrid == null)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(contentFrame);
+                return;
+            }
             performanceGrid.constraintCount = contentWidth >= 980f ? 3 : 1;
             feedbackGrid.constraintCount = contentWidth >= 860f ? 2 : 1;
             float sectionWidth = Mathf.Max(280f, contentWidth - 56f);
             ApplyGridSizing(performanceGrid, sectionWidth, 240f, 144f, frameRateCards.Count);
             ApplyGridSizing(feedbackGrid, sectionWidth, 260f, 122f, toggleCards.Count);
             LayoutRebuilder.ForceRebuildLayoutImmediate(contentFrame);
+        }
+
+        private Vector2Int GetLayoutSize()
+        {
+            RectTransform canvasRect = targetCanvas != null ? targetCanvas.transform as RectTransform : null;
+            if (canvasRect != null)
+            {
+                int width = Mathf.RoundToInt(canvasRect.rect.width);
+                int height = Mathf.RoundToInt(canvasRect.rect.height);
+                if (width > 0 && height > 0)
+                    return new Vector2Int(width, height);
+            }
+
+            return new Vector2Int(Screen.width, Screen.height);
         }
 
         private static void ApplyGridSizing(GridLayoutGroup grid, float availableWidth, float minCellWidth, float cellHeight, int itemCount)
@@ -577,32 +889,58 @@ namespace Shogun.Features.UI
             return rt;
         }
 
+        private static void StretchRectTransform(RectTransform rectTransform)
+        {
+            if (rectTransform == null)
+                return;
+
+            rectTransform.anchorMin = Vector2.zero;
+            rectTransform.anchorMax = Vector2.one;
+            rectTransform.offsetMin = Vector2.zero;
+            rectTransform.offsetMax = Vector2.zero;
+            rectTransform.pivot = new Vector2(0.5f, 0.5f);
+        }
+
         private static void ClearChildren(Transform parent)
         {
             if (parent == null)
                 return;
             for (int i = parent.childCount - 1; i >= 0; i--)
-                Destroy(parent.GetChild(i).gameObject);
+            {
+                GameObject child = parent.GetChild(i).gameObject;
+                if (Application.isPlaying)
+                    Destroy(child);
+                else
+                    DestroyImmediate(child);
+            }
         }
 
         private static Canvas CreateFallbackCanvas()
         {
-            GameObject canvasGo = new GameObject("SettingsCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+            GameObject canvasGo = new GameObject(DedicatedCanvasName, typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+            RectTransform canvasRect = (RectTransform)canvasGo.transform;
+            StretchRectTransform(canvasRect);
+            canvasRect.localScale = Vector3.one;
+
             Canvas canvas = canvasGo.GetComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.pixelPerfect = true;
+            canvas.overrideSorting = true;
+            canvas.sortingOrder = 100;
+
             CanvasScaler scaler = canvasGo.GetComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1080f, 1920f);
+            scaler.referenceResolution = new Vector2(720f, 1280f);
             scaler.matchWidthOrHeight = 1f;
+
             RectTransform safeAreaRoot = CreateRect("UI_SafeAreaPanel", canvasGo.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            StretchRectTransform(safeAreaRoot);
             safeAreaRoot.gameObject.AddComponent<SafeAreaHandler>();
             CreateRect("HUD", safeAreaRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             CreateRect("Menu_Main", safeAreaRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             CreateRect("Popups", safeAreaRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             return canvas;
         }
-
         private static void LoadSceneIfAvailable(string sceneName)
         {
             if (Application.CanStreamedLevelBeLoaded(sceneName))
@@ -615,3 +953,16 @@ namespace Shogun.Features.UI
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

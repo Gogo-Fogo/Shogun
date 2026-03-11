@@ -60,6 +60,16 @@ public class TestBattleSetup : MonoBehaviour
         Debug.Log($"Battle started with {battleManager.activeCharacters.Count} allied frontliners, {battleManager.reserveCharacters.Count} allied reserves, and {battleManager.activeEnemyCharacters.Count} enemy combatants.");
     }
 
+    public List<CharacterDefinition> GetPreviewPlayerTeam()
+    {
+        return BuildPlayerTeam();
+    }
+
+    public List<CharacterDefinition> GetPreviewEnemyTeam()
+    {
+        return BuildEnemyTeam();
+    }
+
     private List<CharacterDefinition> BuildPlayerTeam()
     {
         if (useDebugPlayerRoster && debugPlayerNames != null && debugPlayerNames.Count > 0)
@@ -223,3 +233,4 @@ public class TestBattleSetup : MonoBehaviour
         return closest;
     }
 }
+

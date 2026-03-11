@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 namespace Shogun.Features.UI
 {
+    [ExecuteAlways]
     [DefaultExecutionOrder(20)]
     public sealed class MainMenuSceneController : MonoBehaviour
     {
@@ -16,6 +17,7 @@ namespace Shogun.Features.UI
         private const string BarracksSceneName = "Barracks";
         private const string SummonSceneName = "Summon";
         private const string SettingsSceneName = "Settings";
+        private const string DedicatedCanvasName = "MainMenuCanvas";
         private const float ContentHorizontalMargin = 28f;
         private const float PhoneContentMaxWidth = 900f;
         private const float TabletContentMaxWidth = 1120f;
@@ -24,6 +26,7 @@ namespace Shogun.Features.UI
         private const float ExpandedBreakpoint = 1680f;
         private const int ActionCount = 5;
         private const int StatusCardCount = 4;
+        private const bool PreferMinimalMenuLayout = true;
         private static bool s_BootstrapRegistered;
 
         private static readonly string[] FeaturedCharacterIds = { "ryoma", "kuro", "tsukiko" };
@@ -102,6 +105,14 @@ namespace Shogun.Features.UI
             EnsureControllerExists();
         }
 
+        private string diagnosticStatus = "Awake";
+
+        private void OnEnable()
+        {
+            if (!Application.isPlaying)
+                RebuildEditorPreview();
+        }
+
         private void Start()
         {
             if (!SceneManager.GetActiveScene().name.Equals(MainMenuSceneName, StringComparison.OrdinalIgnoreCase))
@@ -110,76 +121,131 @@ namespace Shogun.Features.UI
                 return;
             }
 
-            try
-            {
-                ResolveCanvas();
-                ResolveFeaturedCharacters();
-                BuildScreen();
-                ApplyResponsiveLayout(true);
-            }
-            catch (Exception exception)
-            {
-                Debug.LogError($"[MainMenuSceneController] Failed to build full main menu. Falling back to minimal menu. {exception}");
-                BuildEmergencyFallback(exception);
-            }
+            BuildSceneContents();
         }
 
         private void Update() => ApplyResponsiveLayout(false);
 
-        private void ResolveCanvas()
+        private void RebuildEditorPreview()
         {
-            targetCanvas = FindFirstObjectByType<Canvas>();
-            if (targetCanvas == null)
+            if (!isActiveAndEnabled)
+                return;
+            if (!SceneManager.GetActiveScene().name.Equals(MainMenuSceneName, StringComparison.OrdinalIgnoreCase))
+                return;
+            BuildSceneContents();
+        }
+
+        private void BuildSceneContents()
+        {
+            ResolveCanvas();
+
+            if (PreferMinimalMenuLayout)
             {
-                Debug.LogWarning("[MainMenuSceneController] No Canvas found. Creating fallback canvas.");
-                targetCanvas = CreateFallbackCanvas();
+                BuildEmergencyFallback(null);
+                ApplyResponsiveLayout(true);
+                return;
             }
 
-            RepairCanvasIfNeeded(targetCanvas);
+            try
+            {
+                diagnosticStatus = "ResolveFeaturedCharacters...";
+                ResolveFeaturedCharacters();
+                diagnosticStatus = "BuildScreen...";
+                BuildScreen();
+                diagnosticStatus = "ApplyResponsiveLayout...";
+                ApplyResponsiveLayout(true);
+                diagnosticStatus = "READY — rich menu";
+            }
+            catch (Exception exception)
+            {
+                diagnosticStatus = $"EXCEPTION: {exception.GetType().Name}: {exception.Message}";
+                Debug.LogError($"[MainMenuSceneController] Failed to build full main menu. Falling back to minimal menu. {exception}");
+                BuildEmergencyFallback(exception);
+                ApplyResponsiveLayout(true);
+            }
+        }
 
+        #if UNITY_EDITOR
+        private void OnGUI()
+        {
+            if (!Application.isPlaying)
+                return;
+            GUIStyle style = new GUIStyle(GUI.skin.box)
+            {
+                fontSize = 18,
+                alignment = TextAnchor.UpperLeft,
+                wordWrap = true,
+                normal = { textColor = Color.yellow }
+            };
+            GUI.backgroundColor = new Color(0f, 0f, 0f, 0.85f);
+            string info = $"[MainMenu Diag]\n{diagnosticStatus}\n" +
+                          $"Canvas: {(targetCanvas != null ? $"active={targetCanvas.isActiveAndEnabled}, mode={targetCanvas.renderMode}" : "NULL")}\n" +
+                          $"Screen: {Screen.width}x{Screen.height}";
+            GUI.Box(new Rect(10, 10, 500, 120), info, style);
+        }
+        #endif
+
+        private void ResolveCanvas()
+        {
+            targetCanvas = FindDedicatedCanvas();
+            if (targetCanvas == null)
+            {
+                Debug.LogWarning("[MainMenuSceneController] Dedicated main menu canvas was not found. Creating one now.");
+                targetCanvas = CreateFallbackCanvas();
+            }
+            RepairCanvasIfNeeded(targetCanvas);
             Transform safeAreaPanel = targetCanvas.transform.Find("UI_SafeAreaPanel");
             if (safeAreaPanel == null)
             {
-                RectTransform canvasRect = targetCanvas.transform as RectTransform;
                 safeAreaPanel = CreateRect("UI_SafeAreaPanel", targetCanvas.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
                 safeAreaPanel.gameObject.AddComponent<SafeAreaHandler>();
-                if (canvasRect != null)
-                    LayoutRebuilder.ForceRebuildLayoutImmediate(canvasRect);
+                CreateRect("HUD", safeAreaPanel, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+                CreateRect("Menu_Main", safeAreaPanel, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+                CreateRect("Popups", safeAreaPanel, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             }
-
+            RectTransform safeAreaRect = safeAreaPanel as RectTransform;
+            if (safeAreaRect != null)
+                StretchRectTransform(safeAreaRect);
             Transform menuRoot = safeAreaPanel.Find("Menu_Main");
             if (menuRoot == null)
                 menuRoot = CreateRect("Menu_Main", safeAreaPanel, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-
-            hostRoot = (menuRoot as RectTransform) ?? (safeAreaPanel as RectTransform);
+            RectTransform menuRootRect = menuRoot as RectTransform;
+            if (menuRootRect != null)
+                StretchRectTransform(menuRootRect);
+            hostRoot = menuRootRect ?? safeAreaRect;
         }
 
         private static void RepairCanvasIfNeeded(Canvas canvas)
         {
             if (canvas == null)
                 return;
-
             RectTransform canvasRect = canvas.transform as RectTransform;
-            if (canvasRect != null && (Mathf.Approximately(canvasRect.localScale.x, 0f) || Mathf.Approximately(canvasRect.localScale.y, 0f) || Mathf.Approximately(canvasRect.localScale.z, 0f)))
+            if (canvasRect != null)
             {
+                StretchRectTransform(canvasRect);
                 canvasRect.localScale = Vector3.one;
-                canvasRect.anchorMin = Vector2.zero;
-                canvasRect.anchorMax = Vector2.one;
-                canvasRect.offsetMin = Vector2.zero;
-                canvasRect.offsetMax = Vector2.zero;
+                canvasRect.anchoredPosition = Vector2.zero;
+                LayoutRebuilder.ForceRebuildLayoutImmediate(canvasRect);
             }
-
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.pixelPerfect = true;
+            canvas.overrideSorting = true;
+            canvas.sortingOrder = 100;
             CanvasScaler scaler = canvas.GetComponent<CanvasScaler>();
             if (scaler == null)
                 scaler = canvas.gameObject.AddComponent<CanvasScaler>();
-
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1080f, 1920f);
+            scaler.referenceResolution = new Vector2(720f, 1280f);
             scaler.matchWidthOrHeight = 1f;
-
             if (canvas.GetComponent<GraphicRaycaster>() == null)
                 canvas.gameObject.AddComponent<GraphicRaycaster>();
         }
+        private static Canvas FindDedicatedCanvas()
+        {
+            GameObject existingCanvas = GameObject.Find(DedicatedCanvasName);
+            return existingCanvas != null ? existingCanvas.GetComponent<Canvas>() : null;
+        }
+
         private void ResolveFeaturedCharacters()
         {
             featuredCharacters.Clear();
@@ -236,7 +302,7 @@ namespace Shogun.Features.UI
             contentLayout.spacing = 18f;
             contentLayout.childAlignment = TextAnchor.UpperCenter;
             contentLayout.childControlWidth = true;
-            contentLayout.childControlHeight = false;
+            contentLayout.childControlHeight = true;
             contentLayout.childForceExpandWidth = true;
             contentLayout.childForceExpandHeight = false;
             ContentSizeFitter frameFitter = contentFrame.gameObject.AddComponent<ContentSizeFitter>();
@@ -269,7 +335,7 @@ namespace Shogun.Features.UI
             background.sprite = GetWhiteSprite();
             background.color = new Color(0.07f, 0.05f, 0.06f, 1f);
 
-            RectTransform panel = CreateRect("EmergencyPanel", screenRoot, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-420f, -520f), new Vector2(420f, 520f));
+            RectTransform panel = CreateRect("EmergencyPanel", screenRoot, Vector2.zero, Vector2.one, new Vector2(24f, 120f), new Vector2(-24f, -120f));
             Image panelImage = panel.gameObject.AddComponent<Image>();
             panelImage.sprite = GetWhiteSprite();
             panelImage.color = new Color(0.12f, 0.1f, 0.1f, 0.96f);
@@ -282,7 +348,7 @@ namespace Shogun.Features.UI
             stack.spacing = 16f;
             stack.childAlignment = TextAnchor.UpperCenter;
             stack.childControlWidth = true;
-            stack.childControlHeight = false;
+            stack.childControlHeight = true;
             stack.childForceExpandWidth = true;
             stack.childForceExpandHeight = false;
 
@@ -293,12 +359,12 @@ namespace Shogun.Features.UI
             title.color = HeadingColor;
             title.rectTransform.offsetMin = new Vector2(0f, 74f);
             Text subtitle = CreateText("Subtitle", titleBlock, TextAnchor.MiddleCenter, 20, FontStyle.Bold);
-            subtitle.text = "Main menu fallback is active.";
+            subtitle.text = exception == null ? "SLICE FRONT DOOR" : "Main menu fallback is active.";
             subtitle.color = BodyColor;
             subtitle.rectTransform.offsetMin = new Vector2(0f, 18f);
             subtitle.rectTransform.offsetMax = new Vector2(0f, -58f);
             Text detail = CreateText("Detail", titleBlock, TextAnchor.LowerCenter, 15, FontStyle.Normal);
-            detail.text = "The full runtime-built menu failed, so this minimal in-scene menu is shown instead. You can still navigate from here.";
+            detail.text = exception == null ? "Enter Courtyard Ambush, Barracks, Summon, or Settings from a simpler stable menu while the richer layout is still under repair." : "The full runtime-built menu failed, so this minimal in-scene menu is shown instead. You can still navigate from here.";
             detail.color = MutedColor;
             detail.horizontalOverflow = HorizontalWrapMode.Wrap;
             detail.verticalOverflow = VerticalWrapMode.Overflow;
@@ -308,7 +374,7 @@ namespace Shogun.Features.UI
             VerticalLayoutGroup buttonLayout = buttonRoot.gameObject.AddComponent<VerticalLayoutGroup>();
             buttonLayout.spacing = 14f;
             buttonLayout.childControlWidth = true;
-            buttonLayout.childControlHeight = false;
+            buttonLayout.childControlHeight = true;
             buttonLayout.childForceExpandWidth = true;
             buttonLayout.childForceExpandHeight = false;
 
@@ -345,7 +411,7 @@ namespace Shogun.Features.UI
             VerticalLayoutGroup stack = content.gameObject.AddComponent<VerticalLayoutGroup>();
             stack.spacing = 14f;
             stack.childControlWidth = true;
-            stack.childControlHeight = false;
+            stack.childControlHeight = true;
             stack.childForceExpandWidth = true;
             stack.childForceExpandHeight = false;
 
@@ -414,7 +480,7 @@ namespace Shogun.Features.UI
             VerticalLayoutGroup stack = content.gameObject.AddComponent<VerticalLayoutGroup>();
             stack.spacing = 12f;
             stack.childControlWidth = true;
-            stack.childControlHeight = false;
+            stack.childControlHeight = true;
             stack.childForceExpandWidth = true;
             stack.childForceExpandHeight = false;
 
@@ -444,7 +510,7 @@ namespace Shogun.Features.UI
             VerticalLayoutGroup stack = content.gameObject.AddComponent<VerticalLayoutGroup>();
             stack.spacing = 12f;
             stack.childControlWidth = true;
-            stack.childControlHeight = false;
+            stack.childControlHeight = true;
             stack.childForceExpandWidth = true;
             stack.childForceExpandHeight = false;
 
@@ -478,7 +544,7 @@ namespace Shogun.Features.UI
             VerticalLayoutGroup stack = content.gameObject.AddComponent<VerticalLayoutGroup>();
             stack.spacing = 12f;
             stack.childControlWidth = true;
-            stack.childControlHeight = false;
+            stack.childControlHeight = true;
             stack.childForceExpandWidth = true;
             stack.childForceExpandHeight = false;
 
@@ -522,7 +588,7 @@ namespace Shogun.Features.UI
             if (contentFrame == null)
                 return;
 
-            Vector2Int currentScreenSize = new Vector2Int(Screen.width, Screen.height);
+            Vector2Int currentScreenSize = GetLayoutSize();
             Rect safeArea = Screen.safeArea;
             float parentWidth = ((RectTransform)contentFrame.parent).rect.width;
             if (!force && currentScreenSize == lastScreenSize && safeArea == lastSafeArea && Mathf.Approximately(parentWidth, lastParentWidth))
@@ -559,6 +625,20 @@ namespace Shogun.Features.UI
                 elements.Add(definitions[i].ElementalType);
             return elements.Count;
         }
+        private Vector2Int GetLayoutSize()
+        {
+            RectTransform canvasRect = targetCanvas != null ? targetCanvas.transform as RectTransform : null;
+            if (canvasRect != null)
+            {
+                int width = Mathf.RoundToInt(canvasRect.rect.width);
+                int height = Mathf.RoundToInt(canvasRect.rect.height);
+                if (width > 0 && height > 0)
+                    return new Vector2Int(width, height);
+            }
+
+            return new Vector2Int(Screen.width, Screen.height);
+        }
+
         private static void ConfigureGrid(GridLayoutGroup grid, LayoutElement gridLayout, LayoutElement panelLayout, int itemCount, int columns, float availableWidth, float minCellWidth, float cellHeight, float headerHeight, float bottomPadding)
         {
             if (grid == null || gridLayout == null || panelLayout == null)
@@ -890,25 +970,48 @@ namespace Shogun.Features.UI
             return rt;
         }
 
+        private static void StretchRectTransform(RectTransform rectTransform)
+        {
+            if (rectTransform == null)
+                return;
+            rectTransform.anchorMin = Vector2.zero;
+            rectTransform.anchorMax = Vector2.one;
+            rectTransform.offsetMin = Vector2.zero;
+            rectTransform.offsetMax = Vector2.zero;
+            rectTransform.pivot = new Vector2(0.5f, 0.5f);
+        }
+
         private static void ClearChildren(Transform parent)
         {
             if (parent == null)
                 return;
             for (int i = parent.childCount - 1; i >= 0; i--)
-                Destroy(parent.GetChild(i).gameObject);
+            {
+                GameObject child = parent.GetChild(i).gameObject;
+                if (Application.isPlaying)
+                    Destroy(child);
+                else
+                    DestroyImmediate(child);
+            }
         }
 
         private static Canvas CreateFallbackCanvas()
         {
-            GameObject canvasGo = new GameObject("MainMenuCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+            GameObject canvasGo = new GameObject(DedicatedCanvasName, typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+            RectTransform canvasRect = (RectTransform)canvasGo.transform;
+            StretchRectTransform(canvasRect);
+            canvasRect.localScale = Vector3.one;
             Canvas canvas = canvasGo.GetComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.pixelPerfect = true;
+            canvas.overrideSorting = true;
+            canvas.sortingOrder = 100;
             CanvasScaler scaler = canvasGo.GetComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1080f, 1920f);
+            scaler.referenceResolution = new Vector2(720f, 1280f);
             scaler.matchWidthOrHeight = 1f;
             RectTransform safeAreaRoot = CreateRect("UI_SafeAreaPanel", canvasGo.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            StretchRectTransform(safeAreaRoot);
             safeAreaRoot.gameObject.AddComponent<SafeAreaHandler>();
             CreateRect("HUD", safeAreaRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             CreateRect("Menu_Main", safeAreaRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
@@ -935,3 +1038,8 @@ namespace Shogun.Features.UI
         }
     }
 }
+
+
+
+
+

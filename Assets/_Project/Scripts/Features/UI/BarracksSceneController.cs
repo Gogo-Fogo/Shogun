@@ -7,10 +7,13 @@ using UnityEngine.UI;
 
 namespace Shogun.Features.UI
 {
+    [ExecuteAlways]
     [DefaultExecutionOrder(20)]
     public sealed partial class BarracksSceneController : MonoBehaviour
     {
         private const string BarracksSceneName = "Barracks";
+        private const bool PreferMinimalBarracksLayout = true;
+        private const string DedicatedCanvasName = "BarracksCanvas";
         private const float ContentHorizontalMargin = 28f;
         private const float PhoneContentMaxWidth = 980f;
         private const float TabletContentMaxWidth = 1220f;
@@ -35,9 +38,10 @@ namespace Shogun.Features.UI
         private RectTransform hostRoot;
         private RectTransform screenRoot;
         private RectTransform contentFrame;
-        private HorizontalLayoutGroup detailLayout;
+        private VerticalLayoutGroup detailLayout;
         private GridLayoutGroup rosterGrid;
         private RectTransform rosterViewport;
+        private ScrollRect screenScrollRect;
         private Text ownedCountLabel;
         private Text elementCoverageLabel;
         private Text collectionDepthLabel;
@@ -59,6 +63,7 @@ namespace Shogun.Features.UI
         private Vector2Int lastScreenSize = new Vector2Int(-1, -1);
         private Rect lastSafeArea = new Rect(-1f, -1f, -1f, -1f);
         private float lastParentWidth = -1f;
+        private bool usingEmergencyLayout;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void EnsureControllerExists()
@@ -71,6 +76,11 @@ namespace Shogun.Features.UI
             new GameObject("BarracksSceneController").AddComponent<BarracksSceneController>();
         }
 
+        private void OnEnable()
+        {
+            if (!Application.isPlaying)
+                RebuildEditorPreview();
+        }
         private void Start()
         {
             if (!SceneManager.GetActiveScene().name.Equals(BarracksSceneName, StringComparison.OrdinalIgnoreCase))
@@ -78,30 +88,116 @@ namespace Shogun.Features.UI
                 enabled = false;
                 return;
             }
-
-            ResolveCanvas();
-            ResolveOwnedCharacters();
-            BuildScreen();
-            SelectCharacter(Mathf.Clamp(selectedIndex, 0, Mathf.Max(0, ownedCharacters.Count - 1)));
-            ApplyResponsiveLayout(true);
+            BuildSceneContents();
         }
-
         private void Update() => ApplyResponsiveLayout(false);
+        private void RebuildEditorPreview()
+        {
+            if (!isActiveAndEnabled)
+                return;
+            if (!SceneManager.GetActiveScene().name.Equals(BarracksSceneName, StringComparison.OrdinalIgnoreCase))
+                return;
+            BuildSceneContents();
+        }
+        private void BuildSceneContents()
+        {
+            ResolveCanvas();
+            usingEmergencyLayout = false;
+            ResolveOwnedCharacters();
+            if (PreferMinimalBarracksLayout)
+            {
+                BuildEmergencyFallback(null);
+                SelectCharacter(Mathf.Clamp(selectedIndex, 0, Mathf.Max(0, ownedCharacters.Count - 1)));
+                ApplyResponsiveLayout(true);
+                return;
+            }
+            try
+            {
+                BuildScreen();
+                SelectCharacter(Mathf.Clamp(selectedIndex, 0, Mathf.Max(0, ownedCharacters.Count - 1)));
+                ApplyResponsiveLayout(true);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError($"[BarracksSceneController] Failed to build full barracks scene. Falling back to minimal layout. {exception}");
+                BuildEmergencyFallback(exception);
+                SelectCharacter(Mathf.Clamp(selectedIndex, 0, Mathf.Max(0, ownedCharacters.Count - 1)));
+                ApplyResponsiveLayout(true);
+            }
+        }
 
         private void ResolveCanvas()
         {
-            targetCanvas = FindFirstObjectByType<Canvas>();
+            targetCanvas = FindDedicatedCanvas();
             if (targetCanvas == null)
             {
-                Debug.LogWarning("[BarracksSceneController] No Canvas found. Creating fallback canvas.");
+                Debug.LogWarning("[BarracksSceneController] Dedicated barracks canvas was not found. Creating one now.");
                 targetCanvas = CreateFallbackCanvas();
             }
 
-            Transform safeAreaPanel = targetCanvas.transform.Find("UI_SafeAreaPanel") ?? targetCanvas.transform;
+            RepairCanvasIfNeeded(targetCanvas);
+
+            Transform safeAreaPanel = targetCanvas.transform.Find("UI_SafeAreaPanel");
+            if (safeAreaPanel == null)
+            {
+                safeAreaPanel = CreateRect("UI_SafeAreaPanel", targetCanvas.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+                safeAreaPanel.gameObject.AddComponent<SafeAreaHandler>();
+                CreateRect("HUD", safeAreaPanel, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+                CreateRect("Menu_Main", safeAreaPanel, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+                CreateRect("Popups", safeAreaPanel, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            }
+
+            RectTransform safeAreaRect = safeAreaPanel as RectTransform;
+            if (safeAreaRect != null)
+                StretchRectTransform(safeAreaRect);
+
             Transform menuRoot = safeAreaPanel.Find("Menu_Main");
-            hostRoot = (menuRoot as RectTransform) ?? (safeAreaPanel as RectTransform);
+            if (menuRoot == null)
+                menuRoot = CreateRect("Menu_Main", safeAreaPanel, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+
+            RectTransform menuRootRect = menuRoot as RectTransform;
+            if (menuRootRect != null)
+                StretchRectTransform(menuRootRect);
+
+            hostRoot = menuRootRect ?? safeAreaRect;
         }
 
+        private static void RepairCanvasIfNeeded(Canvas canvas)
+        {
+            if (canvas == null)
+                return;
+
+            RectTransform canvasRect = canvas.transform as RectTransform;
+            if (canvasRect != null)
+            {
+                StretchRectTransform(canvasRect);
+                canvasRect.localScale = Vector3.one;
+                canvasRect.anchoredPosition = Vector2.zero;
+                LayoutRebuilder.ForceRebuildLayoutImmediate(canvasRect);
+            }
+
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.pixelPerfect = true;
+            canvas.overrideSorting = true;
+            canvas.sortingOrder = 100;
+
+            CanvasScaler scaler = canvas.GetComponent<CanvasScaler>();
+            if (scaler == null)
+                scaler = canvas.gameObject.AddComponent<CanvasScaler>();
+
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(720f, 1280f);
+            scaler.matchWidthOrHeight = 1f;
+
+            if (canvas.GetComponent<GraphicRaycaster>() == null)
+                canvas.gameObject.AddComponent<GraphicRaycaster>();
+        }
+
+        private static Canvas FindDedicatedCanvas()
+        {
+            GameObject existingCanvas = GameObject.Find(DedicatedCanvasName);
+            return existingCanvas != null ? existingCanvas.GetComponent<Canvas>() : null;
+        }
         private void ResolveOwnedCharacters()
         {
             ownedCharacters.Clear();
@@ -137,6 +233,7 @@ namespace Shogun.Features.UI
             detailMetadataLabel.text = $"{BarracksCharacterPresentation.BuildMetadataText(selected)}\nOwned Copies: {ownedCopies}";
             detailStatsLabel.text = BarracksCharacterPresentation.BuildStatsText(selected);
             detailSpecialLabel.text = BarracksCharacterPresentation.BuildSpecialText(selected);
+            RefreshDetailTextLayout();
 
             ClearChildren(detailChipRow);
             CreateChip(detailChipRow, BarracksCharacterPresentation.GetElementLabel(selected.ElementalType), BarracksCharacterPresentation.GetElementColor(selected.ElementalType));
@@ -156,11 +253,33 @@ namespace Shogun.Features.UI
             detailMetadataLabel.text = "Collection profile unavailable.";
             detailStatsLabel.text = "Combat stats unavailable.";
             detailSpecialLabel.text = "Ability data unavailable.";
+            RefreshDetailTextLayout();
             ClearChildren(detailChipRow);
             detailPortraitImage.sprite = null;
             detailPortraitImage.enabled = false;
             detailPortraitPlaceholder.SetActive(true);
             detailPortraitPlaceholderLabel.text = "--";
+        }
+
+        private void RefreshDetailTextLayout()
+        {
+            RefreshTextBlockHeight(detailLoreLabel, 72f, 8f);
+            RefreshTextBlockHeight(detailMetadataLabel, 104f, 8f);
+            RefreshTextBlockHeight(detailStatsLabel, 42f, 6f);
+            RefreshTextBlockHeight(detailSpecialLabel, 148f, 8f);
+        }
+
+        private static void RefreshTextBlockHeight(Text label, float minHeight, float padding)
+        {
+            if (label == null)
+                return;
+
+            LayoutElement layout = label.GetComponent<LayoutElement>();
+            if (layout == null)
+                return;
+
+            layout.minHeight = minHeight;
+            layout.preferredHeight = Mathf.Max(minHeight, label.preferredHeight + padding);
         }
 
         private int GetElementCoverageCount()
@@ -185,10 +304,10 @@ namespace Shogun.Features.UI
 
         private void ApplyResponsiveLayout(bool force)
         {
-            if (contentFrame == null || rosterGrid == null || hostRoot == null)
+            if (contentFrame == null || hostRoot == null)
                 return;
 
-            Vector2Int currentScreenSize = new Vector2Int(Screen.width, Screen.height);
+            Vector2Int currentScreenSize = GetLayoutSize();
             Rect safeArea = Screen.safeArea;
             float parentWidth = ((RectTransform)contentFrame.parent).rect.width;
             if (!force && currentScreenSize == lastScreenSize && safeArea == lastSafeArea && Mathf.Approximately(parentWidth, lastParentWidth))
@@ -206,6 +325,15 @@ namespace Shogun.Features.UI
 
             float contentWidth = Mathf.Max(320f, Mathf.Min(maxWidth, parentWidth - (ContentHorizontalMargin * 2f)));
             contentFrame.sizeDelta = new Vector2(contentWidth, 0f);
+            RefreshDetailTextLayout();
+            if (rosterGrid == null || rosterViewport == null)
+            {
+                if (detailLayout != null)
+                    detailLayout.spacing = contentWidth >= 1100f ? 30f : 22f;
+                LayoutRebuilder.ForceRebuildLayoutImmediate(contentFrame);
+                ResetScreenScrollIfNeeded();
+                return;
+            }
             rosterGrid.constraintCount = contentWidth >= 1120f ? 4 : contentWidth >= 860f ? 3 : 2;
 
             int columns = rosterGrid.constraintCount;
@@ -217,6 +345,32 @@ namespace Shogun.Features.UI
                 detailLayout.spacing = contentWidth >= 1100f ? 30f : 22f;
 
             LayoutRebuilder.ForceRebuildLayoutImmediate(contentFrame);
+            ResetScreenScrollIfNeeded();
+        }
+
+        private void ResetScreenScrollIfNeeded()
+        {
+            if (screenScrollRect == null || screenScrollRect.content == null)
+                return;
+
+            Canvas.ForceUpdateCanvases();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(screenScrollRect.content);
+            screenScrollRect.StopMovement();
+            screenScrollRect.verticalNormalizedPosition = 1f;
+        }
+
+        private Vector2Int GetLayoutSize()
+        {
+            RectTransform canvasRect = targetCanvas != null ? targetCanvas.transform as RectTransform : null;
+            if (canvasRect != null)
+            {
+                int width = Mathf.RoundToInt(canvasRect.rect.width);
+                int height = Mathf.RoundToInt(canvasRect.rect.height);
+                if (width > 0 && height > 0)
+                    return new Vector2Int(width, height);
+            }
+
+            return new Vector2Int(Screen.width, Screen.height);
         }
 
         private sealed class CardView
@@ -228,4 +382,12 @@ namespace Shogun.Features.UI
         }
     }
 }
+
+
+
+
+
+
+
+
 

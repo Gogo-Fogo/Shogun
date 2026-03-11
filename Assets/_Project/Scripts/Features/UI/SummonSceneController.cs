@@ -7,12 +7,15 @@ using UnityEngine.UI;
 
 namespace Shogun.Features.UI
 {
+    [ExecuteAlways]
     [DefaultExecutionOrder(20)]
     public sealed class SummonSceneController : MonoBehaviour
     {
         private const string SummonSceneName = "Summon";
         private const string MainMenuSceneName = "MainMenu";
         private const string BarracksSceneName = "Barracks";
+        private const string DedicatedCanvasName = "SummonCanvas";
+        private const bool PreferMinimalSummonLayout = true;
         private const float ContentHorizontalMargin = 28f;
         private const float PhoneContentMaxWidth = 960f;
         private const float TabletContentMaxWidth = 1160f;
@@ -59,8 +62,10 @@ namespace Shogun.Features.UI
         private Text bannerSummaryLabel;
         private Text bannerOddsLabel;
         private Text bannerDisclosureLabel;
+        private Text featuredSummaryLabel;
         private Text resultStatusLabel;
         private Text resultSummaryLabel;
+        private Text resultListLabel;
         private GameObject resultEmptyState;
         private RectTransform featuredGridRoot;
         private RectTransform resultGridRoot;
@@ -71,6 +76,7 @@ namespace Shogun.Features.UI
         private Vector2Int lastScreenSize = new Vector2Int(-1, -1);
         private Rect lastSafeArea = new Rect(-1f, -1f, -1f, -1f);
         private float lastParentWidth = -1f;
+        private bool usingEmergencyLayout;
 
         private sealed class BannerButtonView
         {
@@ -92,6 +98,11 @@ namespace Shogun.Features.UI
             new GameObject("SummonSceneController").AddComponent<SummonSceneController>();
         }
 
+        private void OnEnable()
+        {
+            if (!Application.isPlaying)
+                RebuildEditorPreview();
+        }
         private void Start()
         {
             if (!SceneManager.GetActiveScene().name.Equals(SummonSceneName, StringComparison.OrdinalIgnoreCase))
@@ -99,30 +110,115 @@ namespace Shogun.Features.UI
                 enabled = false;
                 return;
             }
-
+            BuildSceneContents();
+        }
+        private void Update() => ApplyResponsiveLayout(false);
+        private void RebuildEditorPreview()
+        {
+            if (!isActiveAndEnabled)
+                return;
+            if (!SceneManager.GetActiveScene().name.Equals(SummonSceneName, StringComparison.OrdinalIgnoreCase))
+                return;
+            BuildSceneContents();
+        }
+        private void BuildSceneContents()
+        {
             ResolveCanvas();
             ResolveBanners();
-            BuildScreen();
-            SelectBanner(banners.Count > 0 ? banners[0].BannerId : string.Empty);
-            ApplyResponsiveLayout(true);
+            if (PreferMinimalSummonLayout)
+            {
+                BuildEmergencyFallback(null);
+                SelectBanner(banners.Count > 0 ? banners[0].BannerId : string.Empty);
+                ApplyResponsiveLayout(true);
+                return;
+            }
+            try
+            {
+                BuildScreen();
+                SelectBanner(banners.Count > 0 ? banners[0].BannerId : string.Empty);
+                ApplyResponsiveLayout(true);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError($"[SummonSceneController] Failed to build full summon scene. Falling back to minimal layout. {exception}");
+                BuildEmergencyFallback(exception);
+                SelectBanner(banners.Count > 0 ? banners[0].BannerId : string.Empty);
+                ApplyResponsiveLayout(true);
+            }
         }
-
-        private void Update() => ApplyResponsiveLayout(false);
 
         private void ResolveCanvas()
         {
-            targetCanvas = FindFirstObjectByType<Canvas>();
+            targetCanvas = FindDedicatedCanvas();
             if (targetCanvas == null)
             {
-                Debug.LogWarning("[SummonSceneController] No Canvas found. Creating fallback canvas.");
+                Debug.LogWarning("[SummonSceneController] Dedicated summon canvas was not found. Creating one now.");
                 targetCanvas = CreateFallbackCanvas();
             }
 
-            Transform safeAreaPanel = targetCanvas.transform.Find("UI_SafeAreaPanel") ?? targetCanvas.transform;
+            RepairCanvasIfNeeded(targetCanvas);
+
+            Transform safeAreaPanel = targetCanvas.transform.Find("UI_SafeAreaPanel");
+            if (safeAreaPanel == null)
+            {
+                safeAreaPanel = CreateRect("UI_SafeAreaPanel", targetCanvas.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+                safeAreaPanel.gameObject.AddComponent<SafeAreaHandler>();
+                CreateRect("HUD", safeAreaPanel, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+                CreateRect("Menu_Main", safeAreaPanel, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+                CreateRect("Popups", safeAreaPanel, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            }
+
+            RectTransform safeAreaRect = safeAreaPanel as RectTransform;
+            if (safeAreaRect != null)
+                StretchRectTransform(safeAreaRect);
+
             Transform menuRoot = safeAreaPanel.Find("Menu_Main");
-            hostRoot = (menuRoot as RectTransform) ?? (safeAreaPanel as RectTransform);
+            if (menuRoot == null)
+                menuRoot = CreateRect("Menu_Main", safeAreaPanel, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+
+            RectTransform menuRootRect = menuRoot as RectTransform;
+            if (menuRootRect != null)
+                StretchRectTransform(menuRootRect);
+
+            hostRoot = menuRootRect ?? safeAreaRect;
         }
 
+        private static void RepairCanvasIfNeeded(Canvas canvas)
+        {
+            if (canvas == null)
+                return;
+
+            RectTransform canvasRect = canvas.transform as RectTransform;
+            if (canvasRect != null)
+            {
+                StretchRectTransform(canvasRect);
+                canvasRect.localScale = Vector3.one;
+                canvasRect.anchoredPosition = Vector2.zero;
+                LayoutRebuilder.ForceRebuildLayoutImmediate(canvasRect);
+            }
+
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.pixelPerfect = true;
+            canvas.overrideSorting = true;
+            canvas.sortingOrder = 100;
+
+            CanvasScaler scaler = canvas.GetComponent<CanvasScaler>();
+            if (scaler == null)
+                scaler = canvas.gameObject.AddComponent<CanvasScaler>();
+
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(720f, 1280f);
+            scaler.matchWidthOrHeight = 1f;
+
+            if (canvas.GetComponent<GraphicRaycaster>() == null)
+                canvas.gameObject.AddComponent<GraphicRaycaster>();
+        }
+
+        private static Canvas FindDedicatedCanvas()
+        {
+            GameObject existingCanvas = GameObject.Find(DedicatedCanvasName);
+            return existingCanvas != null ? existingCanvas.GetComponent<Canvas>() : null;
+        }
         private void ResolveBanners()
         {
             banners.Clear();
@@ -179,6 +275,202 @@ namespace Shogun.Features.UI
             BuildDetailPanel();
             BuildResultsPanel();
             BuildFooterPanel();
+        }
+
+        private void BuildEmergencyFallback(Exception exception)
+        {
+            bannerButtons.Clear();
+            bannerGrid = null;
+            featuredGrid = null;
+            resultGrid = null;
+            bannerPanelLayout = null;
+            detailPanelLayout = null;
+            resultPanelLayout = null;
+            bannerGridLayout = null;
+            featuredGridLayout = null;
+            resultGridLayout = null;
+            featuredGridRoot = null;
+            resultGridRoot = null;
+            resultEmptyState = null;
+
+            ClearChildren(hostRoot);
+            RectTransform screenRoot = CreateRect("EmergencySummonScreen", hostRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            Image background = screenRoot.gameObject.AddComponent<Image>();
+            background.sprite = GetWhiteSprite();
+            background.color = BackgroundColor;
+
+            RectTransform panel = CreateRect("EmergencyPanel", screenRoot, Vector2.zero, Vector2.one, new Vector2(24f, 96f), new Vector2(-24f, -88f));
+            Image panelImage = panel.gameObject.AddComponent<Image>();
+            panelImage.sprite = GetWhiteSprite();
+            panelImage.color = new Color(0.12f, 0.1f, 0.1f, 0.97f);
+            Outline outline = panel.gameObject.AddComponent<Outline>();
+            outline.effectColor = new Color(0f, 0f, 0f, 0.45f);
+            outline.effectDistance = new Vector2(3f, -3f);
+
+            contentFrame = CreateRect("EmergencyContent", panel, Vector2.zero, Vector2.one, new Vector2(28f, 28f), new Vector2(-28f, -28f));
+            VerticalLayoutGroup stack = contentFrame.gameObject.AddComponent<VerticalLayoutGroup>();
+            stack.spacing = 14f;
+            stack.childAlignment = TextAnchor.UpperCenter;
+            stack.childControlWidth = true;
+            stack.childControlHeight = true;
+            stack.childForceExpandWidth = true;
+            stack.childForceExpandHeight = false;
+            contentFrame.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            BuildEmergencyHeader(exception);
+            BuildEmergencyBannerPanel();
+            BuildEmergencyDetailPanel();
+            BuildEmergencyResultsPanel();
+        }
+
+        private void BuildEmergencyHeader(Exception exception)
+        {
+            RectTransform root = CreateRect("EmergencyHeader", contentFrame, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            root.gameObject.AddComponent<LayoutElement>().preferredHeight = exception == null ? 212f : 276f;
+
+            Text title = CreateText("Title", root, TextAnchor.UpperCenter, 46, FontStyle.Bold);
+            title.text = "SUMMON GATE";
+            title.color = HeadingColor;
+            title.rectTransform.offsetMin = new Vector2(0f, 134f);
+
+            Text subtitle = CreateText("Subtitle", root, TextAnchor.MiddleCenter, 17, FontStyle.Bold);
+            subtitle.text = "Stable banner test surface while the richer summon layout is under repair.";
+            subtitle.color = BodyColor;
+            subtitle.rectTransform.offsetMin = new Vector2(0f, 72f);
+            subtitle.rectTransform.offsetMax = new Vector2(0f, -82f);
+
+            RectTransform statePill = CreatePill(root, "StatePill", new Vector2(0.04f, 0.44f), new Vector2(0.96f, 0.64f), new Color(0.16f, 0.15f, 0.14f, 0.98f));
+            bannerStateLabel = CreateText("StateLabel", statePill, TextAnchor.MiddleCenter, 14, FontStyle.Bold);
+            bannerStateLabel.color = HeadingColor;
+
+            RectTransform sealsPill = CreatePill(root, "SealsPill", new Vector2(0.04f, 0.22f), new Vector2(0.96f, 0.42f), new Color(0.16f, 0.27f, 0.37f, 0.98f));
+            sealsLabel = CreateText("SealsLabel", sealsPill, TextAnchor.MiddleCenter, 18, FontStyle.Bold);
+            sealsLabel.color = HeadingColor;
+
+            RectTransform collectionPill = CreatePill(root, "CollectionPill", new Vector2(0.04f, 0f), new Vector2(0.96f, 0.2f), new Color(0.25f, 0.19f, 0.11f, 0.98f));
+            collectionLabel = CreateText("CollectionLabel", collectionPill, TextAnchor.MiddleCenter, 16, FontStyle.Bold);
+            collectionLabel.color = HeadingColor;
+
+            if (exception == null)
+                return;
+
+            RectTransform errorRoot = CreateRect("ErrorRoot", root, new Vector2(0.04f, 0f), new Vector2(0.96f, 0.3f), Vector2.zero, Vector2.zero);
+            Image errorBackground = errorRoot.gameObject.AddComponent<Image>();
+            errorBackground.sprite = GetWhiteSprite();
+            errorBackground.color = new Color(0.18f, 0.08f, 0.08f, 0.9f);
+            Text errorLabel = CreateText("ErrorLabel", errorRoot, TextAnchor.UpperLeft, 12, FontStyle.Normal);
+            errorLabel.text = $"Fallback active because the rich summon layout failed:`n{exception.GetType().Name}: {exception.Message}";
+            errorLabel.color = new Color(1f, 0.86f, 0.82f, 1f);
+            errorLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
+            errorLabel.verticalOverflow = VerticalWrapMode.Overflow;
+            errorLabel.rectTransform.offsetMin = new Vector2(14f, 12f);
+            errorLabel.rectTransform.offsetMax = new Vector2(-14f, -12f);
+        }
+
+        private void BuildEmergencyBannerPanel()
+        {
+            CreatePanel(contentFrame, "EmergencyBannerPanel", Mathf.Max(170f, 74f + (banners.Count * 68f)), PanelOuterColor, PanelInnerColor, out RectTransform inner);
+            RectTransform content = CreateRect("Content", inner, Vector2.zero, Vector2.one, new Vector2(24f, 20f), new Vector2(-24f, -20f));
+            VerticalLayoutGroup stack = content.gameObject.AddComponent<VerticalLayoutGroup>();
+            stack.spacing = 10f;
+            stack.childControlWidth = true;
+            stack.childControlHeight = true;
+            stack.childForceExpandWidth = true;
+            stack.childForceExpandHeight = false;
+
+            Text heading = CreateText("Heading", content, TextAnchor.UpperLeft, 26, FontStyle.Bold);
+            heading.text = "ACTIVE BANNERS";
+            heading.color = HeadingColor;
+            heading.gameObject.AddComponent<LayoutElement>().preferredHeight = 38f;
+
+            if (banners.Count == 0)
+            {
+                CreateEmptyMessageCard(content, "No local test banners are currently registered.");
+                return;
+            }
+
+            for (int i = 0; i < banners.Count; i++)
+                bannerButtons.Add(CreateBannerButton(content, banners[i]));
+        }
+
+        private void BuildEmergencyDetailPanel()
+        {
+            CreatePanel(contentFrame, "EmergencyDetailPanel", 388f, PanelOuterColor, PanelInnerColor, out RectTransform inner);
+            detailPanelLayout = inner.parent.GetComponent<LayoutElement>();
+            detailAccentBand = CreateRect("Accent", inner, new Vector2(0f, 0f), new Vector2(0f, 1f), Vector2.zero, new Vector2(10f, 0f)).gameObject.AddComponent<Image>();
+            detailAccentBand.sprite = GetWhiteSprite();
+            RectTransform content = CreateRect("Content", inner, Vector2.zero, Vector2.one, new Vector2(24f, 20f), new Vector2(-24f, -20f));
+            VerticalLayoutGroup stack = content.gameObject.AddComponent<VerticalLayoutGroup>();
+            stack.spacing = 10f;
+            stack.childControlWidth = true;
+            stack.childControlHeight = true;
+            stack.childForceExpandWidth = true;
+            stack.childForceExpandHeight = false;
+
+            bannerTitleLabel = CreateText("BannerTitle", content, TextAnchor.UpperLeft, 34, FontStyle.Bold);
+            bannerTitleLabel.color = HeadingColor;
+            bannerTitleLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 42f;
+            bannerSubtitleLabel = CreateText("BannerSubtitle", content, TextAnchor.UpperLeft, 16, FontStyle.Bold);
+            bannerSubtitleLabel.color = BodyColor;
+            bannerSubtitleLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 40f;
+            bannerSummaryLabel = CreateText("BannerSummary", content, TextAnchor.UpperLeft, 15, FontStyle.Normal);
+            bannerSummaryLabel.color = BodyColor;
+            bannerSummaryLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
+            bannerSummaryLabel.verticalOverflow = VerticalWrapMode.Overflow;
+            bannerSummaryLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 62f;
+            bannerOddsLabel = CreateText("BannerOdds", content, TextAnchor.UpperLeft, 14, FontStyle.Bold);
+            bannerOddsLabel.color = new Color(0.95f, 0.88f, 0.7f, 1f);
+            bannerOddsLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 24f;
+            bannerDisclosureLabel = CreateText("BannerDisclosure", content, TextAnchor.UpperLeft, 13, FontStyle.Normal);
+            bannerDisclosureLabel.color = MutedColor;
+            bannerDisclosureLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
+            bannerDisclosureLabel.verticalOverflow = VerticalWrapMode.Overflow;
+            bannerDisclosureLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 38f;
+            featuredSummaryLabel = CreateText("FeaturedSummary", content, TextAnchor.UpperLeft, 14, FontStyle.Normal);
+            featuredSummaryLabel.color = BodyColor;
+            featuredSummaryLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
+            featuredSummaryLabel.verticalOverflow = VerticalWrapMode.Overflow;
+            featuredSummaryLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 72f;
+
+            RectTransform actions = CreateRect("Actions", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            actions.gameObject.AddComponent<LayoutElement>().preferredHeight = 56f;
+            HorizontalLayoutGroup actionLayout = actions.gameObject.AddComponent<HorizontalLayoutGroup>();
+            actionLayout.spacing = 10f;
+            actionLayout.childControlWidth = true;
+            actionLayout.childControlHeight = true;
+            actionLayout.childForceExpandWidth = true;
+            actionLayout.childForceExpandHeight = false;
+            CreateActionButton(actions, "SinglePull", "SINGLE PULL", ButtonPrimaryColor, () => PerformSummon(1));
+            CreateActionButton(actions, "TenPull", "PULL x10", ButtonSecondaryColor, () => PerformSummon(10));
+            CreateActionButton(actions, "Barracks", "BARRACKS", ButtonNeutralColor, () => LoadSceneIfAvailable(BarracksSceneName));
+            CreateActionButton(actions, "MainMenu", "MAIN MENU", ButtonTertiaryColor, () => LoadSceneIfAvailable(MainMenuSceneName));
+        }
+
+        private void BuildEmergencyResultsPanel()
+        {
+            CreatePanel(contentFrame, "EmergencyResultsPanel", 256f, PanelOuterColor, PanelInnerColor, out RectTransform inner);
+            resultPanelLayout = inner.parent.GetComponent<LayoutElement>();
+            RectTransform content = CreateRect("Content", inner, Vector2.zero, Vector2.one, new Vector2(24f, 20f), new Vector2(-24f, -20f));
+            VerticalLayoutGroup stack = content.gameObject.AddComponent<VerticalLayoutGroup>();
+            stack.spacing = 10f;
+            stack.childControlWidth = true;
+            stack.childControlHeight = true;
+            stack.childForceExpandWidth = true;
+            stack.childForceExpandHeight = false;
+
+            resultStatusLabel = CreateText("Status", content, TextAnchor.UpperLeft, 26, FontStyle.Bold);
+            resultStatusLabel.color = HeadingColor;
+            resultStatusLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 36f;
+            resultSummaryLabel = CreateText("Summary", content, TextAnchor.UpperLeft, 14, FontStyle.Normal);
+            resultSummaryLabel.color = BodyColor;
+            resultSummaryLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
+            resultSummaryLabel.verticalOverflow = VerticalWrapMode.Overflow;
+            resultSummaryLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 58f;
+            resultListLabel = CreateText("ResultList", content, TextAnchor.UpperLeft, 14, FontStyle.Normal);
+            resultListLabel.color = MutedColor;
+            resultListLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
+            resultListLabel.verticalOverflow = VerticalWrapMode.Overflow;
+            resultListLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 110f;
         }
 
         private void BuildHeader()
@@ -386,11 +678,6 @@ namespace Shogun.Features.UI
 
         private void PopulateFeaturedUnits(TestSummonService.TestSummonBanner banner)
         {
-            ClearChildren(featuredGridRoot);
-            featuredGrid.spacing = new Vector2(14f, 14f);
-            featuredGrid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-            featuredGrid.constraintCount = 3;
-            featuredGrid.cellSize = new Vector2(260f, 156f);
             List<CharacterDefinition> featuredDefinitions = new List<CharacterDefinition>();
             for (int i = 0; i < banner.FeaturedCharacterIds.Count; i++)
             {
@@ -398,6 +685,31 @@ namespace Shogun.Features.UI
                 if (definition != null)
                     featuredDefinitions.Add(definition);
             }
+
+            if (featuredGridRoot == null || featuredGrid == null || featuredGridLayout == null)
+            {
+                if (featuredSummaryLabel != null)
+                {
+                    if (featuredDefinitions.Count == 0)
+                    {
+                        featuredSummaryLabel.text = "FEATURED UNITS\nNo featured character definitions resolved for this banner.";
+                    }
+                    else
+                    {
+                        List<string> names = new List<string>();
+                        for (int i = 0; i < featuredDefinitions.Count; i++)
+                            names.Add(BarracksCharacterPresentation.GetDisplayName(featuredDefinitions[i]).ToUpperInvariant());
+                        featuredSummaryLabel.text = $"FEATURED UNITS\n{string.Join(" • ", names)}";
+                    }
+                }
+                return;
+            }
+
+            ClearChildren(featuredGridRoot);
+            featuredGrid.spacing = new Vector2(14f, 14f);
+            featuredGrid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            featuredGrid.constraintCount = 3;
+            featuredGrid.cellSize = new Vector2(260f, 156f);
 
             if (featuredDefinitions.Count == 0)
             {
@@ -442,7 +754,33 @@ namespace Shogun.Features.UI
         }
         private void PopulateResults()
         {
-            resultEmptyState.SetActive(lastResults.Count == 0);
+            if (resultGridRoot == null || resultGrid == null || resultGridLayout == null)
+            {
+                if (resultListLabel != null)
+                {
+                    if (lastResults.Count == 0)
+                    {
+                        resultListLabel.text = "No summon performed yet.";
+                    }
+                    else
+                    {
+                        List<string> lines = new List<string>();
+                        for (int i = 0; i < lastResults.Count; i++)
+                        {
+                            TestSummonService.TestSummonPullResult result = lastResults[i];
+                            string prefix = result.IsNew ? "NEW" : $"x{result.OwnedCount}";
+                            lines.Add($"{prefix} • {BarracksCharacterPresentation.GetDisplayName(result.Definition).ToUpperInvariant()} • {BarracksCharacterPresentation.GetRarityLabel(result.Definition.Rarity)}");
+                        }
+
+                        resultListLabel.text = string.Join("\n", lines);
+                    }
+                }
+
+                return;
+            }
+
+            if (resultEmptyState != null)
+                resultEmptyState.SetActive(lastResults.Count == 0);
             ClearChildren(resultGridRoot);
             resultGrid.spacing = new Vector2(12f, 12f);
             resultGrid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
@@ -467,7 +805,7 @@ namespace Shogun.Features.UI
             if (contentFrame == null)
                 return;
 
-            Vector2Int currentScreenSize = new Vector2Int(Screen.width, Screen.height);
+            Vector2Int currentScreenSize = GetLayoutSize();
             Rect safeArea = Screen.safeArea;
             float parentWidth = ((RectTransform)contentFrame.parent).rect.width;
             if (!force && currentScreenSize == lastScreenSize && safeArea == lastSafeArea && Mathf.Approximately(parentWidth, lastParentWidth))
@@ -485,11 +823,30 @@ namespace Shogun.Features.UI
 
             float contentWidth = Mathf.Max(320f, Mathf.Min(maxWidth, parentWidth - (ContentHorizontalMargin * 2f)));
             contentFrame.sizeDelta = new Vector2(contentWidth, 0f);
+            if (bannerGrid == null || featuredGrid == null || resultGrid == null || bannerGridLayout == null || featuredGridLayout == null || resultGridLayout == null || bannerPanelLayout == null || detailPanelLayout == null || resultPanelLayout == null)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(contentFrame);
+                return;
+            }
             float sectionWidth = Mathf.Max(280f, contentWidth - 56f);
             ConfigureGrid(bannerGrid, bannerGridLayout, bannerPanelLayout, Mathf.Max(1, bannerButtons.Count), contentWidth >= 720f ? 2 : 1, sectionWidth, 280f, 104f, 124f, 32f);
             ConfigureGrid(featuredGrid, featuredGridLayout, detailPanelLayout, Mathf.Max(1, featuredGridRoot.childCount), contentWidth >= 1000f ? 3 : contentWidth >= 620f ? 2 : 1, sectionWidth, 220f, 156f, 388f, 32f);
             ConfigureGrid(resultGrid, resultGridLayout, resultPanelLayout, Mathf.Max(1, lastResults.Count), contentWidth >= 1080f ? 5 : contentWidth >= 820f ? 4 : contentWidth >= 560f ? 3 : 2, sectionWidth, 150f, 170f, lastResults.Count == 0 ? 214f : 124f, 32f);
             LayoutRebuilder.ForceRebuildLayoutImmediate(contentFrame);
+        }
+
+        private Vector2Int GetLayoutSize()
+        {
+            RectTransform canvasRect = targetCanvas != null ? targetCanvas.transform as RectTransform : null;
+            if (canvasRect != null)
+            {
+                int width = Mathf.RoundToInt(canvasRect.rect.width);
+                int height = Mathf.RoundToInt(canvasRect.rect.height);
+                if (width > 0 && height > 0)
+                    return new Vector2Int(width, height);
+            }
+
+            return new Vector2Int(Screen.width, Screen.height);
         }
 
         private static void ConfigureGrid(GridLayoutGroup grid, LayoutElement gridLayout, LayoutElement panelLayout, int itemCount, int columns, float availableWidth, float minCellWidth, float cellHeight, float headerHeight, float bottomPadding)
@@ -511,6 +868,7 @@ namespace Shogun.Features.UI
         private BannerButtonView CreateBannerButton(Transform parent, TestSummonService.TestSummonBanner banner)
         {
             RectTransform root = CreateRect($"Banner_{banner.BannerId}", parent, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            root.gameObject.AddComponent<LayoutElement>().preferredHeight = 92f;
             Image background = root.gameObject.AddComponent<Image>();
             background.sprite = GetWhiteSprite();
             background.color = new Color(0.11f, 0.1f, 0.1f, 0.96f);
@@ -672,7 +1030,7 @@ namespace Shogun.Features.UI
         private static Button CreateActionButton(Transform parent, string name, string labelText, Color backgroundColor, UnityEngine.Events.UnityAction onClick)
         {
             RectTransform root = CreateRect(name, parent, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            root.gameObject.AddComponent<LayoutElement>().preferredHeight = 56f;
+            root.gameObject.AddComponent<LayoutElement>().preferredHeight = 92f;
             Image background = root.gameObject.AddComponent<Image>();
             background.sprite = GetWhiteSprite();
             background.color = backgroundColor;
@@ -800,17 +1158,38 @@ namespace Shogun.Features.UI
             return s_WhiteSprite;
         }
 
+        private static void StretchRectTransform(RectTransform rectTransform)
+        {
+            if (rectTransform == null)
+                return;
+
+            rectTransform.anchorMin = Vector2.zero;
+            rectTransform.anchorMax = Vector2.one;
+            rectTransform.offsetMin = Vector2.zero;
+            rectTransform.offsetMax = Vector2.zero;
+            rectTransform.pivot = new Vector2(0.5f, 0.5f);
+        }
+
         private static Canvas CreateFallbackCanvas()
         {
-            GameObject canvasGo = new GameObject("SummonCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+            GameObject canvasGo = new GameObject(DedicatedCanvasName, typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+            RectTransform canvasRect = (RectTransform)canvasGo.transform;
+            StretchRectTransform(canvasRect);
+            canvasRect.localScale = Vector3.one;
+
             Canvas canvas = canvasGo.GetComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.pixelPerfect = true;
+            canvas.overrideSorting = true;
+            canvas.sortingOrder = 100;
+
             CanvasScaler scaler = canvasGo.GetComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1080f, 1920f);
+            scaler.referenceResolution = new Vector2(720f, 1280f);
             scaler.matchWidthOrHeight = 1f;
+
             RectTransform safeAreaRoot = CreateRect("UI_SafeAreaPanel", canvasGo.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            StretchRectTransform(safeAreaRoot);
             safeAreaRoot.gameObject.AddComponent<SafeAreaHandler>();
             CreateRect("HUD", safeAreaRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             CreateRect("Menu_Main", safeAreaRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
@@ -823,9 +1202,14 @@ namespace Shogun.Features.UI
             if (parent == null)
                 return;
             for (int i = parent.childCount - 1; i >= 0; i--)
-                Destroy(parent.GetChild(i).gameObject);
+            {
+                GameObject child = parent.GetChild(i).gameObject;
+                if (Application.isPlaying)
+                    Destroy(child);
+                else
+                    DestroyImmediate(child);
+            }
         }
-
         private static void LoadSceneIfAvailable(string sceneName)
         {
             if (Application.CanStreamedLevelBeLoaded(sceneName))
@@ -838,4 +1222,14 @@ namespace Shogun.Features.UI
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
 

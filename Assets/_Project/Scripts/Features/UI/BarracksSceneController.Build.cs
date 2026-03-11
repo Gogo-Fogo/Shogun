@@ -20,6 +20,7 @@ namespace Shogun.Features.UI
             glowImage.sprite = GetWhiteSprite();
             glowImage.color = new Color(0.38f, 0.27f, 0.11f, 0.12f);
 
+            screenScrollRect = null;
             contentFrame = CreateRect("ContentFrame", screenRoot, new Vector2(0.5f, 0f), new Vector2(0.5f, 1f), Vector2.zero, Vector2.zero);
             VerticalLayoutGroup contentLayout = contentFrame.gameObject.AddComponent<VerticalLayoutGroup>();
             contentLayout.padding = new RectOffset(0, 0, 24, 24);
@@ -32,6 +33,110 @@ namespace Shogun.Features.UI
             BuildHeader();
             BuildDetailPanel();
             BuildRosterSection();
+        }
+
+        private void BuildEmergencyFallback(System.Exception exception)
+        {
+            cardViews.Clear();
+            rosterGrid = null;
+            rosterViewport = null;
+            screenScrollRect = null;
+            usingEmergencyLayout = true;
+
+            ClearChildren(hostRoot);
+            screenRoot = CreateRect("EmergencyBarracksScreenRoot", hostRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            Image backdrop = screenRoot.gameObject.AddComponent<Image>();
+            backdrop.sprite = GetWhiteSprite();
+            backdrop.type = Image.Type.Simple;
+            backdrop.color = BackgroundColor;
+
+            RectTransform panel = CreateRect("EmergencyPanel", screenRoot, Vector2.zero, Vector2.one, new Vector2(24f, 36f), new Vector2(-24f, -36f));
+            Image panelImage = panel.gameObject.AddComponent<Image>();
+            panelImage.sprite = GetWhiteSprite();
+            panelImage.color = new Color(0.11f, 0.09f, 0.09f, 0.97f);
+            Outline outline = panel.gameObject.AddComponent<Outline>();
+            outline.effectColor = new Color(0f, 0f, 0f, 0.45f);
+            outline.effectDistance = new Vector2(3f, -3f);
+
+            RectTransform scrollRoot = CreateRect("EmergencyScrollView", panel, Vector2.zero, Vector2.one, new Vector2(4f, 4f), new Vector2(-4f, -4f));
+            ScrollRect scrollRect = scrollRoot.gameObject.AddComponent<ScrollRect>();
+            screenScrollRect = scrollRect;
+            scrollRect.horizontal = false;
+            scrollRect.movementType = ScrollRect.MovementType.Clamped;
+            RectTransform viewport = CreateRect("Viewport", scrollRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            Image viewportImage = viewport.gameObject.AddComponent<Image>();
+            viewportImage.sprite = GetWhiteSprite();
+            viewportImage.color = new Color(0f, 0f, 0f, 0f);
+            viewport.gameObject.AddComponent<Mask>().showMaskGraphic = false;
+
+            RectTransform scrollContent = CreateRect("ScrollContent", viewport, new Vector2(0f, 1f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+            scrollContent.pivot = new Vector2(0.5f, 1f);
+            scrollContent.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            scrollRect.viewport = viewport;
+            scrollRect.content = scrollContent;
+
+            contentFrame = CreateRect("EmergencyContent", scrollContent, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), Vector2.zero, Vector2.zero);
+            contentFrame.pivot = new Vector2(0.5f, 1f);
+            VerticalLayoutGroup contentLayout = contentFrame.gameObject.AddComponent<VerticalLayoutGroup>();
+            contentLayout.padding = new RectOffset(0, 0, 20, 28);
+            contentLayout.spacing = 18f;
+            contentLayout.childAlignment = TextAnchor.UpperCenter;
+            contentLayout.childControlWidth = true;
+            contentLayout.childControlHeight = true;
+            contentLayout.childForceExpandWidth = true;
+            contentLayout.childForceExpandHeight = false;
+            contentFrame.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            BuildHeader();
+            if (exception != null)
+                BuildEmergencyErrorPanel(exception);
+            BuildDetailPanel();
+            BuildEmergencyRosterPanel();
+        }
+        private void BuildEmergencyErrorPanel(System.Exception exception)
+        {
+            CreatePanel(contentFrame, "ErrorPanel", 120f, new Color(0.24f, 0.1f, 0.1f, 0.96f), new Color(0.15f, 0.08f, 0.08f, 0.98f), out RectTransform inner);
+            Text label = CreateText("ErrorLabel", inner, TextAnchor.UpperLeft, 12, FontStyle.Normal);
+            label.text = $"Fallback active because the rich barracks layout failed:`n{exception.GetType().Name}: {exception.Message}";
+            label.color = new Color(1f, 0.86f, 0.82f, 1f);
+            label.horizontalOverflow = HorizontalWrapMode.Wrap;
+            label.verticalOverflow = VerticalWrapMode.Overflow;
+            label.rectTransform.offsetMin = new Vector2(14f, 12f);
+            label.rectTransform.offsetMax = new Vector2(-14f, -12f);
+        }
+
+        private void BuildEmergencyRosterPanel()
+        {
+            float preferredHeight = ownedCharacters.Count == 0 ? 240f : 120f + (ownedCharacters.Count * 186f);
+            RectTransform outer = CreatePanel(contentFrame, "EmergencyRosterOuter", preferredHeight, PanelOuterColor, PanelInnerColor, out RectTransform inner);
+            RectTransform content = CreateRect("RosterContent", inner, Vector2.zero, Vector2.one, new Vector2(20f, 18f), new Vector2(-20f, -18f));
+            VerticalLayoutGroup stack = content.gameObject.AddComponent<VerticalLayoutGroup>();
+            stack.spacing = 12f;
+            stack.childControlWidth = true;
+            stack.childControlHeight = true;
+            stack.childForceExpandWidth = true;
+            stack.childForceExpandHeight = false;
+
+            RectTransform header = CreateRect("RosterHeader", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            header.gameObject.AddComponent<LayoutElement>().preferredHeight = 62f;
+            Text title = CreateText("Title", header, TextAnchor.UpperLeft, 28, FontStyle.Bold);
+            title.text = "OWNED CHARACTERS";
+            title.color = new Color(0.98f, 0.94f, 0.84f, 1f);
+            title.rectTransform.offsetMin = new Vector2(0f, 18f);
+            Text subtitle = CreateText("Subtitle", header, TextAnchor.LowerLeft, 14, FontStyle.Normal);
+            subtitle.text = "Stable stacked roster view while the richer scroll/grid layout is under repair.";
+            subtitle.color = SecondaryTextColor;
+            subtitle.rectTransform.offsetMax = new Vector2(0f, -36f);
+
+            cardViews.Clear();
+            if (ownedCharacters.Count == 0)
+            {
+                CreateEmptyRosterCard(content, "No characters are registered yet. Visit the Summon Gate or reset the local collection to repopulate the barracks.");
+                return;
+            }
+
+            for (int i = 0; i < ownedCharacters.Count; i++)
+                cardViews.Add(CreateCharacterCard(content, ownedCharacters[i], i));
         }
 
         private void BuildHeader()
@@ -72,20 +177,21 @@ namespace Shogun.Features.UI
 
         private void BuildDetailPanel()
         {
-            RectTransform outer = CreatePanel(contentFrame, "DetailOuter", 604f, PanelOuterColor, PanelInnerColor, out RectTransform inner);
-            detailAccentBand = CreateRect("DetailAccentBand", inner, new Vector2(0f, 0f), new Vector2(0f, 1f), Vector2.zero, new Vector2(10f, 0f)).gameObject.AddComponent<Image>();
+            RectTransform outer = CreatePanel(contentFrame, "DetailOuter", 920f, PanelOuterColor, PanelInnerColor, out RectTransform inner);
+            detailAccentBand = CreateRect("DetailAccentBand", inner, new Vector2(0f, 0f), new Vector2(1f, 0f), Vector2.zero, new Vector2(0f, 10f)).gameObject.AddComponent<Image>();
             detailAccentBand.sprite = GetWhiteSprite();
-            RectTransform content = CreateRect("DetailContent", inner, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(28f, 24f), new Vector2(-28f, -24f));
-            detailLayout = content.gameObject.AddComponent<HorizontalLayoutGroup>();
-            detailLayout.spacing = 24f;
-            detailLayout.childControlWidth = false;
-            detailLayout.childForceExpandWidth = false;
 
-            RectTransform portraitColumn = CreateRect("PortraitColumn", content, new Vector2(0f, 0f), new Vector2(0f, 1f), Vector2.zero, Vector2.zero);
-            LayoutElement portraitLayout = portraitColumn.gameObject.AddComponent<LayoutElement>();
-            portraitLayout.preferredWidth = 320f;
-            portraitLayout.minWidth = 280f;
-            RectTransform portraitOuter = CreateRect("PortraitOuter", portraitColumn, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            RectTransform content = CreateRect("DetailContent", inner, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(24f, 20f), new Vector2(-24f, -20f));
+            detailLayout = content.gameObject.AddComponent<VerticalLayoutGroup>();
+            detailLayout.spacing = 16f;
+            detailLayout.childControlWidth = true;
+            detailLayout.childControlHeight = true;
+            detailLayout.childForceExpandWidth = true;
+            detailLayout.childForceExpandHeight = false;
+
+            RectTransform portraitBlock = CreateRect("PortraitBlock", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            portraitBlock.gameObject.AddComponent<LayoutElement>().preferredHeight = 208f;
+            RectTransform portraitOuter = CreateRect("PortraitOuter", portraitBlock, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             Image portraitOuterImage = portraitOuter.gameObject.AddComponent<Image>();
             portraitOuterImage.sprite = GetWhiteSprite();
             portraitOuterImage.color = new Color(0.17f, 0.12f, 0.09f, 1f);
@@ -99,35 +205,38 @@ namespace Shogun.Features.UI
             detailPortraitPlaceholder = CreatePlaceholder(portraitArt, out detailPortraitPlaceholderLabel);
 
             RectTransform info = CreateRect("InfoColumn", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            info.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
             VerticalLayoutGroup stack = info.gameObject.AddComponent<VerticalLayoutGroup>();
-            stack.spacing = 12f;
+            stack.spacing = 10f;
+            stack.childControlWidth = true;
+            stack.childControlHeight = true;
             stack.childForceExpandWidth = true;
             stack.childForceExpandHeight = false;
+
             RectTransform nameBlock = CreateRect("NameBlock", info, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            nameBlock.gameObject.AddComponent<LayoutElement>().preferredHeight = 116f;
-            detailNameLabel = CreateText("Name", nameBlock, TextAnchor.UpperLeft, 38, FontStyle.Bold);
+            nameBlock.gameObject.AddComponent<LayoutElement>().preferredHeight = 108f;
+            detailNameLabel = CreateText("Name", nameBlock, TextAnchor.UpperLeft, 34, FontStyle.Bold);
             detailNameLabel.color = new Color(0.98f, 0.95f, 0.84f, 1f);
-            detailNameLabel.rectTransform.offsetMin = new Vector2(0f, 34f);
-            detailSubtitleLabel = CreateText("Subtitle", nameBlock, TextAnchor.MiddleLeft, 20, FontStyle.Bold);
+            detailNameLabel.rectTransform.offsetMin = new Vector2(0f, 28f);
+            detailSubtitleLabel = CreateText("Subtitle", nameBlock, TextAnchor.MiddleLeft, 18, FontStyle.Bold);
             detailSubtitleLabel.color = MutedTextColor;
-            detailSubtitleLabel.rectTransform.offsetMin = new Vector2(0f, -6f);
-            detailSubtitleLabel.rectTransform.offsetMax = new Vector2(0f, -52f);
-            detailTaglineLabel = CreateText("Tagline", nameBlock, TextAnchor.LowerLeft, 16, FontStyle.Normal);
+            detailSubtitleLabel.rectTransform.offsetMin = new Vector2(0f, -2f);
+            detailSubtitleLabel.rectTransform.offsetMax = new Vector2(0f, -44f);
+            detailTaglineLabel = CreateText("Tagline", nameBlock, TextAnchor.LowerLeft, 15, FontStyle.Normal);
             detailTaglineLabel.color = SecondaryTextColor;
-            detailTaglineLabel.rectTransform.offsetMax = new Vector2(0f, -86f);
+            detailTaglineLabel.rectTransform.offsetMax = new Vector2(0f, -78f);
+
             detailChipRow = CreateRect("ChipRow", info, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             HorizontalLayoutGroup chipLayout = detailChipRow.gameObject.AddComponent<HorizontalLayoutGroup>();
-            chipLayout.spacing = 10f;
+            chipLayout.spacing = 8f;
             chipLayout.childControlWidth = false;
             chipLayout.childForceExpandWidth = false;
             detailChipRow.gameObject.AddComponent<LayoutElement>().preferredHeight = 40f;
-            detailLoreLabel = CreateTextBlock(info, "Lore", 18, 158f, MutedTextColor);
-            detailMetadataLabel = CreateTextBlock(info, "Metadata", 16, 146f, SecondaryTextColor);
-            detailStatsLabel = CreateTextBlock(info, "Stats", 18, 86f, new Color(0.95f, 0.9f, 0.78f, 1f));
-            detailSpecialLabel = CreateTextBlock(info, "Specials", 15, 128f, new Color(0.89f, 0.84f, 0.74f, 1f));
-        }
 
+            detailLoreLabel = CreateTextBlock(info, "Lore", 16, 72f, MutedTextColor);
+            detailMetadataLabel = CreateTextBlock(info, "Metadata", 14, 104f, SecondaryTextColor);
+            detailStatsLabel = CreateTextBlock(info, "Stats", 17, 42f, new Color(0.95f, 0.9f, 0.78f, 1f));
+            detailSpecialLabel = CreateTextBlock(info, "Specials", 14, 148f, new Color(0.89f, 0.84f, 0.74f, 1f));
+        }
         private void BuildRosterSection()
         {
             RectTransform outer = CreatePanel(contentFrame, "RosterOuter", 0f, PanelOuterColor, PanelInnerColor, out RectTransform inner, true, 420f);
@@ -147,6 +256,7 @@ namespace Shogun.Features.UI
 
             RectTransform scrollRoot = CreateRect("RosterScrollView", inner, Vector2.zero, Vector2.one, new Vector2(18f, 18f), new Vector2(-18f, -112f));
             ScrollRect scrollRect = scrollRoot.gameObject.AddComponent<ScrollRect>();
+            screenScrollRect = scrollRect;
             scrollRect.horizontal = false;
             scrollRect.movementType = ScrollRect.MovementType.Clamped;
             rosterViewport = CreateRect("Viewport", scrollRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
@@ -255,4 +365,10 @@ namespace Shogun.Features.UI
         }
     }
 }
+
+
+
+
+
+
 
