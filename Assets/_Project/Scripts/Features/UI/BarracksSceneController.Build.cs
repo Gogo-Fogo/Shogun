@@ -58,25 +58,7 @@ namespace Shogun.Features.UI
             outline.effectColor = new Color(0f, 0f, 0f, 0.45f);
             outline.effectDistance = new Vector2(3f, -3f);
 
-            RectTransform scrollRoot = CreateRect("EmergencyScrollView", panel, Vector2.zero, Vector2.one, new Vector2(4f, 4f), new Vector2(-4f, -4f));
-            ScrollRect scrollRect = scrollRoot.gameObject.AddComponent<ScrollRect>();
-            screenScrollRect = scrollRect;
-            scrollRect.horizontal = false;
-            scrollRect.movementType = ScrollRect.MovementType.Clamped;
-            RectTransform viewport = CreateRect("Viewport", scrollRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            Image viewportImage = viewport.gameObject.AddComponent<Image>();
-            viewportImage.sprite = GetWhiteSprite();
-            viewportImage.color = new Color(0f, 0f, 0f, 0f);
-            viewport.gameObject.AddComponent<Mask>().showMaskGraphic = false;
-
-            RectTransform scrollContent = CreateRect("ScrollContent", viewport, new Vector2(0f, 1f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
-            scrollContent.pivot = new Vector2(0.5f, 1f);
-            scrollContent.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-            scrollRect.viewport = viewport;
-            scrollRect.content = scrollContent;
-
-            contentFrame = CreateRect("EmergencyContent", scrollContent, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), Vector2.zero, Vector2.zero);
-            contentFrame.pivot = new Vector2(0.5f, 1f);
+            contentFrame = CreateRect("EmergencyContent", panel, new Vector2(0.5f, 0f), new Vector2(0.5f, 1f), Vector2.zero, Vector2.zero);
             VerticalLayoutGroup contentLayout = contentFrame.gameObject.AddComponent<VerticalLayoutGroup>();
             contentLayout.padding = new RectOffset(0, 0, 20, 28);
             contentLayout.spacing = 18f;
@@ -85,7 +67,6 @@ namespace Shogun.Features.UI
             contentLayout.childControlHeight = true;
             contentLayout.childForceExpandWidth = true;
             contentLayout.childForceExpandHeight = false;
-            contentFrame.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
             BuildHeader();
             if (exception != null)

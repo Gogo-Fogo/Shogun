@@ -207,7 +207,7 @@ Rules:
 - active ally attack circles should use one shared blue battlefield grammar; precision should come from an explicit visible outer circle line, not per-character palette variation
 - ally-circle interior fill should stay airy near the center and bias its opacity toward the edge; a gentler blinking halo can sit outside that line, but the boundary ring itself should remain the clearest read on the field
 - safe-area handling should stay in the HUD layer only; the battlefield camera should fit the arena art cleanly instead of exposing decorative side gutters or edge bands
-- any authored battlefield pressure zone should remain visible during battle so the player understands why chip damage or attrition is happening
+- any authored battlefield pressure zone should remain visible during battle so the player understands why chip damage or attrition is happening`r`n- pressure lanes should read like authored floor telegraphs with bracketed edges and subtle lane fill, not plain debug rectangles
 
 ### Bottom squad rail
 
@@ -460,6 +460,7 @@ When choosing between:
 - and stronger payoff after release
 
 save the spectacle for after release.
+
 
 
 

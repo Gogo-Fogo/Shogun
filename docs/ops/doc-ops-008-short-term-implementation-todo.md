@@ -16,6 +16,7 @@ Do not add broad feature ambitions here unless they directly unblock the slice.
 - `MainMenu` is a support front door only; `Summon`, `Battle_Prototype`, `UI_Demo`, `Barracks`, and `Settings` remain shell/support scenes.
 - `Characters` and `Combat` are real but prototype-grade.
 - `Summon` may exist as a local test harness, but real `Gacha`, broader `UI`, `Networking`, and broader `Input` remain planned architecture.
+- If `Summon` is touched, keep it as a readable portrait-first banner test surface with disclosed rates, featured-unit presentation, and visible Barracks sync rather than a debug-looking placeholder.
 - New art/source work goes into the current `Source / Production` lanes.
 - Imported-heavy legacy art remains archive material by default.
 
@@ -77,5 +78,6 @@ These do not belong in the short-term slice backlog unless they become true bloc
 
 - Authored specials may now live in AbilityDefinition assets plus an AbilityCatalog.
 - This is a data-separation and validation move for the active slice, not a commitment to Fire Emblem Heroes-style inheritance or freeform loadouts.
+
 
 

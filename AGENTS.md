@@ -30,3 +30,15 @@
 - For active implementation work, route through `docs/ops/doc-ops-010-claude-code-read-first-handoff.md`, `docs/ops/doc-ops-008-short-term-implementation-todo.md`, `docs/design/design-008-active-vertical-slice-definition.md`, and `docs/design/design-009-first-vertical-slice-roster-and-encounter-plan.md` unless the user explicitly requests out-of-slice roadmap work.
 - In implementation summaries, cite the docs that drove decisions using concrete file references.
 - If implementation decisions materially change behavior or scope, update the relevant docs in the same change or explicitly record the mismatch.
+## Commit and Push Reporting
+
+- After every commit or push, give a thorough summary by default instead of a one-line status note.
+- The summary must state:
+  - commit hash and message
+  - whether the push is a stable milestone or a checkpoint
+  - the main work included, grouped by feature area or outcome
+  - validation performed and anything not validated
+  - known risks, unresolved issues, or intentionally deferred follow-up
+- If unrelated local changes were included in the commit or push, say that explicitly.
+- Do not say only `pushed to origin/main` unless the user explicitly asks for a minimal confirmation.
+

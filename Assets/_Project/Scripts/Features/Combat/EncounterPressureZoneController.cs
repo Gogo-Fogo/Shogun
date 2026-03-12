@@ -7,11 +7,17 @@ namespace Shogun.Features.Combat
     [DisallowMultipleComponent]
     public sealed class EncounterPressureZoneController : MonoBehaviour
     {
-        private const float FillAlpha = 0.12f;
-        private const float FlashAlpha = 0.22f;
-        private const float BorderAlpha = 0.86f;
-        private const float BorderWidth = 0.08f;
-        private const float LabelOffset = 0.38f;
+        private const float FillAlpha = 0.06f;
+        private const float CoreAlpha = 0.11f;
+        private const float FlashFillAlpha = 0.14f;
+        private const float FlashCoreAlpha = 0.22f;
+        private const float BracketAlpha = 0.82f;
+        private const float FlashBracketAlpha = 1f;
+        private const float BracketWidth = 0.08f;
+        private const float CoreWidthMultiplier = 0.58f;
+        private const float CoreHeightMultiplier = 0.92f;
+        private const float MaxBracketHookLength = 0.5f;
+        private const float LabelOffset = 0.32f;
         private const float FlashDurationSeconds = 0.22f;
 
         private static Sprite runtimeWhiteSprite;
@@ -23,7 +29,9 @@ namespace Shogun.Features.Combat
 
         private GameObject zoneRoot;
         private SpriteRenderer fillRenderer;
-        private LineRenderer borderRenderer;
+        private SpriteRenderer coreRenderer;
+        private LineRenderer leftBracketRenderer;
+        private LineRenderer rightBracketRenderer;
         private TextMesh labelMesh;
         private Coroutine flashCoroutine;
         private bool subscribed;
@@ -44,6 +52,7 @@ namespace Shogun.Features.Combat
 
             EnsureZoneVisual();
             RefreshZoneVisual();
+            ApplyVisualColors(FillAlpha, CoreAlpha, BracketAlpha);
             SetZoneVisible(true);
             Subscribe();
         }
@@ -131,24 +140,16 @@ namespace Shogun.Features.Combat
             fillObject.transform.SetParent(zoneRoot.transform, false);
             fillRenderer = fillObject.AddComponent<SpriteRenderer>();
             fillRenderer.sprite = GetRuntimeWhiteSprite();
-            fillRenderer.color = ResolveFillColor(FillAlpha);
             fillRenderer.sortingOrder = 2;
 
-            GameObject borderObject = new GameObject("Border");
-            borderObject.transform.SetParent(zoneRoot.transform, false);
-            borderRenderer = borderObject.AddComponent<LineRenderer>();
-            borderRenderer.material = GetRuntimeLineMaterial();
-            borderRenderer.loop = true;
-            borderRenderer.positionCount = 4;
-            borderRenderer.useWorldSpace = true;
-            borderRenderer.alignment = LineAlignment.View;
-            borderRenderer.textureMode = LineTextureMode.Stretch;
-            borderRenderer.numCornerVertices = 2;
-            borderRenderer.startWidth = BorderWidth;
-            borderRenderer.endWidth = BorderWidth;
-            borderRenderer.startColor = ResolveBorderColor();
-            borderRenderer.endColor = ResolveBorderColor();
-            borderRenderer.sortingOrder = 3;
+            GameObject coreObject = new GameObject("LaneCore");
+            coreObject.transform.SetParent(zoneRoot.transform, false);
+            coreRenderer = coreObject.AddComponent<SpriteRenderer>();
+            coreRenderer.sprite = GetRuntimeWhiteSprite();
+            coreRenderer.sortingOrder = 3;
+
+            leftBracketRenderer = CreateBracketRenderer("LeftBracket", zoneRoot.transform, 4);
+            rightBracketRenderer = CreateBracketRenderer("RightBracket", zoneRoot.transform, 4);
 
             GameObject labelObject = new GameObject("Label");
             labelObject.transform.SetParent(zoneRoot.transform, false);
@@ -157,16 +158,16 @@ namespace Shogun.Features.Combat
             labelMesh.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             if (labelMesh.font == null)
                 labelMesh.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
-            labelMesh.fontSize = 44;
+            labelMesh.fontSize = 42;
             labelMesh.fontStyle = FontStyle.Bold;
             labelMesh.anchor = TextAnchor.MiddleCenter;
             labelMesh.alignment = TextAlignment.Center;
-            labelMesh.characterSize = 0.07f;
-            labelMesh.color = new Color(0.95f, 0.89f, 0.66f, 0.92f);
+            labelMesh.characterSize = 0.055f;
+            labelMesh.color = new Color(0.95f, 0.89f, 0.74f, 0.9f);
 
             MeshRenderer labelRenderer = labelMesh.GetComponent<MeshRenderer>();
             if (labelRenderer != null)
-                labelRenderer.sortingOrder = 4;
+                labelRenderer.sortingOrder = 5;
         }
 
         private void RefreshZoneVisual()
@@ -181,28 +182,68 @@ namespace Shogun.Features.Combat
             {
                 fillRenderer.transform.position = new Vector3(center.x, center.y, 0.05f);
                 fillRenderer.transform.localScale = new Vector3(bounds.size.x, bounds.size.y, 1f);
-                fillRenderer.color = ResolveFillColor(FillAlpha);
             }
 
-            if (borderRenderer != null)
+            if (coreRenderer != null)
             {
-                float minX = bounds.min.x;
-                float maxX = bounds.max.x;
-                float minY = bounds.min.y;
-                float maxY = bounds.max.y;
-                borderRenderer.SetPosition(0, new Vector3(minX, maxY, 0.04f));
-                borderRenderer.SetPosition(1, new Vector3(maxX, maxY, 0.04f));
-                borderRenderer.SetPosition(2, new Vector3(maxX, minY, 0.04f));
-                borderRenderer.SetPosition(3, new Vector3(minX, minY, 0.04f));
-                borderRenderer.startColor = ResolveBorderColor();
-                borderRenderer.endColor = ResolveBorderColor();
+                coreRenderer.transform.position = new Vector3(center.x, center.y, 0.045f);
+                coreRenderer.transform.localScale = new Vector3(bounds.size.x * CoreWidthMultiplier, bounds.size.y * CoreHeightMultiplier, 1f);
             }
+
+            RefreshBracket(leftBracketRenderer, bounds, true);
+            RefreshBracket(rightBracketRenderer, bounds, false);
 
             if (labelMesh != null)
             {
                 labelMesh.text = encounter.PressureZoneLabel;
                 labelMesh.transform.position = new Vector3(center.x, bounds.max.y + LabelOffset, 0.03f);
             }
+        }
+
+        private void RefreshBracket(LineRenderer renderer, Bounds bounds, bool leftSide)
+        {
+            if (renderer == null)
+                return;
+
+            float minX = bounds.min.x;
+            float maxX = bounds.max.x;
+            float minY = bounds.min.y;
+            float maxY = bounds.max.y;
+            float hookLength = Mathf.Min(MaxBracketHookLength, bounds.size.x * 0.28f);
+            float z = 0.04f;
+
+            if (leftSide)
+            {
+                renderer.SetPosition(0, new Vector3(minX + hookLength, maxY, z));
+                renderer.SetPosition(1, new Vector3(minX, maxY, z));
+                renderer.SetPosition(2, new Vector3(minX, minY, z));
+                renderer.SetPosition(3, new Vector3(minX + hookLength, minY, z));
+            }
+            else
+            {
+                renderer.SetPosition(0, new Vector3(maxX - hookLength, maxY, z));
+                renderer.SetPosition(1, new Vector3(maxX, maxY, z));
+                renderer.SetPosition(2, new Vector3(maxX, minY, z));
+                renderer.SetPosition(3, new Vector3(maxX - hookLength, minY, z));
+            }
+        }
+
+        private static LineRenderer CreateBracketRenderer(string name, Transform parent, int sortingOrder)
+        {
+            GameObject rendererObject = new GameObject(name);
+            rendererObject.transform.SetParent(parent, false);
+            LineRenderer renderer = rendererObject.AddComponent<LineRenderer>();
+            renderer.material = GetRuntimeLineMaterial();
+            renderer.loop = false;
+            renderer.positionCount = 4;
+            renderer.useWorldSpace = true;
+            renderer.alignment = LineAlignment.View;
+            renderer.textureMode = LineTextureMode.Stretch;
+            renderer.numCornerVertices = 2;
+            renderer.startWidth = BracketWidth;
+            renderer.endWidth = BracketWidth;
+            renderer.sortingOrder = sortingOrder;
+            return renderer;
         }
 
         private void SetZoneVisible(bool visible)
@@ -213,7 +254,7 @@ namespace Shogun.Features.Combat
 
         private void TriggerZoneFlash()
         {
-            if (fillRenderer == null)
+            if (fillRenderer == null && coreRenderer == null)
                 return;
 
             if (flashCoroutine != null)
@@ -229,26 +270,52 @@ namespace Shogun.Features.Combat
             {
                 elapsed += Time.deltaTime;
                 float t = Mathf.Clamp01(elapsed / FlashDurationSeconds);
-                float alpha = Mathf.Lerp(FlashAlpha, FillAlpha, t);
-                if (fillRenderer != null)
-                    fillRenderer.color = ResolveFillColor(alpha);
+                float fillAlpha = Mathf.Lerp(FlashFillAlpha, FillAlpha, t);
+                float coreAlpha = Mathf.Lerp(FlashCoreAlpha, CoreAlpha, t);
+                float bracketAlpha = Mathf.Lerp(FlashBracketAlpha, BracketAlpha, t);
+                ApplyVisualColors(fillAlpha, coreAlpha, bracketAlpha);
                 yield return null;
             }
 
-            if (fillRenderer != null)
-                fillRenderer.color = ResolveFillColor(FillAlpha);
-
+            ApplyVisualColors(FillAlpha, CoreAlpha, BracketAlpha);
             flashCoroutine = null;
+        }
+
+        private void ApplyVisualColors(float fillAlpha, float coreAlpha, float bracketAlpha)
+        {
+            if (fillRenderer != null)
+                fillRenderer.color = ResolveFillColor(fillAlpha);
+
+            if (coreRenderer != null)
+                coreRenderer.color = ResolveCoreColor(coreAlpha);
+
+            Color bracketColor = ResolveBracketColor(bracketAlpha);
+            if (leftBracketRenderer != null)
+            {
+                leftBracketRenderer.startColor = bracketColor;
+                leftBracketRenderer.endColor = bracketColor;
+            }
+
+            if (rightBracketRenderer != null)
+            {
+                rightBracketRenderer.startColor = bracketColor;
+                rightBracketRenderer.endColor = bracketColor;
+            }
         }
 
         private static Color ResolveFillColor(float alpha)
         {
-            return new Color(0.46f, 0.14f, 0.12f, Mathf.Clamp01(alpha));
+            return new Color(0.22f, 0.07f, 0.05f, Mathf.Clamp01(alpha));
         }
 
-        private static Color ResolveBorderColor()
+        private static Color ResolveCoreColor(float alpha)
         {
-            return new Color(0.91f, 0.63f, 0.3f, BorderAlpha);
+            return new Color(0.46f, 0.14f, 0.1f, Mathf.Clamp01(alpha));
+        }
+
+        private static Color ResolveBracketColor(float alpha)
+        {
+            return new Color(0.94f, 0.69f, 0.39f, Mathf.Clamp01(alpha));
         }
 
         private static Sprite GetRuntimeWhiteSprite()

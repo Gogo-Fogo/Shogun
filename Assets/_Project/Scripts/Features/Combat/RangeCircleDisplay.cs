@@ -9,14 +9,14 @@ namespace Shogun.Features.Combat
     public class RangeCircleDisplay : MonoBehaviour
     {
         private const float BreathHz = 0.58f;
-        private const float PlayerFillAlphaMin = 0.22f;
-        private const float PlayerFillAlphaMax = 0.28f;
-        private const float EnemyFillAlphaMin = 0.05f;
-        private const float EnemyFillAlphaMax = 0.09f;
-        private const float PlayerHaloAlphaMin = 0.28f;
-        private const float PlayerHaloAlphaMax = 0.36f;
-        private const float EnemyHaloAlphaMin = 0.16f;
-        private const float EnemyHaloAlphaMax = 0.24f;
+        private const float PlayerFillAlphaMin = 0.04f;
+        private const float PlayerFillAlphaMax = 0.09f;
+        private const float EnemyFillAlphaMin = 0.03f;
+        private const float EnemyFillAlphaMax = 0.06f;
+        private const float PlayerHaloAlphaMin = 0.44f;
+        private const float PlayerHaloAlphaMax = 0.64f;
+        private const float EnemyHaloAlphaMin = 0.22f;
+        private const float EnemyHaloAlphaMax = 0.34f;
         private const float PlayerRimAlpha = 1f;
         private const float EnemyRimAlpha = 0.92f;
         private const float MarkerAlphaMin = 0.84f;
@@ -141,7 +141,7 @@ namespace Shogun.Features.Combat
             fillRenderer.transform.localScale = new Vector3(diameterX, diameterY, 1f);
 
             haloRenderer.transform.localPosition = new Vector3(0f, 0f, 0.01f);
-            haloRenderer.transform.localScale = new Vector3(diameterX * 1.01f, diameterY * 1.01f, 1f);
+            haloRenderer.transform.localScale = new Vector3(diameterX * 1.22f, diameterY * 1.22f, 1f);
 
             rimRenderer.transform.localPosition = new Vector3(0f, 0f, 0.02f);
             rimRenderer.transform.localScale = new Vector3(diameterX, diameterY, 1f);
@@ -296,10 +296,10 @@ namespace Shogun.Features.Combat
                         continue;
                     }
 
-                    float edgeBias = Mathf.SmoothStep(0.18f, 0.9f, distance);
-                    float centerSuppression = Mathf.Lerp(0.28f, 1f, edgeBias);
-                    float outerFade = 1f - Mathf.SmoothStep(0.92f, 1f, distance);
-                    float alpha = Mathf.Lerp(0.03f, 0.18f, edgeBias) * centerSuppression * outerFade;
+                    float edgeBias = Mathf.SmoothStep(0.52f, 0.96f, distance);
+                    float centerSuppression = Mathf.Lerp(0.04f, 1f, edgeBias);
+                    float outerFade = 1f - Mathf.SmoothStep(0.90f, 1f, distance);
+                    float alpha = Mathf.Lerp(0.02f, 0.20f, edgeBias) * centerSuppression * outerFade;
                     texture.SetPixel(x, y, new Color(1f, 1f, 1f, alpha));
                 }
             }
@@ -339,9 +339,9 @@ namespace Shogun.Features.Combat
                         continue;
                     }
 
-                    float innerFade = Mathf.SmoothStep(0.88f, 0.95f, distance);
-                    float outerFade = 1f - Mathf.SmoothStep(0.992f, 1f, distance);
-                    float alpha = Mathf.Pow(innerFade * outerFade, 0.98f);
+                    float innerFade = Mathf.SmoothStep(0.52f, 0.88f, distance);
+                    float outerFade = 1f - Mathf.SmoothStep(0.96f, 1f, distance);
+                    float alpha = Mathf.Pow(innerFade * outerFade, 0.55f);
                     texture.SetPixel(x, y, new Color(1f, 1f, 1f, alpha));
                 }
             }
@@ -381,8 +381,8 @@ namespace Shogun.Features.Combat
                         continue;
                     }
 
-                    float line = Mathf.SmoothStep(0.962f, 0.976f, distance) * (1f - Mathf.SmoothStep(0.992f, 1f, distance));
-                    float core = Mathf.SmoothStep(0.978f, 0.988f, distance) * (1f - Mathf.SmoothStep(0.997f, 1f, distance));
+                    float line = Mathf.SmoothStep(0.942f, 0.964f, distance) * (1f - Mathf.SmoothStep(0.992f, 1f, distance));
+                    float core = Mathf.SmoothStep(0.962f, 0.980f, distance) * (1f - Mathf.SmoothStep(0.997f, 1f, distance));
                     float alpha = Mathf.Clamp01(Mathf.Max(Mathf.Pow(line, 0.18f), core));
                     texture.SetPixel(x, y, new Color(1f, 1f, 1f, alpha));
                 }

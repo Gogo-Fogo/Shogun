@@ -215,7 +215,7 @@ It also forces:
 - a readable authored battlefield shape, with the Oni pressuring the center while the Yurei remains a clearer backline threat
 - one explicit spatial rule: allies who end a turn in the exposed center ambush lane take chip damage
 
-The encounter should also open with a brief title/subtitle beat, use authored frontline offsets instead of pure mirrored debug spawns, and expose a small placeholder victory reward preview without granting real progression yet.
+The encounter should also open with a brief title/subtitle beat, use authored frontline offsets instead of pure mirrored debug spawns, show the ambush lane as a subtle floor telegraph rather than a debug box, and expose a small placeholder victory reward preview without granting real progression yet.
 
 ## Recommended content creation order
 
@@ -315,5 +315,6 @@ If a new task does not help:
 - `Courtyard Ambush`
 
 become more real, it is probably not part of the immediate slice.
+
 
 
