@@ -13,6 +13,7 @@
 - what changed in a tooling or repo-modernization batch and why
 - how Claude Code should start without scanning the entire docs tree
 - how feature implementation should run through docs-first gating with citations and mismatch-note handling
+- how NaBlA and comparative reference lessons should turn into a Shogun-scoped product backlog
 
 ## Lean handoff pack
 
@@ -45,21 +46,23 @@ Start here for next-stage implementation or Claude Code onboarding:
    - UI-specific implementation backlog for the active slice
 5. [`doc-ops-009-long-term-roadmap-todo.md`](./doc-ops-009-long-term-roadmap-todo.md)
    - deferred roadmap lanes kept out of the active slice backlog
-6. [`doc-ops-002-unity-mcp-bridge-setup-and-usage.md`](./doc-ops-002-unity-mcp-bridge-setup-and-usage.md)
+6. [`doc-ops-014-nabla-informed-product-todo.md`](./doc-ops-014-nabla-informed-product-todo.md)
+   - NaBlA-informed product backlog for turning reference-pack and comparative lessons into Shogun workstreams
+7. [`doc-ops-002-unity-mcp-bridge-setup-and-usage.md`](./doc-ops-002-unity-mcp-bridge-setup-and-usage.md)
    - Unity MCP bridge setup, live-editor access, and safe usage rules
-7. [`doc-ops-003-ai-workspace-safety-and-backup-plan.md`](./doc-ops-003-ai-workspace-safety-and-backup-plan.md)
+8. [`doc-ops-003-ai-workspace-safety-and-backup-plan.md`](./doc-ops-003-ai-workspace-safety-and-backup-plan.md)
    - repo-scope rules, backup cadence, restore drill, and off-site backup workflow
-8. [`doc-ops-006-unity-editor-version-policy-and-upgrade-checklist.md`](./doc-ops-006-unity-editor-version-policy-and-upgrade-checklist.md)
+9. [`doc-ops-006-unity-editor-version-policy-and-upgrade-checklist.md`](./doc-ops-006-unity-editor-version-policy-and-upgrade-checklist.md)
    - project-specific Unity editor baseline, stable upgrade target, and safe upgrade checklist
-9. [`doc-ops-007-stage-1-unity-project-reality-audit.md`](./doc-ops-007-stage-1-unity-project-reality-audit.md)
+10. [`doc-ops-007-stage-1-unity-project-reality-audit.md`](./doc-ops-007-stage-1-unity-project-reality-audit.md)
    - stage-1 reality check for what the current Unity project actually is, what is salvageable, and what needs rebuilding
-10. [`doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md`](./doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)
+11. [`doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md`](./doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)
    - PixelLab fit, subscription vs API, and AI-assisted sprite workflow boundaries
-11. [`doc-ops-001-project-document-and-telemetry-index.md`](./doc-ops-001-project-document-and-telemetry-index.md)
+12. [`doc-ops-001-project-document-and-telemetry-index.md`](./doc-ops-001-project-document-and-telemetry-index.md)
    - implementation artifact inventory and output manifest
-12. [`doc-ops-005-march-2026-repo-modernization-retrospective.md`](./doc-ops-005-march-2026-repo-modernization-retrospective.md)
+13. [`doc-ops-005-march-2026-repo-modernization-retrospective.md`](./doc-ops-005-march-2026-repo-modernization-retrospective.md)
    - retrospective explanation for the March 2026 repo/tooling cleanup batch
-13. [`doc-ops-012-2026-03-10-combat-ui-and-auto-positioning-retrospective.md`](./doc-ops-012-2026-03-10-combat-ui-and-auto-positioning-retrospective.md)
+14. [`doc-ops-012-2026-03-10-combat-ui-and-auto-positioning-retrospective.md`](./doc-ops-012-2026-03-10-combat-ui-and-auto-positioning-retrospective.md)
    - retrospective explanation for the March 10, 2026 combat HUD and auto-positioning batch
 
 ## Companion docs outside this folder
@@ -82,15 +85,16 @@ Start here for next-stage implementation or Claude Code onboarding:
 3. `DOC-OPS-008`
 4. `DOC-OPS-011`
 5. `DOC-OPS-009`
-6. `DOC-OPS-002`
-7. `DOC-OPS-003`
-8. `DOC-OPS-006`
-9. `DOC-OPS-007`
-10. `DOC-OPS-004`
-11. `DOC-OPS-001`
-12. `DOC-OPS-005`
-13. `DOC-OPS-012`
-14. `DOC-LEGAL-001`
+6. `DOC-OPS-014`
+7. `DOC-OPS-002`
+8. `DOC-OPS-003`
+9. `DOC-OPS-006`
+10. `DOC-OPS-007`
+11. `DOC-OPS-004`
+12. `DOC-OPS-001`
+13. `DOC-OPS-005`
+14. `DOC-OPS-012`
+15. `DOC-LEGAL-001`
 
 ## Rule for future updates
 
@@ -102,3 +106,4 @@ Add new ops docs here when:
 - a handoff/startup flow becomes stable enough to recommend before broad scanning
 - a new operational retrospective or inventory note is needed
 - a UI implementation backlog becomes stable enough to route active-slice work
+- a comparative or reference-driven backlog becomes stable enough to route product planning

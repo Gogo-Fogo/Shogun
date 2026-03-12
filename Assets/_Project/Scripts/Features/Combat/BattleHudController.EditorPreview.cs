@@ -39,6 +39,7 @@ namespace Shogun.Features.Combat
             RefreshEditorPreviewHud();
             HideComboTrackerImmediate();
             HideComboCutInImmediate();
+            HideEncounterIntroImmediate();
 
             if (pauseMenuPanel != null)
                 pauseMenuPanel.SetActive(false);
@@ -135,6 +136,13 @@ namespace Shogun.Features.Combat
             comboCutInRoot = null;
             comboCutInCanvasGroup = null;
             comboCutInCoroutine = null;
+            encounterIntroRoot = null;
+            encounterIntroCanvasGroup = null;
+            encounterIntroTitleLabel = null;
+            encounterIntroSubtitleLabel = null;
+            encounterIntroCoroutine = null;
+            battleHasEnded = false;
+            battleEndResult = BattleResult.Win;
 
             elementLegendTokens.Clear();
             weaponLegendTokens.Clear();
@@ -182,7 +190,9 @@ namespace Shogun.Features.Combat
             int totalEnemies = editorPreviewEnemies.Count;
             if (totalEnemies > 0)
             {
-                objectiveLabel.text = $"DEFEAT ALL ENEMIES  {totalEnemies}/{totalEnemies}";
+                objectiveLabel.text = editorPreviewSetup != null
+                    ? editorPreviewSetup.GetEncounterObjectiveStatusText(totalEnemies, totalEnemies)
+                    : $"DEFEAT ALL ENEMIES  {totalEnemies}/{totalEnemies}";
                 if (objectivePillBackground != null)
                     objectivePillBackground.color = new Color(0.16f, 0.12f, 0.07f, 0.96f);
             }
@@ -404,4 +414,5 @@ namespace Shogun.Features.Combat
         }
     }
 }
+
 

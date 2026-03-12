@@ -81,7 +81,18 @@ namespace Shogun.Features.Combat
         public void OnPointerDown(PointerEventData eventData)
         {
             if (isResolvingAttackSequence)
+            {
+                hasValidPointerDown = false;
                 return;
+            }
+
+            // If the tap lands over a UI Button (e.g. reserve swap badge), route the click
+            // directly to that button and skip drag/move processing entirely.
+            if (TryRoutePointerToButton(eventData))
+            {
+                hasValidPointerDown = false;
+                return;
+            }
 
             if (!TryNormalizeScreenPosition(eventData.position, out Vector2 normalizedPos))
             {
@@ -93,6 +104,31 @@ namespace Shogun.Features.Combat
             pointerDownTime = Time.unscaledTime;
             hasValidPointerDown = true;
             isDragging = false;
+        }
+
+        /// <summary>
+        /// Performs a full UI raycast at the pointer position.
+        /// If any hit element (other than this panel) is a Button, invokes its onClick and returns true.
+        /// </summary>
+        private static bool TryRoutePointerToButton(PointerEventData eventData)
+        {
+            if (EventSystem.current == null)
+                return false;
+
+            var results = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(eventData, results);
+
+            foreach (RaycastResult result in results)
+            {
+                Button btn = result.gameObject.GetComponentInParent<Button>();
+                if (btn != null && btn.interactable)
+                {
+                    btn.onClick.Invoke();
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public void OnPointerUp(PointerEventData eventData)

@@ -64,6 +64,7 @@ namespace Shogun.Features.UI
         private Rect lastSafeArea = new Rect(-1f, -1f, -1f, -1f);
         private float lastParentWidth = -1f;
         private bool usingEmergencyLayout;
+        private string diagnosticStatus = "Not started";
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void EnsureControllerExists()
@@ -91,6 +92,27 @@ namespace Shogun.Features.UI
             BuildSceneContents();
         }
         private void Update() => ApplyResponsiveLayout(false);
+
+        #if UNITY_EDITOR
+        private void OnGUI()
+        {
+            if (!Application.isPlaying)
+                return;
+            GUIStyle style = new GUIStyle(GUI.skin.box)
+            {
+                fontSize = 18,
+                alignment = TextAnchor.UpperLeft,
+                wordWrap = true,
+                normal = { textColor = Color.yellow }
+            };
+            GUI.backgroundColor = new Color(0f, 0f, 0f, 0.85f);
+            string info = $"[Barracks Diag]\n{diagnosticStatus}\n" +
+                          $"Canvas: {(targetCanvas != null ? $"active={targetCanvas.isActiveAndEnabled}, mode={targetCanvas.renderMode}" : "NULL")}\n" +
+                          $"Screen: {Screen.width}x{Screen.height}";
+            GUI.Box(new Rect(10, 10, 500, 120), info, style);
+        }
+        #endif
+
         private void RebuildEditorPreview()
         {
             if (!isActiveAndEnabled)
@@ -101,28 +123,47 @@ namespace Shogun.Features.UI
         }
         private void BuildSceneContents()
         {
-            ResolveCanvas();
-            usingEmergencyLayout = false;
-            ResolveOwnedCharacters();
-            if (PreferMinimalBarracksLayout)
-            {
-                BuildEmergencyFallback(null);
-                SelectCharacter(Mathf.Clamp(selectedIndex, 0, Mathf.Max(0, ownedCharacters.Count - 1)));
-                ApplyResponsiveLayout(true);
-                return;
-            }
             try
             {
+                diagnosticStatus = "ResolveCanvas...";
+                ResolveCanvas();
+                if (targetCanvas == null)
+                {
+                    diagnosticStatus = "FAIL: No canvas after ResolveCanvas.";
+                    Debug.LogError("[BarracksSceneController] FAIL: No canvas found or created.");
+                    return;
+                }
+                diagnosticStatus = "ResolveCanvas complete.";
+                usingEmergencyLayout = false;
+                ResolveOwnedCharacters();
+                diagnosticStatus = $"Owned characters: {ownedCharacters.Count}. Building layout...";
+                if (PreferMinimalBarracksLayout)
+                {
+                    BuildEmergencyFallback(null);
+                    SelectCharacter(Mathf.Clamp(selectedIndex, 0, Mathf.Max(0, ownedCharacters.Count - 1)));
+                    ApplyResponsiveLayout(true);
+                    diagnosticStatus = $"Minimal layout built. {ownedCharacters.Count} characters.";
+                    return;
+                }
                 BuildScreen();
                 SelectCharacter(Mathf.Clamp(selectedIndex, 0, Mathf.Max(0, ownedCharacters.Count - 1)));
                 ApplyResponsiveLayout(true);
+                diagnosticStatus = $"Full layout built. {ownedCharacters.Count} characters.";
             }
             catch (Exception exception)
             {
-                Debug.LogError($"[BarracksSceneController] Failed to build full barracks scene. Falling back to minimal layout. {exception}");
-                BuildEmergencyFallback(exception);
-                SelectCharacter(Mathf.Clamp(selectedIndex, 0, Mathf.Max(0, ownedCharacters.Count - 1)));
-                ApplyResponsiveLayout(true);
+                diagnosticStatus = $"EXCEPTION: {exception.GetType().Name}: {exception.Message}";
+                Debug.LogError($"[BarracksSceneController] BuildSceneContents failed: {exception}");
+                try
+                {
+                    BuildEmergencyFallback(exception);
+                    SelectCharacter(Mathf.Clamp(selectedIndex, 0, Mathf.Max(0, ownedCharacters.Count - 1)));
+                    ApplyResponsiveLayout(true);
+                }
+                catch (Exception fallbackEx)
+                {
+                    Debug.LogError($"[BarracksSceneController] Emergency fallback also failed: {fallbackEx}");
+                }
             }
         }
 
@@ -186,7 +227,7 @@ namespace Shogun.Features.UI
                 scaler = canvas.gameObject.AddComponent<CanvasScaler>();
 
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(720f, 1280f);
+            scaler.referenceResolution = new Vector2(1080f, 1920f);
             scaler.matchWidthOrHeight = 1f;
 
             if (canvas.GetComponent<GraphicRaycaster>() == null)
@@ -325,6 +366,13 @@ namespace Shogun.Features.UI
 
             float contentWidth = Mathf.Max(320f, Mathf.Min(maxWidth, parentWidth - (ContentHorizontalMargin * 2f)));
             contentFrame.sizeDelta = new Vector2(contentWidth, 0f);
+            if (usingEmergencyLayout)
+            {
+                if (screenRoot != null)
+                    LayoutRebuilder.ForceRebuildLayoutImmediate(screenRoot);
+                ResetScreenScrollIfNeeded();
+                return;
+            }
             RefreshDetailTextLayout();
             if (rosterGrid == null || rosterViewport == null)
             {

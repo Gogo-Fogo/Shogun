@@ -12,15 +12,20 @@ public class BattleResultController : MonoBehaviour
 
     [Header("Dependencies (auto-resolved if left empty)")]
     [SerializeField] private TurnManager turnManager;
+    [SerializeField] private TestBattleSetup battleSetup;
 
     private GameObject panel;
     private Text resultLabel;
     private Text subtitleLabel;
+    private Text rewardLabel;
 
     private void Start()
     {
         if (turnManager == null)
             turnManager = FindFirstObjectByType<TurnManager>();
+
+        if (battleSetup == null)
+            battleSetup = FindFirstObjectByType<TestBattleSetup>();
 
         if (turnManager != null)
             turnManager.OnBattleEnded += ShowResult;
@@ -44,8 +49,12 @@ public class BattleResultController : MonoBehaviour
             resultLabel.text = result == BattleResult.Win ? "VICTORY" : "DEFEAT";
         if (subtitleLabel != null)
             subtitleLabel.text = result == BattleResult.Win
-                ? "The battle is decided. Choose your next step."
-                : "Regroup and try the encounter again.";
+                ? ResolveVictorySubtitle()
+                : ResolveDefeatSubtitle();
+        if (rewardLabel != null)
+            rewardLabel.text = result == BattleResult.Win
+                ? ResolveVictoryRewardPreview()
+                : "No reward preview on defeat in this test slice.";
 
         Time.timeScale = 1f;
         Debug.Log($"[BattleResult] {result}");
@@ -92,7 +101,7 @@ public class BattleResultController : MonoBehaviour
         Image overlay = panel.AddComponent<Image>();
         overlay.color = new Color(0.01f, 0.01f, 0.03f, 0.82f);
 
-        RectTransform card = CreateRect("Card", panel.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-240f, -170f), new Vector2(240f, 170f));
+        RectTransform card = CreateRect("Card", panel.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-240f, -182f), new Vector2(240f, 182f));
         Image cardImage = card.gameObject.AddComponent<Image>();
         cardImage.color = new Color(0.12f, 0.11f, 0.08f, 0.97f);
 
@@ -110,11 +119,33 @@ public class BattleResultController : MonoBehaviour
         layout.childForceExpandHeight = false;
 
         resultLabel = CreateLabel(card.transform, "ResultLabel", "RESULT", 54, new Color(0.98f, 0.95f, 0.84f, 1f), 60f);
-        subtitleLabel = CreateLabel(card.transform, "SubtitleLabel", "The battle outcome is ready.", 18, new Color(0.82f, 0.79f, 0.72f, 1f), 30f);
+        subtitleLabel = CreateLabel(card.transform, "SubtitleLabel", "The battle outcome is ready.", 18, new Color(0.82f, 0.79f, 0.72f, 1f), 34f);
+        rewardLabel = CreateLabel(card.transform, "RewardLabel", "+120 EXP  •  +1 Court Intel", 18, new Color(0.88f, 0.8f, 0.52f, 1f), 28f);
         CreateActionButton(card.transform, "RestartButton", "RESTART", new Color(0.42f, 0.3f, 0.16f, 0.96f), OnRestart);
         CreateActionButton(card.transform, "MainMenuButton", "MAIN MENU", new Color(0.32f, 0.18f, 0.16f, 0.96f), OnMainMenu);
 
         panel.SetActive(false);
+    }
+
+    private string ResolveVictorySubtitle()
+    {
+        return battleSetup != null
+            ? battleSetup.GetEncounterVictorySubtitle()
+            : "The battle is decided. Choose your next step.";
+    }
+
+    private string ResolveDefeatSubtitle()
+    {
+        return battleSetup != null
+            ? battleSetup.GetEncounterDefeatSubtitle()
+            : "Regroup and try the encounter again.";
+    }
+
+    private string ResolveVictoryRewardPreview()
+    {
+        return battleSetup != null
+            ? battleSetup.GetEncounterVictoryRewardPreview()
+            : "+120 EXP  •  +1 Court Intel";
     }
 
     private static Text CreateLabel(Transform parent, string goName, string text, int fontSize, Color color, float preferredHeight)

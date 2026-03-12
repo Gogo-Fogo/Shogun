@@ -58,6 +58,7 @@ namespace Shogun.Features.UI
         private Rect lastSafeArea = new Rect(-1f, -1f, -1f, -1f);
         private float lastParentWidth = -1f;
         private bool usingEmergencyLayout;
+        private string diagnosticStatus = "Not started";
 
         private sealed class FrameRateCardView
         {
@@ -104,6 +105,27 @@ namespace Shogun.Features.UI
             BuildSceneContents();
         }
         private void Update() => ApplyResponsiveLayout(false);
+
+        #if UNITY_EDITOR
+        private void OnGUI()
+        {
+            if (!Application.isPlaying)
+                return;
+            GUIStyle style = new GUIStyle(GUI.skin.box)
+            {
+                fontSize = 18,
+                alignment = TextAnchor.UpperLeft,
+                wordWrap = true,
+                normal = { textColor = Color.yellow }
+            };
+            GUI.backgroundColor = new Color(0f, 0f, 0f, 0.85f);
+            string info = $"[Settings Diag]\n{diagnosticStatus}\n" +
+                          $"Canvas: {(targetCanvas != null ? $"active={targetCanvas.isActiveAndEnabled}, mode={targetCanvas.renderMode}" : "NULL")}\n" +
+                          $"Screen: {Screen.width}x{Screen.height}";
+            GUI.Box(new Rect(10, 10, 500, 120), info, style);
+        }
+        #endif
+
         private void RebuildEditorPreview()
         {
             if (!isActiveAndEnabled)
@@ -114,26 +136,44 @@ namespace Shogun.Features.UI
         }
         private void BuildSceneContents()
         {
-            ResolveCanvas();
-            if (PreferMinimalSettingsLayout)
-            {
-                BuildEmergencyFallback(null);
-                RefreshFromSettings();
-                ApplyResponsiveLayout(true);
-                return;
-            }
             try
             {
+                diagnosticStatus = "ResolveCanvas...";
+                ResolveCanvas();
+                if (targetCanvas == null)
+                {
+                    diagnosticStatus = "FAIL: No canvas after ResolveCanvas.";
+                    Debug.LogError("[SettingsSceneController] FAIL: No canvas found or created.");
+                    return;
+                }
+                diagnosticStatus = "ResolveCanvas complete. Building layout...";
+                if (PreferMinimalSettingsLayout)
+                {
+                    BuildEmergencyFallback(null);
+                    RefreshFromSettings();
+                    ApplyResponsiveLayout(true);
+                    diagnosticStatus = "Minimal layout built.";
+                    return;
+                }
                 BuildScreen();
                 RefreshFromSettings();
                 ApplyResponsiveLayout(true);
+                diagnosticStatus = "Full layout built.";
             }
             catch (Exception exception)
             {
-                Debug.LogError($"[SettingsSceneController] Failed to build full settings scene. Falling back to minimal layout. {exception}");
-                BuildEmergencyFallback(exception);
-                RefreshFromSettings();
-                ApplyResponsiveLayout(true);
+                diagnosticStatus = $"EXCEPTION: {exception.GetType().Name}: {exception.Message}";
+                Debug.LogError($"[SettingsSceneController] BuildSceneContents failed: {exception}");
+                try
+                {
+                    BuildEmergencyFallback(exception);
+                    RefreshFromSettings();
+                    ApplyResponsiveLayout(true);
+                }
+                catch (Exception fallbackEx)
+                {
+                    Debug.LogError($"[SettingsSceneController] Emergency fallback also failed: {fallbackEx}");
+                }
             }
         }
 
@@ -197,7 +237,7 @@ namespace Shogun.Features.UI
                 scaler = canvas.gameObject.AddComponent<CanvasScaler>();
 
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(720f, 1280f);
+            scaler.referenceResolution = new Vector2(1080f, 1920f);
             scaler.matchWidthOrHeight = 1f;
 
             if (canvas.GetComponent<GraphicRaycaster>() == null)
@@ -257,6 +297,7 @@ namespace Shogun.Features.UI
             toggleCards.Clear();
             performanceGrid = null;
             feedbackGrid = null;
+            usingEmergencyLayout = true;
 
             ClearChildren(hostRoot);
             RectTransform screen = CreateRect("EmergencySettingsScreen", hostRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
@@ -642,6 +683,12 @@ namespace Shogun.Features.UI
             lastSafeArea = safeArea;
             lastParentWidth = parentWidth;
 
+            if (usingEmergencyLayout)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(hostRoot);
+                return;
+            }
+
             float maxWidth = PhoneContentMaxWidth;
             if (currentScreenSize.x >= ExpandedBreakpoint)
                 maxWidth = ExpandedContentMaxWidth;
@@ -930,7 +977,7 @@ namespace Shogun.Features.UI
 
             CanvasScaler scaler = canvasGo.GetComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(720f, 1280f);
+            scaler.referenceResolution = new Vector2(1080f, 1920f);
             scaler.matchWidthOrHeight = 1f;
 
             RectTransform safeAreaRoot = CreateRect("UI_SafeAreaPanel", canvasGo.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);

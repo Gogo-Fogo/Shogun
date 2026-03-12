@@ -23,6 +23,12 @@
    - longevity, technical-debt, and content-burden analysis
 6. [`doc-ref-004-fire-emblem-heroes-success-and-drawbacks.md`](./doc-ref-004-fire-emblem-heroes-success-and-drawbacks.md)
    - FEH comparison note; use the retained source doc only if the original Word document is needed
+7. [`doc-ref-005-nabla-reference-pack-manifest.md`](./doc-ref-005-nabla-reference-pack-manifest.md)
+   - repo-safe manifest for the local Naruto Blazing reference pack; category guide, safe usage rule, and what each bucket teaches us
+8. [`doc-ref-006-nabla-folder-by-folder-study.md`](./doc-ref-006-nabla-folder-by-folder-study.md)
+   - actual folder-by-folder interpretation of the NaBlA local reference pack; what each category does, what Shogun should learn, and what not to copy
+9. [`doc-ref-007-nabla-to-shogun-adaptation-matrix.md`](./doc-ref-007-nabla-to-shogun-adaptation-matrix.md)
+   - all-folder translation matrix that maps each NaBlA category into Shogun systems, lore lanes, and active-slice priority
 
 ## Companion docs outside this folder
 
@@ -44,6 +50,9 @@
 5. `DOC-REF-002`
 6. `DOC-REF-003`
 7. `DOC-REF-004`
+8. `DOC-REF-005`
+9. `DOC-REF-006`
+10. `DOC-REF-007`
 
 ## Rule for future updates
 

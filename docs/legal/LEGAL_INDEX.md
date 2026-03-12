@@ -20,6 +20,8 @@
    - legal backlog, unresolved questions, and follow-up roadmap
 4. [`doc-data-001-unity-mobile-gacha-rpg-data-collection-and-compliance.md`](./doc-data-001-unity-mobile-gacha-rpg-data-collection-and-compliance.md)
    - telemetry, consent-aware data collection, and audit/compliance implementation detail
+5. [`doc-legal-004-third-party-reference-material-handling.md`](./doc-legal-004-third-party-reference-material-handling.md)
+   - local-only handling rule for copyrighted franchise reference packs, GitHub hygiene, and repo-safe documentation outputs
 
 ## Companion docs outside this folder
 
@@ -38,7 +40,8 @@
 2. `DOC-LEGAL-003`
 3. `DOC-LEGAL-002`
 4. `DOC-DATA-001`
-5. `DOC-GDD-001`
+5. `DOC-LEGAL-004`
+6. `DOC-GDD-001`
 
 ## Rule for future updates
 

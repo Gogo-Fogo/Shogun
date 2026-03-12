@@ -75,9 +75,13 @@
     - Gemini prompts for battle UI chrome: medallion frames, buttons, HP bars, combo tracker, result card, cut-in stripe
     - tool split rule (Gemini vs PixelLab vs Unity native), visual language, element colour tinting table
     - PixelLab skill icon spec template, font strategy, file placement, and import settings
+12. [`art-012-combat-cutin-taxonomy-and-shogun-mapping.md`](./art-012-combat-cutin-taxonomy-and-shogun-mapping.md)
+    - maps Naruto Blazing `chain`, `cutin`, `rarecutin`, and `sevencutin` asset families into Shogun's smaller presentation-art pipeline
+    - clarifies what should be combo-only, what should be ultimate-only, and why Shogun should not mirror every Blazing variant yet
 
 ## Use ART-010 for: character portraits, attack/damage/special poses, pfp medallion face, PixelLab battle sprites
 ## Use ART-011 for: UI frames, buttons, panel backgrounds, HUD chrome, skill icons, status effect icons
+## Use ART-012 for: combo eye strips, battle cut-in taxonomy, and deciding whether new character presentation-art lanes are actually needed
 
 ## Rule for future updates
 

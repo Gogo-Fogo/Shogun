@@ -107,6 +107,7 @@ The player should immediately understand:
 - victory or defeat
 - restart or return path
 - placeholder reward or handoff state if present
+- that the HUD has switched out of live turn polling and into an encounter-result state
 
 This state should be unmistakable and not depend on subtle HUD changes.
 
@@ -140,6 +141,7 @@ Normal battle:
 
 - show objective chip such as `Defeat all enemies`
 - optionally show brief encounter title or phase note
+- at encounter start, a short title/subtitle plate can fade in below the top bar to establish the authored fight without blocking the battlefield for long
 
 Boss battle:
 
@@ -205,6 +207,7 @@ Rules:
 - active ally attack circles should use one shared blue battlefield grammar; precision should come from an explicit visible outer circle line, not per-character palette variation
 - ally-circle interior fill should stay airy near the center and bias its opacity toward the edge; a gentler blinking halo can sit outside that line, but the boundary ring itself should remain the clearest read on the field
 - safe-area handling should stay in the HUD layer only; the battlefield camera should fit the arena art cleanly instead of exposing decorative side gutters or edge bands
+- any authored battlefield pressure zone should remain visible during battle so the player understands why chip damage or attrition is happening
 
 ### Bottom squad rail
 
@@ -282,6 +285,7 @@ This is the main improvement opportunity over `Blazing`.
 ### Presentation rules
 
 - first hit should feel clean and readable, not overloaded
+- when battle end is reached, the top bar should stop showing stale turn ownership and swap to encounter-title plus `Victory` or `Defeat`
 - confirmed `2-unit` and `3-unit` combos can use a brief slanted face/eye-strip cut-in, but solo hits should never trigger it
 - second and later hits are where combo spectacle should peak
 - damage text must appear above the impacted enemy and clear quickly
@@ -402,6 +406,7 @@ Do not combine boss bar, giant portrait, giant warning panel, and constant field
 - readable drag-state range and target overlays
 - damage popup and combo follow-through feedback
 - minimal win or loss result panel
+- optional non-persistent reward preview string on victory, as long as it is clearly marked as a handoff placeholder rather than a real economy grant
 
 ### Phase 2: slice-quality polish
 
@@ -455,6 +460,8 @@ When choosing between:
 - and stronger payoff after release
 
 save the spectacle for after release.
+
+
 
 
 

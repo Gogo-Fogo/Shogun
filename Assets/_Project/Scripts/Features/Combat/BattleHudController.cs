@@ -38,11 +38,16 @@ namespace Shogun.Features.Combat
         private const float ComboTrackerBasePulseSeconds = 0.18f;
         private const float ComboTrackerFinishPulseSeconds = 0.34f;
         private const int MaxPortraitChargeDividers = 20;
-        private const float MedallionOrbRadius = 38f;   // px from circle centre to orb centre
-        private const float MedallionOrbSize   = 9f;    // diameter of each orb dot
+        private const float MedallionOrbRadius = 114f;  // px from circle centre to orb centre (38 × 3)
+        private const float MedallionOrbSize   = 24f;   // diameter of each orb dot (9 × 3)
         private const float ComboCutInIntroSeconds = 0.16f;
         private const float ComboCutInHoldSeconds = 0.18f;
         private const float ComboCutInOutroSeconds = 0.16f;
+        private const float EncounterIntroFadeInSeconds = 0.18f;
+        private const float EncounterIntroHoldSeconds = 1.3f;
+        private const float EncounterIntroFadeOutSeconds = 0.22f;
+        private const float EncounterIntroPanelWidth = 660f;
+        private const float EncounterIntroPanelHeight = 116f;
         private const float ComboCutInStripeWidth = 980f;
         private const float ComboCutInStripeHeight = 124f;
         private const float ComboCutInRotation = -13f;
@@ -58,12 +63,13 @@ namespace Shogun.Features.Combat
         [Header("Dependencies (auto-resolved if left empty)")]
         [SerializeField] private TurnManager turnManager;
         [SerializeField] private BattleManager battleManager;
+        [SerializeField] private TestBattleSetup battleSetup;
         [SerializeField] private Canvas targetCanvas;
         [SerializeField] private RectTransform hudPrefab;
 
         [Header("Layout")]
         [SerializeField] private float topBarHeight = 124f;
-        [SerializeField] private float bottomRailHeight = 116f;
+        [SerializeField] private float bottomRailHeight = 300f;
 
         [Header("Medallion")]
         [SerializeField] private MedallionFrameCatalog medallionCatalog;
@@ -146,6 +152,13 @@ namespace Shogun.Features.Combat
         private CanvasGroup comboCutInCanvasGroup;
         private Coroutine comboCutInCoroutine;
         private readonly List<ComboCutInSlotView> comboCutInSlots = new List<ComboCutInSlotView>();
+        private RectTransform encounterIntroRoot;
+        private CanvasGroup encounterIntroCanvasGroup;
+        private Text encounterIntroTitleLabel;
+        private Text encounterIntroSubtitleLabel;
+        private Coroutine encounterIntroCoroutine;
+        private bool battleHasEnded;
+        private BattleResult battleEndResult;
         private Vector2 lastHudViewportSize = new Vector2(-1f, -1f);
         private Vector2Int lastResponsiveScreenSize = new Vector2Int(-1, -1);
         private Rect lastResponsiveSafeArea = new Rect(-1f, -1f, -1f, -1f);
@@ -232,10 +245,14 @@ namespace Shogun.Features.Combat
 
             yield return WaitForBattleSetup();
 
+            battleHasEnded = false;
+            battleEndResult = BattleResult.Win;
+
             BuildHud();
             BindEvents();
             RebuildPlayerSlots();
             RefreshHud();
+            PlayEncounterIntroIfNeeded();
 
             pollCoroutine = StartCoroutine(PollHud());
             TryQueueAutoTurn();
@@ -251,6 +268,9 @@ namespace Shogun.Features.Combat
 
             if (comboCutInCoroutine != null)
                 StopCoroutine(comboCutInCoroutine);
+
+            if (encounterIntroCoroutine != null)
+                StopCoroutine(encounterIntroCoroutine);
 
             UnbindEvents();
             UnbindCharacterEvents();
@@ -272,6 +292,9 @@ namespace Shogun.Features.Combat
 
             if (battleManager == null)
                 battleManager = FindFirstObjectByType<BattleManager>();
+
+            if (battleSetup == null)
+                battleSetup = FindFirstObjectByType<TestBattleSetup>();
 
             if (targetCanvas == null)
                 targetCanvas = FindFirstObjectByType<Canvas>();
@@ -455,8 +478,9 @@ namespace Shogun.Features.Combat
 
         private void HandleBattleEnded(BattleResult result)
         {
-            if (objectiveLabel != null)
-                objectiveLabel.text = result == BattleResult.Win ? "VICTORY" : "DEFEAT";
+            battleHasEnded = true;
+            battleEndResult = result;
+            HideEncounterIntroImmediate();
 
             if (autoTurnCoroutine != null)
             {
@@ -512,6 +536,7 @@ namespace Shogun.Features.Combat
             BuildTopBar();
             BuildComboTracker();
             BuildComboCutIn();
+            BuildEncounterIntro();
             BuildBottomRail();
             BuildPauseMenu();
             UpdateResponsiveLayout();
@@ -866,6 +891,129 @@ namespace Shogun.Features.Combat
             };
         }
 
+        private void BuildEncounterIntro()
+        {
+            if (hudContentFrame == null)
+                return;
+
+            RectTransform existing = hudContentFrame.Find("EncounterIntroOverlay") as RectTransform;
+            if (existing != null)
+                Destroy(existing.gameObject);
+
+            RectTransform overlay = CreateRect(
+                "EncounterIntroOverlay",
+                hudContentFrame,
+                new Vector2(0.5f, 1f),
+                new Vector2(0.5f, 1f),
+                new Vector2(-(EncounterIntroPanelWidth * 0.5f), -176f - EncounterIntroPanelHeight),
+                new Vector2(EncounterIntroPanelWidth * 0.5f, -176f));
+            overlay.pivot = new Vector2(0.5f, 1f);
+
+            Image panel = overlay.gameObject.AddComponent<Image>();
+            panel.sprite = GetWhiteSprite();
+            panel.color = new Color(0.08f, 0.05f, 0.04f, 0.92f);
+            panel.raycastTarget = false;
+
+            Outline panelOutline = overlay.gameObject.AddComponent<Outline>();
+            panelOutline.effectColor = new Color(0.82f, 0.66f, 0.28f, 0.42f);
+            panelOutline.effectDistance = new Vector2(2f, -2f);
+
+            RectTransform titleRoot = CreateRect("Title", overlay, new Vector2(0f, 0.44f), new Vector2(1f, 1f), new Vector2(22f, -18f), new Vector2(-22f, -10f));
+            encounterIntroTitleLabel = CreateText("Label", titleRoot, TextAnchor.LowerCenter, 34, FontStyle.Bold);
+            encounterIntroTitleLabel.color = new Color(0.99f, 0.95f, 0.84f, 1f);
+            encounterIntroTitleLabel.resizeTextForBestFit = true;
+            encounterIntroTitleLabel.resizeTextMinSize = 18;
+            encounterIntroTitleLabel.resizeTextMaxSize = 34;
+            encounterIntroTitleLabel.text = string.Empty;
+
+            RectTransform subtitleRoot = CreateRect("Subtitle", overlay, new Vector2(0f, 0f), new Vector2(1f, 0.48f), new Vector2(28f, 10f), new Vector2(-28f, 12f));
+            encounterIntroSubtitleLabel = CreateText("Label", subtitleRoot, TextAnchor.UpperCenter, 18, FontStyle.Normal);
+            encounterIntroSubtitleLabel.color = new Color(0.9f, 0.84f, 0.74f, 0.96f);
+            encounterIntroSubtitleLabel.resizeTextForBestFit = true;
+            encounterIntroSubtitleLabel.resizeTextMinSize = 12;
+            encounterIntroSubtitleLabel.resizeTextMaxSize = 18;
+            encounterIntroSubtitleLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
+            encounterIntroSubtitleLabel.verticalOverflow = VerticalWrapMode.Overflow;
+            encounterIntroSubtitleLabel.text = string.Empty;
+
+            encounterIntroRoot = overlay;
+            encounterIntroCanvasGroup = overlay.gameObject.AddComponent<CanvasGroup>();
+            encounterIntroCanvasGroup.alpha = 0f;
+            encounterIntroCanvasGroup.interactable = false;
+            encounterIntroCanvasGroup.blocksRaycasts = false;
+            HideEncounterIntroImmediate();
+        }
+
+        private void PlayEncounterIntroIfNeeded()
+        {
+            if (!Application.isPlaying || battleHasEnded)
+                return;
+
+            if (encounterIntroRoot == null || encounterIntroCanvasGroup == null || encounterIntroTitleLabel == null || encounterIntroSubtitleLabel == null)
+                return;
+
+            string title = battleSetup != null ? battleSetup.GetEncounterDisplayName() : string.Empty;
+            string subtitle = battleSetup != null ? battleSetup.GetEncounterIntroSubtitle() : string.Empty;
+            if (string.IsNullOrWhiteSpace(title))
+                return;
+
+            encounterIntroTitleLabel.text = title.Trim().ToUpperInvariant();
+            encounterIntroSubtitleLabel.text = string.IsNullOrWhiteSpace(subtitle) ? string.Empty : subtitle.Trim();
+
+            if (encounterIntroCoroutine != null)
+                StopCoroutine(encounterIntroCoroutine);
+
+            encounterIntroCoroutine = StartCoroutine(AnimateEncounterIntro());
+        }
+
+        private IEnumerator AnimateEncounterIntro()
+        {
+            if (encounterIntroRoot == null || encounterIntroCanvasGroup == null)
+                yield break;
+
+            encounterIntroRoot.gameObject.SetActive(true);
+            encounterIntroCanvasGroup.alpha = 0f;
+
+            yield return AnimateEncounterIntroPhase(0f, 1f, EncounterIntroFadeInSeconds);
+            yield return new WaitForSecondsRealtime(EncounterIntroHoldSeconds);
+            yield return AnimateEncounterIntroPhase(1f, 0f, EncounterIntroFadeOutSeconds);
+
+            encounterIntroCoroutine = null;
+            HideEncounterIntroImmediate();
+        }
+
+        private IEnumerator AnimateEncounterIntroPhase(float fromAlpha, float toAlpha, float duration)
+        {
+            if (encounterIntroCanvasGroup == null)
+                yield break;
+
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = duration <= 0.0001f ? 1f : Mathf.Clamp01(elapsed / duration);
+                float eased = Mathf.SmoothStep(0f, 1f, t);
+                encounterIntroCanvasGroup.alpha = Mathf.Lerp(fromAlpha, toAlpha, eased);
+                yield return null;
+            }
+
+            encounterIntroCanvasGroup.alpha = toAlpha;
+        }
+
+        private void HideEncounterIntroImmediate()
+        {
+            if (encounterIntroCoroutine != null)
+            {
+                StopCoroutine(encounterIntroCoroutine);
+                encounterIntroCoroutine = null;
+            }
+
+            if (encounterIntroCanvasGroup != null)
+                encounterIntroCanvasGroup.alpha = 0f;
+
+            if (encounterIntroRoot != null)
+                encounterIntroRoot.gameObject.SetActive(false);
+        }
         private void BuildTurnContextModule(Transform parent)
         {
             RectTransform contextRoot = CreateTopBarModule(parent, "TurnContextPill", 246f, 88f, out turnPanelBackground);
@@ -1188,10 +1336,10 @@ namespace Shogun.Features.Combat
         // Creates a circular portrait medallion for one player lane.
         private PlayerSlotView CreatePlayerSlot(int laneIndex)
         {
-            const float diameter  = 76f;   // inner portrait circle
-            const float ringSize  = 88f;   // outer arc/ring
+            const float diameter  = 240f;  // inner portrait circle
+            const float ringSize  = 264f;  // outer arc/ring (3× original 88px)
             const float hpBarH    = 8f;
-            const float badgeSize = 34f;
+            const float badgeSize = 80f;   // reserve badge (proportional to ring)
             float slotW = ringSize + 8f;   // 96px
             float slotH = ringSize + hpBarH + 10f; // 106px
 
@@ -1359,6 +1507,14 @@ namespace Shogun.Features.Combat
             swapPortrait.preserveAspect = true;
             swapPortrait.raycastTarget  = false;
 
+            // Medallion frame overlay on the reserve badge — matches the reserve character's hole count.
+            RectTransform swapFrameRect = CreateRect("MedallionFrame", swapRect,
+                new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+            Image swapMedallionFrame = swapFrameRect.gameObject.AddComponent<Image>();
+            swapMedallionFrame.raycastTarget  = false;
+            swapMedallionFrame.preserveAspect = false;
+            swapMedallionFrame.enabled        = false;
+
             swapRect.gameObject.SetActive(false);
 
             return new PlayerSlotView
@@ -1379,6 +1535,7 @@ namespace Shogun.Features.Combat
                 MedallionFrame          = medallionFrame,
                 MedallionOrbs           = medallionOrbs,
                 LastOrbCount            = -1,
+                ReserveMedallionFrame   = swapMedallionFrame,
             };
         }
 
@@ -2067,6 +2224,27 @@ namespace Shogun.Features.Combat
         {
             if (turnLabel == null || objectiveLabel == null)
                 return;
+
+            if (battleHasEnded)
+            {
+                turnLabel.text = ResolveEncounterDisplayNameText();
+                objectiveLabel.text = battleEndResult == BattleResult.Win ? "VICTORY" : "DEFEAT";
+
+                if (turnPanelBackground != null)
+                    turnPanelBackground.color = new Color(0.16f, 0.12f, 0.07f, 0.96f);
+
+                if (objectivePillBackground != null)
+                {
+                    objectivePillBackground.color = battleEndResult == BattleResult.Win
+                        ? new Color(0.2f, 0.28f, 0.12f, 0.96f)
+                        : new Color(0.32f, 0.12f, 0.1f, 0.93f);
+                }
+
+                RefreshLegendTokens(null);
+                UpdateUtilityLabels();
+                return;
+            }
+
             CharacterInstance current = turnManager != null ? turnManager.GetCurrentCombatant() : null;
             string currentName = current != null ? ResolveCharacterName(current) : "-";
             turnLabel.text = $"TURN: {currentName}";
@@ -2096,12 +2274,29 @@ namespace Shogun.Features.Combat
                 }
                 else
                 {
-                    objectiveLabel.text = $"DEFEAT ALL ENEMIES  {aliveEnemies}/{Mathf.Max(1, totalEnemies)}";
+                    objectiveLabel.text = ResolveEncounterObjectiveStatusText(aliveEnemies, totalEnemies);
                     if (objectivePillBackground != null)
                         objectivePillBackground.color = new Color(0.16f, 0.12f, 0.07f, 0.96f);
                 }
             }
             UpdateUtilityLabels();
+        }
+
+        private string ResolveEncounterObjectiveStatusText(int aliveEnemies, int totalEnemies)
+        {
+            if (battleSetup != null)
+                return battleSetup.GetEncounterObjectiveStatusText(aliveEnemies, totalEnemies);
+
+            return $"DEFEAT ALL ENEMIES  {aliveEnemies}/{Mathf.Max(1, totalEnemies)}";
+        }
+
+        private string ResolveEncounterDisplayNameText()
+        {
+            string encounterName = battleSetup != null ? battleSetup.GetEncounterDisplayName() : string.Empty;
+            if (string.IsNullOrWhiteSpace(encounterName))
+                encounterName = "BATTLE RESULT";
+
+            return encounterName.Trim().ToUpperInvariant();
         }
         private void RefreshTurnContextVisuals(CharacterInstance current)
         {
@@ -2349,6 +2544,13 @@ namespace Shogun.Features.Combat
                             ? new Color(0.34f, 0.24f, 0.12f, 0.96f)
                             : new Color(0.22f, 0.18f, 0.12f, 0.88f);
                 }
+                // Medallion frame on reserve badge — matches the reserve character's charge hole count.
+                if (slot.ReserveMedallionFrame != null && medallionCatalog != null)
+                {
+                    Sprite reserveFrame = medallionCatalog.GetFrame(reserve.SpecialChargeRequirement);
+                    slot.ReserveMedallionFrame.sprite  = reserveFrame;
+                    slot.ReserveMedallionFrame.enabled = reserveFrame != null;
+                }
             }
             else
             {
@@ -2383,6 +2585,7 @@ namespace Shogun.Features.Combat
                     : new Color(0.42f, 0.7f, 0.94f, 0.92f);
 
             UpdateAbilityChargeDividers(slot, totalSegments, specialThreshold, specialReady, ultimateReady, pulse01);
+            UpdateMedallionOrbs(slot, front, specialReady, ultimateReady, pulse01);
         }
 
         private void UpdateAbilityChargeDividers(PlayerSlotView slot, int totalSegments, int specialThreshold, bool specialReady, bool ultimateReady, float pulse01)
@@ -2435,6 +2638,129 @@ namespace Shogun.Features.Combat
 
             if (slot.AbilityThresholdMarkerRoot != null)
                 slot.AbilityThresholdMarkerRoot.gameObject.SetActive(false);
+        }
+
+        /// <summary>
+        /// Updates the medallion frame sprite and N orbs for the given slot.
+        ///
+        /// Cycle 1 (charge 0 → specialReq):  orbs fill blue one per turn.
+        /// Cycle 2 (charge specialReq → ultimateReq): same N orbs convert red one by one.
+        /// When front is null or dead, frame and all orbs are hidden.
+        /// </summary>
+        private void UpdateMedallionOrbs(PlayerSlotView slot, CharacterInstance front, bool specialReady, bool ultimateReady, float pulse01)
+        {
+            if (slot == null || slot.MedallionOrbs == null)
+                return;
+
+            int N = front != null ? front.SpecialChargeRequirement : 0;
+
+            // Hide everything when the character is absent / dead / has no charge mechanic.
+            if (front == null || !front.IsAlive || N <= 0)
+            {
+                if (slot.MedallionFrame != null)
+                    slot.MedallionFrame.enabled = false;
+                for (int i = 0; i < slot.MedallionOrbs.Count; i++)
+                {
+                    if (slot.MedallionOrbs[i] != null)
+                        slot.MedallionOrbs[i].gameObject.SetActive(false);
+                }
+                slot.LastOrbCount = 0;
+                return;
+            }
+
+            // Re-assign frame sprite and re-position orbs only when N changes.
+            if (slot.LastOrbCount != N)
+            {
+                slot.LastOrbCount = N;
+
+                if (slot.MedallionFrame != null)
+                {
+                    Sprite frameSpr = medallionCatalog != null ? medallionCatalog.GetFrame(N) : null;
+                    slot.MedallionFrame.sprite  = frameSpr;
+                    slot.MedallionFrame.enabled = frameSpr != null;
+                }
+
+                PositionMedallionOrbs(slot.MedallionOrbs, N);
+            }
+            else if (slot.MedallionFrame != null)
+            {
+                slot.MedallionFrame.enabled = slot.MedallionFrame.sprite != null;
+            }
+
+            // Determine how many orbs are filled in each cycle.
+            // ultimateReq falls back to N if no ultimate is configured (so cycle 2 is never entered).
+            int ultimateReq = front.UltimateChargeRequirement > 0 ? front.UltimateChargeRequirement : N;
+            int charge      = Mathf.Clamp(front.SpecialCharge, 0, ultimateReq);
+
+            bool  inCycle2     = charge > N;
+            int   cycle1Filled = inCycle2 ? N : charge;             // blue orbs earned in cycle 1
+            int   cycle2Filled = inCycle2 ? (charge - N) : 0;       // red orbs earned in cycle 2
+
+            // Colour palette — flat, no pulse per user preference
+            Color blueEmpty    = new Color(0.18f, 0.18f, 0.22f, 0.45f);
+            Color blueFilled   = new Color(0.42f, 0.70f, 0.94f, 0.95f);
+            Color blueReadyCol = specialReady && !ultimateReady
+                ? new Color(0.96f, 0.82f, 0.28f, 1f)   // gold when special is ready
+                : blueFilled;
+            Color redFilled    = new Color(0.95f, 0.28f, 0.22f, 0.95f);
+            Color redReadyCol  = ultimateReady
+                ? new Color(1f, 0.72f, 0.12f, 1f)       // bright gold when ultimate is ready
+                : redFilled;
+
+            for (int i = 0; i < slot.MedallionOrbs.Count; i++)
+            {
+                Image orb = slot.MedallionOrbs[i];
+                if (orb == null)
+                    continue;
+
+                // Orbs beyond the hole count stay hidden.
+                if (i >= N)
+                {
+                    orb.gameObject.SetActive(false);
+                    continue;
+                }
+
+                orb.gameObject.SetActive(true);
+
+                if (i < cycle2Filled)
+                    orb.color = redReadyCol;                          // cycle 2 — red
+                else if (i < cycle1Filled)
+                    orb.color = specialReady && !ultimateReady ? blueReadyCol : blueFilled; // cycle 1 — blue
+                else
+                    orb.color = blueEmpty;                            // unfilled hole
+            }
+        }
+
+        /// <summary>
+        /// Positions N active orbs evenly around a circle of radius MedallionOrbRadius,
+        /// starting at the top (12 o'clock) and going clockwise.
+        /// Orbs with index >= N are deactivated.
+        /// </summary>
+        private static void PositionMedallionOrbs(List<Image> orbs, int N)
+        {
+            if (orbs == null || N <= 0)
+                return;
+
+            float angleStep = 360f / N;
+            for (int i = 0; i < orbs.Count; i++)
+            {
+                Image orb = orbs[i];
+                if (orb == null)
+                    continue;
+
+                if (i >= N)
+                {
+                    orb.gameObject.SetActive(false);
+                    continue;
+                }
+
+                // 90° = top in Unity UI (Y-up), subtract to go clockwise.
+                float angleDeg = 90f - (angleStep * i);
+                float rad = angleDeg * Mathf.Deg2Rad;
+                orb.rectTransform.anchoredPosition = new Vector2(
+                    Mathf.Cos(rad) * MedallionOrbRadius,
+                    Mathf.Sin(rad) * MedallionOrbRadius);
+            }
         }
 
         private void OnReserveButtonPressed(int laneIndex)
@@ -2913,6 +3239,8 @@ namespace Shogun.Features.Combat
             public Image             MedallionFrame;
             public List<Image>       MedallionOrbs;
             public int               LastOrbCount;
+            // Reserve badge medallion frame
+            public Image             ReserveMedallionFrame;
         }
 
         private sealed class ComboCutInSlotView
@@ -3059,6 +3387,8 @@ namespace Shogun.Features.Combat
         }
     }
 }
+
+
 
 
 

@@ -88,3 +88,7 @@ Assets/_Project/Art/References/
 
 # Codex temporary profile/runtime state
 /_tmp_codex_profile_test/
+
+# Local-only third-party franchise reference packs (do not commit) 
+docs/NaBlA_References_Inspo/
+

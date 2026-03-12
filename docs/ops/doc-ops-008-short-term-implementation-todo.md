@@ -40,15 +40,15 @@ Do not add broad feature ambitions here unless they directly unblock the slice.
 ### Encounter setup for `Courtyard Ambush`
 
 - `[Now]` Turn the scene from a sandbox spawn test into one authored encounter with fixed player/enemy lanes.
-- `[Now]` Lock the battle objective, fail condition, and encounter-start presentation for the ambush.
-- `[Next]` Add one encounter config or lightweight authored setup layer instead of hand-editing scene state forever.
-- `[Next]` Introduce one hazard, pressure point, or spatial rule that proves the range/threat-geometry design.
+- `[Now]` Lock the battle objective, fail condition, encounter-start presentation, and stable post-battle top-bar state for the ambush.
+- `[Now]` Keep `Dev_Sandbox` bound to one authored encounter definition for `Courtyard Ambush` instead of ad-hoc debug roster names.
+- `[Now]` Keep one visible authored pressure point in `Courtyard Ambush` so the range/threat-geometry design is proven in play, not only in docs.
 - `[Do not start yet]` Do not branch into multiple encounters or multiple biomes before `Courtyard Ambush` is solid.
 
 ### Result and reward handoff
 
 - `[Now]` Define the minimal post-battle result state the slice must reach: win, loss, restart, and return path.
-- `[Next]` Add a simple result/reward placeholder that proves handoff without requiring full progression systems.
+- `[Now]` Keep a simple result/reward placeholder that proves handoff without requiring full progression systems.
 - `[Do not start yet]` Do not build full economy, gacha rewards, or permanent inventory grants from this slice.
 
 ### Visual consistency and animation minimums
@@ -77,3 +77,5 @@ These do not belong in the short-term slice backlog unless they become true bloc
 
 - Authored specials may now live in AbilityDefinition assets plus an AbilityCatalog.
 - This is a data-separation and validation move for the active slice, not a commitment to Fire Emblem Heroes-style inheritance or freeform loadouts.
+
+

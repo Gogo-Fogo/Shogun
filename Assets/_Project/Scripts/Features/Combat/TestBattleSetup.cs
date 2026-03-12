@@ -7,10 +7,17 @@ using Shogun.Features.Combat;
 
 public class TestBattleSetup : MonoBehaviour
 {
+    private const string DefaultEncounterResourcePath = "CourtyardAmbush_Encounter";
+
     public BattleManager battleManager;
     public TurnManager turnManager;
     public List<CharacterDefinition> testTeam; // Inspector fallback only
     public List<CharacterDefinition> enemyTeam;
+
+    [Header("Authored Encounter")]
+    [SerializeField] private bool useAuthoredEncounter = true;
+    [SerializeField] private BattleEncounterDefinition encounterDefinition;
+    [SerializeField] private string encounterResourcePath = DefaultEncounterResourcePath;
 
     [Header("Debug Player Override")]
     [SerializeField] private bool useDebugPlayerRoster = true;
@@ -31,8 +38,12 @@ public class TestBattleSetup : MonoBehaviour
     [SerializeField] private string debugEnemyName = "akai";
     [SerializeField] private float extraEnemyDistance = 2.5f;
 
+    private BattleEncounterDefinition resolvedEncounterDefinition;
+
     void Start()
     {
+        resolvedEncounterDefinition = ResolveEncounterDefinition();
+
         List<CharacterDefinition> selectedPlayers = BuildPlayerTeam();
         if (selectedPlayers == null || selectedPlayers.Count < 1)
         {
@@ -48,16 +59,19 @@ public class TestBattleSetup : MonoBehaviour
         }
 
         battleManager.StartBattle(selectedPlayers, selectedEnemies);
-        PushEnemiesFurtherAway(extraEnemyDistance);
+        ApplyEncounterFrontlineOffsets();
+        PushEnemiesFurtherAwayIfNeeded(extraEnemyDistance);
 
         turnManager.AttachBattleManager(battleManager);
         turnManager.Initialize(
             battleManager.activeCharacters,
             battleManager.activeEnemyCharacters,
             battleManager.GetAllPlayerCharacters());
+        EnsureEncounterRuntimeControllers();
         turnManager.StartBattle();
 
-        Debug.Log($"Battle started with {battleManager.activeCharacters.Count} allied frontliners, {battleManager.reserveCharacters.Count} allied reserves, and {battleManager.activeEnemyCharacters.Count} enemy combatants.");
+        string encounterName = GetEncounterDisplayName();
+        Debug.Log($"Battle started for '{encounterName}' with {battleManager.activeCharacters.Count} allied frontliners, {battleManager.reserveCharacters.Count} allied reserves, and {battleManager.activeEnemyCharacters.Count} enemy combatants.");
     }
 
     public List<CharacterDefinition> GetPreviewPlayerTeam()
@@ -70,8 +84,69 @@ public class TestBattleSetup : MonoBehaviour
         return BuildEnemyTeam();
     }
 
+    public string GetEncounterDisplayName()
+    {
+        BattleEncounterDefinition encounter = ResolveEncounterDefinition();
+        return encounter != null ? encounter.DisplayName : "Sandbox Battle";
+    }
+
+    public string GetEncounterIntroSubtitle()
+    {
+        BattleEncounterDefinition encounter = ResolveEncounterDefinition();
+        return encounter != null ? encounter.IntroSubtitle : "Prepare the squad and break the enemy line.";
+    }
+
+    public string GetEncounterObjectiveStatusText(int aliveEnemies, int totalEnemies)
+    {
+        BattleEncounterDefinition encounter = ResolveEncounterDefinition();
+        return encounter != null
+            ? encounter.BuildObjectiveStatusText(aliveEnemies, totalEnemies)
+            : $"DEFEAT ALL ENEMIES  {aliveEnemies}/{Mathf.Max(1, totalEnemies)}";
+    }
+
+    public string GetEncounterVictorySubtitle()
+    {
+        BattleEncounterDefinition encounter = ResolveEncounterDefinition();
+        return encounter != null ? encounter.VictorySubtitle : "The battle is decided. Choose your next step.";
+    }
+
+    public string GetEncounterDefeatSubtitle()
+    {
+        BattleEncounterDefinition encounter = ResolveEncounterDefinition();
+        return encounter != null ? encounter.DefeatSubtitle : "Regroup and try the encounter again.";
+    }
+
+    public string GetEncounterVictoryRewardPreview()
+    {
+        BattleEncounterDefinition encounter = ResolveEncounterDefinition();
+        return encounter != null ? encounter.VictoryRewardPreview : "+120 EXP  •  +1 Court Intel";
+    }
+
+    private void EnsureEncounterRuntimeControllers()
+    {
+        BattleEncounterDefinition encounter = ResolveEncounterDefinition();
+        if (encounter == null)
+            return;
+
+        EncounterPressureZoneController pressureZoneController = GetComponent<EncounterPressureZoneController>();
+        if (pressureZoneController == null)
+            pressureZoneController = gameObject.AddComponent<EncounterPressureZoneController>();
+
+        pressureZoneController.Configure(encounter, battleManager, turnManager);
+    }
+
     private List<CharacterDefinition> BuildPlayerTeam()
     {
+        BattleEncounterDefinition encounter = ResolveEncounterDefinition();
+        if (encounter != null)
+        {
+            List<CharacterDefinition> authoredPlayers = encounter.ResolvePlayerTeam();
+            if (authoredPlayers.Count > 0)
+                return authoredPlayers;
+
+            Debug.LogWarning($"Encounter '{encounter.DisplayName}' did not resolve any player units. Falling back to debug or inspector rosters.");
+        }
+
         if (useDebugPlayerRoster && debugPlayerNames != null && debugPlayerNames.Count > 0)
         {
             List<CharacterDefinition> resolvedPlayers = ResolveRoster(debugPlayerNames, testTeam, "player");
@@ -86,6 +161,16 @@ public class TestBattleSetup : MonoBehaviour
 
     private List<CharacterDefinition> BuildEnemyTeam()
     {
+        BattleEncounterDefinition encounter = ResolveEncounterDefinition();
+        if (encounter != null)
+        {
+            List<CharacterDefinition> authoredEnemies = encounter.ResolveEnemyTeam();
+            if (authoredEnemies.Count > 0)
+                return authoredEnemies;
+
+            Debug.LogWarning($"Encounter '{encounter.DisplayName}' did not resolve any enemies. Falling back to debug or inspector rosters.");
+        }
+
         if (useDebugEnemyRoster && debugEnemyNames != null && debugEnemyNames.Count > 0)
         {
             List<CharacterDefinition> resolvedEnemies = ResolveRoster(debugEnemyNames, enemyTeam, "enemy");
@@ -107,6 +192,69 @@ public class TestBattleSetup : MonoBehaviour
         }
 
         return enemyTeam != null ? new List<CharacterDefinition>(enemyTeam) : new List<CharacterDefinition>();
+    }
+
+    private BattleEncounterDefinition ResolveEncounterDefinition()
+    {
+        if (!useAuthoredEncounter)
+            return null;
+
+        if (encounterDefinition != null)
+        {
+            resolvedEncounterDefinition = encounterDefinition;
+            return resolvedEncounterDefinition;
+        }
+
+        if (resolvedEncounterDefinition != null)
+            return resolvedEncounterDefinition;
+
+        string resourcePath = string.IsNullOrWhiteSpace(encounterResourcePath)
+            ? DefaultEncounterResourcePath
+            : encounterResourcePath.Trim();
+
+        resolvedEncounterDefinition = Resources.Load<BattleEncounterDefinition>(resourcePath);
+        if (resolvedEncounterDefinition == null)
+        {
+            Debug.LogWarning($"TestBattleSetup could not load BattleEncounterDefinition from Resources/{resourcePath}. Falling back to debug or inspector rosters.");
+            return null;
+        }
+
+        encounterDefinition = resolvedEncounterDefinition;
+        return resolvedEncounterDefinition;
+    }
+
+    private void ApplyEncounterFrontlineOffsets()
+    {
+        BattleEncounterDefinition encounter = ResolveEncounterDefinition();
+        if (encounter == null || !encounter.HasFrontlineOffsets || battleManager == null)
+            return;
+
+        ApplyOffsetsToRoster(battleManager.activeCharacters, encounter.GetPlayerFrontlineOffset);
+        ApplyOffsetsToRoster(battleManager.activeEnemyCharacters, encounter.GetEnemyFrontlineOffset);
+    }
+
+    private static void ApplyOffsetsToRoster(List<CharacterInstance> roster, Func<int, Vector3> offsetResolver)
+    {
+        if (roster == null || offsetResolver == null)
+            return;
+
+        for (int i = 0; i < roster.Count; i++)
+        {
+            CharacterInstance character = roster[i];
+            if (character == null)
+                continue;
+
+            character.transform.position += offsetResolver(i);
+        }
+    }
+
+    private void PushEnemiesFurtherAwayIfNeeded(float distance)
+    {
+        BattleEncounterDefinition encounter = ResolveEncounterDefinition();
+        if (encounter != null && encounter.HasFrontlineOffsets)
+            return;
+
+        PushEnemiesFurtherAway(distance);
     }
 
     private List<CharacterDefinition> ResolveRoster(List<string> candidateNames, List<CharacterDefinition> inspectorFallback, string rosterLabel)
@@ -233,4 +381,3 @@ public class TestBattleSetup : MonoBehaviour
         return closest;
     }
 }
-

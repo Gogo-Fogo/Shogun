@@ -53,6 +53,7 @@ docs/
     doc-ops-011-ui-implementation-todo.md
     doc-ops-012-2026-03-10-combat-ui-and-auto-positioning-retrospective.md
     doc-ops-013-docs-routed-feature-workflow.md
+    doc-ops-014-nabla-informed-product-todo.md
   research/
     RESEARCH_INDEX.md
     doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.md
@@ -61,6 +62,9 @@ docs/
     doc-ref-002-naruto-ninja-blazing-success-failure-and-shutdown-analysis.md
     doc-ref-003-one-piece-treasure-cruise-analysis.md
     doc-ref-004-fire-emblem-heroes-success-and-drawbacks.md
+    doc-ref-005-nabla-reference-pack-manifest.md
+    doc-ref-006-nabla-folder-by-folder-study.md
+    doc-ref-007-nabla-to-shogun-adaptation-matrix.md
   recruiter/
     doc-data-001-unity-mobile-gacha-rpg-data-collection-and-compliance.pdf
     doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.pdf
@@ -116,6 +120,7 @@ For feature work, behavior changes, or architecture changes:
 | `DOC-OPS-011` | UI implementation TODO | `ops/doc-ops-011-ui-implementation-todo.md` | No recruiter PDF in this folder | Operational UI backlog | Use when the task is battle UI readability, mobile portrait layout, result-state clarity, or other UI work that must stay inside the active vertical slice. |
 | `DOC-OPS-012` | March 10, 2026 combat UI and auto-positioning retrospective | `ops/doc-ops-012-2026-03-10-combat-ui-and-auto-positioning-retrospective.md` | No recruiter PDF in this folder | Operational change log | Use when the question is what changed in pushed commit `cabf59a`, why it shipped as one combat-clarity batch, and what rationale was missing from the absent commit body. |
 | `DOC-OPS-013` | Docs-routed feature workflow | `ops/doc-ops-013-docs-routed-feature-workflow.md` | No recruiter PDF in this folder | Operational enforcement policy | Use when implementing features, behavior changes, or architecture changes so docs-first routing, citations, and mismatch-note handling are applied consistently. |
+| `DOC-OPS-014` | NaBlA-informed product TODO | `ops/doc-ops-014-nabla-informed-product-todo.md` | No recruiter PDF in this folder | Operational product-backlog note | Use when turning NaBlA study, Blazing lessons, FEH lessons, and OPTC lessons into a Shogun-scoped backlog without overriding the active vertical slice. |
 | `DESIGN-001` | Character collection and fantasy strategy | `design/design-001-character-collection-and-fantasy-strategy.md` | No recruiter PDF in this folder | Primary collection-strategy note | Use for collectible fantasy, roster pillars, battle-vs-presentation art lanes, and variant planning. |
 | `DESIGN-002` | World pillars and combat identity framework | `design/design-002-world-pillars-and-combat-identity-framework.md` | No recruiter PDF in this folder | Primary roster-identity note | Use for world pillars, elemental affinity, weapon families, martial schools, and how those layers stack into a character identity. |
 | `DESIGN-003` | Long-term balance and power-creep policy | `design/design-003-long-term-balance-and-power-creep-policy.md` | No recruiter PDF in this folder | Primary live-balance note | Use for banner-value policy, power-creep controls, old-unit refresh cadence, and ranked/PvE balance boundaries. |
@@ -142,6 +147,9 @@ For feature work, behavior changes, or architecture changes:
 | `DOC-REF-002` | Naruto Blazing success, failure, and shutdown analysis | `research/doc-ref-002-naruto-ninja-blazing-success-failure-and-shutdown-analysis.md` | `recruiter/doc-ref-002-naruto-ninja-blazing-success-failure-and-shutdown-analysis.pdf` | Strategic caution reference | Use for live-ops, retention, monetization, and shutdown-risk lessons. |
 | `DOC-REF-003` | One Piece Treasure Cruise longevity analysis | `research/doc-ref-003-one-piece-treasure-cruise-analysis.md` | `recruiter/doc-ref-003-one-piece-treasure-cruise-analysis.pdf` | Strategic caution reference | Use for long-term sustainability, onboarding, technical debt, and content burden. |
 | `DOC-REF-004` | Fire Emblem Heroes comparison source | `research/doc-ref-004-fire-emblem-heroes-success-and-drawbacks.md` | `recruiter/doc-ref-004-fire-emblem-heroes-success-and-drawbacks.docx` | Secondary source | Open the retained `.docx` only if the original Word source is needed. |
+| `DOC-REF-005` | NaBlA local reference-pack manifest | `research/doc-ref-005-nabla-reference-pack-manifest.md` | No recruiter PDF in this folder | Local-study manifest | Use when the question is what exists in the local Naruto reference pack, what each category teaches, and what can be safely extracted as repo-safe conclusions. |
+| `DOC-REF-006` | NaBlA folder-by-folder study | `research/doc-ref-006-nabla-folder-by-folder-study.md` | No recruiter PDF in this folder | Local-study interpretation note | Use when the question is what each local Naruto reference folder actually contains and how its lessons should map into Shogun. |
+| `DOC-REF-007` | NaBlA to Shogun adaptation matrix | `research/doc-ref-007-nabla-to-shogun-adaptation-matrix.md` | No recruiter PDF in this folder | Local-study translation note | Use when the question is how every NaBlA folder should translate into Shogun systems, world pillars, collectible fantasies, and active-slice priority. |
 
 ## Source-of-truth hierarchy
 
@@ -445,3 +453,5 @@ If the task is roster identity or world design, open DESIGN_INDEX.md first.
 If the task is art direction or sprite production, open ART_INDEX.md first, then the linked DESIGN-* docs if needed, then DOC-OPS-004.
 If documents conflict, follow the hierarchy in PROJECT_CONTEXT_INDEX.md and report the conflict explicitly.
 ```
+
+

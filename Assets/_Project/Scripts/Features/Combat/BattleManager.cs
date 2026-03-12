@@ -39,6 +39,8 @@ public class BattleManager : MonoBehaviour
 
     public event Action<int, CharacterInstance, CharacterInstance> OnPlayerFormationChanged;
 
+    public Vector3 BattleCenter => GetBattleCenter();
+
     private void OnDestroy()
     {
         UnbindPlayerRosterEvents();
@@ -504,3 +506,4 @@ public class BattleManager : MonoBehaviour
         }
     }
 }
+
