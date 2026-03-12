@@ -54,6 +54,8 @@ docs/
     doc-ops-012-2026-03-10-combat-ui-and-auto-positioning-retrospective.md
     doc-ops-013-docs-routed-feature-workflow.md
     doc-ops-014-nabla-informed-product-todo.md
+    doc-ops-015-scene-authoring-vs-runtime-ownership-plan.md
+    doc-ops-016-2026-03-12-support-scene-and-runtime-drift-retrospective.md
   research/
     RESEARCH_INDEX.md
     doc-eng-001-solo-unity-mobile-gacha-rpg-engineering-research.md
@@ -121,6 +123,8 @@ For feature work, behavior changes, or architecture changes:
 | `DOC-OPS-012` | March 10, 2026 combat UI and auto-positioning retrospective | `ops/doc-ops-012-2026-03-10-combat-ui-and-auto-positioning-retrospective.md` | No recruiter PDF in this folder | Operational change log | Use when the question is what changed in pushed commit `cabf59a`, why it shipped as one combat-clarity batch, and what rationale was missing from the absent commit body. |
 | `DOC-OPS-013` | Docs-routed feature workflow | `ops/doc-ops-013-docs-routed-feature-workflow.md` | No recruiter PDF in this folder | Operational enforcement policy | Use when implementing features, behavior changes, or architecture changes so docs-first routing, citations, and mismatch-note handling are applied consistently. |
 | `DOC-OPS-014` | NaBlA-informed product TODO | `ops/doc-ops-014-nabla-informed-product-todo.md` | No recruiter PDF in this folder | Operational product-backlog note | Use when turning NaBlA study, Blazing lessons, FEH lessons, and OPTC lessons into a Shogun-scoped backlog without overriding the active vertical slice. |
+| `DOC-OPS-015` | Scene authoring vs runtime ownership plan | `ops/doc-ops-015-scene-authoring-vs-runtime-ownership-plan.md` | No recruiter PDF in this folder | Operational Unity scene-architecture note | Use when deciding whether a scene/system should be scene-authored, prefab-authored, runtime-populated, or pure runtime across `Dev_Sandbox` and the support scenes. |
+| `DOC-OPS-016` | Support-scene and runtime drift retrospective | `ops/doc-ops-016-2026-03-12-support-scene-and-runtime-drift-retrospective.md` | No recruiter PDF in this folder | Operational failure-pattern note | Use when the question is what went wrong in the recent support-scene batches, why scene view drifted from play mode, and what permanent rules should stop the same regressions from repeating. |
 | `DESIGN-001` | Character collection and fantasy strategy | `design/design-001-character-collection-and-fantasy-strategy.md` | No recruiter PDF in this folder | Primary collection-strategy note | Use for collectible fantasy, roster pillars, battle-vs-presentation art lanes, and variant planning. |
 | `DESIGN-002` | World pillars and combat identity framework | `design/design-002-world-pillars-and-combat-identity-framework.md` | No recruiter PDF in this folder | Primary roster-identity note | Use for world pillars, elemental affinity, weapon families, martial schools, and how those layers stack into a character identity. |
 | `DESIGN-003` | Long-term balance and power-creep policy | `design/design-003-long-term-balance-and-power-creep-policy.md` | No recruiter PDF in this folder | Primary live-balance note | Use for banner-value policy, power-creep controls, old-unit refresh cadence, and ranked/PvE balance boundaries. |
@@ -453,5 +457,4 @@ If the task is roster identity or world design, open DESIGN_INDEX.md first.
 If the task is art direction or sprite production, open ART_INDEX.md first, then the linked DESIGN-* docs if needed, then DOC-OPS-004.
 If documents conflict, follow the hierarchy in PROJECT_CONTEXT_INDEX.md and report the conflict explicitly.
 ```
-
 

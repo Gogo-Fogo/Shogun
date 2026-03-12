@@ -17,6 +17,7 @@ Do not add broad feature ambitions here unless they directly unblock the slice.
 - `Characters` and `Combat` are real but prototype-grade.
 - `Summon` may exist as a local test harness, but real `Gacha`, broader `UI`, `Networking`, and broader `Input` remain planned architecture.
 - If `Summon` is touched, keep it as a readable portrait-first banner test surface with disclosed rates, featured-unit presentation, and visible Barracks sync rather than a debug-looking placeholder.
+- If any support scene is touched, do not deepen the generated fallback-layout approach; prefer scene-authored or prefab-authored shells with runtime data binding only, per `DOC-OPS-015` and `DOC-OPS-016`.
 - New art/source work goes into the current `Source / Production` lanes.
 - Imported-heavy legacy art remains archive material by default.
 
@@ -78,6 +79,4 @@ These do not belong in the short-term slice backlog unless they become true bloc
 
 - Authored specials may now live in AbilityDefinition assets plus an AbilityCatalog.
 - This is a data-separation and validation move for the active slice, not a commitment to Fire Emblem Heroes-style inheritance or freeform loadouts.
-
-
 

@@ -14,6 +14,8 @@
 - how Claude Code should start without scanning the entire docs tree
 - how feature implementation should run through docs-first gating with citations and mismatch-note handling
 - how NaBlA and comparative reference lessons should turn into a Shogun-scoped product backlog
+- how to decide whether a scene/system should be scene-authored, prefab-authored, runtime-populated, or pure runtime
+- what broke across the recent support-scene/runtime-drift investigation and what rules should prevent it from repeating
 
 ## Lean handoff pack
 
@@ -48,22 +50,26 @@ Start here for next-stage implementation or Claude Code onboarding:
    - deferred roadmap lanes kept out of the active slice backlog
 6. [`doc-ops-014-nabla-informed-product-todo.md`](./doc-ops-014-nabla-informed-product-todo.md)
    - NaBlA-informed product backlog for turning reference-pack and comparative lessons into Shogun workstreams
-7. [`doc-ops-002-unity-mcp-bridge-setup-and-usage.md`](./doc-ops-002-unity-mcp-bridge-setup-and-usage.md)
+7. [`doc-ops-015-scene-authoring-vs-runtime-ownership-plan.md`](./doc-ops-015-scene-authoring-vs-runtime-ownership-plan.md)
+   - project-wide decision on what belongs in scene/prefab shells versus runtime, across Dev_Sandbox and all support scenes
+8. [`doc-ops-002-unity-mcp-bridge-setup-and-usage.md`](./doc-ops-002-unity-mcp-bridge-setup-and-usage.md)
    - Unity MCP bridge setup, live-editor access, and safe usage rules
-8. [`doc-ops-003-ai-workspace-safety-and-backup-plan.md`](./doc-ops-003-ai-workspace-safety-and-backup-plan.md)
+9. [`doc-ops-003-ai-workspace-safety-and-backup-plan.md`](./doc-ops-003-ai-workspace-safety-and-backup-plan.md)
    - repo-scope rules, backup cadence, restore drill, and off-site backup workflow
-9. [`doc-ops-006-unity-editor-version-policy-and-upgrade-checklist.md`](./doc-ops-006-unity-editor-version-policy-and-upgrade-checklist.md)
+10. [`doc-ops-006-unity-editor-version-policy-and-upgrade-checklist.md`](./doc-ops-006-unity-editor-version-policy-and-upgrade-checklist.md)
    - project-specific Unity editor baseline, stable upgrade target, and safe upgrade checklist
-10. [`doc-ops-007-stage-1-unity-project-reality-audit.md`](./doc-ops-007-stage-1-unity-project-reality-audit.md)
+11. [`doc-ops-007-stage-1-unity-project-reality-audit.md`](./doc-ops-007-stage-1-unity-project-reality-audit.md)
    - stage-1 reality check for what the current Unity project actually is, what is salvageable, and what needs rebuilding
-11. [`doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md`](./doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)
+12. [`doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md`](./doc-ops-004-pixellab-evaluation-and-sprite-production-workflow.md)
    - PixelLab fit, subscription vs API, and AI-assisted sprite workflow boundaries
-12. [`doc-ops-001-project-document-and-telemetry-index.md`](./doc-ops-001-project-document-and-telemetry-index.md)
+13. [`doc-ops-001-project-document-and-telemetry-index.md`](./doc-ops-001-project-document-and-telemetry-index.md)
    - implementation artifact inventory and output manifest
-13. [`doc-ops-005-march-2026-repo-modernization-retrospective.md`](./doc-ops-005-march-2026-repo-modernization-retrospective.md)
+14. [`doc-ops-005-march-2026-repo-modernization-retrospective.md`](./doc-ops-005-march-2026-repo-modernization-retrospective.md)
    - retrospective explanation for the March 2026 repo/tooling cleanup batch
-14. [`doc-ops-012-2026-03-10-combat-ui-and-auto-positioning-retrospective.md`](./doc-ops-012-2026-03-10-combat-ui-and-auto-positioning-retrospective.md)
+15. [`doc-ops-012-2026-03-10-combat-ui-and-auto-positioning-retrospective.md`](./doc-ops-012-2026-03-10-combat-ui-and-auto-positioning-retrospective.md)
    - retrospective explanation for the March 10, 2026 combat HUD and auto-positioning batch
+16. [`doc-ops-016-2026-03-12-support-scene-and-runtime-drift-retrospective.md`](./doc-ops-016-2026-03-12-support-scene-and-runtime-drift-retrospective.md)
+   - retrospective on the recent MainMenu / Barracks / Summon / Settings failures, runtime drift, and the permanent authored-shell rules that came out of them
 
 ## Companion docs outside this folder
 
@@ -85,16 +91,18 @@ Start here for next-stage implementation or Claude Code onboarding:
 3. `DOC-OPS-008`
 4. `DOC-OPS-011`
 5. `DOC-OPS-009`
-6. `DOC-OPS-014`
-7. `DOC-OPS-002`
-8. `DOC-OPS-003`
-9. `DOC-OPS-006`
-10. `DOC-OPS-007`
-11. `DOC-OPS-004`
-12. `DOC-OPS-001`
-13. `DOC-OPS-005`
-14. `DOC-OPS-012`
-15. `DOC-LEGAL-001`
+6. `DOC-OPS-014` 
+7. `DOC-OPS-015` 
+8. `DOC-OPS-002` 
+9. `DOC-OPS-003` 
+10. `DOC-OPS-006` 
+11. `DOC-OPS-007` 
+12. `DOC-OPS-004` 
+13. `DOC-OPS-001` 
+14. `DOC-OPS-005` 
+15. `DOC-OPS-012` 
+16. `DOC-OPS-016` 
+17. `DOC-LEGAL-001`
 
 ## Rule for future updates
 
@@ -107,3 +115,5 @@ Add new ops docs here when:
 - a new operational retrospective or inventory note is needed
 - a UI implementation backlog becomes stable enough to route active-slice work
 - a comparative or reference-driven backlog becomes stable enough to route product planning
+- a scene-authoring versus runtime-ownership decision becomes stable enough to guide future Unity scene work
+- a repeated support-scene/runtime failure pattern needs a retrospective rule so the repo stops relearning the same lesson
