@@ -163,10 +163,9 @@ namespace Shogun.Features.UI
             for (int i = parent.childCount - 1; i >= 0; i--)
             {
                 GameObject child = parent.GetChild(i).gameObject;
-                if (Application.isPlaying)
-                    Destroy(child);
-                else
-                    DestroyImmediate(child);
+                // These scene controllers generate transient UI trees. Remove them synchronously
+                // so play-mode rebuilds do not lay out against stale edit-preview children.
+                DestroyImmediate(child);
             }
         }
 

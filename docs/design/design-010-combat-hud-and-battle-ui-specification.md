@@ -230,11 +230,13 @@ It should contain:
 #### Recommended visual treatment
 
 - a low-profile decorative rail, not a giant opaque slab
+- medallions can sit slightly proud of the tray so the squad bar reads like a tangible dock rather than a flat footer strip
 - readable medallions or frames with `Shogun` flavor, but less ornamental noise than `Blazing`
 - HP arcs or bars that read instantly at small size
 - skill-charge indicators that do not overpower the portrait itself
 - segmented charge dividers with a visible first-threshold marker when the unit's regular ability comes online
 - full charge should read as a separate authored ultimate state, not just more of the same meter
+- the full footprint of the squad rail must block battlefield tap-through; portrait and medallion taps should never issue movement behind the HUD
 
 #### Safe-area rule
 
@@ -460,6 +462,8 @@ When choosing between:
 - and stronger payoff after release
 
 save the spectacle for after release.
+
+
 
 
 

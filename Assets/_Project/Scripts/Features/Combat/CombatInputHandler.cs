@@ -7,6 +7,7 @@ using UnityEngine;
 using Shogun.Core.Architecture;
 using Shogun.Features.Characters;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 namespace Shogun.Features.Combat
 {
@@ -58,6 +59,7 @@ namespace Shogun.Features.Combat
             if (battleManager == null || turnManager == null) return;
             if (!turnManager.IsBattleActive) return;
             if (!TryNormalizeScreenPosition(screenPos, out Vector2 normalizedScreenPos)) return;
+            if (IsTapBlockedByCombatUi(normalizedScreenPos)) return;
 
             CharacterInstance current = turnManager.GetCurrentCombatant();
             if (current == null || !current.CanAttack) return;
@@ -116,6 +118,50 @@ namespace Shogun.Features.Combat
             }
         }
 
+        private static bool IsTapBlockedByCombatUi(Vector2 screenPos)
+        {
+            if (EventSystem.current == null)
+                return false;
+
+            PointerEventData eventData = new PointerEventData(EventSystem.current)
+            {
+                position = screenPos
+            };
+
+            List<RaycastResult> results = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(eventData, results);
+
+            foreach (RaycastResult result in results)
+            {
+                if (result.gameObject == null)
+                    continue;
+
+                Transform hitTransform = result.gameObject.transform;
+                if (HasAncestorNamed(hitTransform, "DragInputPanel"))
+                    continue;
+
+                if (HasAncestorNamed(hitTransform, "BattleHudRoot")
+                    || HasAncestorNamed(hitTransform, "BattleResultPanel"))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool HasAncestorNamed(Transform origin, string targetName)
+        {
+            Transform current = origin;
+            while (current != null)
+            {
+                if (current.name == targetName)
+                    return true;
+
+                current = current.parent;
+            }
+
+            return false;
+        }
+
         private static bool TryNormalizeScreenPosition(Vector2 rawScreenPos, out Vector2 normalizedScreenPos)
         {
             normalizedScreenPos = rawScreenPos;
@@ -156,3 +202,4 @@ namespace Shogun.Features.Combat
         }
     }
 }
+

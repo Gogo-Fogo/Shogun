@@ -68,6 +68,7 @@ namespace Shogun.Features.UI
         private GameObject resultEmptyState;
         private RectTransform featuredGridRoot;
         private RectTransform resultGridRoot;
+        private ScrollRect emergencyScrollRect;
         private readonly List<BannerButtonView> bannerButtons = new List<BannerButtonView>();
         private readonly List<TestSummonService.TestSummonBanner> banners = new List<TestSummonService.TestSummonBanner>();
         private readonly List<TestSummonService.TestSummonPullResult> lastResults = new List<TestSummonService.TestSummonPullResult>();
@@ -290,14 +291,11 @@ namespace Shogun.Features.UI
             viewportImage.color = new Color(0f, 0f, 0f, 0f);
             Mask mask = viewport.gameObject.AddComponent<Mask>();
             mask.showMaskGraphic = false;
-            RectTransform scrollContent = CreateRect("ScrollContent", viewport, new Vector2(0f, 1f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
-            scrollContent.pivot = new Vector2(0.5f, 1f);
-            ContentSizeFitter scrollFitter = scrollContent.gameObject.AddComponent<ContentSizeFitter>();
-            scrollFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
             scrollRect.viewport = viewport;
-            scrollRect.content = scrollContent;
+            emergencyScrollRect = scrollRect;
 
-            contentFrame = CreateRect("ContentFrame", scrollContent, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), Vector2.zero, Vector2.zero);
+            contentFrame = CreateRect("ContentFrame", viewport, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), Vector2.zero, Vector2.zero);
+            scrollRect.content = contentFrame;
             contentFrame.pivot = new Vector2(0.5f, 1f);
             VerticalLayoutGroup contentLayout = contentFrame.gameObject.AddComponent<VerticalLayoutGroup>();
             contentLayout.padding = new RectOffset(0, 0, 28, 36);
@@ -332,6 +330,7 @@ namespace Shogun.Features.UI
             featuredGridRoot = null;
             resultGridRoot = null;
             resultEmptyState = null;
+            emergencyScrollRect = null;
             usingEmergencyLayout = true;
 
             ClearChildren(hostRoot);
@@ -354,34 +353,15 @@ namespace Shogun.Features.UI
             topLine.sprite = GetWhiteSprite();
             topLine.color = new Color(0.78f, 0.62f, 0.28f, 0.85f);
 
-            RectTransform scrollRoot = CreateRect("EmergencyScrollRoot", panel, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            ScrollRect scrollRect = scrollRoot.gameObject.AddComponent<ScrollRect>();
-            scrollRect.horizontal = false;
-            scrollRect.movementType = ScrollRect.MovementType.Clamped;
-            RectTransform viewport = CreateRect("Viewport", scrollRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            Image viewportImage = viewport.gameObject.AddComponent<Image>();
-            viewportImage.sprite = GetWhiteSprite();
-            viewportImage.color = new Color(0f, 0f, 0f, 0f);
-            Mask mask = viewport.gameObject.AddComponent<Mask>();
-            mask.showMaskGraphic = false;
-            RectTransform scrollContent = CreateRect("ScrollContent", viewport, new Vector2(0f, 1f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
-            scrollContent.pivot = new Vector2(0.5f, 1f);
-            ContentSizeFitter scrollFitter = scrollContent.gameObject.AddComponent<ContentSizeFitter>();
-            scrollFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-            scrollRect.viewport = viewport;
-            scrollRect.content = scrollContent;
-
-            contentFrame = CreateRect("EmergencyContent", scrollContent, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), Vector2.zero, Vector2.zero);
-            contentFrame.pivot = new Vector2(0.5f, 1f);
+            contentFrame = CreateRect("EmergencyContent", panel, Vector2.zero, Vector2.one, new Vector2(24f, 18f), new Vector2(-24f, -18f));
             VerticalLayoutGroup stack = contentFrame.gameObject.AddComponent<VerticalLayoutGroup>();
-            stack.padding = new RectOffset(0, 0, 24, 32);
+            stack.padding = new RectOffset(0, 0, 28, 32);
             stack.spacing = 16f;
             stack.childAlignment = TextAnchor.UpperCenter;
             stack.childControlWidth = true;
             stack.childControlHeight = true;
             stack.childForceExpandWidth = true;
             stack.childForceExpandHeight = false;
-            contentFrame.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
             BuildEmergencyHeader(exception);
             BuildEmergencyBannerPanel();
@@ -393,42 +373,53 @@ namespace Shogun.Features.UI
         private void BuildEmergencyHeader(Exception exception)
         {
             RectTransform root = CreateRect("EmergencyHeader", contentFrame, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            root.gameObject.AddComponent<LayoutElement>().preferredHeight = exception == null ? 248f : 316f;
+            root.gameObject.AddComponent<LayoutElement>().preferredHeight = exception == null ? 276f : 372f;
+            VerticalLayoutGroup stack = root.gameObject.AddComponent<VerticalLayoutGroup>();
+            stack.padding = new RectOffset(18, 18, 14, 14);
+            stack.spacing = 10f;
+            stack.childAlignment = TextAnchor.UpperCenter;
+            stack.childControlWidth = true;
+            stack.childControlHeight = true;
+            stack.childForceExpandWidth = true;
+            stack.childForceExpandHeight = false;
 
-            Text eyebrow = CreateText("Eyebrow", root, TextAnchor.UpperCenter, 15, FontStyle.Bold);
+            Text eyebrow = CreateText("Eyebrow", root, TextAnchor.MiddleCenter, 15, FontStyle.Bold);
             eyebrow.text = "SPIRIT GATE";
             eyebrow.color = new Color(0.93f, 0.82f, 0.5f, 1f);
-            eyebrow.rectTransform.offsetMin = new Vector2(0f, 196f);
+            eyebrow.gameObject.AddComponent<LayoutElement>().preferredHeight = 22f;
 
-            Text title = CreateText("Title", root, TextAnchor.UpperCenter, 48, FontStyle.Bold);
+            Text title = CreateText("Title", root, TextAnchor.MiddleCenter, 44, FontStyle.Bold);
             title.text = "SUMMON GATE";
             title.color = HeadingColor;
-            title.rectTransform.offsetMin = new Vector2(0f, 136f);
+            title.gameObject.AddComponent<LayoutElement>().preferredHeight = 52f;
 
-            Text subtitle = CreateText("Subtitle", root, TextAnchor.MiddleCenter, 17, FontStyle.Bold);
+            Text subtitle = CreateText("Subtitle", root, TextAnchor.MiddleCenter, 16, FontStyle.Bold);
             subtitle.text = "Choose a banner, inspect the rate-up trio, and send fresh pulls straight into the Barracks.";
             subtitle.color = BodyColor;
             subtitle.horizontalOverflow = HorizontalWrapMode.Wrap;
             subtitle.verticalOverflow = VerticalWrapMode.Overflow;
-            subtitle.rectTransform.offsetMin = new Vector2(18f, 76f);
-            subtitle.rectTransform.offsetMax = new Vector2(-18f, -88f);
+            subtitle.gameObject.AddComponent<LayoutElement>().preferredHeight = 44f;
 
-            RectTransform statePill = CreatePill(root, "StatePill", new Vector2(0.04f, 0.44f), new Vector2(0.96f, 0.64f), new Color(0.16f, 0.15f, 0.14f, 0.98f));
+            RectTransform statePill = CreatePill(root, "StatePill", Vector2.zero, Vector2.one, new Color(0.16f, 0.15f, 0.14f, 0.98f));
+            statePill.gameObject.AddComponent<LayoutElement>().preferredHeight = 34f;
             bannerStateLabel = CreateText("StateLabel", statePill, TextAnchor.MiddleCenter, 14, FontStyle.Bold);
             bannerStateLabel.color = HeadingColor;
 
-            RectTransform sealsPill = CreatePill(root, "SealsPill", new Vector2(0.04f, 0.22f), new Vector2(0.96f, 0.42f), new Color(0.16f, 0.27f, 0.37f, 0.98f));
+            RectTransform sealsPill = CreatePill(root, "SealsPill", Vector2.zero, Vector2.one, new Color(0.16f, 0.27f, 0.37f, 0.98f));
+            sealsPill.gameObject.AddComponent<LayoutElement>().preferredHeight = 42f;
             sealsLabel = CreateText("SealsLabel", sealsPill, TextAnchor.MiddleCenter, 18, FontStyle.Bold);
             sealsLabel.color = HeadingColor;
 
-            RectTransform collectionPill = CreatePill(root, "CollectionPill", new Vector2(0.04f, 0f), new Vector2(0.96f, 0.2f), new Color(0.25f, 0.19f, 0.11f, 0.98f));
+            RectTransform collectionPill = CreatePill(root, "CollectionPill", Vector2.zero, Vector2.one, new Color(0.25f, 0.19f, 0.11f, 0.98f));
+            collectionPill.gameObject.AddComponent<LayoutElement>().preferredHeight = 36f;
             collectionLabel = CreateText("CollectionLabel", collectionPill, TextAnchor.MiddleCenter, 16, FontStyle.Bold);
             collectionLabel.color = HeadingColor;
 
             if (exception == null)
                 return;
 
-            RectTransform errorRoot = CreateRect("ErrorRoot", root, new Vector2(0.04f, 0f), new Vector2(0.96f, 0.28f), Vector2.zero, Vector2.zero);
+            RectTransform errorRoot = CreateRect("ErrorRoot", root, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            errorRoot.gameObject.AddComponent<LayoutElement>().preferredHeight = 96f;
             Image errorBackground = errorRoot.gameObject.AddComponent<Image>();
             errorBackground.sprite = GetWhiteSprite();
             errorBackground.color = new Color(0.18f, 0.08f, 0.08f, 0.9f);
@@ -523,7 +514,7 @@ namespace Shogun.Features.UI
             featuredGrid.cellSize = new Vector2(240f, 156f);
 
             RectTransform actions = CreateRect("Actions", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            actions.gameObject.AddComponent<LayoutElement>().preferredHeight = 56f;
+            actions.gameObject.AddComponent<LayoutElement>().preferredHeight = 72f;
             HorizontalLayoutGroup actionLayout = actions.gameObject.AddComponent<HorizontalLayoutGroup>();
             actionLayout.spacing = 10f;
             actionLayout.childControlWidth = true;
@@ -734,7 +725,7 @@ namespace Shogun.Features.UI
 
         private void BuildFooterPanel()
         {
-            CreatePanel(contentFrame, "FooterPanel", 116f, new Color(0.16f, 0.13f, 0.11f, 0.96f), new Color(0.08f, 0.07f, 0.07f, 0.98f), out RectTransform inner);
+            CreatePanel(contentFrame, "FooterPanel", 132f, new Color(0.16f, 0.13f, 0.11f, 0.96f), new Color(0.08f, 0.07f, 0.07f, 0.98f), out RectTransform inner);
             RectTransform content = CreateRect("FooterContent", inner, Vector2.zero, Vector2.one, new Vector2(24f, 18f), new Vector2(-24f, -18f));
             Text footer = CreateText("Footer", content, TextAnchor.MiddleLeft, 14, FontStyle.Normal);
             footer.text = "This gate is local-only, but the roster updates, odds disclosure, currency spend, and Barracks sync are all live inside the current slice.";
@@ -886,7 +877,7 @@ namespace Shogun.Features.UI
 
             Vector2Int currentScreenSize = GetLayoutSize();
             Rect safeArea = Screen.safeArea;
-            float parentWidth = ((RectTransform)contentFrame.parent).rect.width;
+            float parentWidth = ResolveLayoutParentWidth();
             if (!force && currentScreenSize == lastScreenSize && safeArea == lastSafeArea && Mathf.Approximately(parentWidth, lastParentWidth))
                 return;
 
@@ -901,14 +892,24 @@ namespace Shogun.Features.UI
                 maxWidth = TabletContentMaxWidth;
 
             float contentWidth = Mathf.Max(320f, Mathf.Min(maxWidth, parentWidth - (ContentHorizontalMargin * 2f)));
-            contentFrame.sizeDelta = new Vector2(contentWidth, 0f);
-
             if (usingEmergencyLayout)
             {
+                float sideInset = Mathf.Max(ContentHorizontalMargin, (parentWidth - contentWidth) * 0.5f);
+                contentFrame.anchorMin = Vector2.zero;
+                contentFrame.anchorMax = Vector2.one;
+                contentFrame.offsetMin = new Vector2(sideInset, 18f);
+                contentFrame.offsetMax = new Vector2(-sideInset, -18f);
                 ApplyEmergencyResponsiveLayout(contentWidth);
+                Canvas.ForceUpdateCanvases();
                 LayoutRebuilder.ForceRebuildLayoutImmediate(contentFrame);
                 return;
             }
+
+            contentFrame.anchorMin = new Vector2(0.5f, 1f);
+            contentFrame.anchorMax = new Vector2(0.5f, 1f);
+            contentFrame.offsetMin = Vector2.zero;
+            contentFrame.offsetMax = Vector2.zero;
+            contentFrame.sizeDelta = new Vector2(contentWidth, 0f);
 
             if (bannerGrid == null || featuredGrid == null || resultGrid == null || bannerGridLayout == null || featuredGridLayout == null || resultGridLayout == null || bannerPanelLayout == null || detailPanelLayout == null || resultPanelLayout == null)
             {
@@ -935,13 +936,13 @@ namespace Shogun.Features.UI
             {
                 int featuredItems = Mathf.Max(1, featuredGridRoot != null ? featuredGridRoot.childCount : 0);
                 int featuredColumns = contentWidth >= 760f ? 2 : 1;
-                float detailStaticHeight = 72f + 42f + subtitleHeight + summaryHeight + 24f + disclosureHeight + 12f + featuredLineHeight + 88f;
-                ConfigureGrid(featuredGrid, featuredGridLayout, detailPanelLayout, featuredItems, featuredColumns, sectionWidth, 220f, 156f, detailStaticHeight, 28f);
+                float detailStaticHeight = 72f + 42f + subtitleHeight + summaryHeight + 24f + disclosureHeight + 2f + featuredLineHeight + 72f + 112f;
+                ConfigureGrid(featuredGrid, featuredGridLayout, detailPanelLayout, featuredItems, featuredColumns, sectionWidth, 220f, 156f, detailStaticHeight, 36f);
             }
 
             if (resultPanelLayout != null)
             {
-                float resultStaticHeight = 72f + 36f + resultSummaryHeight + 20f;
+                float resultStaticHeight = 72f + 36f + resultSummaryHeight + 96f;
                 if (lastResults.Count <= 0)
                 {
                     if (resultGridLayout != null)
@@ -968,6 +969,51 @@ namespace Shogun.Features.UI
             float preferred = Mathf.Max(minHeight, text.preferredHeight + padding);
             layout.preferredHeight = preferred;
             return preferred;
+        }
+
+        private void ResetEmergencyScrollPosition()
+        {
+            if (emergencyScrollRect == null)
+                return;
+
+            Canvas.ForceUpdateCanvases();
+            emergencyScrollRect.verticalNormalizedPosition = 1f;
+        }
+
+
+        private float ResolveLayoutParentWidth()
+        {
+            if (usingEmergencyLayout && emergencyScrollRect != null && emergencyScrollRect.viewport != null)
+            {
+                float viewportWidth = emergencyScrollRect.viewport.rect.width;
+                if (viewportWidth > 0f)
+                    return viewportWidth;
+            }
+
+            RectTransform frameParent = contentFrame != null ? contentFrame.parent as RectTransform : null;
+            if (frameParent != null)
+            {
+                float parentWidth = frameParent.rect.width;
+                if (parentWidth > 0f)
+                    return parentWidth;
+            }
+
+            if (hostRoot != null)
+            {
+                float hostWidth = hostRoot.rect.width;
+                if (hostWidth > 0f)
+                    return hostWidth;
+            }
+
+            RectTransform canvasRect = targetCanvas != null ? targetCanvas.transform as RectTransform : null;
+            if (canvasRect != null)
+            {
+                float canvasWidth = canvasRect.rect.width;
+                if (canvasWidth > 0f)
+                    return canvasWidth;
+            }
+
+            return Screen.width;
         }
 
         private Vector2Int GetLayoutSize()
@@ -1344,10 +1390,9 @@ namespace Shogun.Features.UI
             for (int i = parent.childCount - 1; i >= 0; i--)
             {
                 GameObject child = parent.GetChild(i).gameObject;
-                if (Application.isPlaying)
-                    Destroy(child);
-                else
-                    DestroyImmediate(child);
+                // These scene controllers generate transient UI trees. Remove them synchronously
+                // so play-mode rebuilds do not lay out against stale edit-preview children.
+                DestroyImmediate(child);
             }
         }
         private static void LoadSceneIfAvailable(string sceneName)
@@ -1362,6 +1407,12 @@ namespace Shogun.Features.UI
         }
     }
 }
+
+
+
+
+
+
 
 
 

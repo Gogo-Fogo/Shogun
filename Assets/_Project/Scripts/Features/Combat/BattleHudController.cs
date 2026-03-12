@@ -1167,34 +1167,53 @@ namespace Shogun.Features.Combat
         }
         private void BuildBottomRail()
         {
-            RectTransform existing = hudRoot.Find("BottomSquadRail") as RectTransform;
+            // Low-profile rail anchored to the bottom edge. The root acts as a
+            // full interaction shield so portrait taps never leak through to the
+            // battlefield drag/tap layer behind the HUD.
+            RectTransform layoutParent = hudContentFrame != null ? hudContentFrame : hudRoot;
+            RectTransform existing = layoutParent.Find("BottomSquadRail") as RectTransform;
             if (existing != null)
                 Destroy(existing.gameObject);
 
-            // Low-profile rail anchored to the bottom edge.
-            RectTransform layoutParent = hudContentFrame != null ? hudContentFrame : hudRoot;
             RectTransform bottomRail = CreateRect("BottomSquadRail", layoutParent,
                 new Vector2(0f, 0f), new Vector2(1f, 0f),
                 new Vector2(HudHorizontalMargin, 0f), new Vector2(-HudHorizontalMargin, bottomRailHeight));
 
-            Image bottomBg = bottomRail.gameObject.AddComponent<Image>();
-            bottomBg.color = new Color(0.06f, 0.05f, 0.04f, 0.78f);
-            bottomBg.raycastTarget = false;
+            Image interactionShield = bottomRail.gameObject.AddComponent<Image>();
+            interactionShield.color = new Color(0f, 0f, 0f, 0.002f);
+            interactionShield.raycastTarget = true;
 
-            HorizontalLayoutGroup layout = bottomRail.gameObject.AddComponent<HorizontalLayoutGroup>();
+            RectTransform tray = CreateRect("Tray", bottomRail,
+                new Vector2(0f, 0f), new Vector2(1f, 0f),
+                new Vector2(10f, 0f), new Vector2(-10f, 172f));
+            Image trayFrame = tray.gameObject.AddComponent<Image>();
+            trayFrame.color = new Color(0.32f, 0.27f, 0.08f, 0.98f);
+            trayFrame.raycastTarget = false;
+            Outline trayOutline = tray.gameObject.AddComponent<Outline>();
+            trayOutline.effectColor = new Color(0.95f, 0.88f, 0.52f, 0.16f);
+            trayOutline.effectDistance = new Vector2(1.3f, -1.3f);
+
+            RectTransform trayInner = CreateRect("Inner", tray,
+                new Vector2(0f, 0f), new Vector2(1f, 1f),
+                new Vector2(5f, 5f), new Vector2(-5f, -5f));
+            Image trayInnerBg = trayInner.gameObject.AddComponent<Image>();
+            trayInnerBg.color = new Color(0.13f, 0.09f, 0.05f, 0.96f);
+            trayInnerBg.raycastTarget = false;
+
+            RectTransform slotRow = CreateRect("SlotRow", bottomRail,
+                new Vector2(0f, 0f), new Vector2(1f, 0f),
+                new Vector2(20f, 0f), new Vector2(-20f, 282f));
+            HorizontalLayoutGroup layout = slotRow.gameObject.AddComponent<HorizontalLayoutGroup>();
             layout.padding = new RectOffset(20, 20, 8, 8);
             layout.spacing = 16f;
-            layout.childAlignment = TextAnchor.MiddleCenter;
+            layout.childAlignment = TextAnchor.LowerCenter;
             layout.childControlWidth = true;
             layout.childControlHeight = true;
             layout.childForceExpandWidth = false;
             layout.childForceExpandHeight = false;
 
-            // The rail itself serves as the medallion row.
-            pairSlotRow = bottomRail;
+            pairSlotRow = slotRow;
         }
-
-
         private void BuildPauseMenu()
         {
             if (hudRoot == null || pauseMenuPanel != null)
@@ -1345,13 +1364,14 @@ namespace Shogun.Features.Combat
 
             // Slot root — LayoutElement tells HorizontalLayoutGroup the preferred size.
             RectTransform slotRoot = CreateRect($"Medallion_{laneIndex}", pairSlotRow,
-                new Vector2(0f, 0f), new Vector2(0f, 0f), Vector2.zero, Vector2.zero);
-
-            LayoutElement le = slotRoot.gameObject.AddComponent<LayoutElement>();
+                new Vector2(0f, 0f), new Vector2(0f, 0f), Vector2.zero, Vector2.zero);            LayoutElement le = slotRoot.gameObject.AddComponent<LayoutElement>();
             le.preferredWidth  = slotW;
             le.preferredHeight = slotH;
             le.minWidth        = slotW;
 
+            Image slotHitTarget = slotRoot.gameObject.AddComponent<Image>();
+            slotHitTarget.color = new Color(0f, 0f, 0f, 0.001f);
+            slotHitTarget.raycastTarget = true;
             Sprite circleSpr = GetCircleSprite();
             Sprite ringSpr   = GetRingSprite();
 
@@ -3387,6 +3407,8 @@ namespace Shogun.Features.Combat
         }
     }
 }
+
+
 
 
 
