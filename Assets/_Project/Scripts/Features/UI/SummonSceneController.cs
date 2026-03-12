@@ -77,6 +77,7 @@ namespace Shogun.Features.UI
         private Rect lastSafeArea = new Rect(-1f, -1f, -1f, -1f);
         private float lastParentWidth = -1f;
         private bool usingEmergencyLayout;
+        private int pendingStartupRefreshFrames;
         private string diagnosticStatus = "Not started";
 
         private sealed class BannerButtonView
@@ -113,27 +114,16 @@ namespace Shogun.Features.UI
             }
             BuildSceneContents();
         }
-        private void Update() => ApplyResponsiveLayout(false);
-
-        #if UNITY_EDITOR
-        private void OnGUI()
+        private void Update()
         {
-            if (!Application.isPlaying)
+            ApplyResponsiveLayout(false);
+
+            if (!Application.isPlaying || pendingStartupRefreshFrames <= 0)
                 return;
-            GUIStyle style = new GUIStyle(GUI.skin.box)
-            {
-                fontSize = 18,
-                alignment = TextAnchor.UpperLeft,
-                wordWrap = true,
-                normal = { textColor = Color.yellow }
-            };
-            GUI.backgroundColor = new Color(0f, 0f, 0f, 0.85f);
-            string info = $"[Summon Diag]\n{diagnosticStatus}\n" +
-                          $"Canvas: {(targetCanvas != null ? $"active={targetCanvas.isActiveAndEnabled}, mode={targetCanvas.renderMode}" : "NULL")}\n" +
-                          $"Screen: {Screen.width}x{Screen.height}";
-            GUI.Box(new Rect(10, 10, 500, 120), info, style);
+
+            pendingStartupRefreshFrames--;
+            StabilizeInitialLayout();
         }
-        #endif
 
         private void RebuildEditorPreview()
         {
@@ -163,12 +153,15 @@ namespace Shogun.Features.UI
                     BuildEmergencyFallback(null);
                     SelectBanner(banners.Count > 0 ? banners[0].BannerId : string.Empty);
                     ApplyResponsiveLayout(true);
-                    diagnosticStatus = $"Minimal layout built. {banners.Count} banners.";
+                    ResetEmergencyScrollPosition();
+                    pendingStartupRefreshFrames = Application.isPlaying ? 2 : 0;
+                    diagnosticStatus = $"Minimal layout rebuilt. {banners.Count} banners.";
                     return;
                 }
                 BuildScreen();
                 SelectBanner(banners.Count > 0 ? banners[0].BannerId : string.Empty);
                 ApplyResponsiveLayout(true);
+                pendingStartupRefreshFrames = Application.isPlaying ? 2 : 0;
                 diagnosticStatus = $"Full layout built. {banners.Count} banners.";
             }
             catch (Exception exception)
@@ -180,6 +173,7 @@ namespace Shogun.Features.UI
                     BuildEmergencyFallback(exception);
                     SelectBanner(banners.Count > 0 ? banners[0].BannerId : string.Empty);
                     ApplyResponsiveLayout(true);
+                    pendingStartupRefreshFrames = Application.isPlaying ? 2 : 0;
                 }
                 catch (Exception fallbackEx)
                 {
@@ -188,6 +182,179 @@ namespace Shogun.Features.UI
             }
         }
 
+        private bool TryBindExistingEmergencyShell()
+        {
+            bannerGrid = null;
+            featuredGrid = null;
+            resultGrid = null;
+            bannerPanelLayout = null;
+            detailPanelLayout = null;
+            resultPanelLayout = null;
+            bannerGridLayout = null;
+            featuredGridLayout = null;
+            resultGridLayout = null;
+            bannerButtons.Clear();
+            emergencyScrollRect = null;
+            usingEmergencyLayout = false;
+
+            Transform screenRoot = hostRoot != null ? hostRoot.Find("EmergencySummonScreen") : null;
+            if (screenRoot == null)
+                return false;
+
+            RectTransform panel = FindRect(screenRoot, "EmergencyPanel");
+            RectTransform emergencyContent = FindRect(screenRoot, "EmergencyPanel/EmergencyContent");
+            if (panel == null || emergencyContent == null)
+                return false;
+
+            contentFrame = emergencyContent;
+            usingEmergencyLayout = true;
+
+            RectTransform bannerPanel = FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyBannerPanel");
+            RectTransform detailPanel = FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel");
+            RectTransform resultsPanel = FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyResultsPanel");
+            if (bannerPanel == null || detailPanel == null || resultsPanel == null)
+                return false;
+
+            bannerPanelLayout = bannerPanel.GetComponent<LayoutElement>();
+            detailPanelLayout = detailPanel.GetComponent<LayoutElement>();
+            resultPanelLayout = resultsPanel.GetComponent<LayoutElement>();
+            detailAccentBand = FindImage(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Accent");
+            bannerStateLabel = FindText(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyHeader/StatePill/StateLabel");
+            sealsLabel = FindText(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyHeader/SealsPill/SealsLabel");
+            collectionLabel = FindText(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyHeader/CollectionPill/CollectionLabel");
+            bannerTitleLabel = FindText(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/BannerTitle");
+            bannerSubtitleLabel = FindText(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/BannerSubtitle");
+            bannerSummaryLabel = FindText(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/BannerSummary");
+            bannerOddsLabel = FindText(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/BannerOdds");
+            bannerDisclosureLabel = FindText(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/BannerDisclosure");
+            featuredSummaryLabel = FindText(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/FeaturedSummary");
+            featuredGridRoot = FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/FeaturedGridRoot");
+            resultStatusLabel = FindText(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyResultsPanel/Inner/Content/Status");
+            resultSummaryLabel = FindText(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyResultsPanel/Inner/Content/Summary");
+            resultEmptyState = FindChild(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyResultsPanel/Inner/Content/EmptyState");
+            resultGridRoot = FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyResultsPanel/Inner/Content/ResultGridRoot");
+
+            if (featuredGridRoot == null || resultGridRoot == null || detailAccentBand == null || bannerStateLabel == null || sealsLabel == null || collectionLabel == null ||
+                bannerTitleLabel == null || bannerSubtitleLabel == null || bannerSummaryLabel == null || bannerOddsLabel == null || bannerDisclosureLabel == null ||
+                featuredSummaryLabel == null || resultStatusLabel == null || resultSummaryLabel == null || resultEmptyState == null ||
+                bannerPanelLayout == null || detailPanelLayout == null || resultPanelLayout == null)
+            {
+                return false;
+            }
+
+            featuredGrid = featuredGridRoot.GetComponent<GridLayoutGroup>();
+            featuredGridLayout = featuredGridRoot.GetComponent<LayoutElement>();
+            resultGrid = resultGridRoot.GetComponent<GridLayoutGroup>();
+            resultGridLayout = resultGridRoot.GetComponent<LayoutElement>();
+            if (featuredGrid == null || featuredGridLayout == null || resultGrid == null || resultGridLayout == null)
+                return false;
+
+            RectTransform bannerContent = FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyBannerPanel/Inner/Content");
+            if (bannerContent == null)
+                return false;
+
+            for (int i = 0; i < banners.Count; i++)
+            {
+                TestSummonService.TestSummonBanner banner = banners[i];
+                Transform bannerRoot = bannerContent.Find($"Banner_{banner.BannerId}");
+                if (bannerRoot == null)
+                    return false;
+
+                Button button = bannerRoot.GetComponent<Button>();
+                Image background = bannerRoot.GetComponent<Image>();
+                Image accent = FindImage(bannerRoot, "Accent");
+                Text title = FindText(bannerRoot, "Content/Title");
+                Text subtitle = FindText(bannerRoot, "Content/Subtitle");
+                Text costs = FindText(bannerRoot, "Content/Costs");
+                if (button == null || background == null || accent == null || title == null || subtitle == null || costs == null)
+                    return false;
+
+                button.onClick.RemoveAllListeners();
+                button.onClick.AddListener(() => SelectBanner(banner.BannerId));
+                costs.text = $"1x {banner.SinglePullCost} • 10x {banner.MultiPullCost}";
+                bannerButtons.Add(new BannerButtonView { Banner = banner, Background = background, Accent = accent, TitleLabel = title, SubtitleLabel = subtitle });
+            }
+
+            if (!BindActionButton(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/Actions/SinglePull", () => PerformSummon(1)))
+                return false;
+            if (!BindActionButton(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/Actions/TenPull", () => PerformSummon(10)))
+                return false;
+            if (!BindActionButton(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/Actions/Barracks", () => LoadSceneIfAvailable(BarracksSceneName)))
+                return false;
+            if (!BindActionButton(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/Actions/MainMenu", () => LoadSceneIfAvailable(MainMenuSceneName)))
+                return false;
+
+            return true;
+        }
+
+        private void NormalizeExistingEmergencyShell(Transform screenRoot)
+        {
+            NormalizeVerticalLayout(FindRect(screenRoot, "EmergencyPanel/EmergencyContent"), new RectOffset(0, 0, 28, 32), 16f, TextAnchor.UpperCenter, true, true, true, false);
+            NormalizeVerticalLayout(FindRect(screenRoot, "EmergencyPanel/EmergencyHeader"), new RectOffset(18, 18, 14, 14), 10f, TextAnchor.UpperCenter, true, true, true, false);
+            NormalizeVerticalLayout(FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyBannerPanel/Inner/Content"), new RectOffset(0, 0, 0, 0), 10f, TextAnchor.UpperCenter, true, true, true, false);
+            NormalizeVerticalLayout(FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content"), new RectOffset(0, 0, 0, 0), 10f, TextAnchor.UpperLeft, true, true, true, false);
+            NormalizeHorizontalLayout(FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/Actions"), 10f, true, true, true, false);
+            NormalizeVerticalLayout(FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyResultsPanel/Inner/Content"), new RectOffset(0, 0, 0, 0), 10f, TextAnchor.UpperLeft, true, true, true, false);
+
+            ApplyPreferredHeight(FindRect(screenRoot, "EmergencyPanel/EmergencyHeader"), 308f);
+            NormalizeText(FindText(screenRoot, "EmergencyPanel/EmergencyHeader/Title"), 44, FontStyle.Bold, HeadingColor);
+            NormalizeText(FindText(screenRoot, "EmergencyPanel/EmergencyHeader/Subtitle"), 16, FontStyle.Bold, BodyColor);
+            ApplyPreferredHeight(FindRect(screenRoot, "EmergencyPanel/EmergencyHeader/Subtitle"), 44f);
+            ApplyPreferredHeight(FindRect(screenRoot, "EmergencyPanel/EmergencyHeader/StatePill"), 34f);
+            ApplyPreferredHeight(FindRect(screenRoot, "EmergencyPanel/EmergencyHeader/SealsPill"), 42f);
+            ApplyPreferredHeight(FindRect(screenRoot, "EmergencyPanel/EmergencyHeader/CollectionPill"), 36f);
+            NormalizeText(FindText(screenRoot, "EmergencyPanel/EmergencyHeader/StatePill/StateLabel"), 16, FontStyle.Bold, HeadingColor);
+            NormalizeText(FindText(screenRoot, "EmergencyPanel/EmergencyHeader/SealsPill/SealsLabel"), 22, FontStyle.Bold, HeadingColor);
+            NormalizeText(FindText(screenRoot, "EmergencyPanel/EmergencyHeader/CollectionPill/CollectionLabel"), 18, FontStyle.Bold, HeadingColor);
+
+            ApplyPreferredHeight(FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyBannerPanel"), Mathf.Max(220f, 78f + (banners.Count * 110f)));
+            ApplyPreferredHeight(FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyBannerPanel/Inner/Content/Heading"), 38f);
+            NormalizeText(FindText(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyBannerPanel/Inner/Content/Heading"), 26, FontStyle.Bold, HeadingColor);
+            for (int i = 0; i < banners.Count; i++)
+            {
+                string buttonRoot = $"EmergencyPanel/EmergencyContent/EmergencyBannerPanel/Inner/Content/Banner_{banners[i].BannerId}";
+                ApplyPreferredHeight(FindRect(screenRoot, buttonRoot), 100f);
+                NormalizeText(FindText(screenRoot, $"{buttonRoot}/Content/Title"), 24, FontStyle.Bold, HeadingColor);
+                NormalizeText(FindText(screenRoot, $"{buttonRoot}/Content/Subtitle"), 15, FontStyle.Normal, BodyColor);
+                NormalizeText(FindText(screenRoot, $"{buttonRoot}/Content/Costs"), 14, FontStyle.Bold, new Color(0.93f, 0.82f, 0.5f, 1f));
+            }
+
+            ApplyPreferredHeight(FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel"), 860f);
+            ApplyPreferredHeight(FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/BANNER FOCUS_Header"), 84f);
+            NormalizeText(FindText(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/BANNER FOCUS_Header/Title"), 32, FontStyle.Bold, HeadingColor);
+            NormalizeText(FindText(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/BANNER FOCUS_Header/Subtitle"), 16, FontStyle.Normal, MutedColor);
+            ApplyPreferredHeight(FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/BannerTitle"), 42f);
+            ApplyPreferredHeight(FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/BannerSubtitle"), 40f);
+            ApplyPreferredHeight(FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/BannerSummary"), 62f);
+            ApplyPreferredHeight(FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/BannerOdds"), 24f);
+            ApplyPreferredHeight(FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/BannerDisclosure"), 40f);
+            ApplyPreferredHeight(FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/FeaturedSummary"), 36f);
+            ApplyPreferredHeight(FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/Actions"), 88f);
+            NormalizeText(FindText(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/BannerTitle"), 38, FontStyle.Bold, HeadingColor);
+            NormalizeText(FindText(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/BannerSubtitle"), 18, FontStyle.Bold, BodyColor);
+            NormalizeText(FindText(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/BannerSummary"), 17, FontStyle.Normal, BodyColor);
+            NormalizeText(FindText(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/BannerOdds"), 16, FontStyle.Bold, new Color(0.95f, 0.88f, 0.7f, 1f));
+            NormalizeText(FindText(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/BannerDisclosure"), 15, FontStyle.Normal, MutedColor);
+            NormalizeText(FindText(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/FeaturedSummary"), 17, FontStyle.Bold, BodyColor);
+            string[] actionButtons = { "SinglePull", "TenPull", "Barracks", "MainMenu" };
+            for (int i = 0; i < actionButtons.Length; i++)
+            {
+                string actionPath = $"EmergencyPanel/EmergencyContent/EmergencyDetailPanel/Inner/Content/Actions/{actionButtons[i]}";
+                ApplyPreferredHeight(FindRect(screenRoot, actionPath), 96f);
+                NormalizeText(FindText(screenRoot, $"{actionPath}/Label"), 18, FontStyle.Bold, HeadingColor);
+            }
+
+            ApplyPreferredHeight(FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyResultsPanel"), 430f);
+            ApplyPreferredHeight(FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyResultsPanel/Inner/Content/REVEAL LEDGER_Header"), 84f);
+            NormalizeText(FindText(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyResultsPanel/Inner/Content/REVEAL LEDGER_Header/Title"), 32, FontStyle.Bold, HeadingColor);
+            NormalizeText(FindText(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyResultsPanel/Inner/Content/REVEAL LEDGER_Header/Subtitle"), 16, FontStyle.Normal, MutedColor);
+            ApplyPreferredHeight(FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyResultsPanel/Inner/Content/Status"), 36f);
+            ApplyPreferredHeight(FindRect(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyResultsPanel/Inner/Content/Summary"), 60f);
+            NormalizeText(FindText(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyResultsPanel/Inner/Content/Status"), 30, FontStyle.Bold, HeadingColor);
+            NormalizeText(FindText(screenRoot, "EmergencyPanel/EmergencyContent/EmergencyResultsPanel/Inner/Content/Summary"), 16, FontStyle.Normal, BodyColor);
+            ApplyPreferredHeight(FindRect(screenRoot, "EmergencyPanel/EmergencyContent/FooterPanel"), 112f);
+            NormalizeText(FindText(screenRoot, "EmergencyPanel/EmergencyContent/FooterPanel/Inner/FooterContent/Footer"), 15, FontStyle.Normal, BodyColor);
+        }
         private void ResolveCanvas()
         {
             targetCanvas = FindDedicatedCanvas();
@@ -373,7 +540,8 @@ namespace Shogun.Features.UI
         private void BuildEmergencyHeader(Exception exception)
         {
             RectTransform root = CreateRect("EmergencyHeader", contentFrame, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            root.gameObject.AddComponent<LayoutElement>().preferredHeight = exception == null ? 276f : 372f;
+            float headerBaseHeight = 308f;
+            root.gameObject.AddComponent<LayoutElement>().preferredHeight = exception == null ? headerBaseHeight : headerBaseHeight + 106f;
             VerticalLayoutGroup stack = root.gameObject.AddComponent<VerticalLayoutGroup>();
             stack.padding = new RectOffset(18, 18, 14, 14);
             stack.spacing = 10f;
@@ -389,12 +557,12 @@ namespace Shogun.Features.UI
             eyebrow.gameObject.AddComponent<LayoutElement>().preferredHeight = 22f;
 
             Text title = CreateText("Title", root, TextAnchor.MiddleCenter, 44, FontStyle.Bold);
-            title.text = "SUMMON GATE";
+            title.text = "SUMMON";
             title.color = HeadingColor;
             title.gameObject.AddComponent<LayoutElement>().preferredHeight = 52f;
 
             Text subtitle = CreateText("Subtitle", root, TextAnchor.MiddleCenter, 16, FontStyle.Bold);
-            subtitle.text = "Choose a banner, inspect the rate-up trio, and send fresh pulls straight into the Barracks.";
+            subtitle.text = "Choose a banner and pull featured warriors straight into the Barracks.";
             subtitle.color = BodyColor;
             subtitle.horizontalOverflow = HorizontalWrapMode.Wrap;
             subtitle.verticalOverflow = VerticalWrapMode.Overflow;
@@ -402,17 +570,17 @@ namespace Shogun.Features.UI
 
             RectTransform statePill = CreatePill(root, "StatePill", Vector2.zero, Vector2.one, new Color(0.16f, 0.15f, 0.14f, 0.98f));
             statePill.gameObject.AddComponent<LayoutElement>().preferredHeight = 34f;
-            bannerStateLabel = CreateText("StateLabel", statePill, TextAnchor.MiddleCenter, 14, FontStyle.Bold);
+            bannerStateLabel = CreateText("StateLabel", statePill, TextAnchor.MiddleCenter, 16, FontStyle.Bold);
             bannerStateLabel.color = HeadingColor;
 
             RectTransform sealsPill = CreatePill(root, "SealsPill", Vector2.zero, Vector2.one, new Color(0.16f, 0.27f, 0.37f, 0.98f));
             sealsPill.gameObject.AddComponent<LayoutElement>().preferredHeight = 42f;
-            sealsLabel = CreateText("SealsLabel", sealsPill, TextAnchor.MiddleCenter, 18, FontStyle.Bold);
+            sealsLabel = CreateText("SealsLabel", sealsPill, TextAnchor.MiddleCenter, 22, FontStyle.Bold);
             sealsLabel.color = HeadingColor;
 
             RectTransform collectionPill = CreatePill(root, "CollectionPill", Vector2.zero, Vector2.one, new Color(0.25f, 0.19f, 0.11f, 0.98f));
             collectionPill.gameObject.AddComponent<LayoutElement>().preferredHeight = 36f;
-            collectionLabel = CreateText("CollectionLabel", collectionPill, TextAnchor.MiddleCenter, 16, FontStyle.Bold);
+            collectionLabel = CreateText("CollectionLabel", collectionPill, TextAnchor.MiddleCenter, 18, FontStyle.Bold);
             collectionLabel.color = HeadingColor;
 
             if (exception == null)
@@ -434,7 +602,8 @@ namespace Shogun.Features.UI
 
         private void BuildEmergencyBannerPanel()
         {
-            CreatePanel(contentFrame, "EmergencyBannerPanel", Mathf.Max(170f, 74f + (banners.Count * 68f)), PanelOuterColor, PanelInnerColor, out RectTransform inner);
+            float bannerPanelHeight = Mathf.Max(220f, 78f + (banners.Count * 110f));
+            CreatePanel(contentFrame, "EmergencyBannerPanel", bannerPanelHeight, PanelOuterColor, PanelInnerColor, out RectTransform inner);
             RectTransform content = CreateRect("Content", inner, Vector2.zero, Vector2.one, new Vector2(24f, 20f), new Vector2(-24f, -20f));
             VerticalLayoutGroup stack = content.gameObject.AddComponent<VerticalLayoutGroup>();
             stack.spacing = 10f;
@@ -444,7 +613,7 @@ namespace Shogun.Features.UI
             stack.childForceExpandHeight = false;
 
             Text heading = CreateText("Heading", content, TextAnchor.UpperLeft, 26, FontStyle.Bold);
-            heading.text = "ACTIVE BANNERS";
+            heading.text = "BANNERS";
             heading.color = HeadingColor;
             heading.gameObject.AddComponent<LayoutElement>().preferredHeight = 38f;
 
@@ -460,7 +629,7 @@ namespace Shogun.Features.UI
 
         private void BuildEmergencyDetailPanel()
         {
-            CreatePanel(contentFrame, "EmergencyDetailPanel", 700f, PanelOuterColor, PanelInnerColor, out RectTransform inner);
+            CreatePanel(contentFrame, "EmergencyDetailPanel", 860f, PanelOuterColor, PanelInnerColor, out RectTransform inner);
             detailPanelLayout = inner.parent.GetComponent<LayoutElement>();
             detailAccentBand = CreateRect("Accent", inner, new Vector2(0f, 0f), new Vector2(0f, 1f), Vector2.zero, new Vector2(10f, 0f)).gameObject.AddComponent<Image>();
             detailAccentBand.sprite = GetWhiteSprite();
@@ -472,25 +641,25 @@ namespace Shogun.Features.UI
             stack.childForceExpandWidth = true;
             stack.childForceExpandHeight = false;
 
-            CreateSectionHeader(content, "BANNER FOCUS", "Review the current gate, its disclosed odds, and the featured trio before committing seals.");
+            CreateSectionHeader(content, "BANNER FOCUS", "Featured trio, rates, and pull actions for the active gate.");
 
-            bannerTitleLabel = CreateText("BannerTitle", content, TextAnchor.UpperLeft, 34, FontStyle.Bold);
+            bannerTitleLabel = CreateText("BannerTitle", content, TextAnchor.UpperLeft, 38, FontStyle.Bold);
             bannerTitleLabel.color = HeadingColor;
             bannerTitleLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 42f;
-            bannerSubtitleLabel = CreateText("BannerSubtitle", content, TextAnchor.UpperLeft, 16, FontStyle.Bold);
+            bannerSubtitleLabel = CreateText("BannerSubtitle", content, TextAnchor.UpperLeft, 18, FontStyle.Bold);
             bannerSubtitleLabel.color = BodyColor;
             bannerSubtitleLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
             bannerSubtitleLabel.verticalOverflow = VerticalWrapMode.Overflow;
             bannerSubtitleLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 40f;
-            bannerSummaryLabel = CreateText("BannerSummary", content, TextAnchor.UpperLeft, 15, FontStyle.Normal);
+            bannerSummaryLabel = CreateText("BannerSummary", content, TextAnchor.UpperLeft, 17, FontStyle.Normal);
             bannerSummaryLabel.color = BodyColor;
             bannerSummaryLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
             bannerSummaryLabel.verticalOverflow = VerticalWrapMode.Overflow;
             bannerSummaryLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 62f;
-            bannerOddsLabel = CreateText("BannerOdds", content, TextAnchor.UpperLeft, 14, FontStyle.Bold);
+            bannerOddsLabel = CreateText("BannerOdds", content, TextAnchor.UpperLeft, 16, FontStyle.Bold);
             bannerOddsLabel.color = new Color(0.95f, 0.88f, 0.7f, 1f);
             bannerOddsLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 24f;
-            bannerDisclosureLabel = CreateText("BannerDisclosure", content, TextAnchor.UpperLeft, 13, FontStyle.Normal);
+            bannerDisclosureLabel = CreateText("BannerDisclosure", content, TextAnchor.UpperLeft, 15, FontStyle.Normal);
             bannerDisclosureLabel.color = MutedColor;
             bannerDisclosureLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
             bannerDisclosureLabel.verticalOverflow = VerticalWrapMode.Overflow;
@@ -498,7 +667,7 @@ namespace Shogun.Features.UI
 
             CreateDivider(content);
 
-            featuredSummaryLabel = CreateText("FeaturedSummary", content, TextAnchor.UpperLeft, 15, FontStyle.Bold);
+            featuredSummaryLabel = CreateText("FeaturedSummary", content, TextAnchor.UpperLeft, 17, FontStyle.Bold);
             featuredSummaryLabel.color = BodyColor;
             featuredSummaryLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
             featuredSummaryLabel.verticalOverflow = VerticalWrapMode.Overflow;
@@ -511,10 +680,10 @@ namespace Shogun.Features.UI
             featuredGrid.spacing = new Vector2(12f, 12f);
             featuredGrid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
             featuredGrid.constraintCount = 2;
-            featuredGrid.cellSize = new Vector2(240f, 156f);
+            featuredGrid.cellSize = new Vector2(250f, 164f);
 
             RectTransform actions = CreateRect("Actions", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            actions.gameObject.AddComponent<LayoutElement>().preferredHeight = 72f;
+            actions.gameObject.AddComponent<LayoutElement>().preferredHeight = 88f;
             HorizontalLayoutGroup actionLayout = actions.gameObject.AddComponent<HorizontalLayoutGroup>();
             actionLayout.spacing = 10f;
             actionLayout.childControlWidth = true;
@@ -529,7 +698,7 @@ namespace Shogun.Features.UI
 
         private void BuildEmergencyResultsPanel()
         {
-            CreatePanel(contentFrame, "EmergencyResultsPanel", 392f, PanelOuterColor, PanelInnerColor, out RectTransform inner);
+            CreatePanel(contentFrame, "EmergencyResultsPanel", 430f, PanelOuterColor, PanelInnerColor, out RectTransform inner);
             resultPanelLayout = inner.parent.GetComponent<LayoutElement>();
             RectTransform content = CreateRect("Content", inner, Vector2.zero, Vector2.one, new Vector2(24f, 20f), new Vector2(-24f, -20f));
             VerticalLayoutGroup stack = content.gameObject.AddComponent<VerticalLayoutGroup>();
@@ -539,12 +708,12 @@ namespace Shogun.Features.UI
             stack.childForceExpandWidth = true;
             stack.childForceExpandHeight = false;
 
-            CreateSectionHeader(content, "REVEAL LEDGER", "Latest pulls resolve here immediately. New units are marked and duplicates update owned copy counts.");
+            CreateSectionHeader(content, "REVEAL LEDGER", "Fresh pulls land here immediately.");
 
-            resultStatusLabel = CreateText("Status", content, TextAnchor.UpperLeft, 26, FontStyle.Bold);
+            resultStatusLabel = CreateText("Status", content, TextAnchor.UpperLeft, 30, FontStyle.Bold);
             resultStatusLabel.color = HeadingColor;
             resultStatusLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 36f;
-            resultSummaryLabel = CreateText("Summary", content, TextAnchor.UpperLeft, 14, FontStyle.Normal);
+            resultSummaryLabel = CreateText("Summary", content, TextAnchor.UpperLeft, 16, FontStyle.Normal);
             resultSummaryLabel.color = BodyColor;
             resultSummaryLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
             resultSummaryLabel.verticalOverflow = VerticalWrapMode.Overflow;
@@ -554,12 +723,12 @@ namespace Shogun.Features.UI
 
             resultGridRoot = CreateRect("ResultGridRoot", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             resultGridLayout = resultGridRoot.gameObject.AddComponent<LayoutElement>();
-            resultGridLayout.preferredHeight = 0f;
+            resultGridLayout.preferredHeight = 12f;
             resultGrid = resultGridRoot.gameObject.AddComponent<GridLayoutGroup>();
             resultGrid.spacing = new Vector2(12f, 12f);
             resultGrid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
             resultGrid.constraintCount = 2;
-            resultGrid.cellSize = new Vector2(168f, 170f);
+            resultGrid.cellSize = new Vector2(176f, 178f);
         }
 
         private void BuildHeader()
@@ -572,7 +741,7 @@ namespace Shogun.Features.UI
             eyebrow.color = new Color(0.93f, 0.82f, 0.5f, 1f);
             eyebrow.rectTransform.offsetMin = new Vector2(0f, 144f);
             Text title = CreateText("Title", titleBlock, TextAnchor.MiddleLeft, 48, FontStyle.Bold);
-            title.text = "SUMMON GATE";
+            title.text = "SUMMON";
             title.color = HeadingColor;
             title.rectTransform.offsetMin = new Vector2(0f, 54f);
             title.rectTransform.offsetMax = new Vector2(0f, -28f);
@@ -720,15 +889,15 @@ namespace Shogun.Features.UI
             resultGrid.spacing = new Vector2(12f, 12f);
             resultGrid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
             resultGrid.constraintCount = 3;
-            resultGrid.cellSize = new Vector2(168f, 170f);
+            resultGrid.cellSize = new Vector2(176f, 178f);
         }
 
         private void BuildFooterPanel()
         {
-            CreatePanel(contentFrame, "FooterPanel", 132f, new Color(0.16f, 0.13f, 0.11f, 0.96f), new Color(0.08f, 0.07f, 0.07f, 0.98f), out RectTransform inner);
+            CreatePanel(contentFrame, "FooterPanel", 112f, new Color(0.16f, 0.13f, 0.11f, 0.96f), new Color(0.08f, 0.07f, 0.07f, 0.98f), out RectTransform inner);
             RectTransform content = CreateRect("FooterContent", inner, Vector2.zero, Vector2.one, new Vector2(24f, 18f), new Vector2(-24f, -18f));
-            Text footer = CreateText("Footer", content, TextAnchor.MiddleLeft, 14, FontStyle.Normal);
-            footer.text = "This gate is local-only, but the roster updates, odds disclosure, currency spend, and Barracks sync are all live inside the current slice.";
+            Text footer = CreateText("Footer", content, TextAnchor.MiddleLeft, 15, FontStyle.Normal);
+            footer.text = "Local test gate. Pulls, rates, seal spend, and Barracks sync are live in this slice.";
             footer.color = BodyColor;
             footer.horizontalOverflow = HorizontalWrapMode.Wrap;
             footer.verticalOverflow = VerticalWrapMode.Overflow;
@@ -762,7 +931,7 @@ namespace Shogun.Features.UI
             resultStatusLabel.text = "Ready";
             resultStatusLabel.color = BodyColor;
             if (lastResults.Count == 0)
-                resultSummaryLabel.text = "Pick single or multi pull to reveal warriors and update the Barracks instantly.";
+                resultSummaryLabel.text = "Pick a pull to reveal warriors.";
             RefreshCurrencyLabel();
             ApplyResponsiveLayout(true);
         }
@@ -800,7 +969,7 @@ namespace Shogun.Features.UI
 
             if (featuredDefinitions.Count == 0)
             {
-                CreateEmptyMessageCard(featuredGridRoot, "No featured character definitions resolved for this banner.");
+                CreateEmptyMessageCard(featuredGridRoot, "No featured units resolved for this banner.");
                 return;
             }
 
@@ -850,7 +1019,7 @@ namespace Shogun.Features.UI
             resultGrid.spacing = new Vector2(12f, 12f);
             resultGrid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
             resultGrid.constraintCount = 3;
-            resultGrid.cellSize = new Vector2(168f, 170f);
+            resultGrid.cellSize = new Vector2(176f, 178f);
             for (int i = 0; i < lastResults.Count; i++)
                 CreateResultCard(resultGridRoot, lastResults[i]);
         }
@@ -874,6 +1043,9 @@ namespace Shogun.Features.UI
         {
             if (contentFrame == null)
                 return;
+
+            if (force)
+                Canvas.ForceUpdateCanvases();
 
             Vector2Int currentScreenSize = GetLayoutSize();
             Rect safeArea = Screen.safeArea;
@@ -936,17 +1108,17 @@ namespace Shogun.Features.UI
             {
                 int featuredItems = Mathf.Max(1, featuredGridRoot != null ? featuredGridRoot.childCount : 0);
                 int featuredColumns = contentWidth >= 760f ? 2 : 1;
-                float detailStaticHeight = 72f + 42f + subtitleHeight + summaryHeight + 24f + disclosureHeight + 2f + featuredLineHeight + 72f + 112f;
+                float detailStaticHeight = 412f + subtitleHeight + summaryHeight + disclosureHeight + featuredLineHeight;
                 ConfigureGrid(featuredGrid, featuredGridLayout, detailPanelLayout, featuredItems, featuredColumns, sectionWidth, 220f, 156f, detailStaticHeight, 36f);
             }
 
             if (resultPanelLayout != null)
             {
-                float resultStaticHeight = 72f + 36f + resultSummaryHeight + 96f;
+                float resultStaticHeight = 196f + resultSummaryHeight;
                 if (lastResults.Count <= 0)
                 {
                     if (resultGridLayout != null)
-                        resultGridLayout.preferredHeight = 0f;
+                        resultGridLayout.preferredHeight = 12f;
                     resultPanelLayout.preferredHeight = resultStaticHeight + 112f;
                 }
                 else if (resultGrid != null && resultGridLayout != null)
@@ -980,6 +1152,28 @@ namespace Shogun.Features.UI
             emergencyScrollRect.verticalNormalizedPosition = 1f;
         }
 
+
+        private void StabilizeInitialLayout()
+        {
+            Canvas.ForceUpdateCanvases();
+
+            RectTransform canvasRect = targetCanvas != null ? targetCanvas.transform as RectTransform : null;
+            if (canvasRect != null)
+                LayoutRebuilder.ForceRebuildLayoutImmediate(canvasRect);
+
+            if (hostRoot != null)
+                LayoutRebuilder.ForceRebuildLayoutImmediate(hostRoot);
+
+            if (contentFrame != null)
+                LayoutRebuilder.ForceRebuildLayoutImmediate(contentFrame);
+
+            if (!string.IsNullOrEmpty(selectedBannerId))
+                SelectBanner(selectedBannerId);
+            else
+                ApplyResponsiveLayout(true);
+
+            ResetEmergencyScrollPosition();
+        }
 
         private float ResolveLayoutParentWidth()
         {
@@ -1030,6 +1224,97 @@ namespace Shogun.Features.UI
             return new Vector2Int(Screen.width, Screen.height);
         }
 
+        private static void NormalizeVerticalLayout(RectTransform rectTransform, RectOffset padding, float spacing, TextAnchor alignment, bool childControlWidth, bool childControlHeight, bool childForceExpandWidth, bool childForceExpandHeight)
+        {
+            if (rectTransform == null)
+                return;
+
+            VerticalLayoutGroup layout = rectTransform.GetComponent<VerticalLayoutGroup>();
+            if (layout == null)
+                layout = rectTransform.gameObject.AddComponent<VerticalLayoutGroup>();
+
+            layout.padding = padding;
+            layout.spacing = spacing;
+            layout.childAlignment = alignment;
+            layout.childControlWidth = childControlWidth;
+            layout.childControlHeight = childControlHeight;
+            layout.childForceExpandWidth = childForceExpandWidth;
+            layout.childForceExpandHeight = childForceExpandHeight;
+        }
+
+        private static void NormalizeHorizontalLayout(RectTransform rectTransform, float spacing, bool childControlWidth, bool childControlHeight, bool childForceExpandWidth, bool childForceExpandHeight)
+        {
+            if (rectTransform == null)
+                return;
+
+            HorizontalLayoutGroup layout = rectTransform.GetComponent<HorizontalLayoutGroup>();
+            if (layout == null)
+                layout = rectTransform.gameObject.AddComponent<HorizontalLayoutGroup>();
+
+            layout.spacing = spacing;
+            layout.childControlWidth = childControlWidth;
+            layout.childControlHeight = childControlHeight;
+            layout.childForceExpandWidth = childForceExpandWidth;
+            layout.childForceExpandHeight = childForceExpandHeight;
+        }
+
+        private static void ApplyPreferredHeight(RectTransform rectTransform, float preferredHeight)
+        {
+            if (rectTransform == null)
+                return;
+
+            LayoutElement layout = rectTransform.GetComponent<LayoutElement>();
+            if (layout == null)
+                layout = rectTransform.gameObject.AddComponent<LayoutElement>();
+
+            layout.preferredHeight = preferredHeight;
+        }
+
+        private static void NormalizeText(Text text, int fontSize, FontStyle fontStyle, Color color)
+        {
+            if (text == null)
+                return;
+
+            text.fontSize = fontSize;
+            text.fontStyle = fontStyle;
+            text.color = color;
+        }
+        private static RectTransform FindRect(Transform root, string relativePath)
+        {
+            Transform child = root != null ? root.Find(relativePath) : null;
+            return child as RectTransform;
+        }
+
+        private static Text FindText(Transform root, string relativePath)
+        {
+            Transform child = root != null ? root.Find(relativePath) : null;
+            return child != null ? child.GetComponent<Text>() : null;
+        }
+
+        private static Image FindImage(Transform root, string relativePath)
+        {
+            Transform child = root != null ? root.Find(relativePath) : null;
+            return child != null ? child.GetComponent<Image>() : null;
+        }
+
+        private static GameObject FindChild(Transform root, string relativePath)
+        {
+            Transform child = root != null ? root.Find(relativePath) : null;
+            return child != null ? child.gameObject : null;
+        }
+
+        private static bool BindActionButton(Transform root, string relativePath, UnityEngine.Events.UnityAction onClick)
+        {
+            Transform child = root != null ? root.Find(relativePath) : null;
+            Button button = child != null ? child.GetComponent<Button>() : null;
+            if (button == null)
+                return false;
+
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(onClick);
+            return true;
+        }
+
         private static void ConfigureGrid(GridLayoutGroup grid, LayoutElement gridLayout, LayoutElement panelLayout, int itemCount, int columns, float availableWidth, float minCellWidth, float cellHeight, float headerHeight, float bottomPadding)
         {
             if (grid == null || gridLayout == null || panelLayout == null)
@@ -1063,19 +1348,33 @@ namespace Shogun.Features.UI
             accent.sprite = GetWhiteSprite();
             accent.color = banner.AccentColor;
             RectTransform content = CreateRect("Content", root, Vector2.zero, Vector2.one, new Vector2(20f, 12f), new Vector2(-18f, -12f));
-            Text title = CreateText("Title", content, TextAnchor.UpperLeft, 22, FontStyle.Bold);
+            VerticalLayoutGroup stack = content.gameObject.AddComponent<VerticalLayoutGroup>();
+            stack.padding = new RectOffset(0, 0, 0, 0);
+            stack.spacing = 4f;
+            stack.childControlWidth = true;
+            stack.childControlHeight = true;
+            stack.childForceExpandWidth = true;
+            stack.childForceExpandHeight = false;
+
+            Text title = CreateText("Title", content, TextAnchor.UpperLeft, 24, FontStyle.Bold);
             title.text = banner.Title;
             title.color = HeadingColor;
-            title.rectTransform.offsetMin = new Vector2(0f, 40f);
-            Text subtitle = CreateText("Subtitle", content, TextAnchor.MiddleLeft, 14, FontStyle.Normal);
+            title.gameObject.AddComponent<LayoutElement>().preferredHeight = 30f;
+
+            Text subtitle = CreateText("Subtitle", content, TextAnchor.MiddleLeft, 15, FontStyle.Normal);
             subtitle.text = $"{banner.BannerType.ToUpperInvariant()} • {banner.FeaturedCharacterIds.Count} FEATURED";
             subtitle.color = BodyColor;
-            subtitle.rectTransform.offsetMin = new Vector2(0f, 14f);
-            subtitle.rectTransform.offsetMax = new Vector2(0f, -30f);
-            Text costs = CreateText("Costs", content, TextAnchor.LowerLeft, 13, FontStyle.Bold);
+            subtitle.horizontalOverflow = HorizontalWrapMode.Wrap;
+            subtitle.verticalOverflow = VerticalWrapMode.Overflow;
+            subtitle.gameObject.AddComponent<LayoutElement>().preferredHeight = 22f;
+
+            RectTransform spacer = CreateRect("Spacer", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            spacer.gameObject.AddComponent<LayoutElement>().flexibleHeight = 1f;
+
+            Text costs = CreateText("Costs", content, TextAnchor.LowerLeft, 14, FontStyle.Bold);
             costs.text = $"1x {banner.SinglePullCost} • 10x {banner.MultiPullCost}";
             costs.color = new Color(0.93f, 0.82f, 0.5f, 1f);
-            costs.rectTransform.offsetMax = new Vector2(0f, -54f);
+            costs.gameObject.AddComponent<LayoutElement>().preferredHeight = 18f;
             return new BannerButtonView { Banner = banner, Background = background, Accent = accent, TitleLabel = title, SubtitleLabel = subtitle };
         }
 
@@ -1102,16 +1401,16 @@ namespace Shogun.Features.UI
             GameObject placeholder = CreatePlaceholder(portraitInner, out placeholderLabel, 28);
             BarracksCharacterPresentation.SetPortraitVisual(definition, portrait, placeholder, placeholderLabel, 28);
             RectTransform info = CreateRect("Info", root, Vector2.zero, Vector2.one, new Vector2(120f, 14f), new Vector2(-14f, -14f));
-            Text name = CreateText("Name", info, TextAnchor.UpperLeft, 22, FontStyle.Bold);
+            Text name = CreateText("Name", info, TextAnchor.UpperLeft, 24, FontStyle.Bold);
             name.text = BarracksCharacterPresentation.GetDisplayName(definition).ToUpperInvariant();
             name.color = HeadingColor;
             name.rectTransform.offsetMin = new Vector2(0f, 88f);
-            Text identity = CreateText("Identity", info, TextAnchor.MiddleLeft, 14, FontStyle.Bold);
+            Text identity = CreateText("Identity", info, TextAnchor.MiddleLeft, 15, FontStyle.Bold);
             identity.text = $"{BarracksCharacterPresentation.GetElementLabel(definition.ElementalType)} • {BarracksCharacterPresentation.GetWeaponLabel(definition.MartialArtsType)}";
             identity.color = BodyColor;
             identity.rectTransform.offsetMin = new Vector2(0f, 50f);
             identity.rectTransform.offsetMax = new Vector2(0f, -56f);
-            Text summary = CreateText("Summary", info, TextAnchor.LowerLeft, 13, FontStyle.Normal);
+            Text summary = CreateText("Summary", info, TextAnchor.LowerLeft, 14, FontStyle.Normal);
             summary.text = BarracksCharacterPresentation.GetCardSummary(definition);
             summary.color = MutedColor;
             summary.horizontalOverflow = HorizontalWrapMode.Wrap;
@@ -1136,7 +1435,7 @@ namespace Shogun.Features.UI
             Image statusImage = statusPill.gameObject.AddComponent<Image>();
             statusImage.sprite = GetWhiteSprite();
             statusImage.color = result.IsNew ? new Color(0.28f, 0.35f, 0.2f, 1f) : new Color(0.17f, 0.15f, 0.14f, 1f);
-            Text status = CreateText("StatusLabel", statusPill, TextAnchor.MiddleCenter, 12, FontStyle.Bold);
+            Text status = CreateText("StatusLabel", statusPill, TextAnchor.MiddleCenter, 13, FontStyle.Bold);
             status.text = result.IsNew ? "NEW" : $"x{result.OwnedCount}";
             status.color = result.IsNew ? new Color(0.94f, 0.96f, 0.78f, 1f) : BodyColor;
             RectTransform portraitRect = CreateRect("Portrait", root, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-44f, -56f), new Vector2(44f, 28f));
@@ -1149,12 +1448,12 @@ namespace Shogun.Features.UI
             Text placeholderLabel;
             GameObject placeholder = CreatePlaceholder(portraitInner, out placeholderLabel, 26);
             BarracksCharacterPresentation.SetPortraitVisual(result.Definition, portrait, placeholder, placeholderLabel, 26);
-            Text name = CreateText("Name", root, TextAnchor.LowerCenter, 16, FontStyle.Bold);
+            Text name = CreateText("Name", root, TextAnchor.LowerCenter, 18, FontStyle.Bold);
             name.text = BarracksCharacterPresentation.GetDisplayName(result.Definition).ToUpperInvariant();
             name.color = HeadingColor;
             name.rectTransform.offsetMin = new Vector2(8f, 52f);
             name.rectTransform.offsetMax = new Vector2(-8f, -42f);
-            Text rarity = CreateText("Rarity", root, TextAnchor.LowerCenter, 13, FontStyle.Bold);
+            Text rarity = CreateText("Rarity", root, TextAnchor.LowerCenter, 14, FontStyle.Bold);
             rarity.text = BarracksCharacterPresentation.GetRarityLabel(result.Definition.Rarity);
             rarity.color = rarityColor;
             rarity.rectTransform.offsetMax = new Vector2(0f, -22f);
@@ -1189,12 +1488,12 @@ namespace Shogun.Features.UI
         private static RectTransform CreateSectionHeader(Transform parent, string titleText, string subtitleText)
         {
             RectTransform root = CreateRect($"{titleText}_Header", parent, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            root.gameObject.AddComponent<LayoutElement>().preferredHeight = 72f;
-            Text title = CreateText("Title", root, TextAnchor.UpperLeft, 28, FontStyle.Bold);
+            root.gameObject.AddComponent<LayoutElement>().preferredHeight = 84f;
+            Text title = CreateText("Title", root, TextAnchor.UpperLeft, 32, FontStyle.Bold);
             title.text = titleText;
             title.color = HeadingColor;
             title.rectTransform.offsetMin = new Vector2(0f, 18f);
-            Text subtitle = CreateText("Subtitle", root, TextAnchor.LowerLeft, 14, FontStyle.Normal);
+            Text subtitle = CreateText("Subtitle", root, TextAnchor.LowerLeft, 16, FontStyle.Normal);
             subtitle.text = subtitleText;
             subtitle.color = MutedColor;
             subtitle.horizontalOverflow = HorizontalWrapMode.Wrap;
@@ -1216,14 +1515,14 @@ namespace Shogun.Features.UI
         private static Button CreateActionButton(Transform parent, string name, string labelText, Color backgroundColor, UnityEngine.Events.UnityAction onClick)
         {
             RectTransform root = CreateRect(name, parent, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            root.gameObject.AddComponent<LayoutElement>().preferredHeight = 92f;
+            root.gameObject.AddComponent<LayoutElement>().preferredHeight = 96f;
             Image background = root.gameObject.AddComponent<Image>();
             background.sprite = GetWhiteSprite();
             background.color = backgroundColor;
             Button button = root.gameObject.AddComponent<Button>();
             button.targetGraphic = background;
             button.onClick.AddListener(onClick);
-            Text label = CreateText("Label", root, TextAnchor.MiddleCenter, 16, FontStyle.Bold);
+            Text label = CreateText("Label", root, TextAnchor.MiddleCenter, 18, FontStyle.Bold);
             label.text = labelText;
             label.color = HeadingColor;
             return button;
@@ -1237,7 +1536,7 @@ namespace Shogun.Features.UI
             Image background = root.gameObject.AddComponent<Image>();
             background.sprite = GetWhiteSprite();
             background.color = new Color(0.1f, 0.09f, 0.09f, 0.95f);
-            Text label = CreateText("Label", root, TextAnchor.MiddleCenter, 15, FontStyle.Normal);
+            Text label = CreateText("Label", root, TextAnchor.MiddleCenter, 16, FontStyle.Normal);
             label.text = message;
             label.color = BodyColor;
             label.horizontalOverflow = HorizontalWrapMode.Wrap;
@@ -1253,7 +1552,7 @@ namespace Shogun.Features.UI
             Image background = root.gameObject.AddComponent<Image>();
             background.sprite = GetWhiteSprite();
             background.color = new Color(0.1f, 0.09f, 0.09f, 0.95f);
-            Text label = CreateText("Label", root, TextAnchor.MiddleCenter, 15, FontStyle.Normal);
+            Text label = CreateText("Label", root, TextAnchor.MiddleCenter, 16, FontStyle.Normal);
             label.text = message;
             label.color = BodyColor;
             label.horizontalOverflow = HorizontalWrapMode.Wrap;
@@ -1316,7 +1615,24 @@ namespace Shogun.Features.UI
             rt.anchorMax = anchorMax;
             rt.offsetMin = offsetMin;
             rt.offsetMax = offsetMax;
+            ConfigureAsLayoutChildIfNeeded(parent, rt);
             return rt;
+        }
+
+        private static void ConfigureAsLayoutChildIfNeeded(Transform parent, RectTransform child)
+        {
+            if (parent == null || child == null)
+                return;
+
+            // Unity layout groups expect non-stretch child anchors. Keeping stretch anchors
+            // here causes overlap/collapse in play mode once responsive relayout runs.
+            if (parent.GetComponent<LayoutGroup>() == null)
+                return;
+
+            child.anchorMin = new Vector2(0f, 1f);
+            child.anchorMax = new Vector2(0f, 1f);
+            child.pivot = new Vector2(0f, 1f);
+            child.anchoredPosition = Vector2.zero;
         }
 
         private static Font GetRuntimeFont()
@@ -1407,6 +1723,17 @@ namespace Shogun.Features.UI
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

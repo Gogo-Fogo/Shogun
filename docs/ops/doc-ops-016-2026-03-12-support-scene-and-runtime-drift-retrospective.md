@@ -237,6 +237,38 @@ This is especially required for:
 
 If a scene keeps breaking because generated fallback code is too complex, stop tuning the fallback and move the scene to an authored shell. That is cheaper than repeating another cycle of runtime drift fixes.
 
+## 8. `Summon` had a first-frame layout stabilization bug even after the screen was technically "built"
+
+What happened:
+
+- `Summon` stopped rendering as a dead slab, but the first play-mode frame still came up partially collapsed
+- the banner selector row could appear as thin bars with clipped text
+- action buttons in the detail panel could collapse into narrow strips
+- clicking one of those strips immediately made the screen look correct
+
+Why that clue mattered:
+
+- the click was not loading a second page
+- it was hitting the same scene and forcing a later state update plus another layout pass
+- that proved the main failure was no longer missing content, but incomplete first-frame layout stabilization
+
+What the root cause turned out to be:
+
+- `Summon` was still depending on a startup layout sequence that was not fully settled on the first rendered frame
+- some generated children under layout-group parents were being created with anchors that were safe for generic absolute positioning, but unstable for Unity layout-group ownership in play mode
+- later interactions such as `SelectBanner()` or `PerformSummon()` triggered another forced relayout, which made the same screen suddenly look correct
+
+What fixed it:
+
+- the minimal summon path was forced to rebuild its fallback shell directly instead of trusting stale authored-shell binding state
+- generated `RectTransform` children under `LayoutGroup` parents were normalized to layout-safe top-left anchors/pivot instead of stretch-style anchors
+- a short startup stabilization pass was added for the first two play-mode frames so `Summon` re-forces canvas/root/content layout before the player interacts with the scene
+- the old top-left `OnGUI` diagnostic overlay was removed after the layout path became stable enough to rely on console logging instead
+
+Operational lesson:
+
+- if a support scene looks broken until the first user interaction, treat that as a lifecycle/layout-settling bug, not a content bug
+- if clicking a collapsed control makes the screen "fix itself," the screen is usually already built and just missing a trustworthy first-frame relayout pass
 ## Immediate implications for current Shogun work
 
 - `Dev_Sandbox` remains the gameplay truth scene, but its stable HUD composition should still move toward a prefab-authored shell.
@@ -265,3 +297,4 @@ If the answer trends the wrong way, stop and correct the ownership model before 
 - [`doc-eng-002-unity-project-runtime-architecture-patterns.md`](../research/doc-eng-002-unity-project-runtime-architecture-patterns.md)
 - [`design-008-active-vertical-slice-definition.md`](../design/design-008-active-vertical-slice-definition.md)
 - [`design-009-first-vertical-slice-roster-and-encounter-plan.md`](../design/design-009-first-vertical-slice-roster-and-encounter-plan.md)
+

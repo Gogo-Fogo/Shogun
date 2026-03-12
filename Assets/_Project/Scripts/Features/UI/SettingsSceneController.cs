@@ -106,26 +106,6 @@ namespace Shogun.Features.UI
         }
         private void Update() => ApplyResponsiveLayout(false);
 
-        #if UNITY_EDITOR
-        private void OnGUI()
-        {
-            if (!Application.isPlaying)
-                return;
-            GUIStyle style = new GUIStyle(GUI.skin.box)
-            {
-                fontSize = 18,
-                alignment = TextAnchor.UpperLeft,
-                wordWrap = true,
-                normal = { textColor = Color.yellow }
-            };
-            GUI.backgroundColor = new Color(0f, 0f, 0f, 0.85f);
-            string info = $"[Settings Diag]\n{diagnosticStatus}\n" +
-                          $"Canvas: {(targetCanvas != null ? $"active={targetCanvas.isActiveAndEnabled}, mode={targetCanvas.renderMode}" : "NULL")}\n" +
-                          $"Screen: {Screen.width}x{Screen.height}";
-            GUI.Box(new Rect(10, 10, 500, 120), info, style);
-        }
-        #endif
-
         private void RebuildEditorPreview()
         {
             if (!isActiveAndEnabled)
@@ -999,6 +979,9 @@ namespace Shogun.Features.UI
         }
     }
 }
+
+
+
 
 
 
