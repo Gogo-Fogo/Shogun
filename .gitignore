@@ -92,3 +92,8 @@ Assets/_Project/Art/References/
 # Local-only third-party franchise reference packs (do not commit) 
 docs/NaBlA_References_Inspo/
 
+# Local Unity recovery/autosave artifacts
+/Assets/_Recovery/
+/Assets/_Recovery.meta
+
+
