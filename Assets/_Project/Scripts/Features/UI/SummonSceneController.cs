@@ -540,47 +540,47 @@ namespace Shogun.Features.UI
         private void BuildEmergencyHeader(Exception exception)
         {
             RectTransform root = CreateRect("EmergencyHeader", contentFrame, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            float headerBaseHeight = 308f;
+            float headerBaseHeight = 226f;
             root.gameObject.AddComponent<LayoutElement>().preferredHeight = exception == null ? headerBaseHeight : headerBaseHeight + 106f;
             VerticalLayoutGroup stack = root.gameObject.AddComponent<VerticalLayoutGroup>();
-            stack.padding = new RectOffset(18, 18, 14, 14);
-            stack.spacing = 10f;
+            stack.padding = new RectOffset(28, 28, 8, 12);
+            stack.spacing = 8f;
             stack.childAlignment = TextAnchor.UpperCenter;
             stack.childControlWidth = true;
             stack.childControlHeight = true;
             stack.childForceExpandWidth = true;
             stack.childForceExpandHeight = false;
 
-            Text eyebrow = CreateText("Eyebrow", root, TextAnchor.MiddleCenter, 15, FontStyle.Bold);
+            Text eyebrow = CreateText("Eyebrow", root, TextAnchor.MiddleCenter, 17, FontStyle.Bold);
             eyebrow.text = "SPIRIT GATE";
             eyebrow.color = new Color(0.93f, 0.82f, 0.5f, 1f);
-            eyebrow.gameObject.AddComponent<LayoutElement>().preferredHeight = 22f;
+            eyebrow.gameObject.AddComponent<LayoutElement>().preferredHeight = 24f;
 
-            Text title = CreateText("Title", root, TextAnchor.MiddleCenter, 44, FontStyle.Bold);
+            Text title = CreateText("Title", root, TextAnchor.MiddleCenter, 54, FontStyle.Bold);
             title.text = "SUMMON";
             title.color = HeadingColor;
-            title.gameObject.AddComponent<LayoutElement>().preferredHeight = 52f;
+            title.gameObject.AddComponent<LayoutElement>().preferredHeight = 56f;
 
-            Text subtitle = CreateText("Subtitle", root, TextAnchor.MiddleCenter, 16, FontStyle.Bold);
-            subtitle.text = "Choose a banner and pull featured warriors straight into the Barracks.";
+            Text subtitle = CreateText("Subtitle", root, TextAnchor.MiddleCenter, 18, FontStyle.Bold);
+            subtitle.text = "Choose a banner. Pull featured warriors into the Barracks.";
             subtitle.color = BodyColor;
             subtitle.horizontalOverflow = HorizontalWrapMode.Wrap;
             subtitle.verticalOverflow = VerticalWrapMode.Overflow;
-            subtitle.gameObject.AddComponent<LayoutElement>().preferredHeight = 44f;
+            subtitle.gameObject.AddComponent<LayoutElement>().preferredHeight = 34f;
 
             RectTransform statePill = CreatePill(root, "StatePill", Vector2.zero, Vector2.one, new Color(0.16f, 0.15f, 0.14f, 0.98f));
-            statePill.gameObject.AddComponent<LayoutElement>().preferredHeight = 34f;
-            bannerStateLabel = CreateText("StateLabel", statePill, TextAnchor.MiddleCenter, 16, FontStyle.Bold);
+            statePill.gameObject.AddComponent<LayoutElement>().preferredHeight = 30f;
+            bannerStateLabel = CreateText("StateLabel", statePill, TextAnchor.MiddleCenter, 15, FontStyle.Bold);
             bannerStateLabel.color = HeadingColor;
 
             RectTransform sealsPill = CreatePill(root, "SealsPill", Vector2.zero, Vector2.one, new Color(0.16f, 0.27f, 0.37f, 0.98f));
-            sealsPill.gameObject.AddComponent<LayoutElement>().preferredHeight = 42f;
-            sealsLabel = CreateText("SealsLabel", sealsPill, TextAnchor.MiddleCenter, 22, FontStyle.Bold);
+            sealsPill.gameObject.AddComponent<LayoutElement>().preferredHeight = 40f;
+            sealsLabel = CreateText("SealsLabel", sealsPill, TextAnchor.MiddleCenter, 24, FontStyle.Bold);
             sealsLabel.color = HeadingColor;
 
             RectTransform collectionPill = CreatePill(root, "CollectionPill", Vector2.zero, Vector2.one, new Color(0.25f, 0.19f, 0.11f, 0.98f));
-            collectionPill.gameObject.AddComponent<LayoutElement>().preferredHeight = 36f;
-            collectionLabel = CreateText("CollectionLabel", collectionPill, TextAnchor.MiddleCenter, 18, FontStyle.Bold);
+            collectionPill.gameObject.AddComponent<LayoutElement>().preferredHeight = 32f;
+            collectionLabel = CreateText("CollectionLabel", collectionPill, TextAnchor.MiddleCenter, 17, FontStyle.Bold);
             collectionLabel.color = HeadingColor;
 
             if (exception == null)
@@ -602,20 +602,15 @@ namespace Shogun.Features.UI
 
         private void BuildEmergencyBannerPanel()
         {
-            float bannerPanelHeight = Mathf.Max(220f, 78f + (banners.Count * 110f));
+            float bannerPanelHeight = Mathf.Max(188f, 44f + (banners.Count * 90f));
             CreatePanel(contentFrame, "EmergencyBannerPanel", bannerPanelHeight, PanelOuterColor, PanelInnerColor, out RectTransform inner);
-            RectTransform content = CreateRect("Content", inner, Vector2.zero, Vector2.one, new Vector2(24f, 20f), new Vector2(-24f, -20f));
+            RectTransform content = CreateRect("Content", inner, Vector2.zero, Vector2.one, new Vector2(16f, 14f), new Vector2(-16f, -14f));
             VerticalLayoutGroup stack = content.gameObject.AddComponent<VerticalLayoutGroup>();
-            stack.spacing = 10f;
+            stack.spacing = 8f;
             stack.childControlWidth = true;
             stack.childControlHeight = true;
             stack.childForceExpandWidth = true;
             stack.childForceExpandHeight = false;
-
-            Text heading = CreateText("Heading", content, TextAnchor.UpperLeft, 26, FontStyle.Bold);
-            heading.text = "BANNERS";
-            heading.color = HeadingColor;
-            heading.gameObject.AddComponent<LayoutElement>().preferredHeight = 38f;
 
             if (banners.Count == 0)
             {
@@ -629,53 +624,53 @@ namespace Shogun.Features.UI
 
         private void BuildEmergencyDetailPanel()
         {
-            CreatePanel(contentFrame, "EmergencyDetailPanel", 860f, PanelOuterColor, PanelInnerColor, out RectTransform inner);
+            CreatePanel(contentFrame, "EmergencyDetailPanel", 760f, PanelOuterColor, PanelInnerColor, out RectTransform inner);
             detailPanelLayout = inner.parent.GetComponent<LayoutElement>();
             detailAccentBand = CreateRect("Accent", inner, new Vector2(0f, 0f), new Vector2(0f, 1f), Vector2.zero, new Vector2(10f, 0f)).gameObject.AddComponent<Image>();
             detailAccentBand.sprite = GetWhiteSprite();
-            RectTransform content = CreateRect("Content", inner, Vector2.zero, Vector2.one, new Vector2(24f, 20f), new Vector2(-24f, -20f));
+            RectTransform content = CreateRect("Content", inner, Vector2.zero, Vector2.one, new Vector2(18f, 16f), new Vector2(-18f, -16f));
             VerticalLayoutGroup stack = content.gameObject.AddComponent<VerticalLayoutGroup>();
-            stack.spacing = 10f;
+            stack.spacing = 8f;
             stack.childControlWidth = true;
             stack.childControlHeight = true;
             stack.childForceExpandWidth = true;
             stack.childForceExpandHeight = false;
 
-            CreateSectionHeader(content, "BANNER FOCUS", "Featured trio, rates, and pull actions for the active gate.");
+            CreateSectionHeader(content, "BANNER FOCUS", "Featured trio, rates, and pull actions.");
 
-            bannerTitleLabel = CreateText("BannerTitle", content, TextAnchor.UpperLeft, 38, FontStyle.Bold);
+            bannerTitleLabel = CreateText("BannerTitle", content, TextAnchor.UpperLeft, 34, FontStyle.Bold);
             bannerTitleLabel.color = HeadingColor;
-            bannerTitleLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 42f;
-            bannerSubtitleLabel = CreateText("BannerSubtitle", content, TextAnchor.UpperLeft, 18, FontStyle.Bold);
+            bannerTitleLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 38f;
+            bannerSubtitleLabel = CreateText("BannerSubtitle", content, TextAnchor.UpperLeft, 19, FontStyle.Bold);
             bannerSubtitleLabel.color = BodyColor;
             bannerSubtitleLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
             bannerSubtitleLabel.verticalOverflow = VerticalWrapMode.Overflow;
-            bannerSubtitleLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 40f;
-            bannerSummaryLabel = CreateText("BannerSummary", content, TextAnchor.UpperLeft, 17, FontStyle.Normal);
+            bannerSubtitleLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 30f;
+            bannerSummaryLabel = CreateText("BannerSummary", content, TextAnchor.UpperLeft, 18, FontStyle.Normal);
             bannerSummaryLabel.color = BodyColor;
             bannerSummaryLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
             bannerSummaryLabel.verticalOverflow = VerticalWrapMode.Overflow;
-            bannerSummaryLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 62f;
-            bannerOddsLabel = CreateText("BannerOdds", content, TextAnchor.UpperLeft, 16, FontStyle.Bold);
+            bannerSummaryLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 48f;
+            bannerOddsLabel = CreateText("BannerOdds", content, TextAnchor.UpperLeft, 18, FontStyle.Bold);
             bannerOddsLabel.color = new Color(0.95f, 0.88f, 0.7f, 1f);
-            bannerOddsLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 24f;
-            bannerDisclosureLabel = CreateText("BannerDisclosure", content, TextAnchor.UpperLeft, 15, FontStyle.Normal);
+            bannerOddsLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 26f;
+            bannerDisclosureLabel = CreateText("BannerDisclosure", content, TextAnchor.UpperLeft, 14, FontStyle.Normal);
             bannerDisclosureLabel.color = MutedColor;
             bannerDisclosureLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
             bannerDisclosureLabel.verticalOverflow = VerticalWrapMode.Overflow;
-            bannerDisclosureLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 40f;
+            bannerDisclosureLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 26f;
 
             CreateDivider(content);
 
-            featuredSummaryLabel = CreateText("FeaturedSummary", content, TextAnchor.UpperLeft, 17, FontStyle.Bold);
+            featuredSummaryLabel = CreateText("FeaturedSummary", content, TextAnchor.UpperLeft, 19, FontStyle.Bold);
             featuredSummaryLabel.color = BodyColor;
             featuredSummaryLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
             featuredSummaryLabel.verticalOverflow = VerticalWrapMode.Overflow;
-            featuredSummaryLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 36f;
+            featuredSummaryLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 28f;
 
             featuredGridRoot = CreateRect("FeaturedGridRoot", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             featuredGridLayout = featuredGridRoot.gameObject.AddComponent<LayoutElement>();
-            featuredGridLayout.preferredHeight = 156f;
+            featuredGridLayout.preferredHeight = 148f;
             featuredGrid = featuredGridRoot.gameObject.AddComponent<GridLayoutGroup>();
             featuredGrid.spacing = new Vector2(12f, 12f);
             featuredGrid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
@@ -683,9 +678,9 @@ namespace Shogun.Features.UI
             featuredGrid.cellSize = new Vector2(250f, 164f);
 
             RectTransform actions = CreateRect("Actions", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            actions.gameObject.AddComponent<LayoutElement>().preferredHeight = 88f;
+            actions.gameObject.AddComponent<LayoutElement>().preferredHeight = 78f;
             HorizontalLayoutGroup actionLayout = actions.gameObject.AddComponent<HorizontalLayoutGroup>();
-            actionLayout.spacing = 10f;
+            actionLayout.spacing = 8f;
             actionLayout.childControlWidth = true;
             actionLayout.childControlHeight = true;
             actionLayout.childForceExpandWidth = true;
@@ -698,28 +693,28 @@ namespace Shogun.Features.UI
 
         private void BuildEmergencyResultsPanel()
         {
-            CreatePanel(contentFrame, "EmergencyResultsPanel", 430f, PanelOuterColor, PanelInnerColor, out RectTransform inner);
+            CreatePanel(contentFrame, "EmergencyResultsPanel", 356f, PanelOuterColor, PanelInnerColor, out RectTransform inner);
             resultPanelLayout = inner.parent.GetComponent<LayoutElement>();
-            RectTransform content = CreateRect("Content", inner, Vector2.zero, Vector2.one, new Vector2(24f, 20f), new Vector2(-24f, -20f));
+            RectTransform content = CreateRect("Content", inner, Vector2.zero, Vector2.one, new Vector2(18f, 16f), new Vector2(-18f, -16f));
             VerticalLayoutGroup stack = content.gameObject.AddComponent<VerticalLayoutGroup>();
-            stack.spacing = 10f;
+            stack.spacing = 8f;
             stack.childControlWidth = true;
             stack.childControlHeight = true;
             stack.childForceExpandWidth = true;
             stack.childForceExpandHeight = false;
 
-            CreateSectionHeader(content, "REVEAL LEDGER", "Fresh pulls land here immediately.");
+            CreateSectionHeader(content, "REVEAL LEDGER", "New pulls land here.");
 
-            resultStatusLabel = CreateText("Status", content, TextAnchor.UpperLeft, 30, FontStyle.Bold);
+            resultStatusLabel = CreateText("Status", content, TextAnchor.UpperLeft, 28, FontStyle.Bold);
             resultStatusLabel.color = HeadingColor;
-            resultStatusLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 36f;
-            resultSummaryLabel = CreateText("Summary", content, TextAnchor.UpperLeft, 16, FontStyle.Normal);
+            resultStatusLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 32f;
+            resultSummaryLabel = CreateText("Summary", content, TextAnchor.UpperLeft, 18, FontStyle.Normal);
             resultSummaryLabel.color = BodyColor;
             resultSummaryLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
             resultSummaryLabel.verticalOverflow = VerticalWrapMode.Overflow;
-            resultSummaryLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 60f;
+            resultSummaryLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 42f;
 
-            resultEmptyState = CreateEmptyState(content, "No summon performed yet. Pull on a banner to reveal characters here and sync them into the Barracks.");
+            resultEmptyState = CreateEmptyState(content, "No summon yet. Pick a banner and pull to reveal warriors here.");
 
             resultGridRoot = CreateRect("ResultGridRoot", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             resultGridLayout = resultGridRoot.gameObject.AddComponent<LayoutElement>();
@@ -894,10 +889,10 @@ namespace Shogun.Features.UI
 
         private void BuildFooterPanel()
         {
-            CreatePanel(contentFrame, "FooterPanel", 112f, new Color(0.16f, 0.13f, 0.11f, 0.96f), new Color(0.08f, 0.07f, 0.07f, 0.98f), out RectTransform inner);
+            CreatePanel(contentFrame, "FooterPanel", 92f, new Color(0.16f, 0.13f, 0.11f, 0.96f), new Color(0.08f, 0.07f, 0.07f, 0.98f), out RectTransform inner);
             RectTransform content = CreateRect("FooterContent", inner, Vector2.zero, Vector2.one, new Vector2(24f, 18f), new Vector2(-24f, -18f));
-            Text footer = CreateText("Footer", content, TextAnchor.MiddleLeft, 15, FontStyle.Normal);
-            footer.text = "Local test gate. Pulls, rates, seal spend, and Barracks sync are live in this slice.";
+            Text footer = CreateText("Footer", content, TextAnchor.MiddleLeft, 16, FontStyle.Normal);
+            footer.text = "Local test gate. Pulls, rates, seal spend, and Barracks sync are live here.";
             footer.color = BodyColor;
             footer.horizontalOverflow = HorizontalWrapMode.Wrap;
             footer.verticalOverflow = VerticalWrapMode.Overflow;
@@ -911,10 +906,10 @@ namespace Shogun.Features.UI
             {
                 BannerButtonView view = bannerButtons[i];
                 bool isSelected = banner != null && string.Equals(view.Banner.BannerId, banner.BannerId, StringComparison.OrdinalIgnoreCase);
-                view.Background.color = isSelected ? new Color(0.2f, 0.16f, 0.12f, 0.98f) : new Color(0.11f, 0.1f, 0.1f, 0.96f);
+                view.Background.color = isSelected ? new Color(0.26f, 0.2f, 0.13f, 0.99f) : new Color(0.11f, 0.1f, 0.1f, 0.96f);
                 view.Accent.color = isSelected ? view.Banner.AccentColor : new Color(view.Banner.AccentColor.r * 0.66f, view.Banner.AccentColor.g * 0.66f, view.Banner.AccentColor.b * 0.66f, 0.92f);
-                view.TitleLabel.color = isSelected ? HeadingColor : new Color(0.92f, 0.88f, 0.8f, 1f);
-                view.SubtitleLabel.color = isSelected ? BodyColor : MutedColor;
+                view.TitleLabel.color = isSelected ? new Color(0.98f, 0.95f, 0.84f, 1f) : new Color(0.92f, 0.88f, 0.8f, 1f);
+                view.SubtitleLabel.color = isSelected ? new Color(0.97f, 0.9f, 0.72f, 1f) : MutedColor;
             }
 
             if (banner == null)
@@ -923,10 +918,10 @@ namespace Shogun.Features.UI
             if (detailAccentBand != null)
                 detailAccentBand.color = banner.AccentColor;
             bannerTitleLabel.text = banner.Title;
-            bannerSubtitleLabel.text = $"{banner.BannerType}  •  {banner.FeaturedCharacterIds.Count} featured  •  Single {banner.SinglePullCost} seals  •  Multi {banner.MultiPullCost} seals";
+            bannerSubtitleLabel.text = $"{banner.BannerType} • {banner.FeaturedCharacterIds.Count} featured • 1x {banner.SinglePullCost} • 10x {banner.MultiPullCost}";
             bannerSummaryLabel.text = banner.Summary;
             bannerOddsLabel.text = banner.GetOddsSummary();
-            bannerDisclosureLabel.text = $"Pool {banner.PoolCharacterIds.Count} warriors • {banner.FeaturedCharacterIds.Count} rate-up units • {banner.Disclosure}";
+            bannerDisclosureLabel.text = $"Pool {banner.PoolCharacterIds.Count} • Rate-up {banner.FeaturedCharacterIds.Count} • {banner.Disclosure}";
             PopulateFeaturedUnits(banner);
             resultStatusLabel.text = "Ready";
             resultStatusLabel.color = BodyColor;
@@ -950,7 +945,7 @@ namespace Shogun.Features.UI
             {
                 if (featuredDefinitions.Count == 0)
                 {
-                    featuredSummaryLabel.text = "RATE-UP FOCUS • no featured character definitions resolved for this banner";
+                    featuredSummaryLabel.text = "RATE-UP FOCUS • no featured unit data resolved";
                 }
                 else
                 {
@@ -1002,8 +997,8 @@ namespace Shogun.Features.UI
             }
 
             resultSummaryLabel.text = newCount > 0
-                ? $"Spent {session.SpentSpiritSeals} seals. {newCount} new character{(newCount > 1 ? "s" : string.Empty)} added. Collection now holds {TestCollectionService.GetOwnedCharacterCount()} units."
-                : $"Spent {session.SpentSpiritSeals} seals. All pulls were duplicates, so total owned copies climbed to {TestCollectionService.GetTotalOwnedCopies()}.";
+                ? $"Spent {session.SpentSpiritSeals} seals. {newCount} new unit{(newCount > 1 ? "s" : string.Empty)} added."
+                : $"Spent {session.SpentSpiritSeals} seals. All pulls were duplicates.";
             PopulateResults();
             RefreshCurrencyLabel();
             ApplyResponsiveLayout(true);
@@ -1034,8 +1029,8 @@ namespace Shogun.Features.UI
             {
                 TestSummonService.TestSummonBanner activeBanner = TestSummonService.GetBanner(selectedBannerId);
                 bannerStateLabel.text = activeBanner != null
-                    ? $"{activeBanner.Title} ACTIVE • {banners.Count} BANNERS • DISCLOSED RATES"
-                    : $"{banners.Count} BANNERS • DISCLOSED RATES";
+                    ? $"{activeBanner.Title} ACTIVE • {banners.Count} BANNERS"
+                    : $"{banners.Count} BANNERS READY";
             }
         }
 
@@ -1098,28 +1093,28 @@ namespace Shogun.Features.UI
         private void ApplyEmergencyResponsiveLayout(float contentWidth)
         {
             float sectionWidth = Mathf.Max(280f, contentWidth - 48f);
-            float subtitleHeight = SyncTextBlockHeight(bannerSubtitleLabel, 40f, 8f);
-            float summaryHeight = SyncTextBlockHeight(bannerSummaryLabel, 56f, 8f);
-            float disclosureHeight = SyncTextBlockHeight(bannerDisclosureLabel, 38f, 8f);
-            float featuredLineHeight = SyncTextBlockHeight(featuredSummaryLabel, 34f, 6f);
-            float resultSummaryHeight = SyncTextBlockHeight(resultSummaryLabel, 56f, 8f);
+            float subtitleHeight = SyncTextBlockHeight(bannerSubtitleLabel, 28f, 6f);
+            float summaryHeight = SyncTextBlockHeight(bannerSummaryLabel, 42f, 6f);
+            float disclosureHeight = SyncTextBlockHeight(bannerDisclosureLabel, 22f, 4f);
+            float featuredLineHeight = SyncTextBlockHeight(featuredSummaryLabel, 24f, 4f);
+            float resultSummaryHeight = SyncTextBlockHeight(resultSummaryLabel, 36f, 6f);
 
             if (featuredGrid != null && featuredGridLayout != null && detailPanelLayout != null)
             {
                 int featuredItems = Mathf.Max(1, featuredGridRoot != null ? featuredGridRoot.childCount : 0);
                 int featuredColumns = contentWidth >= 760f ? 2 : 1;
-                float detailStaticHeight = 412f + subtitleHeight + summaryHeight + disclosureHeight + featuredLineHeight;
-                ConfigureGrid(featuredGrid, featuredGridLayout, detailPanelLayout, featuredItems, featuredColumns, sectionWidth, 220f, 156f, detailStaticHeight, 36f);
+                float detailStaticHeight = 332f + subtitleHeight + summaryHeight + disclosureHeight + featuredLineHeight;
+                ConfigureGrid(featuredGrid, featuredGridLayout, detailPanelLayout, featuredItems, featuredColumns, sectionWidth, 220f, 156f, detailStaticHeight, 24f);
             }
 
             if (resultPanelLayout != null)
             {
-                float resultStaticHeight = 196f + resultSummaryHeight;
+                float resultStaticHeight = 124f + resultSummaryHeight;
                 if (lastResults.Count <= 0)
                 {
                     if (resultGridLayout != null)
                         resultGridLayout.preferredHeight = 12f;
-                    resultPanelLayout.preferredHeight = resultStaticHeight + 112f;
+                    resultPanelLayout.preferredHeight = resultStaticHeight + 92f;
                 }
                 else if (resultGrid != null && resultGridLayout != null)
                 {
@@ -1334,7 +1329,7 @@ namespace Shogun.Features.UI
         private BannerButtonView CreateBannerButton(Transform parent, TestSummonService.TestSummonBanner banner)
         {
             RectTransform root = CreateRect($"Banner_{banner.BannerId}", parent, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            root.gameObject.AddComponent<LayoutElement>().preferredHeight = 100f;
+            root.gameObject.AddComponent<LayoutElement>().preferredHeight = 84f;
             Image background = root.gameObject.AddComponent<Image>();
             background.sprite = GetWhiteSprite();
             background.color = new Color(0.11f, 0.1f, 0.1f, 0.96f);
@@ -1347,31 +1342,31 @@ namespace Shogun.Features.UI
             Image accent = CreateRect("Accent", root, new Vector2(0f, 0f), new Vector2(0f, 1f), Vector2.zero, new Vector2(8f, 0f)).gameObject.AddComponent<Image>();
             accent.sprite = GetWhiteSprite();
             accent.color = banner.AccentColor;
-            RectTransform content = CreateRect("Content", root, Vector2.zero, Vector2.one, new Vector2(20f, 12f), new Vector2(-18f, -12f));
+            RectTransform content = CreateRect("Content", root, Vector2.zero, Vector2.one, new Vector2(18f, 10f), new Vector2(-18f, -10f));
             VerticalLayoutGroup stack = content.gameObject.AddComponent<VerticalLayoutGroup>();
             stack.padding = new RectOffset(0, 0, 0, 0);
-            stack.spacing = 4f;
+            stack.spacing = 3f;
             stack.childControlWidth = true;
             stack.childControlHeight = true;
             stack.childForceExpandWidth = true;
             stack.childForceExpandHeight = false;
 
-            Text title = CreateText("Title", content, TextAnchor.UpperLeft, 24, FontStyle.Bold);
+            Text title = CreateText("Title", content, TextAnchor.UpperLeft, 20, FontStyle.Bold);
             title.text = banner.Title;
             title.color = HeadingColor;
-            title.gameObject.AddComponent<LayoutElement>().preferredHeight = 30f;
+            title.gameObject.AddComponent<LayoutElement>().preferredHeight = 24f;
 
-            Text subtitle = CreateText("Subtitle", content, TextAnchor.MiddleLeft, 15, FontStyle.Normal);
+            Text subtitle = CreateText("Subtitle", content, TextAnchor.MiddleLeft, 14, FontStyle.Normal);
             subtitle.text = $"{banner.BannerType.ToUpperInvariant()} • {banner.FeaturedCharacterIds.Count} FEATURED";
             subtitle.color = BodyColor;
             subtitle.horizontalOverflow = HorizontalWrapMode.Wrap;
             subtitle.verticalOverflow = VerticalWrapMode.Overflow;
-            subtitle.gameObject.AddComponent<LayoutElement>().preferredHeight = 22f;
+            subtitle.gameObject.AddComponent<LayoutElement>().preferredHeight = 18f;
 
             RectTransform spacer = CreateRect("Spacer", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             spacer.gameObject.AddComponent<LayoutElement>().flexibleHeight = 1f;
 
-            Text costs = CreateText("Costs", content, TextAnchor.LowerLeft, 14, FontStyle.Bold);
+            Text costs = CreateText("Costs", content, TextAnchor.LowerLeft, 15, FontStyle.Bold);
             costs.text = $"1x {banner.SinglePullCost} • 10x {banner.MultiPullCost}";
             costs.color = new Color(0.93f, 0.82f, 0.5f, 1f);
             costs.gameObject.AddComponent<LayoutElement>().preferredHeight = 18f;
@@ -1488,17 +1483,17 @@ namespace Shogun.Features.UI
         private static RectTransform CreateSectionHeader(Transform parent, string titleText, string subtitleText)
         {
             RectTransform root = CreateRect($"{titleText}_Header", parent, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            root.gameObject.AddComponent<LayoutElement>().preferredHeight = 84f;
+            root.gameObject.AddComponent<LayoutElement>().preferredHeight = 70f;
             Text title = CreateText("Title", root, TextAnchor.UpperLeft, 32, FontStyle.Bold);
             title.text = titleText;
             title.color = HeadingColor;
-            title.rectTransform.offsetMin = new Vector2(0f, 18f);
-            Text subtitle = CreateText("Subtitle", root, TextAnchor.LowerLeft, 16, FontStyle.Normal);
+            title.rectTransform.offsetMin = new Vector2(0f, 12f);
+            Text subtitle = CreateText("Subtitle", root, TextAnchor.LowerLeft, 15, FontStyle.Normal);
             subtitle.text = subtitleText;
             subtitle.color = MutedColor;
             subtitle.horizontalOverflow = HorizontalWrapMode.Wrap;
             subtitle.verticalOverflow = VerticalWrapMode.Overflow;
-            subtitle.rectTransform.offsetMax = new Vector2(0f, -38f);
+            subtitle.rectTransform.offsetMax = new Vector2(0f, -30f);
             return root;
         }
 
@@ -1515,14 +1510,14 @@ namespace Shogun.Features.UI
         private static Button CreateActionButton(Transform parent, string name, string labelText, Color backgroundColor, UnityEngine.Events.UnityAction onClick)
         {
             RectTransform root = CreateRect(name, parent, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            root.gameObject.AddComponent<LayoutElement>().preferredHeight = 96f;
+            root.gameObject.AddComponent<LayoutElement>().preferredHeight = 78f;
             Image background = root.gameObject.AddComponent<Image>();
             background.sprite = GetWhiteSprite();
             background.color = backgroundColor;
             Button button = root.gameObject.AddComponent<Button>();
             button.targetGraphic = background;
             button.onClick.AddListener(onClick);
-            Text label = CreateText("Label", root, TextAnchor.MiddleCenter, 18, FontStyle.Bold);
+            Text label = CreateText("Label", root, TextAnchor.MiddleCenter, 20, FontStyle.Bold);
             label.text = labelText;
             label.color = HeadingColor;
             return button;
@@ -1532,11 +1527,11 @@ namespace Shogun.Features.UI
         {
             RectTransform root = CreateRect("EmptyState", parent, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             LayoutElement layout = root.gameObject.AddComponent<LayoutElement>();
-            layout.preferredHeight = 88f;
+            layout.preferredHeight = 76f;
             Image background = root.gameObject.AddComponent<Image>();
             background.sprite = GetWhiteSprite();
             background.color = new Color(0.1f, 0.09f, 0.09f, 0.95f);
-            Text label = CreateText("Label", root, TextAnchor.MiddleCenter, 16, FontStyle.Normal);
+            Text label = CreateText("Label", root, TextAnchor.MiddleCenter, 18, FontStyle.Normal);
             label.text = message;
             label.color = BodyColor;
             label.horizontalOverflow = HorizontalWrapMode.Wrap;
@@ -1723,6 +1718,8 @@ namespace Shogun.Features.UI
         }
     }
 }
+
+
 
 
 
